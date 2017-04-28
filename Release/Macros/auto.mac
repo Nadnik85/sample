@@ -1,0 +1,19 @@
+Sub Main
+/declare myclass string outer ${Me.Class}
+/delay 1
+/if (${myclass.Equal[Cleric]}) {
+	/target id ${Spawn[group tank].ID}
+	/timed 5 /mac Autocleric
+	/end
+} else /if (${myclass.Equal[Warrior]}) {
+	/timed 5 /mac Autowarrior
+	/end
+} else /if (${myclass.Equal[Bard]}) {
+	/timed 5 /mac Autobard
+	/end
+} else {
+	/target id ${Spawn[group tank].ID}
+	/timed 5 /mac Kissassist
+	/end
+}
+/return

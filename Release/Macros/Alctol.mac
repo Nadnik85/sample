@@ -1,0 +1,197 @@
+| alctol.mac
+| Takes you to 200 Alcohol Tolerance
+| Version 1.1
+| Date: 11-02-2010
+|
+| By Bror
+| Updated by Maskoi
+|
+| MerchantName is the name of the merchant that sells your booze
+| MaxWanted is where you want to stop: Default is 450
+| Booze is the alcohol you want to buy: Default is ALE
+|
+| Requirements:
+| Slot 8 in your inventory must be empty
+| Must be standing next to the merchant you buying alcohol from/
+
+	#event Explode "#*#If you consumed any more drink you would explode#*#"
+	#event Explode "#*#You could not possibly drink any more, you would explode#*#"
+	#event TooDrunk "#*#You could not possibly consume more alcohol or become more intoxicated#*#"
+	#event SkillUp  "#*#You have become better at Alcohol Tolerance#*#"
+
+
+| --------------------------------------------------------------------------------------------
+| SUB: Main
+| --------------------------------------------------------------------------------------------
+	Sub Main
+	/declare OldSkill int outer ${Me.Skill[Alcohol Tolerance]}
+	/declare MaxWanted int outer
+	/declare MerchantName string outer i
+	/declare Booze string outer
+	/declare Amount		int 	outer
+	/declare DrinkCounter int outer
+	/declare MaxTime int outer
+
+| ***********************************************
+| *   Change these settings if you want.        *
+| ***********************************************
+
+	/varset MerchantName Bixx Bartleby
+	/varset Booze Brandy
+	/varset MaxWanted 450
+
+	/echo Alcohol Tolerance is at ${Me.Skill[Alcohol Tolerance]}
+:Start
+	/call BuyBooze
+	/call Drink
+	/call MaxSkill
+	/goto :Start
+	/return
+
+| ***********************************************
+| Buy Booze                                     *
+| ***********************************************
+| --------------------------------------------------------------------------------------------
+| SUB: BuyBooze
+| --------------------------------------------------------------------------------------------
+	sub BuyBooze
+	/if (${FindItemCount[${Booze}]} > 0) /return
+	/echo Time to buy more booze
+	/target ${MerchantName}
+	/face
+	/delay 1s
+	/click right target
+	/delay 1s
+	/call Buy "${Booze}" 20
+	/keypress esc
+	/delay 1s
+	/return
+
+| ***********************************************
+| Sub Drink                      				*
+| ***********************************************
+| --------------------------------------------------------------------------------------------
+| SUB: Drink
+| --------------------------------------------------------------------------------------------
+	sub Drink
+
+	/for DrinkCounter 1 to 20
+		/itemnotify pack8 rightmouseup
+		/delay 1s
+		/doevents
+	/next DrinkCounter
+
+	/return
+
+| ***********************************************
+| sUB event too much drink                      *
+| ***********************************************
+
+
+| --------------------------------------------------------------------------------------------
+| SUB: Event_Explode
+| --------------------------------------------------------------------------------------------
+	Sub Event_Explode
+	/echo Too full, Waiting 30 seconds.
+	/delay ${WaitSober}
+	/varcalc DrinkCounter ${DrinkCounter}-1
+	/return
+
+| ***********************************************
+| SUB event too drunk                           *
+| ***********************************************
+
+
+| --------------------------------------------------------------------------------------------
+| SUB: Event_TooDrunk
+| --------------------------------------------------------------------------------------------
+	Sub Event_TooDrunk
+	/declare WaitSober string local ${Math.Calc[45+${Math.Rand[70]}]}s
+	/echo Too Drunk, Waiting ${WaitSober} seconds.
+	/delay ${WaitSober}
+	/varcalc DrinkCounter ${DrinkCounter}-1
+
+	/return
+
+| ***********************************************
+| SUB event skillup                             *
+| ***********************************************
+
+
+| --------------------------------------------------------------------------------------------
+| SUB: Event_SkillUp
+| --------------------------------------------------------------------------------------------
+	Sub Event_SkillUp
+	/varcalc MaxTime ${MaxWanted}-${Me.Skill[Alcohol Tolerance]}
+	/echo Alcohol Tolerance increased >> ${Me.Skill[Alcohol Tolerance]} <<
+	/delay 5
+	/return
+
+| ***********************************************
+| SUB Max skill check                        	*
+| ***********************************************
+
+
+| --------------------------------------------------------------------------------------------
+| SUB: MaxSkill
+| --------------------------------------------------------------------------------------------
+	sub MaxSkill
+	/if (${Me.Skill[Alcohol Tolerance]}>=${MaxWanted}) {
+		/echo Alcohol Tolerance is at or greater than ${MaxWanted}. Quiting!
+		/camp
+		endmacro
+	}
+	/return
+
+| ***********************************************
+| Sub Buy                            			*
+| ***********************************************
+
+
+| --------------------------------------------------------------------------------------------
+| SUB: Buy
+| --------------------------------------------------------------------------------------------
+	Sub Buy(string ItemToBuy, int amount)
+	/declare i int local
+	/echo Buying ${ItemToBuy}!
+	/declare QTY int local
+	/declare ListItem int local
+	/varset QTY ${Math.Calc[${amount}-${FindItemCount[${ItemToBuy}]}]}
+	/delay 1s
+
+	/if (${FindItemCount[${ItemToBuy}]}>= ${amount}) {
+		/echo Done!
+		/return
+	}
+	/varset ListItem ${Window[MerchantWnd].Child[ItemList].List[=${ItemToBuy},2]}
+	/if (!${ListItem}) {
+		/echo couldn't find ${ItemToBuy}
+		/return
+	} else {
+		/notify MerchantWnd ItemList listselect ${ListItem}
+		/delay 1s
+	}
+	/echo Buying ${ItemToBuy} Till I get ${amount}
+:Loop
+	/if (${QTY}>1) {
+		/if (${QTY}>19) {
+			/Shiftkey /notify merchantwnd MW_buy_Button leftmouseup
+			/delay 30s ${FindItemCount[${ItemToBuy}]}>=${amount}
+			/echo ${FindItemCount[${ItemToBuy}]} ${ItemToBuy} in inventory
+			/varset QTY ${Math.Calc[${amount}-${FindItemCount[${ItemToBuy}]}]}
+			/delay 3
+			/if (${QTY}<=0) /return
+			/goto :Loop
+		}
+		/if (${QTY}>0 && ${QTY}<20) {
+			/for i 1 to ${QTY}
+				/notify merchantwnd MW_buy_Button leftmouseup
+				/echo Buying ${ItemToBuy} ${i} of ${QTY}
+				/varcalc QTY ${amount}-${FindItemCount[${ItemToBuy}]}
+				/echo ${QTY}
+				/if (${QTY}<=0) /return
+			/next i
+		}
+	}
+	/return
+|  [+++  Formatted by MQ2fusing tabs for indents +++]
