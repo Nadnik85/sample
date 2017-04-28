@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{72838d38-8860-457b-9c97-d21d8f80008e}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{47376865-c942-458b-b6b6-0ab4134fce64}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{b6f8c61b-a005-4f8a-b76d-27be2387db79}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="Source Files\EQDraw">
+      <UniqueIdentifier>{b94117e8-cc2b-4d5e-8fcb-ab7cf21a2469}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tatnium_gui">
+      <UniqueIdentifier>{3130a199-74cc-4d2c-a042-852cb3af5c78}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="MQ2EQDraw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FindPattern.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EQDraw\EQDraw.cpp">
+      <Filter>Source Files\EQDraw</Filter>
+    </ClCompile>
+    <ClCompile Include="tatnium_gui\gui.cpp">
+      <Filter>Source Files\tatnium_gui</Filter>
+    </ClCompile>
+    <ClCompile Include="tatnium_gui\gui_controls.cpp">
+      <Filter>Source Files\tatnium_gui</Filter>
+    </ClCompile>
+    <ClCompile Include="tatnium_gui\gui_form.cpp">
+      <Filter>Source Files\tatnium_gui</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\MQ2Plugin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+</Project>

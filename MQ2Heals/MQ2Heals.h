@@ -1,0 +1,41 @@
+#pragma once
+
+#define        PLUGIN_DATE     20160128
+#define        PLUGIN_VERS         0.50
+#define        PLUGIN_NAME   "MQ2Heals"
+
+// Global Defines
+#define HEALSTATE_IDLE 0
+#define HEALSTATE_CASTSTART 1
+#define HEALSTATE_CASTING 2
+#define HEALSTATE_CASTDONE 3
+#define HEALSTATE_CASTFAIL 4
+#define HEALSTATE_PAUSED 5
+#define HEALSTATE_DEAD 6
+#define HEALSTATE_ZONING 7
+#define HEALSTATE_COOLDOWN 8
+
+#define CASTSTATE_STARTED 0
+#define CASTSTATE_TARGETING 1
+#define CASTSTATE_CASTING 2
+#define CASTSTATE_DONE 3
+
+#define HEALTYPE_SINGLE 0
+#define HEALTYPE_GROUP 1
+#define HEALTYPE_TANKONLY 2
+#define HEALTYPE_BUFF 3
+#define HEALTYPE_DI 4
+
+#define TARGET_NO_HEAL 0
+#define TARGET_SELF_HEAL 1
+#define TARGET_GROUP_SINGLE_HEAL 2
+#define TARGET_GROUP_GROUP_HEAL 3
+#define TARGET_XTAR_HEAL 4
+#define TARGET_PET_HEAL 5
+
+#define MAX_SPELL 128
+
+#define ISINDEX() (Index[0])
+#define ISNUMBER() (IsNumber(Index))
+#define GETNUMBER() (atoi(Index))
+#define GETFIRST() Index
