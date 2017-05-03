@@ -1753,7 +1753,7 @@ bool DivineAuraCheck()
 {
 	if(CheckSongs("Touch of the Divine"))
 	{
-		EzCommand("/clickoff \"Touch of the Divine\"");
+		EzCommand("/removebuff \"Touch of the Divine\"");
 		return true;
 	}
 	if (PctAggro() > 95)

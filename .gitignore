@@ -10,6 +10,7 @@ MQ2Auth0.h
 *.pdb
 *.map
 
+Release/
 Debug/
 Intermediate/
 ISXEQ*Intermediate

@@ -63,11 +63,11 @@ CWizard::CWizard()
 	SplashSpells.push_back("Splash of Rhyolite");
 	SplashSpells.push_back("Splash of Brimstone");
 
-	FreeNukeAAs.push_back("Force of Flame");
-	FreeNukeAAs.push_back("Force of Ice");
-	FreeNukeAAs.push_back("Force of Will");
-	//FreeNukeAAs.push_back("Banestrike");
-	FreeNukeAAs.push_back("Concussive Intuition");
+	FireNukeAAs.push_back("Force of Flame");
+	IceNukeAAs.push_back("Force of Ice");
+	MagicNukeAAs.push_back("Force of Will");
+	//MiscNukeAAs.push_back("Banestrike");
+	MiscNukeAAs.push_back("Concussive Intuition");
 
 	DichotomicSpells.push_back("Dichotomic Fire");
 	AllianceSpells.push_back("Frostbound Alliance");
@@ -198,9 +198,24 @@ bool CWizard::MagicEtherealReady(string &NukeSpell, float Distance)
 	return SpellTypeReady(NukeSpell, EtherealMagicSpells, Distance);
 }
 
-bool CWizard::FreeNukeReady(string &NukeSpell, float Distance)
+bool CWizard::FreeMiscNukeReady(string &NukeSpell, float Distance)
 {
-	return AATypeReady(NukeSpell, FreeNukeAAs);
+	return AATypeReady(NukeSpell, MiscNukeAAs);
+}
+
+bool CWizard::FreeFireNukeReady(string &NukeSpell, float Distance)
+{
+	return AATypeReady(NukeSpell, FireNukeAAs);
+}
+
+bool CWizard::FreeIceNukeReady(string &NukeSpell, float Distance)
+{
+	return AATypeReady(NukeSpell, IceNukeAAs);
+}
+
+bool CWizard::FreeMagicNukeReady(string &NukeSpell, float Distance)
+{
+	return AATypeReady(NukeSpell, MagicNukeAAs);
 }
 
 bool CWizard::IceClawReady(string &NukeSpell, float Distance)

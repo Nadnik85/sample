@@ -20,7 +20,10 @@ public:
 	bool FireClawReady(string &NukeSpell, float Distance=0);
 	bool IceClawReady(string &NukeSpell, float Distance=0);
 
-	bool FreeNukeReady(string &NukeAA, float Distance=0);
+	bool FreeFireNukeReady(string &NukeAA, float Distance = 0);
+	bool FreeIceNukeReady(string &NukeAA, float Distance = 0);
+	bool FreeMagicNukeReady(string &NukeAA, float Distance = 0);
+	bool FreeMiscNukeReady(string &NukeAA, float Distance=0);
 
 	bool FastNukeReady(string &NukeSpell, float Distance=0);
 	bool DichotomicNukeReady(string &NukeSpell, float Distance=0);
@@ -36,7 +39,10 @@ private:
 	vector<string> EtherealMagicSpells;
 	vector<string> EtherealWeaveSpells;
 
-	vector<string> FreeNukeAAs;
+	vector<string> FireNukeAAs;
+	vector<string> IceNukeAAs;
+	vector<string> MagicNukeAAs;
+	vector<string> MiscNukeAAs;
 
 	vector<string> InstantIceSpells;
 	vector<string> InstantFireSpells;

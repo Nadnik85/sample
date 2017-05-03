@@ -82,6 +82,12 @@ float CampRadius=50.0;
 int MobBurnThreshold=2;
 bool BurnNamed=true;
 bool DoAANukes = true;
+bool BreakInvis = false;
+
+// These will not be saved in .ini... Just for temporarily disabling spells (Think Velishan's Revenge, Enslaver of Souls, etc...)
+bool DoFire = true; 
+bool DoIce = true;
+bool DoMagic = true;
 
 // Mount
 CHAR MountItem[MAX_SPELL] = "Verdant Hedgerow Leaf";
@@ -200,6 +206,14 @@ void NukeCommand(PSPAWNINFO pCHAR, PCHAR zLine)
 		ManualAssist = SetBOOL(ManualAssist, Param2, PLUGIN_NAME, "ManualAssist");
 	else if (!_stricmp("dummy", Param1))
 		Dummy = SetBOOL(Dummy, Param2, PLUGIN_NAME, "Dummy");
+	else if (!_stricmp("breakinvis", Param1))
+		BreakInvis = SetBOOL(BreakInvis, Param2, PLUGIN_NAME, "BreakInvis");
+	else if (!_stricmp("fire", Param1))
+		DoFire = SetBOOL(DoFire, Param2, PLUGIN_NAME, "Fire");
+	else if (!_stricmp("cold", Param1))
+		DoIce = SetBOOL(DoIce , Param2, PLUGIN_NAME, "Cold");
+	else if (!_stricmp("magic", Param1))
+		DoMagic = SetBOOL(DoMagic, Param2, PLUGIN_NAME, "Magic");
 	else if (!_stricmp("start", Param1))
 	{
 		if (ManualAssist)
@@ -255,11 +269,16 @@ void ShowHelp()
 	Notify(NULL, NULL, "/nuke manualassist on|off -> Manually target mobs, and use /nuke start to kill.");
 	Notify(NULL, NULL, "/nuke start -> Start nuking mob on manual targeting.");
 	Notify(NULL, NULL, "/nuke stop -> Stop nuking mob on manual targeting.");
+	Notify(NULL, NULL, "/nuke breakinvis on|off -> Break invis to start nuking (not Harvest).");
 	Notify(NULL, NULL, "=============DPS Options================");
 	Notify(NULL, NULL, "/nuke assistat # -> Assist the MA/MT at #% HPs (default: 99)");
 	Notify(NULL, NULL, "/nuke stopat # -> Stop assisting the MA/MT at #% HPs (default: 0)");
 	Notify(NULL, NULL, "/nuke burn on|off -> Turn automatic burns on/off.");
 	Notify(NULL, NULL, "/nuke doaanukes on|off -> Toggle AA Nukes on/off");
+	Notify(NULL, NULL, "/nuke fire on|off -> Toggle Fire Nukes on/off");
+	Notify(NULL, NULL, "/nuke magic on|off -> Toggle Magic Nukes on/off");
+	Notify(NULL, NULL, "/nuke cold on|off -> Toggle Cold Nukes on/off");
+	Notify(NULL, NULL, "/nuke reset -> Toggle Fire/Cold/Magic Nukes on (default)");
 	Notify(NULL, NULL, "=============Med Options================");
 	Notify(NULL, NULL, "/nuke domed on|off -> Toggle Meditate on/off");
 	Notify(NULL, NULL, "/nuke harvest on|off -> Toggle Harvest abilities/items on/off");
@@ -297,11 +316,15 @@ void ShowSettings()
 	Notify(PLUGIN_NAME, "Debug", "(\ag%s\ax).", (DoDebug ? "on" : "off"));
 	Notify(PLUGIN_NAME, "PauseOnZone", "(\ag%s\ax).", (PauseOnZone ? "on" : "off"));
 	Notify(PLUGIN_NAME, "ManualAssist", "(\ag%s\ax).", (ManualAssist ? "on" : "off"));
+	Notify(PLUGIN_NAME, "BreakInvis", "(\ag%s\ax).", (BreakInvis ? "on" : "off"));
 	Notify(NULL, NULL, "==============DPS Options===============");
 	Notify(PLUGIN_NAME, "AssistAt", "(\ag%i\ax).", AssistAt);
 	Notify(PLUGIN_NAME, "StopAt", "(\ag%i\ax).", StopAt);
 	Notify(PLUGIN_NAME, "Burn", "(\ag%s\ax).", (DoBurn ? "on" : "off"));
 	Notify(PLUGIN_NAME, "DoAANukes", "(\ag%s\ax).", (DoAANukes ? "on" : "off"));
+	Notify(PLUGIN_NAME, "Fire", "(\ag%s\ax).", (DoFire ? "on" : "off"));
+	Notify(PLUGIN_NAME, "Ice", "(\ag%s\ax).", (DoIce ? "on" : "off"));
+	Notify(PLUGIN_NAME, "Magic", "(\ag%s\ax).", (DoMagic ? "on" : "off"));
 	Notify(NULL, NULL, "==================Rez===================");
 	Notify(PLUGIN_NAME, "CampFireRez", "(\ag%s\ax).", (ReleaseAndCampfire ? "on" : "off"));
 	Notify(PLUGIN_NAME, "ReviveMerc", "(\ag%s\ax).", (DoReviveMerc ? "on" : "off"));
@@ -424,7 +447,7 @@ void LoadIni()
 	DoDebug = GetPrivateProfileInt(PLUGIN_NAME, "Debug", 0, INIFileName) ? true : false;
 	Dummy = GetPrivateProfileInt(PLUGIN_NAME, "Dummy", 0, INIFileName) ? true : false;
 	ManualAssist = GetPrivateProfileInt(PLUGIN_NAME, "ManualAssist", 0, INIFileName) ? true : false;
-
+	BreakInvis = GetPrivateProfileInt(PLUGIN_NAME, "BreakInvis", 0, INIFileName) ? true : false;
 
 	//DPSMode			=	GetPrivateProfileInt(PLUGIN_NAME, "DPSMode", 0, INIFileName);
 	DoMemSpells = GetPrivateProfileInt(PLUGIN_NAME, "MemSpells", 0, INIFileName) ? true : false;
@@ -466,6 +489,7 @@ void SaveIni()
 	WritePrivateProfileString(PLUGIN_NAME, "DoAANukes", DoAANukes ? "1" : "0", INIFileName);
 	WritePrivateProfileString(PLUGIN_NAME, "Harvest", Harvest ? "1" : "0", INIFileName);
 	WritePrivateProfileString(PLUGIN_NAME, "ManualAssist", ManualAssist ? "1" : "0", INIFileName);
+	WritePrivateProfileString(PLUGIN_NAME, "BreakInvis", BreakInvis ? "1" : "0", INIFileName);
 	WritePrivateProfileInt(PLUGIN_NAME, "AssistAt", AssistAt, INIFileName);
 	WritePrivateProfileInt(PLUGIN_NAME, "HarvestAt", HarvestAt, INIFileName);
 	WritePrivateProfileString(PLUGIN_NAME, "DoMount", DoMount ? "1" : "0", INIFileName);
@@ -606,7 +630,7 @@ PSPAWNINFO GetAssistNPC()
 bool CheckForNukes()
 {
 	PCHARINFO info = GetCharInfo();
-	if (Me->Invis()) return false;
+	if (Me->Invis()&&!BreakInvis) return false;
 	if (Me->Moving()) return false;
 	if (!Me->InCombat() && !Dummy && !ManualAssist) return false;
 
@@ -717,7 +741,11 @@ bool CastNextFreeNuke()
 	{
 		float dist=GetDistance(GetCharInfo()->pSpawn, pNukeTarget);
 		CWizard *wizard = (CWizard *)Me;
-		if (wizard->FreeNukeReady(NukeSpell, dist))
+		if (DoFire && wizard->FreeFireNukeReady(NukeSpell, dist)) {}
+		else if(DoIce && wizard->FreeIceNukeReady(NukeSpell, dist)) {}
+		else if (DoMagic && wizard->FreeMagicNukeReady(NukeSpell, dist)) {}
+		else if (wizard->FreeMiscNukeReady(NukeSpell, dist)) {}
+		if(NukeSpell.length()>0)
 		{
 			DoCommandf("/casting \"%s\" alt -targetid|%d", NukeSpell.c_str(), pNukeTarget->SpawnID);
 			DNotify(PLUGIN_NAME, "CastFreeNuke", "Casting AA Nuke <\ar%s\ax> on <\ay%s\ax>", NukeSpell.c_str(), pNukeTarget->Name);
@@ -885,28 +913,28 @@ bool CastNextNuke()
 							return true;
 						}
 					}
-					if (!Haze && !ITC && !GoM && Wiz->FireClawReady(NukeSpell, dist)){}
-					else if (!Haze && !ITC && !GoM && Wiz->IceClawReady(NukeSpell, dist)) {}
-					else if (!Haze && !ITC && !GoM && Wiz->MagicClawReady(NukeSpell, dist)) {}
-					else if (!Haze && !ITC && !GoM && Wiz->VortexNukeReady(NukeSpell, dist)) {}
-					else if (!Haze && !ITC && Wiz->MagicInstantReady(NukeSpell, dist)) {}
-					else if (!Haze && !ITC && Wiz->FireInstantReady(NukeSpell, dist)) {}
-					else if (!Haze && !ITC && Wiz->IceInstantReady(NukeSpell, dist)) {}
-					else if (!Haze && !Burn && Gambit && !GoM && Wiz->FastNukeReady(NukeSpell, dist)) {}
-					else if ((!LowMana && Haze || GoM) && (!ITC) && Wiz->DichotomicNukeReady(NukeSpell, dist)) {}
-					else if ((!LowMana || Haze || GoM) && Wiz->EtherealWeaveReady(NukeSpell, dist)) {}
-					else if ((!LowMana || Haze || GoM) && Wiz->FireEtherealReady(NukeSpell, dist)) {}
-					else if ((!LowMana || Haze || GoM) && Wiz->IceEtherealReady(NukeSpell, dist)) {}
-					else if ((!LowMana || Haze || GoM) && Wiz->MagicEtherealReady(NukeSpell, dist)) {}
-					else if (LowMana && !GoM && Wiz->FastNukeReady(NukeSpell, dist)) {}
-					else if (Wiz->MagicInstantReady(NukeSpell, dist)) {}
-					else if (Wiz->FireInstantReady(NukeSpell, dist)) {}
-					else if (Wiz->IceInstantReady(NukeSpell, dist)) {}
-					else if (Wiz->FireClawReady(NukeSpell, dist)){}
-					else if (Wiz->IceClawReady(NukeSpell, dist)) {}
-					else if (Wiz->MagicClawReady(NukeSpell, dist)) {}
-					else if (Wiz->FastNukeReady(NukeSpell, dist)) {}
-					else if (Wiz->LowLevelNukeReady(NukeSpell, dist)) {}
+					if (DoFire && !Haze && !ITC && !GoM && Wiz->FireClawReady(NukeSpell, dist)){}
+					else if (DoIce && !Haze && !ITC && !GoM && Wiz->IceClawReady(NukeSpell, dist)) {}
+					else if (DoMagic && !Haze && !ITC && !GoM && Wiz->MagicClawReady(NukeSpell, dist)) {}
+					else if (DoMagic && !Haze && !ITC && !GoM && Wiz->VortexNukeReady(NukeSpell, dist)) {}
+					else if (DoMagic && !Haze && !ITC && Wiz->MagicInstantReady(NukeSpell, dist)) {}
+					else if (DoFire && !Haze && !ITC && Wiz->FireInstantReady(NukeSpell, dist)) {}
+					else if (DoIce && !Haze && !ITC && Wiz->IceInstantReady(NukeSpell, dist)) {}
+					else if (DoIce && DoFire && DoMagic && !Haze && !Burn && Gambit && !GoM && Wiz->FastNukeReady(NukeSpell, dist)) {}
+					else if ((!LowMana && Haze || GoM) && DoFire && (!ITC) && Wiz->DichotomicNukeReady(NukeSpell, dist)) {}
+					else if ((!LowMana || Haze || GoM) && DoFire && DoIce && Wiz->EtherealWeaveReady(NukeSpell, dist)) {}
+					else if ((!LowMana || Haze || GoM) && DoFire && Wiz->FireEtherealReady(NukeSpell, dist)) {}
+					else if ((!LowMana || Haze || GoM) && DoIce && Wiz->IceEtherealReady(NukeSpell, dist)) {}
+					else if ((!LowMana || Haze || GoM) && DoMagic && Wiz->MagicEtherealReady(NukeSpell, dist)) {}
+					else if (LowMana && !GoM && DoFire && DoIce && DoMagic && Wiz->FastNukeReady(NukeSpell, dist)) {}
+					else if (DoMagic && Wiz->MagicInstantReady(NukeSpell, dist)) {}
+					else if (DoFire && Wiz->FireInstantReady(NukeSpell, dist)) {}
+					else if (DoIce && Wiz->IceInstantReady(NukeSpell, dist)) {}
+					else if (DoFire && Wiz->FireClawReady(NukeSpell, dist)){}
+					else if (DoIce && Wiz->IceClawReady(NukeSpell, dist)) {}
+					else if (DoMagic && Wiz->MagicClawReady(NukeSpell, dist)) {}
+					else if (DoFire && DoIce && DoMagic && Wiz->FastNukeReady(NukeSpell, dist)) {}
+					else if (DoFire && DoIce && DoMagic && Wiz->LowLevelNukeReady(NukeSpell, dist)) {}
 					else {
 						CastState = CASTSTATE_STARTED;
 						NukeState = NUKESTATE_IDLE;
@@ -1471,7 +1499,7 @@ bool MedCheck()
 		medtimer.Reset();
 		medtimer.Start();
 
-		if (Harvest && (Me->PctMana() <= HarvestAt) && Me->IsAAReady("Harvest of Druzzil") && !Me->CastingLeft())
+		if (Harvest && !Me->Invis() && (Me->PctMana() <= HarvestAt) && Me->IsAAReady("Harvest of Druzzil") && !Me->CastingLeft())
 		{
 			if (Me->Sitting()) { DoCommandf("/stand"); return true; }
 			DoCommandf("/casting \"Harvest of Druzzil\" alt");
@@ -1479,7 +1507,7 @@ bool MedCheck()
 			NukeState = NUKESTATE_CASTING;
 			return false;
 		}
-		else if (Harvest && (Me->PctMana() <= HarvestAt) && !Me->InCombat() && Me->IsSpellReady("Quiescent Harvest") && !Me->CastingLeft())
+		else if (Harvest && !Me->Invis() && (Me->PctMana() <= HarvestAt) && !Me->InCombat() && Me->IsSpellReady("Quiescent Harvest") && !Me->CastingLeft())
 		{
 			if (Me->Sitting()) { DoCommandf("/stand"); return true; }
 			DoCommandf("/casting \"${Spell[Quiescent Harvest].RankName}\"");
@@ -1487,7 +1515,7 @@ bool MedCheck()
 			NukeState = NUKESTATE_CASTING;
 			return false;
 		}
-		else if (Harvest && (Me->PctMana() <= HarvestAt) && Me->IsSpellReady("Quiescent Gambit") && !Me->CastingLeft())
+		else if (Harvest && !Me->Invis() && (Me->PctMana() <= HarvestAt) && Me->IsSpellReady("Quiescent Gambit") && !Me->CastingLeft())
 		{
 			if (Me->Sitting()) { DoCommandf("/stand"); return true; }
 			DoCommandf("/casting \"${Spell[Quiescent Gambit].RankName}\"");
@@ -1495,7 +1523,7 @@ bool MedCheck()
 			NukeState = NUKESTATE_CASTING;
 			return false;
 		}
-		else if (Harvest && (Me->PctMana() <= HarvestAt) && Me->IsSpellReady("Bucolic Gambit") && !Me->CastingLeft())
+		else if (Harvest && !Me->Invis() && (Me->PctMana() <= HarvestAt) && Me->IsSpellReady("Bucolic Gambit") && !Me->CastingLeft())
 		{
 			if (Me->Sitting()) { DoCommandf("/stand"); return true; }
 			DoCommandf("/casting \"${Spell[Bucolic Gambit].RankName}\"");
@@ -1525,7 +1553,7 @@ bool MedCheck()
 				return false;
 			}
 		}
-		else if (Harvest && (Me->PctMana() < 20))
+		else if (Harvest && !Me->Invis() && (Me->PctMana() < 20))
 		{
 			//else if ()
 			if (Me->IsAAReady("Harvest of Druzzil"))
