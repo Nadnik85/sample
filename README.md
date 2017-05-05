@@ -22,7 +22,7 @@ We love contributors! If you're testing changes, feel free to create or request 
 
 Not everything has to be MQ2 related, we've hosted many other programs for EverQuest in the past and we want to see them here.
 
-# Git Guide
+## Git Guide
 If you've never used git before, GitHub has a nice little tutorial:
 https://help.github.com/articles/set-up-git/
 You can even use their "GitHub Desktop" client with our Gitlab repository. Most developers in the MQ2 scene use Visual Studio to connect to git, which is also free.
