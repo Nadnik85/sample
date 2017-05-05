@@ -18,11 +18,14 @@ http://www.macroquest2.com/wiki/index.php/MacroQuest2:Compiling
 
 
 # Contribute
-We love contributors! If you're testing changes that might break things, create or request a new branch for your project. Otherwise feel free to checkin to master at will.
+We love contributors! If you're testing changes that might break things, create or request a new branch for your project. Otherwise feel free to checkin to the master branch.
 
 Not everything has to be MQ2 related, we've hosted many other programs for EverQuest in the past and we want to see them here.
 
 ## Git Guide
+If you're working on a single macro by yourself, you don't have to learn anything. You can edit the macro directly on gitlab.com - no programs required.
+
+If you're working with others, or with several files, it's best to use software to avoid conflicting edits.
 If you've never used git before, GitHub has a nice little tutorial:
 https://help.github.com/articles/set-up-git/
 You can even use their "GitHub Desktop" client with our Gitlab repository, as Redguides member erfg12 shows here:
