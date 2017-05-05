@@ -1,7 +1,7 @@
 # Introduction
 Our goal is to create and maintain "Very Vanilla Live", a ban-safe and reliable version of MacroQuest2 made with Redguides' community plugins, modifications, and macros.
 
-We're currently supporting Test, Live, and EMU with this compile.
+We're currently supporting Test, Live, and the RoF2 client with this compile.
 
 # Getting Started
 Information about installing Very Vanilla can be found on RedGuides.com. Specifically, right here:
