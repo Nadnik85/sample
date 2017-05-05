@@ -25,7 +25,8 @@ Not everything has to be MQ2 related, we've hosted many other programs for EverQ
 ## Git Guide
 If you've never used git before, GitHub has a nice little tutorial:
 https://help.github.com/articles/set-up-git/
-You can even use their "GitHub Desktop" client with our Gitlab repository. Our very own erfg12 has a guide on this:
+You can even use their "GitHub Desktop" client with our Gitlab repository. 
+Redguides member erfg12 wrote a guide on this for his site:
 https://newagesoldier.com/how-to-use-github-windows-client-with-gitlab-reposaccounts/
 
 Most developers in the MQ2 scene use Visual Studio Community Edition to connect to git, which is also free.
