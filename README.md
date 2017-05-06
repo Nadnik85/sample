@@ -32,7 +32,7 @@ To add or update a macro, it's as simple as this:
 
 1) Go to https://gitlab.com/redguides/VeryVanilla/tree/master/Release/Macros
 
-2) click "+" "upload file" and you're done.
+2) click "+" then "upload file"
 
 
 If you're working with others, or with several files, it's best to use software to avoid conflicting edits.
