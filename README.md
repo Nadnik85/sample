@@ -18,7 +18,9 @@ http://www.macroquest2.com/wiki/index.php/MacroQuest2:Compiling
 
 
 # Contribute
-We love contributors! If you're testing changes that might break things, create or request a new branch for your project. Otherwise feel free to checkin to the master branch.
+We love contributors! If you're testing changes that might break things, create or request a new branch for your project. Otherwise feel free to commit to the master branch.
+
+Make sure you add your plugins to the Plugin List, and your macro to the Macro List on RedGuides.com to attract more users.
 
 Not everything has to be MQ2 related, we've hosted many other programs for EverQuest in the past and we want to see them here.
 
