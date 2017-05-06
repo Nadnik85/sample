@@ -4,7 +4,7 @@ Our goal is to create and maintain "Very Vanilla Live", a ban-safe and reliable 
 We're currently supporting Test, Live, and the RoF2 client with this compile.
 
 # Getting Started
-Information about installing Very Vanilla can be found on RedGuides.com. Specifically, right here:
+Information about installing Very Vanilla can be found on RedGuides.com:
 
 https://www.redguides.com/forums/threads/26389-MacroQuest2-Beginner-s-Guide-(start-here)
 
