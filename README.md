@@ -43,6 +43,8 @@ https://newagesoldier.com/how-to-use-github-windows-client-with-gitlab-reposacco
 
 Most developers in the MQ2 scene use Visual Studio Community Edition to connect to git, which is also free.
 
+Git is everywhere, so if you have a favorite editor (notepad++) someone has made a way to commit to git directly through that program.
+
 # Access
 
 If you'd like to keep your work private, a special plugin for example, or if you need access to code not shown here, send a PM to Redbot. 
