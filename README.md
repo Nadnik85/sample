@@ -27,6 +27,10 @@ Not everything has to be MQ2 related, we've hosted many other programs for EverQ
 ## Git Guide
 If you're working on a single macro by yourself, you don't have to learn anything. You can edit the macro directly on gitlab.com - no programs required.
 
+To add or update a macro, it's as simple as this:
+1) Go to https://gitlab.com/redguides/VeryVanilla/tree/master/Release/Macros
+2) click "+" "upload file" and you're done.
+
 If you're working with others, or with several files, it's best to use software to avoid conflicting edits.
 If you've never used git before, GitHub has a nice little tutorial:
 https://help.github.com/articles/set-up-git/
