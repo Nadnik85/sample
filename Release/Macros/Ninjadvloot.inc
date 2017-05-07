@@ -1,4 +1,4 @@
-| Ninjadvloot.inc v6.4 12/28/2016 Redguides.com 
+| Ninjadvloot.inc v6.05 12/28/2016 Redguides.com 
 | Author A_Druid_00 12/19/2005
 | Based on original looting code of toomanynames
 | The following updates were all individually posted and consolidated by Maskoi into the current version.
