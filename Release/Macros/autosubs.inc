@@ -1,10 +1,9 @@
 |Auto-Subs Shared routines across Auto series macros by Noobhaxor
-| Version 3.0 April Update
+| Version 4.0 May Update
 | ----------------------------------------------------------------------------
-| SUB: Compatibility with KissAssist Chase
+| SUB: Compatibility with KissAssist Aliases Old and New
 | ----------------------------------------------------------------------------
 #Event BackOff           "[MQ2] BackOff"
-#Event Campfire          "[MQ2] Summon Campfire"
 #Event Camping           "#*#seconds to prepare your camp."
 #Event GainSomething	 "#*#You have gained|#1#|"
 #Event KissShit    		 "[MQ2] Reset #1# #2# #3#"
@@ -12,25 +11,27 @@
 #Event TaskUpdate		 "#*#Your task |#1#| has been updated#*#" 
 #Event Zoned             "LOADING, PLEASE WAIT#*#"
 #Event Zoned             "You have entered#*#"
+#bind BackOff        /backoff
+#bind Campfire       /campfire
+#bind ChangeVarInt   /changevarint
+#bind ToggleVariable /togglevariable
+
 Sub AliasSetup
-	/squelch /alias /backoff        /echo BackOff
-	/squelch /alias /campfire       /echo Summon Campfire
-	/squelch /alias /camphere       /echo toggle ReturnToCamp
-	/noparse /alias /camphold       /echo toggle HoldCamp
-	/noparse /alias /campoff	    /echo Reset General CampOff
-	/squelch /alias /campradius     /echo Reset General CampRadius
-	/squelch /alias /chase          /echo toggle ChaseAssist
-	/squelch /alias /chaseoff       /echo Reset General ChaseAssist 0        
-	/squelch /alias /chaseon        /echo Reset General ChaseAssist 1 
-	/squelch /alias /meleeon        /echo toggle MeleeOn
-	/squelch /alias /meleeoff       /echo toggle MeleeOff
-	/squelch /alias /mezon          /echo Reset Mez MezOn
-	/squelch /alias /mezoff         /echo Reset Mez MezOff
-	/squelch /alias /slowon         /echo toggle SlowOn
-	/squelch /alias /slowoff        /echo toggle SlowOff
-	/squelch /alias /returntocamp   /echo toggle ReturnToCamp
-	/noparse /alias /instantrelease /echo toggle InstantRelease
-	/noparse /alias /usefellowship 	/echo toggle UseFellowship
+	/squelch /alias /camphere       /togglevariable ReturnToCamp
+	/noparse /alias /campoff	    /togglevariable ReturnToCamp 0
+	/squelch /alias /campradius     /changevarint General CampRadius
+	/squelch /alias /chase          /togglevariable ChaseAssist
+	/squelch /alias /chaseoff       /changevarint General ChaseAssist 0        
+	/squelch /alias /chaseon        /changevarint General ChaseAssist 1 
+	/squelch /alias /meleeon        /togglevariable MeleeOn
+	/squelch /alias /meleeoff       /togglevariable MeleeOn 0
+	/squelch /alias /mezon          /changevarint Mez MezOn
+	/squelch /alias /mezoff         /changevarint Mez MezOn 0
+	/squelch /alias /slowon         /togglevariable UseSlow 1
+	/squelch /alias /slowoff        /togglevariable UseSlow 0
+	/squelch /alias /returntocamp   /togglevariable ReturnToCamp
+	/noparse /alias /instantrelease /togglevariable InstantRelease
+	/noparse /alias /usefellowship 	/togglevariable UseFellowship
 	
 /return
 Sub VarSetup
@@ -44,8 +45,9 @@ Sub VarSetup
 	/declare changetoini	int outer 0
 	/declare targetcleartimer	timer outer 0
 	/declare numoftargets	int outer 0
+	/declare ChaseAssist	int outer 0
 	/echo -----${MacroName} LOADING------
-	/if (${AutoCampHold}==1) /echo CAUTION: Auto Camp Hold is set!
+	/if (${AutoCampHold}==1) /echo CAUTION: Auto Camp is set!
 	/if (${Me.XTarget[1].TargetType.NotEqual[Auto Hater]}) {
 		/echo Extended Target 1 HAS TO BE SET TO Auto Hater
 		/echo ENDING MACRO -- Set Extended Target 1 to Auto
@@ -59,7 +61,108 @@ Sub VarSetup
 	/call UnCheckPlugin MQ2Twist
 	/squelch /rez accept on
 /return
-|------------------------KissAssist Alias Changes------------------------------
+|------------------------KissAssist Alias 9.2.4 Updates-----------------------
+| ----------------------------------------------------------------------------
+| SUB: Bind Change Var Int resets various interger settings from ini file
+| ----------------------------------------------------------------------------
+    Sub Bind_ChangeVarInt(string ISection, string IName, int IVar)
+        /docommand /varset changetoini 1
+	|ChaseAssist Var Set
+        /if (${IName.Equal[ChaseAssist]} && ${IVar}==1 &&${Target.Type.Equal[PC]}) {
+			/docommand /varset FollowToonName ${Target.Name}
+			/echo Following ${If[${FollowToonName.Equal[NULL ]},OFF,${FollowToonName}]}
+		} else /if (${IName.Equal[ChaseAssist]} && ${IVar}==0) {
+			/varset FollowToonName NULL
+			/echo Following OFF
+			/if (${AdvPath.Following}) /docommand /afollow off
+		}
+	|Camp Radius Set
+		/if (${IName.Equal[CampRadius]} && ${IVar}>=20 && ${IVar}<=100) {
+			/varset CampRadius ${IVar}
+			/echo Camp Radius set to ${IVar}
+		} else /if (${IName.Equal[CampRadius]} && ${IVar}<20 && ${IVar}>100) {
+			/echo Invalid Camp Radius - Set between 20-100 units
+		}
+	|Mez Var Change
+		/if (${IName.Equal[MezOn]} && ${IVar}!=0) {
+			/varset UseMez 1
+			/echo Mez is now On
+		} else /if (${IName.Equal[MezOn]} && ${IVar}!=1) {
+			/varset UseMez 0
+			/echo Mez is now Off
+		}
+		
+	/return
+| -------------------------------------------------------------------------------------
+| SUB: Bind_ToggleVariable  Check whenever the player is changing any variable via /echo
+| -------------------------------------------------------------------------------------
+    Sub Bind_ToggleVariable(string Command, string Command2)
+        /declare i int local
+        | Toggle Variables & Set Variables
+        /if (${Defined[${Command}]}) {
+            /declare OnOff local
+            /if (${Command2.NotEqual[NULL]}) {
+                /if (${Select[${Command2},0,off]}) {
+                    /varset ${Command} 0
+                    /varset OnOff Off
+                } else /if (${Select[${Command2},1,on]}) {
+                    /varset ${Command} 1
+                    /varset OnOff On
+                } 
+            } else /if (${Command.NotEqual[0]}) {
+                /varset ${Command} 0
+                /varset OnOff Off
+            } else {
+                /varset ${Command} 1
+                /varset OnOff On
+            }
+			/docommand /varset changetoini 1
+		|Camp Toggle
+            /if (${Command.Equal[ReturnToCamp]} && ${OnOff.Equal[on]} ) {
+				/if (${AutoCampHold}!=1) /docommand /varset AutoCampHold 1
+				/if (${AutoCampReturn}!=0) /docommand /varset AutoCampReturn 0
+            } else /if (${Command.Equal[ReturnToCamp]} && ${OnOff.Equal[off]}) {
+                /echo Turning ALL Camp settings to OFF
+				/docommand /varset AutoCampHold 0
+				/docommand /varset AutoCampReturn 0
+            }
+		|Chase Toon Toggle
+			/if (${Command.Equal[ChaseAssist]} && ${OnOff.Equal[on]} &&${Target.Type.Equal[PC]}) {
+				/docommand /varset FollowToonName ${Target.Name}
+				/echo Following ${If[${FollowToonName.Equal[NULL ]},OFF,${FollowToonName}]}
+			} else /if (${Command.Equal[ChaseAssist]} && ${OnOff.Equal[off]}) {
+				/varset FollowToonName NULL
+				/echo Following OFF
+				/if (${AdvPath.Following}) /docommand /afollow off
+			}
+		|Melee Toggle
+			/if (${Command.Equal[MeleeOn]} && ${OnOff.Equal[on]} ) {
+				/varset UseMelee 1
+			} else /if (${Command.Equal[MeleeOn]} && ${OnOff.Equal[off]}) {
+				/varset UseMelee 0
+			}
+        |Slow Toggle
+			/if (${Command.Equal[UseSlow]} && ${OnOff.Equal[on]} ) {
+				/varset UseSlow 1
+			} else /if (${Command.Equal[UseSlow]} && ${OnOff.Equal[off]}) {
+				/varset UseSlow 0
+			}
+		|InstantRelease on Death
+			/if (${Command.Equal[InstantRelease]} && ${OnOff.Equal[on]} ) {
+				/varset InstantRelease 1
+			} else /if (${Command.Equal[InstantRelease]} && ${OnOff.Equal[off]}) {
+				/varset InstantRelease 0
+			}
+        |Use Fellowship to port back on death
+			/if (${Command.Equal[UseFellowship]} && ${OnOff.Equal[on]} ) {
+				/varset UseFellowship 1
+			} else /if (${Command.Equal[UseFellowship]} && ${OnOff.Equal[off]}) {
+				/varset UseFellowship 0
+			}
+            /echo >> Set ${Command}: ${OnOff}
+        }
+    /return
+|---OLD KISSASSIST Compatibility	
 Sub Event_KissShit(string Line, string ISection, string IName, string IVar)
     /if (${ISection.Equal[ChaseAssist]}&&${Target.Type.Equal[PC]}) {
 		/docommand /varset FollowToonName ${Target.Name}
@@ -84,25 +187,12 @@ Sub Event_KissShit(string Line, string ISection, string IName, string IVar)
 		/echo Following OFF
 		/if (${AdvPath.Following}) /docommand /afollow off
 	}
-	/if (${ISection.Equal[ReturnToCamp]}) {
-		/if (${AutoCampReturn}==1) {
-			/varset AutoCampReturn 0
-		} else {
-			/varset AutoCampReturn 1
-			/docommand /varset AutoCampX ${Me.X}
-			/docommand /varset AutoCampY ${Me.Y}
-		}
-	}
-	/if (${ISection.Equal[HoldCamp]}) {
-		/docommand /varset changetoini 1
-		/if (${AutoCampHold}==1) {
-			/varset AutoCampHold 0
-			/if (${AutoCampReturn}!=1) /docommand /varset AutoCampReturn 0
-		} else {
-			/varset AutoCampHold 1
-		}
+	/if (${ISection.Equal[ReturnToCamp]}||${ISection.Equal[HoldCamp]}) {
+		/if (${AutoCampHold}!=1) /docommand /varset AutoCampHold 1
+		/if (${AutoCampReturn}!=0) /docommand /varset AutoCampReturn 0
 	}
 	/if (${IName.Equal[CampOff]}) {
+		/echo Turning ALL Camp settings to OFF
 		/docommand /varset changetoini 1
 		/docommand /varset AutoCampHold 0
 		/docommand /varset AutoCampReturn 0
@@ -193,6 +283,17 @@ Sub Event_KissShit(string Line, string ISection, string IName, string IVar)
 		/call AutoCampCheck
 		/doevents flush Event_BackOff  
 	/return 
+|-----------------------------------------------------------------------------  
+| SUB: Back Off and stop melee  New Version
+| ----------------------------------------------------------------------------      
+	Sub Bind_BackOff  
+		/echo Resetting. No Longer Backing off.  
+		/if (${Target.ID}) /target clear
+		/if (${Me.Combat}) /squelch /attack off 
+		/if (${Stick.Active}) /stick off 
+		/call AutoCampCheck
+		/doevents flush Event_BackOff  
+	/return 
 | ----------------------------------------------------------------------------
 | SUB: Event Camping - end macro
 | ----------------------------------------------------------------------------
@@ -203,7 +304,7 @@ Sub Event_KissShit(string Line, string ISection, string IName, string IVar)
 | ----------------------------------------------------------------------------
 | SUB: Campfire ${Window[FellowshipWnd].Child[FP_CampPage].Child[FP_CampsiteViewer].Text}
 | ----------------------------------------------------------------------------
-    Sub Campfire
+    Sub Bind_Campfire
     /if ((${Me.Fellowship.Campfire} && (${Select[${Me.Fellowship.CampfireZone},${Zone.Name}]} || ${Me.Fellowship.CampfireZone.Name.Find[guild hall]})) || (${Me.InInstance}==FALSE)) /return
         /declare FellowCount int local 0
         /declare i int local
