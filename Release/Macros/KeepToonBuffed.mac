@@ -26,7 +26,7 @@ Sub Main
 
 |==================== DO NOT ALTER THESE VALUES ====================
 /declare MacroName		string	outer	KeepToonBuffed
-/declare KeepToonBuffVer	string	outer	1.7.3
+/declare KeepToonBuffVer	string	outer	1.7.5
 /declare IniFileName		string	outer	${MacroName}_${Me.CleanName}.ini
 /call CreateIni
 
@@ -43,6 +43,7 @@ Sub Main
 /call LoadIni Mana MinManaMedPct		int	100
 
 | ################## Set up [Heal] values
+/call LoadIni Heal HealsOn			int	1
 /call LoadIni Heal HealSpell			string	NULL
 /call LoadIni Heal HealPct			int	60
 /declare HealSpellRange 			int 	outer 	${Spell[${HealSpell}].Range}
@@ -53,6 +54,7 @@ Sub Main
 /call LoadIni Toons MyBuffTargetName		string	NULL	MyBuffTargetName
 
 | ################## Set up [Buffs] values
+/call LoadIni Buffs BuffssOn			int	1
 /call LoadIni Buffs NumberOfBuffs		int	5
 /declare TargetBuffName[${NumberOfBuffs}]	string	outer
 /call LoadIni Buffs TargetBuffName		string	NULL	TargetBuffName
@@ -75,9 +77,9 @@ Sub Main
 
 :loop 
 
-    /call CheckMyHealth
-    /call CheckTargetHealth
-    /call MaintainTargetBuffs 
+    /if (${HealsOn})  /call CheckMyHealth
+    /if (${HealsOn})  /call CheckTargetHealth
+    /if (${BuffssOn}) /call MaintainTargetBuffs 
 
     /if (${Me.PctMana}<=${MinManaPct} && !${Me.CombatState.Equal[COMBAT]}) /call CheckMana
     |Internal half second delay to allow for manual moving, prevents constant sit loop if only 1 toon being buffed.
@@ -357,5 +359,4 @@ Sub Event_SpellBlocked(string line, string MySPell, string BuffToon, string Bloc
 	
 /return
 |---------------------------------------------------------------------------------
-
 
