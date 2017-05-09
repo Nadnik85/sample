@@ -24,14 +24,14 @@ Sub Main
  /tgb on
 |---------------------------------------------------------------------------------
 
-
 |==================== DO NOT ALTER THESE VALUES ====================
-/declare MacroName	string	outer	KeepToonBuffed
-/declare IniFileName	string	outer	${MacroName}_${Me.CleanName}.ini
+/declare MacroName		string	outer	KeepToonBuffed
+/declare KeepToonBuffVer	string	outer	1.7.5
+/declare IniFileName		string	outer	${MacroName}_${Me.CleanName}.ini
 /call CreateIni
 
 | ################## Set up [General] values
-/call LoadIni General MacroVer			string	1.7.1
+/call LoadIni General MacroVer			string	${KeepToonBuffVer}
 /call LoadIni General AutoAnnounce		bool	FALSE
 /call LoadIni General Debug			bool	TRUE
 /call LoadIni General AdminDebug		bool	FALSE
@@ -43,6 +43,7 @@ Sub Main
 /call LoadIni Mana MinManaMedPct		int	100
 
 | ################## Set up [Heal] values
+/call LoadIni Heal HealsOn			int	1
 /call LoadIni Heal HealSpell			string	NULL
 /call LoadIni Heal HealPct			int	60
 /declare HealSpellRange 			int 	outer 	${Spell[${HealSpell}].Range}
@@ -53,9 +54,12 @@ Sub Main
 /call LoadIni Toons MyBuffTargetName		string	NULL	MyBuffTargetName
 
 | ################## Set up [Buffs] values
+/call LoadIni Buffs BuffssOn			int	1
 /call LoadIni Buffs NumberOfBuffs		int	5
 /declare TargetBuffName[${NumberOfBuffs}]	string	outer
 /call LoadIni Buffs TargetBuffName		string	NULL	TargetBuffName
+
+/call VersionControl
 |==================== DO NOT ALTER THESE VALUES ====================
 
 |---------------------------------------------------------------------------------
@@ -73,9 +77,9 @@ Sub Main
 
 :loop 
 
-    /call CheckMyHealth
-    /call CheckTargetHealth
-    /call MaintainTargetBuffs 
+    /if (${HealsOn})  /call CheckMyHealth
+    /if (${HealsOn})  /call CheckTargetHealth
+    /if (${BuffssOn}) /call MaintainTargetBuffs 
 
     /if (${Me.PctMana}<=${MinManaPct} && !${Me.CombatState.Equal[COMBAT]}) /call CheckMana
     |Internal half second delay to allow for manual moving, prevents constant sit loop if only 1 toon being buffed.
@@ -324,6 +328,21 @@ Sub CheckGlobalCooldown
     :WaitForCooldown
     /delay 5
     /if (${Me.SpellInCooldown}) /goto :WaitForCooldown
+}
+
+/return
+|---------------------------------------------------------------------------------
+
+|---------------------------------------------------------------------------------
+| Sub: Version COntrol
+|---------------------------------------------------------------------------------
+Sub VersionControl
+
+/if (${MacroVer.NotEqual[${KeepToonBuffVer}]}) {
+    /echo Version mismatch detected, please wait until this is corrected.
+    /ini "${IniFileName}" "General" "MacroVer" "${KeepToonBuffVer}"
+    /echo Version information updated.
+    /call LoadIni General MacroVer	string	${KeepToonBuffVer}
 }
 
 /return
