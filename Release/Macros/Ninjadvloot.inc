@@ -1,4 +1,4 @@
-| Ninjadvloot.inc v6.4 12/28/2016 Redguides.com 
+| Ninjadvloot.inc v6.06 5/7/2017 Redguides.com 
 | Author A_Druid_00 12/19/2005
 | Based on original looting code of toomanynames
 | The following updates were all individually posted and consolidated by Maskoi into the current version.
@@ -20,6 +20,7 @@
 |		4. User selectable to distribute nodrop items to everyone in the group, similar to quest looting
 |		5. User selectable minimum plat value to mark items =Keep in the loot.ini file
 |		6. User selectable limits on number of foraged items to keep using =quest|xx setting
+| Updated: hoosierbilly added fishing item handling 5/7/17
 |
 | Selling Contributions by
 |   drkrain - TLInv item check
@@ -54,6 +55,7 @@
 #Event Broke            "#*#you can't afford#*#" 
 #Event Forage           "Your forage mastery has enabled you to find something else!"
 #Event Forage           "You have scrounged up #*#"
+#Event Forage			"You caught #*#"
 #Event InventoryFull    "#*#Your inventory appears full!#*#"
 #Event Novalue          "#*#give you absolutely nothing for the #1#.#*#"
 #Event NullSlot         "#*#Invalid item slot 'null#*#"
@@ -64,7 +66,7 @@
 Sub SetupAdvLootVars(string ChangeIniFile)
 
     /declare CantLootID							int                 outer 
-    /declare NinjadVersion                      string              outer   6.05
+    /declare NinjadVersion                      string              outer   6.06
     /declare InventoryFull                      int                 outer   0
     /declare NinjaIniFile                       string              outer   Loot.ini
     /declare MasterCorpseList                   string              outer   
@@ -323,13 +325,13 @@ Sub CheckCursor
 /return
 
 | **************** Foraged Items Section ******************** |
-Sub Event_Forage
+Sub Event_Forage(S0)
     /if (!${LootForage}) /return
 	/if (${Debugloot}) /echo DEBUGLOOT Enter Sub Forage items
     /declare ForagedItem string local
 	/declare ForagedIniEntry string local
 	/declare ForagedMaxKeep int local
-	
+/echo event trigger ${S0}	
 	/delay ${Math.Calc[${LootLagDelay}+10]} ${Cursor.ID}
     :MoreToAutoInventory
         /if (${Cursor.ID}) {
@@ -339,20 +341,32 @@ Sub Event_Forage
 			/if (${ForagedMaxKeep}==NULL) /varset ForagedMaxKeep 1
  			/if (!${Select[${ForagedIniEntry},Ignore,Keep,Destroy,Sell,Quest]}) {
 			/if (${Cursor.ID}) /ini "${NinjaIniFile}" "${Cursor.Name.Left[1]}" "${Cursor.Name}" Keep
-                /echo New foraged item >> ${Cursor.Name}=Keep << added to ${NinjaIniFile} file. 
+                /if (${S0.Find[caught]}) {
+					/echo Ninjadvloot: New fishing item >> ${Cursor.Name}=Keep << added to ${NinjaIniFile} file.
+				} else /echo Ninjadvloot: New foraging item >> ${Cursor.Name}=Keep << added to ${NinjaIniFile} file.
             }
 			/delay ${Math.Calc[${LootLagDelay}+5]}
             /if (${ForagedIniEntry.Equal[Destroy]} || ${ForagedIniEntry.Equal[Ignore]} || (${ForagedIniEntry.Equal[Quest]} && ${FindItemCount[=${Cursor.Name}]}>=${ForagedMaxKeep})) {
-				/if (${LootForageSpam} && ${ForagedIniEntry.Equal[Quest]}) /echo NINJADVLOOT: I already foraged ${FindItemCount[=${Cursor.Name}]} of ${ForagedMaxKeep} destroying ${Cursor.Name}
-                /if (${LootForageSpam} && ${ForagedIniEntry.NotEqual[Quest]}) /echo NINJADVLOOT: Destroyed forage item ${ForagedItem}.
+				/if (${LootForageSpam} && ${ForagedIniEntry.Equal[Quest]}) {
+					/if (${S0.Find[caught]}) {
+						/echo Ninjadvloot: I already caught ${FindItemCount[=${Cursor.Name}]} of ${ForagedMaxKeep} destroying ${Cursor.Name}
+					} else /echo Ninjadvloot: I already foraged ${FindItemCount[=${Cursor.Name}]} of ${ForagedMaxKeep} destroying ${Cursor.Name}
+                }
+				/if (${LootForageSpam} && ${ForagedIniEntry.NotEqual[Quest]}) {
+					/if (${S0.Find[caught]}) {
+						/echo Ninjadvloot: Destroyed fishing item ${ForagedItem}.
+					} else /echo Ninjadvloot: Destroyed forage item ${ForagedItem}.
+				}
 				/delay 5
 				/if (${Cursor.Name.Equal[${ForagedItem}]}) /destroy
                 /delay ${Math.Calc[${LootLagDelay}+10]} !${Cursor.ID}
 			} else /if ((${ForagedIniEntry.Equal[Keep]} || ${ForagedIniEntry.Equal[Sell]} || ${FindItemCount[=${Cursor.Name}]}<${ForagedMaxKeep}) && (!${Cursor.Lore} || !${FindItem[=${Cursor.Name}].ID}) && (${Me.FreeInventory} || (${FindItemCount[=${Cursor.Name}]} && ${Cursor.Stackable} && ${Cursor.FreeStack}))) {
-                /if (${LootForageSpam}) /echo NINJADVLOOT: Keeping forage item ${ForagedItem}.
+                /if (${LootForageSpam} && ${S0.Find[caught]}) {
+					/echo Ninjadvloot: Keeping fishing item ${ForagedItem}.
+				} else /echo Ninjadvloot: Keeping forage item ${ForagedItem}.
+				}
 				/autoinventory
                 /delay ${Math.Calc[${LootLagDelay}+10]} !${Cursor.ID}
-            }
 		}
 		/delay 5
 		/if (${Cursor.ID}) /goto :MoreToAutoInventory
