@@ -24,14 +24,14 @@ Sub Main
  /tgb on
 |---------------------------------------------------------------------------------
 
-
 |==================== DO NOT ALTER THESE VALUES ====================
-/declare MacroName	string	outer	KeepToonBuffed
-/declare IniFileName	string	outer	${MacroName}_${Me.CleanName}.ini
+/declare MacroName		string	outer	KeepToonBuffed
+/declare KeepToonBuffVer	string	outer	1.7.3
+/declare IniFileName		string	outer	${MacroName}_${Me.CleanName}.ini
 /call CreateIni
 
 | ################## Set up [General] values
-/call LoadIni General MacroVer			string	1.7.1
+/call LoadIni General MacroVer			string	${KeepToonBuffVer}
 /call LoadIni General AutoAnnounce		bool	FALSE
 /call LoadIni General Debug			bool	TRUE
 /call LoadIni General AdminDebug		bool	FALSE
@@ -56,6 +56,8 @@ Sub Main
 /call LoadIni Buffs NumberOfBuffs		int	5
 /declare TargetBuffName[${NumberOfBuffs}]	string	outer
 /call LoadIni Buffs TargetBuffName		string	NULL	TargetBuffName
+
+/call VersionControl
 |==================== DO NOT ALTER THESE VALUES ====================
 
 |---------------------------------------------------------------------------------
@@ -324,6 +326,21 @@ Sub CheckGlobalCooldown
     :WaitForCooldown
     /delay 5
     /if (${Me.SpellInCooldown}) /goto :WaitForCooldown
+}
+
+/return
+|---------------------------------------------------------------------------------
+
+|---------------------------------------------------------------------------------
+| Sub: Version COntrol
+|---------------------------------------------------------------------------------
+Sub VersionControl
+
+/if (${MacroVer.NotEqual[${KeepToonBuffVer}]}) {
+    /echo Version mismatch detected, please wait until this is corrected.
+    /ini "${IniFileName}" "General" "MacroVer" "${KeepToonBuffVer}"
+    /echo Version information updated.
+    /call LoadIni General MacroVer	string	${KeepToonBuffVer}
 }
 
 /return
