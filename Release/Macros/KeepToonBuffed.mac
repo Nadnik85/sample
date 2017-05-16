@@ -1,6 +1,6 @@
 |---------------------------------------------------------------------------------
 |
-|  KeepToonBuffed.mac by TreeHuginDruid -- Last Edited 5/15/2017
+|  KeepToonBuffed.mac by TreeHuginDruid -- Last Edited 5/16/2017
 |
 |   This macro is designed to allow an out of group PowerLeveling toon
 |   to be able to target members of a low level group, heal, 
@@ -21,13 +21,13 @@ Sub Main
 
 |---------------------------------------------------------------------------------
 | ---- Turn off melee functions and turn on "Target Group Buff" setting ----------
- /melee off
- /tgb on
+/if (${Bool[${Plugin[MQ2Melee]}]}) /squelch /melee melee=0
+/tgb on
 |---------------------------------------------------------------------------------
 
 |==================== DO NOT ALTER THESE VALUES ====================
 /declare MacroName		string	outer	KeepToonBuffed
-/declare KeepToonBuffVer	string	outer	1.8.0
+/declare KeepToonBuffVer	string	outer	1.8.1
 /declare IniFileName		string	outer	${MacroName}_${Me.CleanName}.ini
 /call CreateIni
 
@@ -58,7 +58,7 @@ Sub Main
 /call LoadIni Toons MyBuffTargetName		string	NULL	MyBuffTargetName
 
 | ################## Set up [Buffs] values
-/call LoadIni Buffs BuffssOn			int	1
+/call LoadIni Buffs BuffsOn			int	1
 /call LoadIni Buffs NumberOfBuffs		int	5
 /declare TargetBuffName[${NumberOfBuffs}]	string	outer
 /call LoadIni Buffs TargetBuffName		string	NULL	TargetBuffName
@@ -86,7 +86,7 @@ Sub Main
 
     /if (${HealsOn})  /call CheckMyHealth
     /if (${HealsOn})  /call CheckTargetHealth
-    /if (${BuffssOn}) /call MaintainTargetBuffs 
+    /if (${BuffsOn})  /call MaintainTargetBuffs 
     /if (${Me.PctMana}<=${MinManaPct} && !${Me.CombatState.Equal[COMBAT]}) /call CheckMana
     /if (${FollowGroup}) /call FollowAround
     |Internal second delay to allow for manual moving, prevents constant sit loop if only 1 toon being buffed.
@@ -99,7 +99,35 @@ Sub Main
 |---------------------------------------------------------------------------------
 
 |---------------------------------------------------------------------------------
-| Sub: CreateIni
+| SUB: Version Control
+|---------------------------------------------------------------------------------
+Sub VersionControl
+
+/if (${MacroVer.NotEqual[${KeepToonBuffVer}]}) {
+    /echo Version mismatch detected, please wait until this is corrected.
+    /ini "${IniFileName}" "General" "MacroVer" "${KeepToonBuffVer}"
+    /echo Version information updated.
+    /call LoadIni General MacroVer	string	${KeepToonBuffVer}
+}
+
+/return
+|---------------------------------------------------------------------------------
+
+|---------------------------------------------------------------------------------
+| SUB: Check Plugin
+|---------------------------------------------------------------------------------
+Sub CheckPlugin(string pluginname)
+
+/if (!${Bool[${Plugin[${pluginname}]}]}) {
+    /squelch /plugin ${pluginname}
+    /echo ${pluginname} not detected! This macro requires it! Loading ...
+}
+    
+/return
+|---------------------------------------------------------------------------------
+
+|---------------------------------------------------------------------------------
+| SUB: CreateIni
 |---------------------------------------------------------------------------------
 Sub CreateIni
 
@@ -116,7 +144,7 @@ Sub CreateIni
 |---------------------------------------------------------------------------------
 
 |---------------------------------------------------------------------------------
-| Sub: Load Ini
+| SUB: Load Ini
 |---------------------------------------------------------------------------------
 Sub LoadIni(string sectionName, string varName, string varType, string varValue, string varArray, string FileName)
    
@@ -160,7 +188,7 @@ Sub LoadIni(string sectionName, string varName, string varType, string varValue,
 |--------------------------------------------------------------------------------- 
 
 |-------------------------------------------------------------------------------- 
-| Sub: Check My Health
+| SUB: Check My Health
 |-------------------------------------------------------------------------------- 
 Sub CheckMyHealth
 
@@ -179,7 +207,7 @@ Sub CheckMyHealth
 |---------------------------------------------------------------------------------
 
 |-------------------------------------------------------------------------------- 
-| Sub: Check Target Health
+| SUB: Check Target Health
 |-------------------------------------------------------------------------------- 
 Sub CheckTargetHealth
 
@@ -223,7 +251,7 @@ Sub CheckTargetHealth
 |---------------------------------------------------------------------------------
 
 |-------------------------------------------------------------------------------- 
-| Sub: Maintain Target buffs
+| SUB: Maintain Target buffs
 |-------------------------------------------------------------------------------- 
 Sub MaintainTargetBuffs
 
@@ -272,7 +300,7 @@ Sub MaintainTargetBuffs
 |---------------------------------------------------------------------------------
 
 |--------------------------------------------------------------------------------- 
-| Sub: Check Mana
+| SUB: Check Mana
 |---------------------------------------------------------------------------------
 Sub CheckMana
 
@@ -290,9 +318,10 @@ Sub CheckMana
     /if (!${Me.CombatState.Equal[COMBAT]} && (${Me.PctMana}<${MinManaMedPct})) {
         /echo Mana now at (${Me.PctMana}%) ...
         /if (${Me.AltAbilityReady[Cannibalization]}) /call Cast "Cannibalization" alt  	 	
- 	/call CheckMyHealth
- 	/call CheckTargetHealth
-	/call MaintainTargetBuffs
+        /if (${HealsOn})  /call CheckMyHealth
+        /if (${HealsOn})  /call CheckTargetHealth
+        /if (${BuffsOn})  /call MaintainTargetBuffs 
+	/if (${FollowGroup}) /call FollowAround
         /delay 6s
         /doevents        
         /if (${Me.Standing} && !${Me.Mount.ID}) /sit
@@ -354,34 +383,6 @@ Sub CheckGlobalCooldown
     /if (${Me.SpellInCooldown}) /goto :WaitForCooldown
 }
 
-/return
-|---------------------------------------------------------------------------------
-
-|---------------------------------------------------------------------------------
-| Sub: Version Control
-|---------------------------------------------------------------------------------
-Sub VersionControl
-
-/if (${MacroVer.NotEqual[${KeepToonBuffVer}]}) {
-    /echo Version mismatch detected, please wait until this is corrected.
-    /ini "${IniFileName}" "General" "MacroVer" "${KeepToonBuffVer}"
-    /echo Version information updated.
-    /call LoadIni General MacroVer	string	${KeepToonBuffVer}
-}
-
-/return
-|---------------------------------------------------------------------------------
-
-|---------------------------------------------------------------------------------
-| SUB: Check Plugin
-|---------------------------------------------------------------------------------
-Sub CheckPlugin(string pluginname)
-
-/if (!${Bool[${Plugin[${pluginname}]}]}) {
-    /squelch /plugin ${pluginname}
-    /echo ${pluginname} not detected! This macro requires it! Loading ...
-}
-    
 /return
 |---------------------------------------------------------------------------------
 
