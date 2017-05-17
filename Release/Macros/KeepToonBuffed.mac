@@ -1,6 +1,6 @@
 |---------------------------------------------------------------------------------
 |
-|  KeepToonBuffed.mac by TreeHuginDruid -- Last Edited 5/8/2017
+|  KeepToonBuffed.mac by TreeHuginDruid -- Last Edited 5/16/2017
 |
 |   This macro is designed to allow an out of group PowerLeveling toon
 |   to be able to target members of a low level group, heal, 
@@ -14,19 +14,20 @@
 #turbo 80
 
 #Event SpellBlocked "#*#Your #1# spell did not take hold on #2#. (Blocked by #3#.)#*#"
+#Event SpellBlocked "#*#Your #1# spell did not take hold on #2#.#*#"
 
 |---------------------------------------------------------------------------------
 Sub Main
 
 |---------------------------------------------------------------------------------
 | ---- Turn off melee functions and turn on "Target Group Buff" setting ----------
- /melee off
- /tgb on
+/if (${Bool[${Plugin[MQ2Melee]}]}) /squelch /melee melee=0
+/tgb on
 |---------------------------------------------------------------------------------
 
 |==================== DO NOT ALTER THESE VALUES ====================
 /declare MacroName		string	outer	KeepToonBuffed
-/declare KeepToonBuffVer	string	outer	1.7.5
+/declare KeepToonBuffVer	string	outer	1.8.1
 /declare IniFileName		string	outer	${MacroName}_${Me.CleanName}.ini
 /call CreateIni
 
@@ -36,6 +37,9 @@ Sub Main
 /call LoadIni General Debug			bool	TRUE
 /call LoadIni General AdminDebug		bool	FALSE
 /call LoadIni General DebugINI			bool	FALSE
+/call LoadIni General FollowGroup		int		0
+/call LoadIni General FollowDist		int		30
+/declare MyMDist 				int 	outer	${FollowDist}-5
 /call LoadIni General SpellSetName		string	NULL
 
 | ################## Set up [Mana] values
@@ -54,12 +58,14 @@ Sub Main
 /call LoadIni Toons MyBuffTargetName		string	NULL	MyBuffTargetName
 
 | ################## Set up [Buffs] values
-/call LoadIni Buffs BuffssOn			int	1
+/call LoadIni Buffs BuffsOn			int	1
 /call LoadIni Buffs NumberOfBuffs		int	5
 /declare TargetBuffName[${NumberOfBuffs}]	string	outer
 /call LoadIni Buffs TargetBuffName		string	NULL	TargetBuffName
 
 /call VersionControl
+/call CheckPlugin MQ2Cast
+/call CheckPlugin MQ2Moveutils
 |==================== DO NOT ALTER THESE VALUES ====================
 
 |---------------------------------------------------------------------------------
@@ -69,9 +75,10 @@ Sub Main
 |---------------------------------------------------------------------------------
 
 |---------------------------------------------------------------------------------
-/if (${Defined[SpellSetName]}) {
+/if (${Defined[SpellSetName]} || ${SpellSetName.NotEqual[null]}) {
     /echo Memming spellset (${SpellSetName}).
-    /memspellset ${SpellSetName}    
+    /memspellset ${SpellSetName}
+	/delay 5s
 }   
 |---------------------------------------------------------------------------------
 
@@ -79,20 +86,48 @@ Sub Main
 
     /if (${HealsOn})  /call CheckMyHealth
     /if (${HealsOn})  /call CheckTargetHealth
-    /if (${BuffssOn}) /call MaintainTargetBuffs 
-
+    /if (${BuffsOn})  /call MaintainTargetBuffs 
     /if (${Me.PctMana}<=${MinManaPct} && !${Me.CombatState.Equal[COMBAT]}) /call CheckMana
-    |Internal half second delay to allow for manual moving, prevents constant sit loop if only 1 toon being buffed.
-    /delay 5
+    /if (${FollowGroup}) /call FollowAround
+    |Internal second delay to allow for manual moving, prevents constant sit loop if only 1 toon being buffed.
+    /delay 10
     /if (${Me.Standing} && !${Me.Casting.ID} && !${Me.CombatState.Equal[COMBAT]} && !${Me.Moving} && !${Me.Mount.ID}) /sit 
-    
+  
 /goto :loop
 
 /return
 |---------------------------------------------------------------------------------
 
 |---------------------------------------------------------------------------------
-| Sub: CreateIni
+| SUB: Version Control
+|---------------------------------------------------------------------------------
+Sub VersionControl
+
+/if (${MacroVer.NotEqual[${KeepToonBuffVer}]}) {
+    /echo Version mismatch detected, please wait until this is corrected.
+    /ini "${IniFileName}" "General" "MacroVer" "${KeepToonBuffVer}"
+    /echo Version information updated.
+    /call LoadIni General MacroVer	string	${KeepToonBuffVer}
+}
+
+/return
+|---------------------------------------------------------------------------------
+
+|---------------------------------------------------------------------------------
+| SUB: Check Plugin
+|---------------------------------------------------------------------------------
+Sub CheckPlugin(string pluginname)
+
+/if (!${Bool[${Plugin[${pluginname}]}]}) {
+    /squelch /plugin ${pluginname}
+    /echo ${pluginname} not detected! This macro requires it! Loading ...
+}
+    
+/return
+|---------------------------------------------------------------------------------
+
+|---------------------------------------------------------------------------------
+| SUB: CreateIni
 |---------------------------------------------------------------------------------
 Sub CreateIni
 
@@ -101,7 +136,7 @@ Sub CreateIni
 /echo Creating ini file ${IniFileName}
 /declare i int local 1
 /for i 1 to 5
-    /ini ${IniFileName} "${a.Arg[${i},|]}" "|===================================" "==================================|"
+/ini ${IniFileName} "${a.Arg[${i},|]}" "|===================================" "==================================|"
 /next i
 /echo Please edit your ini file ${IniFileName} and restart Shambot
 
@@ -109,7 +144,7 @@ Sub CreateIni
 |---------------------------------------------------------------------------------
 
 |---------------------------------------------------------------------------------
-| Sub: Load Ini
+| SUB: Load Ini
 |---------------------------------------------------------------------------------
 Sub LoadIni(string sectionName, string varName, string varType, string varValue, string varArray, string FileName)
    
@@ -153,7 +188,7 @@ Sub LoadIni(string sectionName, string varName, string varType, string varValue,
 |--------------------------------------------------------------------------------- 
 
 |-------------------------------------------------------------------------------- 
-| Sub: Check My Health
+| SUB: Check My Health
 |-------------------------------------------------------------------------------- 
 Sub CheckMyHealth
 
@@ -164,7 +199,7 @@ Sub CheckMyHealth
          /delay 15
          /casting "${HealSpell}" gem8
          /call CheckCasting
-        /call CheckGlobalCooldown
+         /call CheckGlobalCooldown
     }
 }
 
@@ -172,7 +207,7 @@ Sub CheckMyHealth
 |---------------------------------------------------------------------------------
 
 |-------------------------------------------------------------------------------- 
-| Sub: Check Target Health
+| SUB: Check Target Health
 |-------------------------------------------------------------------------------- 
 Sub CheckTargetHealth
 
@@ -216,7 +251,7 @@ Sub CheckTargetHealth
 |---------------------------------------------------------------------------------
 
 |-------------------------------------------------------------------------------- 
-| Sub: Maintain Target buffs
+| SUB: Maintain Target buffs
 |-------------------------------------------------------------------------------- 
 Sub MaintainTargetBuffs
 
@@ -251,21 +286,21 @@ Sub MaintainTargetBuffs
             }
             |--------------------------------------------------------------------------------			 
 			 		 
-			 /if (${Debug}) /echo Attempting to cast (${TargetBuffName[${i}]}) on (${MyBuffTargetName[${j}]}).
+	     /if (${Debug}) /echo Attempting to cast (${TargetBuffName[${i}]}) on (${MyBuffTargetName[${j}]}).
              /casting "${TargetBuffName[${i}]}" gem8             
              /call CheckCasting
              /call CheckGlobalCooldown
-			 /doevents
+	     /doevents
         }
     /next i
-
+    
 /next j
  
 /return
 |---------------------------------------------------------------------------------
 
 |--------------------------------------------------------------------------------- 
-| Sub: Check Mana
+| SUB: Check Mana
 |---------------------------------------------------------------------------------
 Sub CheckMana
 
@@ -282,12 +317,11 @@ Sub CheckMana
     :KeepMeddingForMana
     /if (!${Me.CombatState.Equal[COMBAT]} && (${Me.PctMana}<${MinManaMedPct})) {
         /echo Mana now at (${Me.PctMana}%) ...
-        /if (${Me.AltAbilityReady[Cannibalization]}) {
-            /call Cast "Cannibalization" alt
-        }  	 	
- 		/call CheckMyHealth
- 		/call CheckTargetHealth
-		/call MaintainTargetBuffs
+        /if (${Me.AltAbilityReady[Cannibalization]}) /call Cast "Cannibalization" alt  	 	
+        /if (${HealsOn})  /call CheckMyHealth
+        /if (${HealsOn})  /call CheckTargetHealth
+        /if (${BuffsOn})  /call MaintainTargetBuffs 
+	/if (${FollowGroup}) /call FollowAround
         /delay 6s
         /doevents        
         /if (${Me.Standing} && !${Me.Mount.ID}) /sit
@@ -300,6 +334,25 @@ Sub CheckMana
     /if (${AutoAnnounce}) /tell ${MyBuffTargetName[1]} Done medding!
 }
  
+/return
+|---------------------------------------------------------------------------------
+
+|---------------------------------------------------------------------------------
+| SUB: Follow Around
+|---------------------------------------------------------------------------------
+Sub FollowAround
+
+/if (${Target.ID}!=${Spawn[=${MyBuffTargetName[1]}].ID} && ${MyBuffTargetName[1].NotEqual[null]}) {
+     /squelch /target id ${Spawn[=${MyBuffTargetName[1]}].ID} pc targetable
+     /delay 15
+} 
+
+/if (${Target.Distance} > ${FollowDist}) {
+     /echo *** Moving closer to (${MyBuffTargetName[1]}). ***
+     /if (${Me.Sitting} && !${Me.Mount.ID}) /stand
+     /moveto id ${Spawn[=${MyBuffTargetName[1]}].ID} mdist ${MyMDist}	
+}
+
 /return
 |---------------------------------------------------------------------------------
 
@@ -334,29 +387,17 @@ Sub CheckGlobalCooldown
 |---------------------------------------------------------------------------------
 
 |---------------------------------------------------------------------------------
-| Sub: Version COntrol
-|---------------------------------------------------------------------------------
-Sub VersionControl
-
-/if (${MacroVer.NotEqual[${KeepToonBuffVer}]}) {
-    /echo Version mismatch detected, please wait until this is corrected.
-    /ini "${IniFileName}" "General" "MacroVer" "${KeepToonBuffVer}"
-    /echo Version information updated.
-    /call LoadIni General MacroVer	string	${KeepToonBuffVer}
-}
-
-/return
-|---------------------------------------------------------------------------------
-
-|---------------------------------------------------------------------------------
 | SUB: Event_SpellBlocked
 |---------------------------------------------------------------------------------
 Sub Event_SpellBlocked(string line, string MySPell, string BuffToon, string BlockingSPell)
-	
-	/echo Your ${MySPell} spell did not take hold on ${BuffToon} (Blocked by ${BlockingSPell}.)
-	/echo You are wasting mana in a casting loop!
-    /beep
-	
+
+/if (${Defined[${BlockingSPell}]}) {
+    /echo Your ${MySPell} spell did not take hold on ${BuffToon} (Blocked by ${BlockingSPell}.)
+} else {
+    /echo Your ${MySPell} spell did not take hold on ${BuffToon} (Perhaps he/she is max buffed?)
+}
+/beep
+/echo You are wasting mana in a casting loop!
+    
 /return
 |---------------------------------------------------------------------------------
-
