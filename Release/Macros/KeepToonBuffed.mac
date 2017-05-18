@@ -21,13 +21,13 @@ Sub Main
 
 |---------------------------------------------------------------------------------
 | ---- Turn off melee functions and turn on "Target Group Buff" setting ----------
-/if (${Bool[${Plugin[MQ2Melee]}]}) /squelch /melee melee=0
+/if (${Bool[${Plugin[MQ2Melee]}]}) /squelch /melee off
 /tgb on
 |---------------------------------------------------------------------------------
 
 |==================== DO NOT ALTER THESE VALUES ====================
 /declare MacroName		string	outer	KeepToonBuffed
-/declare KeepToonBuffVer	string	outer	1.8.1
+/declare KeepToonBuffVer	string	outer	1.8.3
 /declare IniFileName		string	outer	${MacroName}_${Me.CleanName}.ini
 /call CreateIni
 
@@ -37,8 +37,8 @@ Sub Main
 /call LoadIni General Debug			bool	TRUE
 /call LoadIni General AdminDebug		bool	FALSE
 /call LoadIni General DebugINI			bool	FALSE
-/call LoadIni General FollowGroup		int		0
-/call LoadIni General FollowDist		int		30
+/call LoadIni General FollowGroup		int	0
+/call LoadIni General FollowDist		int	30
 /declare MyMDist 				int 	outer	${FollowDist}-5
 /call LoadIni General SpellSetName		string	NULL
 
@@ -60,6 +60,7 @@ Sub Main
 | ################## Set up [Buffs] values
 /call LoadIni Buffs BuffsOn			int	1
 /call LoadIni Buffs NumberOfBuffs		int	5
+/call LoadIni Buffs TargetBuffNameHelp 		string 	"Name of Spell to Cast|Name of Buff Effect in Buff Window"
 /declare TargetBuffName[${NumberOfBuffs}]	string	outer
 /call LoadIni Buffs TargetBuffName		string	NULL	TargetBuffName
 
@@ -211,7 +212,7 @@ Sub CheckMyHealth
 |-------------------------------------------------------------------------------- 
 Sub CheckTargetHealth
 
-/declare i int inner
+/declare i int local
 
 /for i 1 to ${NumberOfToons}
 
@@ -255,10 +256,14 @@ Sub CheckTargetHealth
 |-------------------------------------------------------------------------------- 
 Sub MaintainTargetBuffs
 
-/declare i int inner
-/declare j int inner
+/declare i int local
+/declare j int local
+
+[COLOR="#FF0000"]/declare SpellToCast string local 0
+/declare BuffIDName  string local 0[/COLOR]
 
 /for j 1 to ${NumberOfToons}
+
     /if (${Target.ID}!=${Spawn[=${MyBuffTargetName[${j}]}].ID} && ${MyBuffTargetName[${j}].NotEqual[null]}) {
          /if (${Debug}) /echo Attempting to target (${MyBuffTargetName[${j}]}) for buffs.
          /squelch /target id ${Spawn[=${MyBuffTargetName[${j}]}].ID} pc targetable
@@ -266,31 +271,42 @@ Sub MaintainTargetBuffs
          /if (${Target.ID}!=${Spawn[=${MyBuffTargetName[${j}]}].ID} || !${Target.Type.Equal[pc]}) /next j
     }
  
-    /for i 1 to ${NumberOfBuffs}         
-        /if (!${Target.Buff[${TargetBuffName[${i}]}].ID} && ${Target.Type.Equal[pc]} && (${Me.CurrentMana}>${Spell[${TargetBuffName[${i}]}].Mana}) && ${Spell[${TargetBuffName[${i}]}].Stacks} && (${Target.Distance}<=${Spell[${TargetBuffName[${i}]}].Range} || ${Target.Distance}<=${Spell[${TargetBuffName[${i}]}].AERange}) && !${Target.Buff[Resurrection Sickness].ID} && !${Target.Buff[Revival Sickness].ID}) {
+    /for i 1 to ${NumberOfBuffs} 
+	[COLOR="#FF0000"]|--------------------------------------------------------------------------------
+	|If spell name differs from buff name, use argument seperator to extract and set values. 
+	/if (${TargetBuffName[${i}].Arg[2,|].Length}) {
+	     /varset SpellToCast ${TargetBuffName[${i}].Arg[1,|]}
+	     /varset BuffIDName  ${TargetBuffName[${i}].Arg[2,|]}
+        } else {
+	     /varset SpellToCast ${TargetBuffName[${i}]}
+	     /varset BuffIDName  ${TargetBuffName[${i}]}
+	}
+	|--------------------------------------------------------------------------------[/COLOR]
+
+        /if (!${Target.Buff[${[COLOR="#FF0000"]BuffIDName[/COLOR]}].ID} && ${Target.Type.Equal[pc]} && (${Me.CurrentMana}>${Spell[${[COLOR="#FF0000"]SpellToCast[/COLOR]}].Mana}) && ${Spell[${[COLOR="#FF0000"]SpellToCast[/COLOR]}].Stacks} && (${Target.Distance}<=${Spell[${[COLOR="#FF0000"]SpellToCast[/COLOR]}].Range} || ${Target.Distance}<=${Spell[${[COLOR="#FF0000"]SpellToCast[/COLOR]}].AERange}) && !${Target.Buff[Resurrection Sickness].ID} && !${Target.Buff[Revival Sickness].ID}) {
              
             |--------------------------------------------------------------------------------
             |  ADMIN DEBUG FOR BUFF CODE
             |--------------------------------------------------------------------------------        
             /if (${AdminDebug}) {
                 /echo -----------
-                /if (!${Target.Buff[${TargetBuffName[${i}]}].ID} && ${Target.Type.Equal[pc]} && (${Me.CurrentMana}>${Spell[${TargetBuffName[${i}]}].Mana}) && ${Spell[${TargetBuffName[${i}]}].Stacks} && (${Target.Distance}<=${Spell[${TargetBuffName[${i}]}].Range} || ${Target.Distance}<=${Spell[${TargetBuffName[${i}]}].AERange}) && !${Target.Buff[Resurrection Sickness].ID} && !${Target.Buff[Revival Sickness].ID}) {
-                    /echo PC:${Target.Type.Equal[pc]} BUFF:!${Target.Buff[${TargetBuffName[${i}]}].ID} MANA:(${Me.CurrentMana}>${Spell[${TargetBuffName[${i}]}].Mana}) STACKS:${Spell[${TargetBuffName[${i}]}].Stacks} INRANGE:(${Target.Distance}<=${Spell[${TargetBuffName[${i}]}].Range} || ${Target.Distance}<=${Spell[${TargetBuffName[${i}]}].AERange}) RezSick:!${Target.Buff[Resurrection Sickness].ID} RevivSick:!${Target.Buff[Revival Sickness].ID}
-                    /echo "${TargetBuffName[${i}]}" = Buff is Needed
+                /if (!${Target.Buff[${BuffIDName}].ID} && ${Target.Type.Equal[pc]} && (${Me.CurrentMana}>${Spell[${SpellToCast}].Mana}) && ${Spell[${SpellToCast}].Stacks} && (${Target.Distance}<=${Spell[${SpellToCast}].Range} || ${Target.Distance}<=${Spell[${SpellToCast}].AERange}) && !${Target.Buff[Resurrection Sickness].ID} && !${Target.Buff[Revival Sickness].ID}) {
+                    /echo PC:${Target.Type.Equal[pc]} BUFF:!${Target.Buff[${BuffIDName}].ID} MANA:(${Me.CurrentMana}>${Spell[${SpellToCast}].Mana}) STACKS:${Spell[${SpellToCast}].Stacks} INRANGE:(${Target.Distance}<=${Spell[${SpellToCast}].Range} || ${Target.Distance}<=${Spell[${SpellToCast}].AERange}) RezSick:!${Target.Buff[Resurrection Sickness].ID} RevivSick:!${Target.Buff[Revival Sickness].ID}
+                    /echo "${BuffIDName}" = Buff is Needed
                 } else {
-                    /echo PC:${Target.Type.Equal[pc]} BUFF:!${Target.Buff[${TargetBuffName[${i}]}].ID} MANA:(${Me.CurrentMana}>${Spell[${TargetBuffName[${i}]}].Mana}) STACKS:${Spell[${TargetBuffName[${i}]}].Stacks} INRANGE:(${Target.Distance}<=${Spell[${TargetBuffName[${i}]}].Range} || ${Target.Distance}<=${Spell[${TargetBuffName[${i}]}].AERange}) RezSick:!${Target.Buff[Resurrection Sickness].ID} RevivSick:!${Target.Buff[Revival Sickness].ID}
-                    /echo "${TargetBuffName[${i}]}" = Buff is NOT Needed             
+                    /echo PC:${Target.Type.Equal[pc]} BUFF:!${Target.Buff[${BuffIDName}].ID} MANA:(${Me.CurrentMana}>${Spell[${SpellToCast}].Mana}) STACKS:${Spell[${SpellToCast}].Stacks} INRANGE:(${Target.Distance}<=${Spell[${SpellToCast}].Range} || ${Target.Distance}<=${Spell[${SpellToCast}].AERange}) RezSick:!${Target.Buff[Resurrection Sickness].ID} RevivSick:!${Target.Buff[Revival Sickness].ID}
+                    /echo "[COLOR="#FF0000"]${BuffIDName}[/COLOR]" = Buff is NOT Needed             
                     /echo -----------
                     /delay 5s
                 }
             }
             |--------------------------------------------------------------------------------			 
 			 		 
-	     /if (${Debug}) /echo Attempting to cast (${TargetBuffName[${i}]}) on (${MyBuffTargetName[${j}]}).
-             /casting "${TargetBuffName[${i}]}" gem8             
-             /call CheckCasting
-             /call CheckGlobalCooldown
-	     /doevents
+	    /if (${Debug}) /echo Attempting to cast ([COLOR="#FF0000"]${SpellToCast}[/COLOR]) on (${MyBuffTargetName[${j}]}).
+            /casting "[COLOR="#FF0000"]${SpellToCast}[/COLOR]" gem8             
+            /call CheckCasting
+            /call CheckGlobalCooldown
+	    /doevents
         }
     /next i
     
