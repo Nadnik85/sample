@@ -359,6 +359,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "contrib", "contrib", "{EBF3
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MQ2Nav_Project", "MQ2Nav_Project", "{A86D2C08-FDE3-4F05-8A04-848539E9D259}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2KillTracker", "MQ2KillTracker\MQ2KillTracker.vcxproj", "{054CB3C1-8984-4D89-B9E1-4BC4F75AE0DD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2A0A06A4-E9C6-4229-82EE-BD2D4E0A7221} = {2A0A06A4-E9C6-4229-82EE-BD2D4E0A7221}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2AutoLoot", "MQ2AutoLoot\MQ2AutoLoot.vcxproj", "{564C515B-5EA9-4060-B442-53AD6C43A770}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2A0A06A4-E9C6-4229-82EE-BD2D4E0A7221} = {2A0A06A4-E9C6-4229-82EE-BD2D4E0A7221}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -886,6 +896,18 @@ Global
 		{E0A98D60-D694-4E6E-836B-E41AB5737D1D}.Release|Win32.ActiveCfg = Release|Win32
 		{E0A98D60-D694-4E6E-836B-E41AB5737D1D}.Release|Win32.Build.0 = Release|Win32
 		{E0A98D60-D694-4E6E-836B-E41AB5737D1D}.Release|x64.ActiveCfg = Release|Win32
+		{054CB3C1-8984-4D89-B9E1-4BC4F75AE0DD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{054CB3C1-8984-4D89-B9E1-4BC4F75AE0DD}.Debug|Win32.Build.0 = Debug|Win32
+		{054CB3C1-8984-4D89-B9E1-4BC4F75AE0DD}.Debug|x64.ActiveCfg = Debug|Win32
+		{054CB3C1-8984-4D89-B9E1-4BC4F75AE0DD}.Release|Win32.ActiveCfg = Release|Win32
+		{054CB3C1-8984-4D89-B9E1-4BC4F75AE0DD}.Release|Win32.Build.0 = Release|Win32
+		{054CB3C1-8984-4D89-B9E1-4BC4F75AE0DD}.Release|x64.ActiveCfg = Release|Win32
+		{564C515B-5EA9-4060-B442-53AD6C43A770}.Debug|Win32.ActiveCfg = Debug|Win32
+		{564C515B-5EA9-4060-B442-53AD6C43A770}.Debug|Win32.Build.0 = Debug|Win32
+		{564C515B-5EA9-4060-B442-53AD6C43A770}.Debug|x64.ActiveCfg = Debug|Win32
+		{564C515B-5EA9-4060-B442-53AD6C43A770}.Release|Win32.ActiveCfg = Release|Win32
+		{564C515B-5EA9-4060-B442-53AD6C43A770}.Release|Win32.Build.0 = Release|Win32
+		{564C515B-5EA9-4060-B442-53AD6C43A770}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -894,7 +916,7 @@ Global
 		{EBF3B2A1-B1B8-477E-997B-35D98F5DA3AB} = {A86D2C08-FDE3-4F05-8A04-848539E9D259}
 	EndGlobalSection
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 78
+		SccNumberOfProjects = 80
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://redbot.visualstudio.com/
 		SccLocalPath0 = .
@@ -1129,5 +1151,11 @@ Global
 		SccProjectUniqueName77 = MQ2Bzsrch\\MQ2Bzsrch(TF).vcxproj
 		SccProjectName77 = MQ2Bzsrch
 		SccLocalPath77 = MQ2Bzsrch
+		SccProjectUniqueName78 = MQ2KillTracker\\MQ2KillTracker.vcxproj
+		SccProjectName78 = MQ2KillTracker
+		SccLocalPath78 = MQ2KillTracker
+		SccProjectUniqueName79 = MQ2AutoLoot\\MQ2AutoLoot.vcxproj
+		SccProjectName79 = MQ2AutoLoot
+		SccLocalPath79 = MQ2AutoLoot
 	EndGlobalSection
 EndGlobal
