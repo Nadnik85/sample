@@ -76,6 +76,10 @@ Sub CheckAggro
 	/varset autotargetid ${badaggroid}
 	/if (${Target.ID}!=${autotargetid} && ${Spawn[id ${autotargetid} npc radius 100].ID}) /target id ${autotargetid}
 	/delay 5 ${Target.ID}==${autotargetid}
+} else /if (${badaggro}==0&&${Spawn[Named npc radius 100].ID}&&${Spawn[Named npc radius 100].ID}!=${Target.ID}&&!${Target.Named}) {
+	/varset autotargetid ${Spawn[Named npc radius 100].ID}
+	/if (${Target.ID}!=${autotargetid} && ${Spawn[id ${autotargetid} npc radius 100].ID}) /target id ${autotargetid}
+	/delay 5 ${Target.ID}==${autotargetid}
 } else /if (${Target.ID}!=${Me.GroupAssistTarget.ID} && ${Spawn[id ${Me.GroupAssistTarget.ID} npc radius 100].ID}) {
 	/varset autotargetid ${Me.GroupAssistTarget.ID}
 	/if (${Target.ID}!=${autotargetid} && ${Spawn[id ${autotargetid} npc radius 100].ID}) /target id ${autotargetid}
