@@ -1,7 +1,7 @@
 |------------------------------|
 |---AUTO-BARD by Noobhaxor-----|
-|--------Version 2.2 O1--------|
-|---------April Update --------|
+|--------Version 2.3 v1--------|
+|---------May Update ----------|
 #turbo 80
 #Event Buff 			"Your #1# spell has worn off of #*#."
 #include autosubs.inc
@@ -61,7 +61,7 @@ Sub Main
 	/call LoadIni General AutoCampHold		int 1
 	/call LoadIni General AutoAssistAt		int 98
 	/call AliasSetup
-	/call AutoVersionCheck 3
+	/call AutoVersionCheck 4
 |----------------------------------------------------------------------------
 | MainLoop
 |---------------------------------------------------------------------------- 

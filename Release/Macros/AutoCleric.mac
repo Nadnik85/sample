@@ -84,13 +84,13 @@ Sub Main
 	/call LoadIni General AutoCampHold		int 0
 	/call LoadIni General UseFellowship 	int 1
 	/call LoadIni General InstantRelease 	int 1
-	/call LoadIni General QMGroup		 	int 1
+	/call LoadIni General qmtarget		 	int 0
 	/call LoadIni General UseMelee		 	int 0
 	/call LoadIni General AutoAssistAt		int 98
 	/call LoadIni General BringYourOwnSpells	int 0
 	/declare newtank		int outer 0
 	/call VarSetup
-	/call AutoVersionCheck 3
+	/call AutoVersionCheck 4
 |-Alias setup for Ini
 	/noparse /alias /divinebuff /multiline ; /docommand ${If[${DivineBuffOn}==1,/varset DivineBuffOn 0,/varset DivineBuffOn 1]} ; /docommand ${If[${Me.Gem[${promheal}]}==${spellslots},/varcalc divinegem ${spellslots}-1,/varset divinegem ${spellslots}]} ; /varset changetoini 1 ; /echo Toggling ${DivineBuff} to ${If[${DivineBuffOn}==0,OFF,ON]}
 	/noparse /alias /promised /multiline ; /docommand ${If[${usepromheals}==1,/varset usepromheals 0,/varset usepromheals 1]} ; /docommand ${If[${Me.Gem[${DivineBuff}]}==${spellslots},/varcalc promgem ${spellslots}-1,/varset promgem ${spellslots}]} ; /varset changetoini 1 ; /echo Toggling Promised Heals to ${If[${usepromheals}==0,OFF,ON]}
@@ -102,7 +102,7 @@ Sub Main
 	/noparse /alias /raidhealpoint /multiline ; /varset changetoini 1 ; /docommand /varset raidhealpoint 
 	/noparse /alias /mountitem /multiline ; /varset changetoini 1 ; /docommand /varset mountitem 
 	/noparse /alias /newtank /docommand /varset newtank 1
-	/noparse /alias /qmgroup /multiline ; /varset changetoini 1 ; /docommand ${If[${QMGroup}==1,/varset QMGroup 0,/varset QMGroup 1]} ; /echo Toggling Quiet Miracle on Group to ${If[${QMGroup}==0,OFF,ON]}
+	/noparse /alias /qmtarget /multiline ; /varset changetoini 1 ; /docommand ${If[${Spawn[id ${Target.ID} group].ID},/varset qmtarget ${Target.ID},/varset qmtarget 0]} ; /echo Toggling Quiet Miracle on Cast on ${If[${qmtarget}==0,Noone,${Spawn[id ${qmtarget}].CleanName}]}
 	/noparse /alias /byos /multiline ; /varset changetoini 1 ; /docommand ${If[${BringYourOwnSpells}==1,/varset BringYourOwnSpells 0,/varset BringYourOwnSpells 1]} ; /echo Toggling Bring Your Own Spells to ${If[${BringYourOwnSpells}==0,OFF,ON]}
 	/noparse /alias /nocures /multiline ; /docommand /varset NoCures 1 ; /echo WILL NOT CAST ANY CURES
 |--General Alias Setup
@@ -118,6 +118,7 @@ Sub Main
 	/declare reztimer				timer outer 0
 	/declare hottimer				timer outer 0
 	/declare bufftimer				timer outer 0
+	/declare groupbufftimer			timer outer 0
 	/declare ReverseDS				string outer "NULL"
 	/declare SelfBuff				string outer "NULL"
 	/declare GroupHPBuff			string outer "NULL"
@@ -233,7 +234,6 @@ Sub Main
 	/call TankChangeCheck
 	/if (${Cursor.ID}) /call BagModRods
 	/doevents
-	/if (${Target.ID}!=${Spawn[${tanktype} ${tankname}].ID}&&!${Me.XTarget[1].ID}) /target id ${Spawn[${tanktype} ${tankname}].ID}
 	/call ConfigHeal
 	/call ExtraHeal
 	/if (${Me.Song["Touch of the Divine"].ID}) /call DALogic
@@ -243,7 +243,8 @@ Sub Main
 	/if ((${Me.PctMana}<=98)&&!${Me.Moving}&&!${Me.Invis}) /call MedTime
 	/if ((${AutoRez}==1)&&(${Me.CombatState.NotEqual[COMBAT]})&&(!${Me.Moving})&&(!${Me.Invis})) /call RezCheck
 	/if ((${Me.PctMana}>=30)&&(!${Me.Casting.ID})&&(!${Me.XTarget[1].ID})&&(!${Me.Invis})&&!${MoveTo.Moving}) /call BuffCheck
-	/call AutoCampCheck
+	/if ((${Me.PctMana}>=30)&&(!${Me.Casting.ID})&&(!${Me.XTarget[1].ID})&&(!${Me.Invis})&&!${MoveTo.Moving}&&${groupbufftimer}==0) /call BuffGroup
+	/if (!${Me.XTarget[1].ID}) /call AutoCampCheck
 /goto :mainloop
 /return
 
@@ -436,6 +437,27 @@ Sub SpellQueue(string nextspell,int nextid)
 /return ${CastResult}
 
 |----------------------------------------------------------------------------
+| SUB: BuffGroup
+|---------------------------------------------------------------------------- 
+Sub BuffGroup
+	/declare bmember			int local 0
+	/if (${groupbufftimer}==0) /varset groupbufftimer 1m
+	/for bmember 0 to ${Group}
+		/if (${Group.Member[${bmember}].Distance}<100) {
+			/target id ${Group.Member[${bmember}].ID}
+			/delay 5 ${Target.ID}==${Group.Member[${bmember}].ID}
+			/delay 5 ${Target.BuffsPopulated}==TRUE
+			/if (${Target.ID}&&${Target.BuffsPopulated}==TRUE&&!${Target.Aego.ID}&&!${Target.Skin.ID}&&!${Target.Symbol.ID}&&!${Spell[${Target.Buff[${GroupBuff}]}].ID}&&${GroupBuffRecast}!=1) /varset GroupBuffRecast 1
+		}
+	/next bmember
+	/if (${Spawn[${tanktype} ${tankname}].ID}) {
+		/target id ${Spawn[${tanktype} ${tankname}].ID}
+	} else {
+		/target id ${Me.ID}
+	}
+/return
+
+|----------------------------------------------------------------------------
 | SUB: HealGroup
 |---------------------------------------------------------------------------- 
 Sub HealGroup
@@ -469,11 +491,12 @@ Sub HealGroup
 			/casting "Blessing of Resurrection" alt -targetid|${Group.Member[${gmember}].ID}
 			/delay 8
 			/varset reztimer 30s
+			/varset GroupBuffRecast 1
 			/next gmember
 		}
 	|========MAIN GROUP HEAL LOGIC
 		/if (!${Spawn[${Group.Member[${gmember}]}].ID}||${Spawn[${Group.Member[${gmember}]}].Hovering}||${Spawn[${Group.Member[${gmember}]}].Type.Equal[Corpse]}) /next gmember
-		/if ((${Select[${Group.Member[${gmember}].Class.ShortName},CLR,WIZ,SHD,PAL]}>0)&&(${Me.PctMana}>60)&&${QMGroup}==1&&${Group.Member[${gmember}].PctMana}<50&&${Me.AltAbilityReady[Quiet Miracle]}) /call AANow 135 ${Group.Member[${gmember}].ID}
+		/if (${Group.Member[${gmember}].ID}==${qmtarget}&&${Me.PctMana}>60&&${Group.Member[${gmember}].PctMana}<50&&${Me.AltAbilityReady[Quiet Miracle]}) /call AANow 135 ${Group.Member[${gmember}].ID}
 		/if (${Group.Member[${gmember}].Distance}<=${healspellrange}&&(${Group.Member[${gmember}].PctHPs}<100)) {
 			/if ((${Group.Member[${gmember}].Distance}<100)&&(${Group.Member[${gmember}].PctHPs}<${grouphealpoint})&&(${Group.Member[${gmember}].PctHPs}>=1)) /varcalc HurtMember ${HurtMember}+1
 			/if (${Group.Member[${gmember}].PctHPs}<=${worsthp}&&((${Spawn[NPC ${Me.XTarget[1].Name}].PctHPs}<=99)||${Group.Member[${gmember}].Distance}<50)&&(${priorityworsthp}>${grouphealpoint})) {
@@ -490,10 +513,6 @@ Sub HealGroup
 		  }
    /next gmember
 |=============Main Tank Buff Check
-   /declare bmember 	int local 0
-   /declare founddivine	int local 0
-   /declare foundtankb	int local 0
-   /declare foundgroupb	int local 0
    /if (${Target.ID}==${Spawn[${tanktype} ${tankname}].ID}&&${Target.BuffsPopulated}==TRUE) {
 		/if (!${Spell[${Target.Buff[${DivineBuff}]}].ID}&&${DivineBuffRecast}!=1) {
 			/varset DivineBuffRecast 1
@@ -503,7 +522,7 @@ Sub HealGroup
 			/varset TankBuffRecast 1
 			/varset bufftimer 10s
 			}
-		/if (!${Target.Aego.ID}&&!${Target.Skin.ID}&&!${Target.Symbol.ID}&&!${Spell[${Target.Buff[${GroupBuff}]}].ID}&&${GroupBuffRecast}!=1) {
+		/if (!${Target.Aego.ID}&&!${Target.Skin.ID}&&!${Target.Symbol.ID}&&!${Target.MyBuff[${GroupBuff}].ID}&&${GroupBuffRecast}!=1) {
 			/varset GroupBuffRecast 1
 			/varset bufftimer 10s
 			}
@@ -535,7 +554,7 @@ Sub HealGroup
 		/call SingleCure ${Target.ID}
 	} else /if ((${DivineBuffOn}==1)&&(${DivineBuffRecast}==1)&&(!${Me.Casting.ID})&&(${Spell[${DivineBuff}].Range}>${Spawn[${tanktype} ${tankname}].Distance})&&(${Spawn[${tanktype} ${tankname}].ID})&&(!${Spawn[${tanktype} ${tankname}].Hovering})&&(${Spawn[${tanktype} ${tankname}].PctHPs}>${healpoint})&&${bufftimer}==0) {
 			/call DivineUsage
-	} else /if ((${Me.PctMana}>=${Manatonuke})&&(${Me.XTarget[1].ID})&&(!${Raid.Members})) {
+	} else /if ((${Me.PctMana}>=${Manatonuke})&&(${Me.XTarget[1].ID})&&(!${Raid.Members})&&${UseMelee}==1) {
 		/call Offense
 	}
 /return
@@ -864,7 +883,7 @@ Sub INIChanges
 	/call SetIni General UseFellowship		int ${UseFellowship}
 	/call SetIni General InstantRelease		int ${InstantRelease}
 	/call SetIni General AutoCampHold		int ${AutoCampHold}
-	/call SetIni General QMGroup			int ${QMGroup}
+	/call SetIni General qmtarget			int ${qmtarget}
 	/call SetIni General UseMelee			int ${UseMelee}
 	/call SetIni General BringYourOwnSpells	int ${BringYourOwnSpells}
 	/if (${Manatonuke}<20) {

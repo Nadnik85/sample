@@ -13,7 +13,7 @@ Sub Main
 	/end
 } else {
 	/target id ${Spawn[group tank].ID}
-	/timed 5 /mac Kissassist
-	/end
+	/delay 5 ${Target.ID}==${Spawn[group tank].ID}
+	/mac Kissassist
 }
 /return

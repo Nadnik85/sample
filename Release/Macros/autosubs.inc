@@ -78,7 +78,7 @@ Sub VarSetup
 		}
 	|Camp Radius Set
 		/if (${IName.Equal[CampRadius]} && ${IVar}>=20 && ${IVar}<=100) {
-			/varset CampRadius ${IVar}
+			/varset AutoCampRadius ${IVar}
 			/echo Camp Radius set to ${IVar}
 		} else /if (${IName.Equal[CampRadius]} && ${IVar}<20 && ${IVar}>100) {
 			/echo Invalid Camp Radius - Set between 20-100 units
@@ -604,7 +604,7 @@ Sub ItemNow(string nextitem)
 | SUB: AutoVersionCheck
 |---------------------------------------------------------------------------- 
 Sub AutoVersionCheck(int autoversion)
-	/if (${autoversion}!=3) {
+	/if (${autoversion}!=4) {
 		/echo AUTOSUBS VERSION MISMATCH
 		/echo download new autosubs.inc - ending macro
 	}
