@@ -27,7 +27,7 @@ Sub Main
 
 |==================== DO NOT ALTER THESE VALUES ====================
 /declare MacroName		string	outer	KeepToonBuffed
-/declare KeepToonBuffVer	string	outer	1.8.9
+/declare KeepToonBuffVer	string	outer	1.9.0
 /declare IniFileName		string	outer	${MacroName}_${Me.CleanName}.ini
 /call CreateIni
 
@@ -291,13 +291,13 @@ Sub MaintainTargetBuffs
 	}
 	|--------------------------------------------------------------------------------
 
-        /if (!${Target.Buff[${BuffIDName}].ID} && ${Select[${Spawn[${MyBuffTargetName[${j}]}].Type},Mercenary,PC,Pet]} && (${Me.CurrentMana}>${Spell[${SpellToCast}].Mana}) && ${Spell[${SpellToCast}].Stacks} && (${Target.Distance}<=${Spell[${SpellToCast}].Range} || ${Target.Distance}<=${Spell[${SpellToCast}].AERange}) && !${Target.Buff[Resurrection Sickness].ID} && !${Target.Buff[Revival Sickness].ID}) {
+        /if ((${Target.BuffsPopulated}==TRUE) && !${Target.Buff[${BuffIDName}].ID} && ${Select[${Spawn[${MyBuffTargetName[${j}]}].Type},Mercenary,PC,Pet]} && (${Me.CurrentMana}>${Spell[${SpellToCast}].Mana}) && ${Spell[${SpellToCast}].Stacks} && (${Target.Distance}<=${Spell[${SpellToCast}].Range} || ${Target.Distance}<=${Spell[${SpellToCast}].AERange}) && !${Target.Buff[Resurrection Sickness].ID} && !${Target.Buff[Revival Sickness].ID}) {
             |--------------------------------------------------------------------------------
             |  ADMIN DEBUG FOR BUFF CODE
             |--------------------------------------------------------------------------------        
             /if (${AdminDebug}) {
                 /echo -----------
-                /if (!${Target.Buff[${BuffIDName}].ID} && ${Select[${Spawn[${MyBuffTargetName[${j}]}].Type},Mercenary,PC,Pet]} && (${Me.CurrentMana}>${Spell[${SpellToCast}].Mana}) && ${Spell[${SpellToCast}].Stacks} && (${Target.Distance}<=${Spell[${SpellToCast}].Range} || ${Target.Distance}<=${Spell[${SpellToCast}].AERange}) && !${Target.Buff[Resurrection Sickness].ID} && !${Target.Buff[Revival Sickness].ID}) {
+                /if ((${Target.BuffsPopulated}==TRUE) && !${Target.Buff[${BuffIDName}].ID} && ${Select[${Spawn[${MyBuffTargetName[${j}]}].Type},Mercenary,PC,Pet]} && (${Me.CurrentMana}>${Spell[${SpellToCast}].Mana}) && ${Spell[${SpellToCast}].Stacks} && (${Target.Distance}<=${Spell[${SpellToCast}].Range} || ${Target.Distance}<=${Spell[${SpellToCast}].AERange}) && !${Target.Buff[Resurrection Sickness].ID} && !${Target.Buff[Revival Sickness].ID}) {
                     /echo TargetType:${Select[${Target.Type},Mercenary,PC,Pet]} BUFF:!${Target.Buff[${BuffIDName}].ID} MANA:(${Me.CurrentMana}>${Spell[${SpellToCast}].Mana}) STACKS:${Spell[${SpellToCast}].Stacks} INRANGE:(${Target.Distance}<=${Spell[${SpellToCast}].Range} || ${Target.Distance}<=${Spell[${SpellToCast}].AERange}) RezSick:!${Target.Buff[Resurrection Sickness].ID} RevivSick:!${Target.Buff[Revival Sickness].ID}
                     /echo "${BuffIDName}" = Buff is Needed
                 } else {
@@ -336,12 +336,12 @@ Sub AssistOnTarget
             /squelch /target id ${Me.TargetOfTarget.ID}) pet targetable
             /delay 10
         }
-        /if (((${Target.Type.Equal[NPC]} || ${Target.Type.Equal[PET]}) && (${Target.PctHPs}>${AssistPct})) || ${Target.Buff[${AssistSpell}].ID}) /return				
-	/if ((${Target.Type.Equal[NPC]} || ${Target.Type.Equal[PET]}) && (${Target.PctHPs}<${AssistPct}) && ${Target.Distance}<=${Spell[${AssistSpell}].Range}) {
+        /if ((${Target.BuffsPopulated}==TRUE) && ((${Target.Type.Equal[NPC]} || ${Target.Type.Equal[PET]}) && (${Target.PctHPs}>${AssistPct})) || ${Target.Buff[${AssistSpell}].ID}) /return				
+	/if ((${Target.BuffsPopulated}==TRUE) && (${Target.Type.Equal[NPC]} || ${Target.Type.Equal[PET]}) && (${Target.PctHPs}<${AssistPct}) && ${Target.Distance}<=${Spell[${AssistSpell}].Range}) {
             /if (${Debug}) /echo Attempting to assist, casting (${AssistSpell}) on (${Target.CleanName}).
             /casting "${AssistSpell}" gem8
             /call CheckCasting
-             call CheckGlobalCooldown
+            /call CheckGlobalCooldown
 	}
     }
 }
