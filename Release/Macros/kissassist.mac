@@ -1,4 +1,4 @@
-| - kissassist.mac v10.0.0 by Maskoi 05/25/2017.
+| - kissassist.mac v10.0.3 by Maskoi 05/28/2017.
 | - Contributions by anonymoushero, crystane, eqmule, thenomadman, william12.
 | - ChainPull, Debuffs and combat rewrites by ctaylor22.
 | - PetTank, PullerPetTank & HunterPetTank roles developed by TreeHuginDruid
@@ -165,7 +165,7 @@ Sub Main
         /varset ZoneName ${Zone.ShortName}
     }
     /declare MacroName              string      outer       KissAssist
-    /declare MacroVer               string      outer       10.0.0
+    /declare MacroVer               string      outer       10.0.3
     /declare IniFileName            string      outer         
     /declare InfoFileName           string      outer       ${MacroName}_Info.ini
     /declare ConditionsFileName     string      outer       
@@ -959,7 +959,7 @@ Sub Main
             } else {
                 /call CheckForCombat 2 MainLoop
             }
-            /if (${LootOnOn}) /call LootStuff
+            /if (${LootOn}) /call LootStuff
             /if (${DebugHeal}) /delay 5 
             /delay 1
         /goto :MainLoop
@@ -1576,7 +1576,7 @@ Sub Main
                 /varset DPSPart4
                 /varset DPSPart5
             }
-            /if (${ConditionsOn} && ${DPSCOn} && !${DPSCond[${i}]}) /goto :skipcast
+            /if (${ConditionsOn} && ${DPSCOn} && ${If[${DPSCond[${i}]},0,1]}) /goto :skipcast
             /if (${Select[${DPSPart3},Me,MA]}==0 && (${Me.CombatAbility[${DPSPart1}]} || ${Me.Ability[${DPSPart1}]})) {
                  /call CastWhat "${DPSPart1}" ${DPSTargetID} DPS
                  /goto :MeleeCast
@@ -1745,7 +1745,7 @@ Sub Main
         /for i 1 to ${WeaveArray.Size}
             /varset DPSat1 ${Int[${WeaveArray[${i}].Arg[2,|]}]}
             /if (${DPSat1}==0) /return 
-            /if (!${ConditionsOn} || !${DPSCOn} || ${WeaveCond[${i}]}) {
+            /if (!${ConditionsOn} || !${DPSCOn} || ${If[${WeaveCond[${i}]},1,0]}) {
                 /if (${Me.AltAbilityReady[${WeaveArray[${i}].Arg[1,|]}]} || ${Me.ItemReady[${WeaveArray[${i}].Arg[1,|]}]} || ${Me.CombatAbilityReady[${WeaveArray[${i}].Arg[1,|]}]} ||  ${Me.AbilityReady[${WeaveArray[${i}].Arg[1,|]}]}) {
                     /if (${Spawn[${TarID}].PctHPs}<=${DPSat1}) {
                         /call CastWhat "${WeaveArray[${i}]}" ${TarID}
@@ -1765,7 +1765,7 @@ Sub Main
         /for i 1 to ${MashArray.Size}
             /varset MashThis ${MashArray[${i}].Arg[1,|]}
             /if (${MashThis.Length}==0 || ${MashThis.Equal[null]}) /return 
-            /if (!${ConditionsOn} || !${DPSCOn} || ${MashCond[${i}]}) {
+            /if (!${ConditionsOn} || !${DPSCOn} || ${If[${MashCond[${i}]},1,0]}) {
                 /if (${FindItem[=${MashThis}].ID} && ${Me.ItemReady[${MashThis}]}) {
                     /useitem "${MashThis}"
                     /echo ## Mashing >> ${MashThis} <<
@@ -2016,7 +2016,7 @@ Sub AggroCheck
         /varset AggroGLT ${Aggro[${i}].Arg[3,|]}
         /varset AggroTarget ${Aggro[${i}].Arg[4,|]}
         /if (${DebugCombat}) /echo \atDEBUGCOMBAT AggroCheck ${Me.PctAggro} ${AggroGLT} ${AggroPCT} ${AggroSpell} \agLine#: ${Macro.CurLine}
-        /if (${ConditionsOn} && ${DPSCOn} && !${AggroCond[${i}]}) /goto :NextAggro
+        /if (${ConditionsOn} && ${DPSCOn} && ${If[${AggroCond[${i}]},0,1]}) /goto :NextAggro
         /if ((${AggroGLT.Equal[<]} && ${Me.PctAggro}<${AggroPCT}) || (${AggroGLT.Equal[>]} && ${Me.PctAggro}>${AggroPCT}) && (${Cast.Ready[${AggroSpell}]} || ${Me.AbilityReady[${AggroSpell}]} || (${Me.CombatAbilityReady[${AggroSpell}]} && !${Me.ActiveDisc.ID}))) {
             /echo Trying to control Aggro: ${Me.PctAggro} ${AggroGLT} ${AggroPCT} ${AggroSpell} 
             /if (${Select[${AggroTarget},null,Mob]} || ${AggroTarget.Equal[INC]} && ${Spawn[${MyTargetID}].Distance}>${MeleeDistance}) /varset AggroTID ${MyTargetID}
@@ -2700,7 +2700,7 @@ Sub AggroCheck
             /if (!${SpellRange}) /varset SpellRange 100
             /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs ${i} 1st: ${1stPart} 2nd: ${2ndPart} FullText: ${Buffs[${i}]} Type: ${Spell[${1stPart}].TargetType} ReadBuffsTimer: ${ReadBuffsTimer} IniNextTimer: ${IniNextTimer} \agLine#: ${Macro.CurLine}
             | Added Conditions Check
-            /if (${ConditionsOn} && ${BuffsCOn} && !${BuffsCond[${i}]}) /goto :SkipCheckIni
+            /if (${ConditionsOn} && ${BuffsCOn} && ${If[${BuffsCond[${i}]},0,1]}) /goto :SkipCheckIni
             | Check for Mana/End AA Regen on others
             /if (${Group} && ${Select[${2ndPart},Endgroup,Managroup]}>0) {
                 /if (${2ndPart.Equal[Endgroup]}) /call RegenOther "${1stPart}" Endurance ${3rdPart} 0    
@@ -4054,7 +4054,7 @@ Sub CheckPetBuffs
             /if (${Spell[SHealSpell].TargetType.Find[Group v]})  /varset SHealRange ${Spell[${1stPart}].AERange}
             /if (!${SHealRange}) /varset SHealRange 100
             | New Conditional Check to Skip spell
-            /if (${ConditionsOn} && ${HealsCOn} && !${SHCond[${i}]}) /goto :SNextHeal
+            /if (${ConditionsOn} && ${HealsCOn} && ${If[${SHCond[${i}]},0,1]}) /goto :SNextHeal
             | Skip Heal if pet 
             /if (${Spawn[${SHealThem}].Type.NotEqual[Pet]} && ${SHealTag.Equal[pet]}) /goto :SNextHeal
             /if (${SHealThem}!=${MainAssistID} && (${HealGroupPetsOn} && ${SHealTag.Equal[pet]} && ${Spawn[${SHealThem}].Type.NotEqual[pet]}) || (!${HealGroupPetsOn} && ${SHealTag.Equal[pet]})) /goto :SNextHeal
@@ -4188,7 +4188,7 @@ Sub DoGrouopHealStuff(int GroupHealth)
         /varset HealPct     ${GroupHeal[${j}].Arg[2,|]}
         /if (${DebugHeal}) /echo \amDEBUGHEALS DoGroupHealStuff ${HealSpell} ${HealPct} \agLine#: ${Macro.CurLine}
         /if (${DebugHeal}) /echo \amDEBUGHEALS DoGroupHealStuff Group Heal Spell/Item:${Spell[${HealSpell}].TargetType.Find[group v]}/${Spell[${FindItem[=${HealSpell}].Spell}].TargetType.Find[group v]} Spell:${HealSpell} GpAvg:${GroupHealth} HealAt:${HealPct} Timer:${SpellGH${j}}==0 \agLine#: ${Macro.CurLine}
-        /if (!${ConditionsOn} || !${HealsCOn} || ${GHCond[${i}]}) {
+        /if (!${ConditionsOn} || !${HealsCOn} || ${If[${GHCond[${i}]},1,0]}) {
             /if (${GroupHealth}<=${HealPct} && ${SpellGH${j}}==0 && ${Group}) {
                 /call CastWhat "${HealSpell}" ${Me.ID} GroupHeal
                 /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
@@ -4890,7 +4890,7 @@ Sub MezMobsAE(int AEMezID)
                /goto :SkipCast
            }
            | Conditional Check Added.
-           /if (${ConditionsOn} && ${DPSCOn} && !${DPSCond[${i}]}) /goto :SkipCast
+           /if (${ConditionsOn} && ${DPSCOn} && ${If[${DPSCond[${i}]},0,1]}) /goto :SkipCast
            | Everything is ready, lets debuff this mob
            /call CastWhat "${DebuffText}" ${DebuffTargetID} DebuffCast
            /if (${DebugCombat}) /echo \atDEBUGCOMBAT DebuffCast: Return From CastWhat: ${Macro.Return} \agLine#: ${Macro.CurLine}
@@ -5173,7 +5173,7 @@ Sub Event_MezBroke(meztext,mezmob,mezbreaker)
                 }
             }
            | /ini "${IniFileName}" "${sectionName}" "${varName}" "${varValue}"
-           /echo >> Setting: (${Command}) to (${If[${Select[${Command2},on,1]}>0,On,Off]})
+           /echo >> Setting: (${Command}) to (${If[${Select[${OnOff},on,1]}>0,On,Off]})
         } else /if (${Command.Equal[conditions]}) {
             /if (${Command2.Equal[all]}) {
                 /if (${Select[${Command3},1,on]}) {
@@ -6845,7 +6845,7 @@ Sub Event_MezBroke(meztext,mezmob,mezbreaker)
             /declare GoMCast string local
             /declare GoMTarget string  local
             /for i 1 to ${GoMSpell.Size}
-                /if (!${ConditionsOn} || !${GoMCOn} || ${GoMCond[${i}]}) {
+                /if (!${ConditionsOn} || !${GoMCOn} || ${If[${GoMCond[${i}]},1,0]}) {
                     /varset GoMCast ${GoMSpell[${i}].Arg[1,|]}
                     /varset GoMTarget ${GoMSpell[${i}].Arg[2,|]}
                     /if (${GoMCast.Equal[null]} || ${GoMCast.Find[spell]} || ${GoMSpellTimer${i}}) /goto :NextGOM
@@ -6992,7 +6992,7 @@ Sub Event_MezBroke(meztext,mezmob,mezbreaker)
                 /if (${BurnTarget.Equal[Pet]}) /varset BurnTargetID ${Me.Pet.ID}
                 | /delay 10
                 | Conditional Added to skip entry
-                /if (${ConditionsOn} && ${BurnCOn} && !${BurnCond[${i}]}) /goto :SkipBurnEntry
+                /if (${ConditionsOn} && ${BurnCOn} && ${If[${BurnCond[${i}]},0,1]}) /goto :SkipBurnEntry
                 /if (${Burn[${i}].Arg[3,|].Length} && ${Burn[${i}].Arg[4,|].Length} && ${Burn[${i}].Arg[3,|].Equal[if]}) {
                     /varset BurnIfSpell ${Burn[${i}].Arg[4,|]}
                     /if (${Me.Buff[${BurnIfSpell}].ID} || ${Me.Song[${BurnIfSpell}].ID} || ${Me.ActiveDisc.Name.Find[${BurnIfSpell}]}) {
@@ -7070,7 +7070,7 @@ Sub Event_MezBroke(meztext,mezmob,mezbreaker)
         /declare WArrayCount int    local 1
         /declare TempSwapHold       string  local
         /declare Swapped            int     local 1
-        /if (${Select[${CArrayName},NULL,GoMCond,HealsCond,DPSCond,BurnCond,GHCond,SHCond,MashCond,WeaveCond]}==0) {
+        /if (${Select[${CArrayName},NULL,GoMCond,HealsCond,DPSCond,BurnCond,GHCond,SHCond,MashCond,WeaveCond,AggroCond]}==0) {
             /echo ${CArrayName} is an invalid Conditional. Supported Conditionals for DPS, GOM, Burn, Heals, Mash, and Weave. 
             /beep
         }
@@ -8273,7 +8273,7 @@ Sub FindGroupHeals
         /if (${rkTemp.Find[ Rk.]}) {
             /varset rkTemp ${rkTemp.Left[${Math.Calc[${rkTemp.Find[ Rk.]}-1]}]} 
         }
-        /if (${Int[${Me.Book[${rkTemp}]}]}==0 && ${Int[${Me.Book[${Spell[${rkTemp}].RankName}]}]}==0 && ${Int[${Me.AltAbility[${rkTemp}]}]}==0 && ${Int[${Me.AltAbility[${rkTemp}].Spell.ID}]}==0) /return ${Rk_Check_What}
+        /if (${Int[${Me.Book[${rkTemp}]}]}==0 && ${Int[${Me.Book[${Spell[${rkTemp}].RankName}]}]}==0 && ${Int[${Me.AltAbility[${rkTemp}]}]}==0 && ${Int[${Me.AltAbility[${rkTemp}].Spell.ID}]}==0 && ${Int[${Me.CombatAbility[${Spell[${rkTemp}].RankName}]}]}==0) /return ${Rk_Check_What}
         /if (${DebugRk}) /echo \atDEBUGSpell_Rk_Checks: 1 rkCheck: "${rkCheck}" rkTemp: "${rkTemp}" rkdCheck: "${rkdCheck}" rkdTemp: "${rkdTemp}"  \agLine#: ${Macro.CurLine}
         | If this is NOT an Alt Ability then it must be a spell.
         /if (${Int[${Me.AltAbility[${rkTemp}].ID}]}!=0 || ${Int[${Me.AltAbility[${rkTemp}].Spell.ID}]}!=0) {
