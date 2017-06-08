@@ -1,5 +1,5 @@
 |Auto-Subs Shared routines across Auto series macros by Noobhaxor
-| Version 4.0 May Update
+| Version 4.0 v1 June Update
 | ----------------------------------------------------------------------------
 | SUB: Compatibility with KissAssist Aliases Old and New
 | ----------------------------------------------------------------------------
@@ -619,7 +619,7 @@ Sub FindTarget
 	/if (!${Spawn[npc id ${autotargetid}].ID}&&${autotargetid}!=0) /varset autotargetid 0
 |--Query XTarget to find hp percents
 	/for xt 1 to ${Me.XTarget}
-		/if (${Me.XTarget[${xt}].PctHPs}<${xtlow}&&${Spawn[id ${Me.XTarget[${xt}].ID} npc].ID}) {
+		/if (${Me.XTarget[${xt}].PctHPs}<=${xtlow}&&${Spawn[id ${Me.XTarget[${xt}].ID} npc].ID}) {
 			/varset xtlow ${Me.XTarget[${xt}].PctHPs}
 			/varset xtid ${Me.XTarget[${xt}].ID}
 		}
