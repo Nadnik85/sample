@@ -1,6 +1,6 @@
 |---------------------------------------------------------------------------------
 |
-|  KeepToonBuffed.mac by TreeHuginDruid -- Last Edited 5/24/2017
+|  KeepToonBuffed.mac by TreeHuginDruid -- Last Edited 6/08/2017
 |
 |   This macro is designed to allow an out of group PowerLeveling toon
 |   to be able to target members of a low level group, heal, 
@@ -23,11 +23,12 @@ Sub Main
 | ---- Turn off melee functions and turn on "Target Group Buff" setting ----------
 /if (${Bool[${Plugin[MQ2Melee]}]}) /squelch /melee off
 /tgb on
+/squelch /target clear
 |---------------------------------------------------------------------------------
 
 |==================== DO NOT ALTER THESE VALUES ====================
 /declare MacroName		string	outer	KeepToonBuffed
-/declare KeepToonBuffVer	string	outer	1.9.0
+/declare KeepToonBuffVer	string	outer	1.9.3
 /declare IniFileName		string	outer	${MacroName}_${Me.CleanName}.ini
 /call CreateIni
 
@@ -90,10 +91,11 @@ Sub Main
 |---------------------------------------------------------------------------------
 
 :loop 
+
     /if (${HealsOn})  /call CheckMyHealth
     /if (${HealsOn})  /call CheckTargetHealth
     /if (${BuffsOn})  /call MaintainTargetBuffs
-    /if (${Me.PctMana}<=${MinManaPct} && !${Me.CombatState.Equal[COMBAT]}) /call CheckMana
+    /if ((${Me.PctMana}<=${MinManaPct}) && !${Me.CombatState.Equal[COMBAT]}) /call CheckMana
     /if (${FollowGroup}) /call FollowAround
     |Internal second delay to allow for manual moving, prevents constant sit loop if only 1 toon being buffed.
     /delay 10
@@ -202,7 +204,7 @@ Sub CheckMyHealth
     /if (${Target.ID}!=${Me.ID}) {
          /if (${Debug}) /echo Attempting to target (${Me.CleanName}) for heals!
          /squelch /target id ${Me.ID} pc targetable
-         /delay 10   
+         /delay 15 !${Target.ID}   
          /casting "${HealSpell}" gem8
          /call CheckCasting
          /call CheckGlobalCooldown
@@ -223,8 +225,9 @@ Sub CheckTargetHealth
 
     /if (${Target.ID}!=${Spawn[=${MyBuffTargetName[${j}]}].ID} && ${MyBuffTargetName[${j}].NotEqual[null]}) {
          /if (${Debug}) /echo Attempting to target (${MyBuffTargetName[${j}]}) for health check.
-         /squelch /target id ${Spawn[=${MyBuffTargetName[${j}]}].ID} ${Spawn[${MyBuffTargetName[${j}]}].Type} targetable
-         /delay 10
+         /squelch /target id ${Spawn[=${MyBuffTargetName[${j}]}].ID} ${Spawn[=${MyBuffTargetName[${j}]}].Type} targetable
+         /if (${AdminDebug}) /echo /squelch /target id ${Spawn[=${MyBuffTargetName[${j}]}].ID} ${Spawn[=${MyBuffTargetName[${j}]}].Type} targetable
+         /delay 15 !${Target.ID}
          /if (${Target.ID}!=${Spawn[=${MyBuffTargetName[${j}]}].ID} || !${Select[${Target.Type},Mercenary,PC,Pet]}) /next j       
     }
 
@@ -273,12 +276,13 @@ Sub MaintainTargetBuffs
 
     /if (${Target.ID}!=${Spawn[=${MyBuffTargetName[${j}]}].ID} && ${MyBuffTargetName[${j}].NotEqual[null]}) {
          /if (${Debug}) /echo Attempting to target (${MyBuffTargetName[${j}]}) for buffs.
-         /squelch /target id ${Spawn[=${MyBuffTargetName[${j}]}].ID} ${Spawn[${MyBuffTargetName[${j}]}].Type} targetable
-         /delay 10
-         /if (${Target.ID}!=${Spawn[=${MyBuffTargetName[${j}]}].ID} || !${Select[${Target.Type},Mercenary,PC,Pet]}) /next j
-         /if (${AssistOn}) /call AssistOnTarget         
+         /squelch /target id ${Spawn[=${MyBuffTargetName[${j}]}].ID} ${Spawn[=${MyBuffTargetName[${j}]}].Type} targetable
+         /if (${AdminDebug}) /echo /squelch /target id ${Spawn[=${MyBuffTargetName[${j}]}].ID} ${Spawn[=${MyBuffTargetName[${j}]}].Type} targetable
+         /delay 15 !${Target.ID}
+	 /call PupulateBuffs
+         /if (${Target.ID}!=${Spawn[=${MyBuffTargetName[${j}]}].ID} || !${Select[${Target.Type},Mercenary,PC,Pet]}) /next j         
     }
- 
+	
     /for i 1 to ${NumberOfBuffs} 
 	|--------------------------------------------------------------------------------
 	|If spell name differs from buff name, use argument seperator to extract and set values. 
@@ -291,7 +295,7 @@ Sub MaintainTargetBuffs
 	}
 	|--------------------------------------------------------------------------------
 
-        /if ((${Target.BuffsPopulated}==TRUE) && !${Target.Buff[${BuffIDName}].ID} && ${Select[${Spawn[${MyBuffTargetName[${j}]}].Type},Mercenary,PC,Pet]} && (${Me.CurrentMana}>${Spell[${SpellToCast}].Mana}) && ${Spell[${SpellToCast}].Stacks} && (${Target.Distance}<=${Spell[${SpellToCast}].Range} || ${Target.Distance}<=${Spell[${SpellToCast}].AERange}) && !${Target.Buff[Resurrection Sickness].ID} && !${Target.Buff[Revival Sickness].ID}) {
+        /if (!${Target.Buff[${BuffIDName}].ID} && ${Select[${Spawn[${MyBuffTargetName[${j}]}].Type},Mercenary,PC,Pet]} && (${Me.CurrentMana}>${Spell[${SpellToCast}].Mana}) && ${Spell[${SpellToCast}].Stacks} && (${Target.Distance}<=${Spell[${SpellToCast}].Range} || ${Target.Distance}<=${Spell[${SpellToCast}].AERange}) && !${Target.Buff[Resurrection Sickness].ID} && !${Target.Buff[Revival Sickness].ID}) {
             |--------------------------------------------------------------------------------
             |  ADMIN DEBUG FOR BUFF CODE
             |--------------------------------------------------------------------------------        
@@ -316,12 +320,30 @@ Sub MaintainTargetBuffs
 	    /doevents
         }
     /next i
-    
+    /if (${AssistOn}) /call AssistOnTarget
+
 /next j
 /squelch /target clear
  
 /return
 |---------------------------------------------------------------------------------
+
+|-------------------------------------------------------------------------------- 
+| SUB: Pupulate Buffs
+|-------------------------------------------------------------------------------- 
+Sub PupulateBuffs
+
+:GetTargetBuffs
+/if (!${Target.BuffsPopulated}==TRUE) {
+    /if (${AdminDebug}) /echo ${Target.CleanName} {Target.BuffsPopulated}=${Target.BuffsPopulated}
+    /delay 5
+} 
+/if (!${Target.BuffsPopulated}==TRUE) /goto :GetTargetBuffs
+
+/if (${AdminDebug}) /echo ${Target.CleanName} {Target.BuffsPopulated}=${Target.BuffsPopulated}
+
+/return
+|-------------------------------------------------------------------------------- 
 
 |-------------------------------------------------------------------------------- 
 | SUB: Assist On Target
@@ -345,6 +367,8 @@ Sub AssistOnTarget
 	}
     }
 }
+
+/squelch /target clear
 
 /return
 |---------------------------------------------------------------------------------
