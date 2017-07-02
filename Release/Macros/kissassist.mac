@@ -4813,7 +4813,7 @@ Sub MezMobsAE(int AEMezID)
                        /varset f 0
                     } else {
                        /if (${FWait} && !${echoTimer}) {
-                          /varset f1 ${Select[TRUE,${Bool[${Me.Book[${DebuffText}]}]},${Bool[${Me.AltAbility[${DebuffText}]}]},${Bool[${Me.FindItem[=${DebuffText}].ID}]}]}
+                          /varset f1 ${Select[TRUE,${Bool[${Me.Book[${DebuffText}]}]},${Bool[${Me.AltAbility[${DebuffText}]}]},${Bool[${FindItem[=${DebuffText}].ID}]}]}
                           | This is a spell.
                           /if (${f1}==1) {
                              /if (${Me.SpellInCooldown}) {
