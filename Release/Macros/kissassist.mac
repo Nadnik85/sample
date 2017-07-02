@@ -1,4 +1,4 @@
-| - kissassist.mac v10.0.4 by Maskoi 06/29/2017.
+| - kissassist.mac v10.0.4 by Maskoi 07/01/2017.
 | - Contributions by anonymoushero, crystane, eqmule, thenomadman, william12.
 | - ChainPull, Debuffs and combat rewrites by ctaylor22.
 | - PetTank, PullerPetTank & HunterPetTank roles developed by TreeHuginDruid
@@ -1605,7 +1605,7 @@ Sub Main
             /if (${MercOn} && !${MercAssisting} && ${MyTargetID} && ${Mercenary.State.Equal[Active]}) /call MercsDoWhat
             /if (${AEOn}) /call AECheck
             /if (${AggroOn}) /call AggroCheck
-            /if (${Spawn[${MyTargetID}].PctHPs}<=${AssistAt} && ${PetOn} && ${PetCombatOn}) /call CombatPet
+            /if (${Spawn[${MyTargetID}].PctHPs}<=${PetAssistAt} && ${PetOn} && ${PetCombatOn}) /call CombatPet
             /if (${DebugCombat}) /echo \atDEBUGCOMBAT CombatCast ${DPS[${i}]} ${DPSPart1} ${DPSPart2} ${DPSPart3} ${DPSPart4} ${DPSPart5} \agLine#: ${Macro.CurLine}
             | - Check for 2nd value in dps for mob health
             /if (${DPSPart2.Length} && ${Int[${DPSPart2}]}>0) {
