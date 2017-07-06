@@ -36,8 +36,13 @@ To add or update a macro, it's as simple as this:
 
 
 If you're working with others, or with several files, it's best to use software to avoid conflicting edits.
-If you've never used git before, GitHub has a nice little tutorial:
+
+We have a guide on using Git with Visual Studio here:
+https://www.redguides.com/forums/thr...lute-beginners
+
+If you want more detail, GitHub has a nice little tutorial:
 https://help.github.com/articles/set-up-git/
+
 You can even use their "GitHub Desktop" client with our Gitlab repository, as Redguides member erfg12 shows here:
 https://newagesoldier.com/how-to-use-github-windows-client-with-gitlab-reposaccounts/
 
@@ -47,7 +52,7 @@ Most developers in the MQ2 scene use Visual Studio Community Edition to connect 
 
 If you'd like to keep your work private, a special plugin for example, or if you need access to code not shown here, send a PM to Redbot. 
 
-If there are plugins you don't see here that you'd like to work on, please PM Redbot.
+If there are plugins you don't see here that you'd like to work on, please PM Redbot. test
 
 
 
