@@ -1,0 +1,83 @@
+From the druid you were told to keep your old oak tree knotholes away from....
+TreeHugingDruid presents for your testing pleasures.... EQ_Backup.exe and EQ_Restore.exe
+
+
+
+==============================================================================================================================================================================================================================================
+EQ_Backup.exe
+
+Q: What does it do?
+A: It backs up ALL your important configuration files within the EverQuest install directory.
+I often make global changes on all my toons, its a handy utility to have to back everything up before you go messing with stuff.
+Also easier now to archive everything into one directory so you can copy that to a thumb drive and quickly deploy on another computer with all your settings in tact.
+Only thing of importance that I am NOT backing up is your "EverQuest\uifiles" structure.
+
+
+EQ_Restore.exe
+
+Q: What does it do?
+A: It allows you to opick and choose what configuration backups /audio trigger backups to restore from your EQ_Backup archives.
+
+==============================================================================================================================================================================================================================================
+
+Q: How do I install them?
+A: Copy the 2 files from into your EverQuest directory.
+Go into properties of EQ_Backup.exe and EQ_Restore.exe and set each to run as admin.
+Run the program.
+==============================================================================================================================================================================================================================================
+
+
+
+==============================================================================================================================================================================================================================================
+Notes on EQ_Backup.exe
+==============================================================================================================================================================================================================================================
+RELEASE DATE: 04-05-2014
+
+UPDATE: 05-28-2014 v1.0.2.2
+Utility has now been updated and will automatically compress and backup your Config_Backups directory into a 7-zip file called Config_Backups.7z
+Thanks to dannuic for the info on 7-zip.
+
+UPDATE: 07-07-2014 v1.0.2.3
+Config_Backups archive file is now fixed to reflect date and time of archive in the naming convention of the file.
+Example: Config_Backups_2014-07-07_121632.7a
+
+UPDATE: 09-05-2014 v1.0.2.4
+Audio triggers are now backed up and archived.
+1) If it doesn't already exist, a new directory is created under the Config_Backups directory called "userdata_AudioTriggers".
+2) %EverQuestInstallDirectory%\userdata\AT_*.ini (Your specific user's AT config files) is copied to this new directory.
+3) The entire %EverQuestInstallDirectory%\AudioTriggers directory (contains the sound files and audio trigger groups) is archived into a 7-zip file then moved to "userdata_AudioTriggers" directory.
+
+UPDATE: 10-30-2014 v1.0.2.5
+Corrected issue where archived audio triggers .7z file was not being moved back into your EverQuest directory after final Config_Backup archive .7z file is made. This was causing each subsequent Backup to contain the previous audio trigger .7z files. The final backup file would grow and become bloated with older audio trigger backups.
+Now the audio trigger .7z file is moved to the EverQuest directory along side the final config backup .7z file for archival purposes. A copy of the audio triggers .7z file is correctly backed up in final config backup.
+
+UPDATE: 07-27-2015 v1.0.2.7
+Updated to include backup procedures for Ragefire and Lockjaw progression servers.
+
+UPDATE: 04-09-2016 v1.0.2.8
+Updated to include backup procedures for Phinigel server.
+
+UPDATE: 11-30-2016 v1.0.3.0
+Updated to include backup procedures for Quarm event server.
+
+UPDATE: 05-28-2017 v1.0.3.1
+Updated to include backup procedures for Brekt and Agnarr servers.
+
+UPDATE: 06-16-2017 v2.0.0.0
+Full GUI 32 bit version released.
+
+==============================================================================================================================================================================================================================================
+
+
+
+==============================================================================================================================================================================================================================================
+Notes on EQ_Restore.exe
+==============================================================================================================================================================================================================================================
+RELEASE DATE: 11-03-2016
+
+UPDATE: 07-10-2017 v2.0.0.0
+Full GUI 32 bit version released.
+
+UPDATE: 07-12-2017 v2.0.0.0
+Corrected an error in the code for the Audio Trigger Archive restore... when selecting the archive name.
+==============================================================================================================================================================================================================================================
