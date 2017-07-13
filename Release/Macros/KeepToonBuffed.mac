@@ -28,7 +28,7 @@ Sub Main
 
 |==================== DO NOT ALTER THESE VALUES ====================
 /declare MacroName		string	outer	KeepToonBuffed
-/declare KeepToonBuffVer	string	outer	1.9.5
+/declare KeepToonBuffVer	string	outer	1.9.7
 /declare IniFileName		string	outer	${MacroName}_${Me.CleanName}.ini
 /call CreateIni
 
@@ -351,8 +351,7 @@ Sub PupulateBuffs
 |-------------------------------------------------------------------------------- 
 Sub AssistOnTarget
 
-/if (${Target.ID}==${Spawn[=${MyBuffTargetName[1]}].ID}) {
-    /if (${AdminDebug}) /echo Assisting: casting  (${AssistSpell}) on (${Me.TargetOfTarget.CleanName})	
+/if (${Me.TargetOfTarget.CleanName.Equal[NULL]} ||  ${Me.TargetOfTarget.Type.Equal[CORPSE]}) /return	
     /if (${Me.TargetOfTarget.Type.Equal[NPC]} || ${Me.TargetOfTarget.Type.Equal[PET]}) {
         /squelch /target id ${Me.TargetOfTarget.ID} ${Me.TargetOfTarget.Type} targetable
         /delay 10
@@ -362,13 +361,12 @@ Sub AssistOnTarget
         /if ((${Target.BuffsPopulated}==TRUE) && ((${Target.Type.Equal[NPC]} || ${Target.Type.Equal[PET]}) && (${Target.PctHPs}>${AssistPct})) || ${Target.Buff[${AssistSpell}].ID}) /return				
 	    /if ((${Target.BuffsPopulated}==TRUE) && (${Target.Type.Equal[NPC]} || ${Target.Type.Equal[PET]}) && (${Target.PctHPs}<${AssistPct}) && ${Target.Distance}<=${Spell[${AssistSpell}].Range}) {
             /if (${Debug}) /echo Attempting to assist, casting (${AssistSpell}) on (${Target.CleanName}).
-            /casting "${AssistSpell}" gem8
+            /echo Assisting: casting  (${AssistSpell}) on (${Me.TargetOfTarget.CleanName})
+			/casting "${AssistSpell}" gem8
             /call CheckCasting
             /call CheckGlobalCooldown
         }
     }
-}
-
 /squelch /target clear
 
 /return
