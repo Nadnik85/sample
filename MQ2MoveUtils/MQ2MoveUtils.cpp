@@ -6001,7 +6001,12 @@ void MainProcess(unsigned char ucCmdUsed)
                 double dLookAngle = (double)atan2(psTarget->Z + psTarget->AvatarHeight * StateHeightMultiplier(psTarget->StandState) -
                     pChSpawn->Z - pChSpawn->AvatarHeight * StateHeightMultiplier(pChSpawn->StandState), fabs(GetDistance3D(pChSpawn->Y, pChSpawn->X, pChSpawn->Z, psTarget->Y, psTarget->X, psTarget->Z))) * HEADING_HALF / (double)PI;
                 MOVE->NewFace(dLookAngle);
-            }
+			}
+			else if (MOVETO->Z != 0.0f && MOVETO->UW)
+			{
+				double dLookAngle = (double)atan2(MOVETO->Z - pChSpawn->Z, fabs(GetDistance3D(pChSpawn->Y, pChSpawn->X, pChSpawn->Z, MOVETO->Y, MOVETO->X, MOVETO->Z))) * HEADING_HALF / (double)PI;
+				MOVE->NewFace(dLookAngle);
+			}
             if (CAMP->Returning)
             {
                 fNewHeading = MOVE->SaneHead(atan2(CAMP->X - pChSpawn->X, CAMP->Y - pChSpawn->Y) * HEADING_HALF / (float)PI);
