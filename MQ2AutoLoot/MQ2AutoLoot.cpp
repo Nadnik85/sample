@@ -47,7 +47,6 @@ bool					StartDistributeLootTimer = true;  //
 bool					StartLootStuff = false; // When set true will call DoLootStuff
 bool					StartMoveToTarget = false; // Will move to target (banker/merchant) when set to true
 bool					StartToOpenWindow = false; // Will move to target (banker/merchant) when set to true
-bool					StarBarterTimer = false; // Will start the barter timer when set to true
 bool					LootStuffWindowOpen = false; // Will be set true the first time the merchant/barter/banker window is open and will stop you from reopening the window a second time
 LONG					DistributeI; //Index for looping over people in the group to try and distribute an item 
 LONG					DistributeK;  // Index for the item to be distributed
@@ -81,11 +80,12 @@ DWORD FindBarterItemCount(CHAR* pszItemName);
 void SetAutoLootVariables();
 void AutoLootCommand(PSPAWNINFO pCHAR, PCHAR zLine);
 void SetItemCommand(PSPAWNINFO pCHAR, PCHAR zLine);
-void DestroyStuff(void); 
-void DoLootStuff(CHAR* szAction);
+void DestroyStuff(void);
 void DoBarterStuff(CHAR* szAction);
+void DoLootStuff(CHAR* szAction);
 void CreateLootEntry(CHAR* szAction, CHAR* szEntry, PITEMINFO pItem);
 void CreateLootINI(void);
+DWORD __stdcall BuyItem(PVOID pData);
 
 #pragma region Inlines
 // Returns TRUE if character is in game and has valid character data structures
@@ -236,28 +236,24 @@ PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color)
 				if (strstr(Line, MerchantText))
 				{
 					LootStuffTimer = pluginclock::now();
-					LootStuffCancelTimer = pluginclock::now() + std::chrono::minutes(20); // Will stop trying to move to open the merchant/banker window after 20 minutes
 					return(0);
 				}
 				sprintf_s(MerchantText, "%s says, 'Welcome to my shop, %s. You would probably find a ", MerchantName, GetCharInfo()->Name); // Confirmed 04/15/2017
 				if (strstr(Line, MerchantText))
 				{
 					LootStuffTimer = pluginclock::now();
-					LootStuffCancelTimer = pluginclock::now() + std::chrono::minutes(20); // Will stop trying to move to open the merchant/banker window after 20 minutes
 					return(0);
 				}
 				sprintf_s(MerchantText, "%s says, 'Hello there, %s. How about a nice ", MerchantName, GetCharInfo()->Name); // Confirmed 04/15/2017
 				if (strstr(Line, MerchantText))
 				{
 					LootStuffTimer = pluginclock::now();
-					LootStuffCancelTimer = pluginclock::now() + std::chrono::minutes(20); // Will stop trying to move to open the merchant/banker window after 20 minutes
 					return(0);
 				}
 				sprintf_s(MerchantText, "%s says, 'Greetings, %s. You look like you could use a ", MerchantName, GetCharInfo()->Name); // Confirmed 04/15/2017
 				if (strstr(Line, MerchantText))
 				{
 					LootStuffTimer = pluginclock::now();
-					LootStuffCancelTimer = pluginclock::now() + std::chrono::minutes(20); // Will stop trying to move to open the merchant/banker window after 20 minutes
 					return(0);
 				}
 				sprintf_s(MerchantText, "%s tells you, 'I'll give you ", MerchantName);  // Confirmed 04/15/2017
@@ -289,7 +285,6 @@ PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color)
 	if (strstr(Line, BankerText))
 	{
 		LootStuffTimer = pluginclock::now() + std::chrono::seconds(2); // Will start trying to deposit items are a 2 second delay
-		LootStuffCancelTimer = pluginclock::now() + std::chrono::minutes(20); // Will stop trying to deposit items after 20 minutes
 		return(0);
 	}
 
@@ -321,7 +316,6 @@ PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color)
 				sprintf_s(BarterText, ".");  // Confirmed 04/27/2017
 				if (PCHAR pItemEnd = strstr(Line, BarterText))
 				{
-					//WriteChatf(PLUGIN_MSG ":: OMG i sold shit");
 					LootStuffTimer = pluginclock::now() + std::chrono::milliseconds(100);
 					return(0);
 				}
@@ -739,8 +733,10 @@ PLUGIN_API VOID OnPulse(VOID)
 									}
 									else
 									{
-										//TODO add safety checks to make sure it is a number etc
-										QuestNumber = atoi(pParsedValue);
+										if (IsNumber(pParsedValue))
+										{
+											QuestNumber = atoi(pParsedValue);
+										}
 									}
 									if ((ItemOnCursor || pShareItem->LootDetails->Locked || QuestNumber <= FindItemCount(pShareItem->Name) || !DoIHaveSpace(pShareItem->Name, pShareItem->MaxStack, pShareItem->LootDetails->StackCount) || CheckIfItemIsLoreByID(pShareItem->ItemID)) && !pChar->pGroupInfo->pMember[0]->MasterLooter)
 									{
@@ -796,8 +792,10 @@ PLUGIN_API VOID OnPulse(VOID)
 											}
 											else
 											{
-												//TODO add safety checks to make sure it is a number etc
-												GearNumber = atoi(pParsedValue);
+												if (IsNumber(pParsedValue))
+												{
+													GearNumber = atoi(pParsedValue);
+												}
 												break;
 											}
 										}
@@ -939,7 +937,7 @@ PLUGIN_API VOID OnPulse(VOID)
 											DistributeI++;
 											if (DistributeI == 6)
 											{
-												// Had 6 in the group and no one wanted the item
+												// Finished attempting to pass out the item and no one in the group wanted the item
 												if (SpamLootInfo) { WriteChatf(PLUGIN_MSG ":: SList: No one wanted \ag%s\ax setting to leave", pShareItem->Name); }
 												LootTimer = pluginclock::now() + std::chrono::milliseconds(200);
 												LONG LootInd = k + 1;
@@ -970,17 +968,6 @@ PLUGIN_API VOID OnPulse(VOID)
 														return;
 													}
 												}
-											}
-											else
-											{
-												// Had less then 6 in the group and no one wanted the item
-												if (SpamLootInfo) { WriteChatf(PLUGIN_MSG ":: SList: No one wanted \ag%s\ax setting to leave", pShareItem->Name); }
-												LootTimer = pluginclock::now() + std::chrono::milliseconds(200);
-												LONG LootInd = k + 1;
-												sprintf_s(Command, "/advloot shared %d leave", LootInd);
-												DoCommand(GetCharInfo()->pSpawn, Command);
-												StartDistributeLootTimer = true;
-												return;
 											}
 										}
 									}
@@ -1873,6 +1860,156 @@ DWORD FindBarterItemCount(CHAR* pszItemName)
 	return Count;
 }
 
+void DestroyStuff()
+{
+	PCHARINFO pChar = GetCharInfo();
+	PCHARINFO2 pChar2 = GetCharInfo2();
+	if (pluginclock::now() > DestroyStuffCancelTimer)
+	{
+		if (SpamLootInfo) { WriteChatf(PLUGIN_MSG ":: Destroying timer ran out, moving on!"); }
+		DestroyID = 0;
+		return;
+	}
+	// Looping through the items in my inventory and seening if I want to sell/deposit them based on which window was open
+	if (pChar2->pInventoryArray && pChar2->pInventoryArray->Inventory.Cursor)
+	{
+		if (PCONTENTS pItem = pChar2->pInventoryArray->Inventory.Cursor)
+		{
+			if (pItem->ID == DestroyID)
+			{
+				if (SpamLootInfo) { WriteChatf(PLUGIN_MSG ":: Destroying \ar%s\ax!", pItem->Item2->Name); }
+				DoCommand(GetCharInfo()->pSpawn, "/destroy");
+				DestroyID = 0;
+				return;
+			}
+		}
+	}
+	if (pChar2 && pChar2->pInventoryArray && pChar2->pInventoryArray->InventoryArray) //check my inventory slots
+	{
+		for (unsigned long nSlot = BAG_SLOT_START; nSlot < NUM_INV_SLOTS; nSlot++)
+		{
+			if (PCONTENTS pItem = pChar2->pInventoryArray->InventoryArray[nSlot])
+			{
+				if (pItem->ID == DestroyID)
+				{
+					sprintf_s(Command, "/nomodkey /itemnotify \"%s\" leftmouseup", pItem->Item2->Name);
+					DoCommand(GetCharInfo()->pSpawn, Command);
+					DestroyStuffTimer = pluginclock::now() + std::chrono::milliseconds(100);
+					return;
+				}
+			}
+		}
+	}
+	if (pChar2 && pChar2->pInventoryArray) //Checking my bags
+	{
+		for (unsigned long nPack = 0; nPack < 10; nPack++)
+		{
+			if (PCONTENTS pPack = pChar2->pInventoryArray->Inventory.Pack[nPack])
+			{
+				if (PITEMINFO pItemPack = GetItemFromContents(pPack))
+				{
+					if (pItemPack->Type == ITEMTYPE_PACK && pPack->Contents.ContainedItems.pItems)
+					{
+						for (unsigned long nItem = 0; nItem < pItemPack->Slots; nItem++)
+						{
+							if (PCONTENTS pItem = pPack->Contents.ContainedItems.pItems->Item[nItem])
+							{
+								if (pItem->ID == DestroyID)
+								{
+									sprintf_s(Command, "/nomodkey /itemnotify \"%s\" leftmouseup", pItem->Item2->Name);
+									DoCommand(GetCharInfo()->pSpawn, Command);
+									DestroyStuffTimer = pluginclock::now() + std::chrono::milliseconds(100);
+									return;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+DWORD __stdcall BuyItem(PVOID pData)
+{
+	int  iItemCount;
+	CHAR szTemp1[MAX_STRING];
+	CHAR szItemToBuy[MAX_STRING];
+	CXStr	cxstrItemName;
+	CHAR	szItemName[MAX_STRING] = { 0 };
+	CXStr	cxstrItemCount;
+	CHAR	szItemCount[MAX_STRING] = { 0 };
+	pluginclock::time_point	BuyTimer = pluginclock::now();
+
+	sprintf_s(szTemp1, "%s", (PCHAR)pData);
+	CHAR *pParsedToken = NULL;
+	CHAR *pParsedValue = strtok_s(szTemp1, "|", &pParsedToken);
+	sprintf_s(szItemToBuy, "%s", pParsedValue);
+	pParsedValue = strtok_s(NULL, "|", &pParsedToken);
+	if (IsNumber(pParsedValue))
+	{
+		iItemCount = atoi(pParsedValue);
+		WriteChatf(PLUGIN_MSG ":: You want to buy \ag%d\ax of \ag%s\ax",iItemCount, szItemToBuy);
+		if (WinState((CXWnd*)pMerchantWnd))  // merchant window are open
+		{
+			if (CListWnd *cLWnd = (CListWnd *)FindMQ2Window("MerchantWnd")->GetChildItem("MW_ItemList"))
+			{
+				if (cLWnd->ItemsArray.GetLength() > 0)
+				{
+					for (int nMerchantItems = 0; nMerchantItems < cLWnd->ItemsArray.GetLength(); nMerchantItems++)
+					{
+						if (cLWnd->GetItemText(&cxstrItemName, nMerchantItems, 1))
+						{
+							GetCXStr(cxstrItemName.Ptr, szItemName, MAX_STRING);
+							if (!_stricmp(szItemToBuy, szItemName))
+							{
+								WriteChatf(PLUGIN_MSG ":: I found \ag%s\ax on the merchant!", szItemToBuy);
+								if (cLWnd->GetCurSel() != nMerchantItems)
+								{
+									cLWnd->SetCurSel(nMerchantItems);
+
+								}
+								BuyTimer = pluginclock::now() + std::chrono::seconds(10); // If I haven't targeted the item within 10 seconds i'm going to bail on this shit
+								while (cLWnd->GetCurSel() != nMerchantItems)
+								{
+									Sleep(100); // 0.1 seconds
+									if (pluginclock::now() < BuyTimer)
+									{
+										WriteChatf(PLUGIN_MSG ":: Woah you weren't able to target the item to buy within 10 seconds!");
+										WriteChatf(PLUGIN_MSG ":: Bailing on attempting to buy \ar%s\ax!", szItemToBuy);
+										return 0;
+									}
+								}
+								if (cLWnd->GetItemText(&cxstrItemCount, nMerchantItems, 2))
+								{
+									GetCXStr(cxstrItemCount.Ptr, szItemCount, MAX_STRING);
+									if (!_stricmp(szItemCount, "--"))
+									{
+										WriteChatf(PLUGIN_MSG ":: I found \agInfinite\ax number on the merchant!");
+									}
+									else
+									{
+										WriteChatf(PLUGIN_MSG ":: I found \ag%d\ax number on the merchant!", atoi(szItemCount));
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			WriteChatf(PLUGIN_MSG ":: Please open a merchant window first before attempting to buy: \ag%s\ax", szItemToBuy);
+		}
+	}
+
+
+	Sleep(10000); // 10 seconds
+
+	return 0;
+}
+
 void DoBarterStuff(CHAR* szAction)
 {
 	
@@ -1923,11 +2060,10 @@ void DoBarterStuff(CHAR* szAction)
 	// Looping through the barter window to find if I want to sell stuff
 	if (WinState((CXWnd*)FindMQ2Window("BarterSearchWnd")))
 	{
-		LootStuffWindowOpen = true;
-		if (StarBarterTimer)
+		if (!LootStuffWindowOpen)
 		{
 			LootStuffCancelTimer = pluginclock::now() + std::chrono::minutes(20); // Will stop trying to barter items after 20 minutes
-			StarBarterTimer = false;
+			LootStuffWindowOpen = true;
 		}
 		if (CListWnd *cLWnd = (CListWnd *)FindMQ2Window("BarterSearchWnd")->GetChildItem("BTRSRCH_InventoryList"))
 		{
@@ -1970,8 +2106,10 @@ void DoBarterStuff(CHAR* szAction)
 							}
 							else
 							{
-								//TODO add safety checks to make sure it is a number etc
-								MyBarterMinimum = atoi(pParsedValue);
+								if (IsNumber(pParsedValue))
+								{
+									MyBarterMinimum = atoi(pParsedValue);
+								}
 								if (LootStuffN == 1)
 								{
 									WriteChatf(PLUGIN_MSG ":: For entry %i, the item's name is %s and I will sell for: %d platinum", nBarterItems + 1, szItemName, MyBarterMinimum);
@@ -2050,7 +2188,6 @@ void DoBarterStuff(CHAR* szAction)
 										}
 										else
 										{
-											// Hey I think this means that no one wants to buy the item, TODO verify this shit
 											BarterIndex++;
 											LootStuffN = 1;
 											return;
@@ -2091,7 +2228,6 @@ void DoBarterStuff(CHAR* szAction)
 												}
 												else
 												{
-													// This shouldn't fail, TODO verify this shit
 													BarterIndex++;
 													WriteChatf(PLUGIN_MSG ":: Whoa this shouldn't fail, somehow this person is selling %s but has none to sell", szItemName);
 													LootStuffN = 1;
@@ -2101,7 +2237,6 @@ void DoBarterStuff(CHAR* szAction)
 												WriteChatf(PLUGIN_MSG ":: My count is %d, and the barter count is %d for %s", MyCount, BarterCount, szItemName);
 												if (MyCount == 0)
 												{
-													// This shouldn't fail, TODO verify this shit
 													BarterIndex++;
 													LootStuffN = 1;
 													return;
@@ -2157,7 +2292,7 @@ void DoBarterStuff(CHAR* szAction)
 					}
 					else
 					{
-						// Hey I think this means the item isn't in my loot.ini, TODO verify this shit
+						// Hey I think this means the item isn't in my loot.ini
 						BarterIndex++;
 						WriteChatf(PLUGIN_MSG ":: Barter index:%d and the item name is %s", BarterIndex, szItemName);
 						return;
@@ -2172,76 +2307,6 @@ void DoBarterStuff(CHAR* szAction)
 		DoCommand(GetCharInfo()->pSpawn, "/squelch /windowstate BarterSearchWnd close");
 		StartLootStuff = false;
 		return;
-	}
-}
-
-void DestroyStuff()
-{
-	PCHARINFO pChar = GetCharInfo();
-	PCHARINFO2 pChar2 = GetCharInfo2();
-	if (pluginclock::now() > DestroyStuffCancelTimer)
-	{
-		if (SpamLootInfo) { WriteChatf(PLUGIN_MSG ":: Destroying timer ran out, moving on!"); }
-		DestroyID = 0;
-		return;
-	}
-	// Looping through the items in my inventory and seening if I want to sell/deposit them based on which window was open
-	if (pChar2->pInventoryArray && pChar2->pInventoryArray->Inventory.Cursor)
-	{
-		if (PCONTENTS pItem = pChar2->pInventoryArray->Inventory.Cursor)
-		{
-			if (pItem->ID == DestroyID)
-			{
-				if (SpamLootInfo) { WriteChatf(PLUGIN_MSG ":: Destroying \ar%s\ax!", pItem->Item2->Name); }
-				DoCommand(GetCharInfo()->pSpawn, "/destroy");
-				DestroyID = 0;
-				return;
-			}
-		}
-	}
-	if (pChar2 && pChar2->pInventoryArray && pChar2->pInventoryArray->InventoryArray) //check my inventory slots
-	{
-		for (unsigned long nSlot = BAG_SLOT_START; nSlot < NUM_INV_SLOTS; nSlot++)
-		{
-			if (PCONTENTS pItem = pChar2->pInventoryArray->InventoryArray[nSlot])
-			{
-				if (pItem->ID == DestroyID)
-				{
-					sprintf_s(Command, "/nomodkey /itemnotify \"%s\" leftmouseup", pItem->Item2->Name);
-					DoCommand(GetCharInfo()->pSpawn, Command);
-					DestroyStuffTimer = pluginclock::now() + std::chrono::milliseconds(100);
-					return;
-				}
-			}
-		}
-	}
-	if (pChar2 && pChar2->pInventoryArray) //Checking my bags
-	{
-		for (unsigned long nPack = 0; nPack < 10; nPack++)
-		{
-			if (PCONTENTS pPack = pChar2->pInventoryArray->Inventory.Pack[nPack])
-			{
-				if (PITEMINFO pItemPack = GetItemFromContents(pPack))
-				{
-					if (pItemPack->Type == ITEMTYPE_PACK && pPack->Contents.ContainedItems.pItems)
-					{
-						for (unsigned long nItem = 0; nItem < pItemPack->Slots; nItem++)
-						{
-							if (PCONTENTS pItem = pPack->Contents.ContainedItems.pItems->Item[nItem])
-							{
-								if (pItem->ID == DestroyID)
-								{
-									sprintf_s(Command, "/nomodkey /itemnotify \"%s\" leftmouseup", pItem->Item2->Name);
-									DoCommand(GetCharInfo()->pSpawn, Command);
-									DestroyStuffTimer = pluginclock::now() + std::chrono::milliseconds(100);
-									return;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
 	}
 }
 
@@ -2350,7 +2415,11 @@ void DoLootStuff(CHAR* szAction)
 	// Looping through the items in my inventory and seening if I want to sell/deposit them based on which window was open
 	if (WinState((CXWnd*)pMerchantWnd) || WinState((CXWnd*)pBankWnd) || WinState((CXWnd*)FindMQ2Window("GuildBankWnd")))  // Either bank or merchant window are open
 	{
-		LootStuffWindowOpen = true;
+		if (!LootStuffWindowOpen)
+		{
+			LootStuffCancelTimer = pluginclock::now() + std::chrono::minutes(20); // Will stop trying to barter items after 20 minutes
+			LootStuffWindowOpen = true;
+		}
 		if (pChar2->pInventoryArray && pChar2->pInventoryArray->Inventory.Cursor)
 		{
 			if (PCONTENTS pItem = pChar2->pInventoryArray->Inventory.Cursor)
@@ -2889,37 +2958,68 @@ void AutoLootCommand(PSPAWNINFO pCHAR, PCHAR zLine)
 		WriteChatf(PLUGIN_MSG ":: Spam looting actions %s", SpamLootInfo ? "\agON\ax" : "\arOFF\ax");
 	}
 	else if (!_stricmp(Parm1, "barterminimum")) {
-		//TODO add safety checks to make sure it is a number etc
-		BarMinSellPrice = atoi(Parm2);
-		WritePrivateProfileString("Settings", "BarMinSellPrice", Parm2, LootINI);
-		WriteChatf(PLUGIN_MSG ":: Stop looting when \ag%d\ax slots are left", BarMinSellPrice);
+		if (IsNumber(Parm2))
+		{
+			BarMinSellPrice = atoi(Parm2);
+			WritePrivateProfileString("Settings", "BarMinSellPrice", Parm2, LootINI);
+			WriteChatf(PLUGIN_MSG ":: Stop looting when \ag%d\ax slots are left", BarMinSellPrice);
+		}
+		else
+		{
+			WriteChatf(PLUGIN_MSG ":: Please send a valid number for your minimum barter price");
+		}
 	}
-	else if (!_stricmp(Parm1, "saveslots")) {
-		//TODO add safety checks to make sure it is a number etc
-		SaveBagSlots = atoi(Parm2);
-		WritePrivateProfileString("Settings", "SaveBagSlots", Parm2, LootINI);
-		WriteChatf(PLUGIN_MSG ":: Stop looting when \ag%d\ax slots are left", SaveBagSlots);
+	else if (!_stricmp(Parm1, "saveslots")) 
+	{
+		if (IsNumber(Parm2))
+		{
+			SaveBagSlots = atoi(Parm2);
+			WritePrivateProfileString("Settings", "SaveBagSlots", Parm2, LootINI);
+			WriteChatf(PLUGIN_MSG ":: Stop looting when \ag%d\ax slots are left", SaveBagSlots);
+		}
+		else
+		{
+			WriteChatf(PLUGIN_MSG ":: Please send a valid number for the number of bag slots to save");
+		}
 	}
 	else if (!_stricmp(Parm1, "distributedelay"))
 	{
-		//TODO add safety checks to make sure it is a number etc
-		DistributeLootDelay = atoi(Parm2);
-		WritePrivateProfileString("Settings", "DistributeLootDelay", Parm2, LootINI);
-		WriteChatf(PLUGIN_MSG ":: The master looter will wait \ag%d\ax seconds before trying to distribute loot", DistributeLootDelay);
+		if (IsNumber(Parm2))
+		{
+			DistributeLootDelay = atoi(Parm2);
+			WritePrivateProfileString("Settings", "DistributeLootDelay", Parm2, LootINI);
+			WriteChatf(PLUGIN_MSG ":: The master looter will wait \ag%d\ax seconds before trying to distribute loot", DistributeLootDelay);
+		}
+		else
+		{
+			WriteChatf(PLUGIN_MSG ":: Please send a valid number for the distribute loot delay");
+		}
 	}
 	else if (!_stricmp(Parm1, "cursordelay"))
 	{
-		//TODO add safety checks to make sure it is a number etc
-		CursorDelay = atoi(Parm2);
-		WritePrivateProfileString("Settings", "CursorDelay", Parm2, LootINI);
-		WriteChatf(PLUGIN_MSG ":: You will wait \ag%d\ax seconds before trying to autoinventory items on your cursor", CursorDelay);
+		if (IsNumber(Parm2))
+		{
+			CursorDelay = atoi(Parm2);
+			WritePrivateProfileString("Settings", "CursorDelay", Parm2, LootINI);
+			WriteChatf(PLUGIN_MSG ":: You will wait \ag%d\ax seconds before trying to autoinventory items on your cursor", CursorDelay);
+		}
+		else
+		{
+			WriteChatf(PLUGIN_MSG ":: Please send a valid number for the cursor delay");
+		}
 	}
 	else if (!_stricmp(Parm1, "questkeep"))
 	{
-		//TODO add safety checks to make sure it is a number etc
-		QuestKeep = atoi(Parm2);
-		WritePrivateProfileString("Settings", "QuestKeep", Parm2, LootINI);
-		WriteChatf(PLUGIN_MSG ":: Your default number to keep of new no drop items is: \ag%d\ax", QuestKeep);
+		if (IsNumber(Parm2))
+		{
+			QuestKeep = atoi(Parm2);
+			WritePrivateProfileString("Settings", "QuestKeep", Parm2, LootINI);
+			WriteChatf(PLUGIN_MSG ":: Your default number to keep of new no drop items is: \ag%d\ax", QuestKeep);
+		}
+		else
+		{
+			WriteChatf(PLUGIN_MSG ":: Please send a valid number for default number of quest items to keep");
+		}
 	}
 	else if (!_stricmp(Parm1, "nodropdefault"))
 	{
@@ -3008,7 +3108,6 @@ void AutoLootCommand(PSPAWNINFO pCHAR, PCHAR zLine)
 		StartLootStuff = true;
 		StartMoveToTarget = true;
 		StartToOpenWindow = true;
-		StarBarterTimer = true;
 		LootStuffWindowOpen = false;
 		BarterIndex = 0;
 		LootStuffN = 1;
@@ -3016,10 +3115,26 @@ void AutoLootCommand(PSPAWNINFO pCHAR, PCHAR zLine)
 		LootStuffCancelTimer = pluginclock::now() + std::chrono::milliseconds(30000);
 		sprintf_s(LootStuffAction, "Barter");
 	}
+	else if (!_stricmp(Parm1, "buy"))
+	{
+		WriteChatf(PLUGIN_MSG ":: This command is not ready for release yet! Coming next patch");
+		return;
+		CHAR	szTemp1[MAX_STRING] = { 0 };
+		sprintf_s(szTemp1, "%s|%s", Parm2, Parm3);
+		if (IsNumber(Parm3))
+		{
+			DWORD nThreadID = 0;
+			CreateThread(NULL, NULL, BuyItem, _strdup(szTemp1), 0, &nThreadID);
+		}
+		else
+		{
+			WriteChatf(PLUGIN_MSG ":: Invalid buy command");
+		}
+	}
 	else if (!_stricmp(Parm1, "test"))
 	{
 		WriteChatf(PLUGIN_MSG ":: Testing stuff, please ignore this command.  I will remove it later once plugin is done");
-		WriteChatf(PLUGIN_MSG ":: You have %d of %s", FindItemCount(Parm2), Parm2);
+
 	}
 	else if (!_stricmp(Parm1, "status"))
 	{
