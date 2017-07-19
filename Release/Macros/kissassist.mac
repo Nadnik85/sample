@@ -4896,8 +4896,8 @@ Sub MezMobsAE(int AEMezID)
                         /varcalc TempTimer ${Target.BuffDuration[${Target.Slowed.Name}].TotalSeconds}*10
                      } else /if (${Tag1.Equal[tash]} && ${Target.Tashed.ID}) {
                         /varcalc TempTimer ${Target.BuffDuration[${Target.Tashed.Name}].TotalSeconds}*10
-                     } else /if (${Tag1.Equal[malo]} && ${Target.Malod.ID}) {
-                        /varcalc TempTimer ${Target.BuffDuration[${Target.Malod.Name}].TotalSeconds}*10
+                     } else /if (${Tag1.Equal[malo]} && ${Target.Maloed.ID}) {
+                        /varcalc TempTimer ${Target.BuffDuration[${Target.Maloed.Name}].TotalSeconds}*10
                      } else /if (${Tag1.Equal[crip]} && ${Target.Crippled.ID}) {
                         /varcalc TempTimer ${Target.BuffDuration[${Target.Crippled.Name}].TotalSeconds}*10
                      } else /if (${Tag1.Equal[snare]} && ${Target.Snared.ID}) {
@@ -4909,7 +4909,7 @@ Sub MezMobsAE(int AEMezID)
                  /if (!${DBOList${i}.Find[|${DebuffTargetID}]}) /varset DBOList${i} ${DBOList${i}}|${DebuffTargetID}
                  /goto :SkipCast
               }
-              /if (${DebugCombat}) /echo \atDEBUGCOMBAT DebuffCast: DebuffTargetID: ${DebuffTargetID} Slowed: ${Target.Slowed.ID} Tashed: ${Target.Tashed.ID} Maloed: ${Target.Malod.ID} Crippled:${Target.Crippled.ID} Tag1: ${Tag1} Tag2: ${Tag2} TempTimer: ${TempTimer} \agLine#: ${Macro.CurLine}
+              /if (${DebugCombat}) /echo \atDEBUGCOMBAT DebuffCast: DebuffTargetID: ${DebuffTargetID} Slowed: ${Target.Slowed.ID} Tashed: ${Target.Tashed.ID} Maloed: ${Target.Maloed.ID} Crippled:${Target.Crippled.ID} Tag1: ${Tag1} Tag2: ${Tag2} TempTimer: ${TempTimer} \agLine#: ${Macro.CurLine}
            } 
            /if (${HealsOn}) /call CheckHealth
            | Wait here for a sec, your spell bar may still be in global cool down.
