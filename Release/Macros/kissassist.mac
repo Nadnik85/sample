@@ -1,4 +1,4 @@
-| - kissassist.mac v10.0.4 by Maskoi 07/01/2017.
+| - kissassist.mac v10.0.4 by Maskoi 07/20/2017.
 | - Contributions by anonymoushero, crystane, eqmule, thenomadman, william12.
 | - ChainPull, Debuffs and combat rewrites by ctaylor22.
 | - PetTank, PullerPetTank & HunterPetTank roles developed by TreeHuginDruid
@@ -2669,7 +2669,8 @@ Sub AggroCheck
            /if (${Cursor.Name.Equal[${PowerSource}]}) /destroy
            /delay 5s ${Cursor.Equal[Null]}
         }
-        /if (${MountOn} && !${Me.Mount.ID} && (${Zone.Outdoor} || !${Select[${Zone.ID},1,2,5]}) && ${Me.CombatState.NotEqual[COMBAT]}) /call CastMount
+        |--------- Change to add Zone.Outdoor TLO and specific Zone.Type to stop mount cast spam.
+        /if (${MountOn} && !${Me.Mount.ID} && (${Zone.Outdoor} || ${Select[[${Zone.Type},1,2,5]}) && ${Me.CombatState.NotEqual[COMBAT]}) /call CastMount
         | Call Buffs Array
         /for i 1 to ${Buffs.Size}
            /doevents
