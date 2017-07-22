@@ -9,7 +9,8 @@ MQ2Auth0.h
 *.exp
 *.pdb
 *.map
-
+*.dll
+*.lib
 
 Debug/
 Intermediate/
