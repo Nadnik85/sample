@@ -3,7 +3,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <IntDir>.\Intermediate\Debug</IntDir>
+    <IntDir>.\Intermediate\Debug\</IntDir>
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\Debug\</OutDir>
   </PropertyGroup>
@@ -17,7 +17,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <StructMemberAlignment>4Bytes</StructMemberAlignment>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
       <CompileAs>CompileAsCpp</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>..\..\macroquest2;..\..\macroquest2\Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

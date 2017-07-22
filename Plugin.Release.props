@@ -3,7 +3,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <IntDir>.\Intermediate\</IntDir>
+    <IntDir>.\Intermediate\Release\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <OutDir>..\Release\</OutDir>
   </PropertyGroup>
