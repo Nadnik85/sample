@@ -16,7 +16,7 @@ Only thing of importance that I am NOT backing up is your "EverQuest\uifiles" st
 EQ_Restore.exe
 
 Q: What does it do?
-A: It allows you to opick and choose what configuration backups /audio trigger backups to restore from your EQ_Backup archives.
+A: It allows you to pick and choose what configuration backups / audio trigger backups to restore from your EQ_Backup archives.
 
 ==============================================================================================================================================================================================================================================
 
