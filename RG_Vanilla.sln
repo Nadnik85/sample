@@ -134,6 +134,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2Speaker", "MQ2Speaker\MQ
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2AutoGroup", "MQ2AutoGroup\MQ2AutoGroup.vcxproj", "{F72A4B90-E83B-41D6-8D93-5C1CFE9B7732}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2CpuLoad", "MQ2CpuLoad\MQ2CpuLoad.vcxproj", "{F28BE032-CE55-4E50-8CA7-015E93E686DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -546,6 +548,12 @@ Global
 		{F72A4B90-E83B-41D6-8D93-5C1CFE9B7732}.Release|Win32.ActiveCfg = Release|Win32
 		{F72A4B90-E83B-41D6-8D93-5C1CFE9B7732}.Release|Win32.Build.0 = Release|Win32
 		{F72A4B90-E83B-41D6-8D93-5C1CFE9B7732}.Release|x64.ActiveCfg = Release|Win32
+		{F28BE032-CE55-4E50-8CA7-015E93E686DB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F28BE032-CE55-4E50-8CA7-015E93E686DB}.Debug|Win32.Build.0 = Debug|Win32
+		{F28BE032-CE55-4E50-8CA7-015E93E686DB}.Debug|x64.ActiveCfg = Debug|Win32
+		{F28BE032-CE55-4E50-8CA7-015E93E686DB}.Release|Win32.ActiveCfg = Release|Win32
+		{F28BE032-CE55-4E50-8CA7-015E93E686DB}.Release|Win32.Build.0 = Release|Win32
+		{F28BE032-CE55-4E50-8CA7-015E93E686DB}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
