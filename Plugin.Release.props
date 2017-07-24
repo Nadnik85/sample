@@ -19,7 +19,7 @@
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <CompileAs>CompileAsCpp</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>..\..\macroquest2\Detours;..\..\macroquest2\Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\macroquest2\Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(OutDir);..\..\macroquest2\Detours\lib;..\..\macroquest2\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

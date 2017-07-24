@@ -13,6 +13,8 @@ MQ2Auth0.h
 *.lib
 *.iobj
 *.ipdb
+*.log
+*.ilk
 
 Debug/
 Intermediate/
