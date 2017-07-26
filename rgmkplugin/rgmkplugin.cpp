@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <string>
 #include <regex>
+#include <algorithm>
 
 using namespace std;
 using namespace experimental::filesystem;
@@ -90,14 +91,13 @@ int main(int argc, char *argv[])
 		return (1);
 	}
 	string plugin_name(argv[1]);
-	for (int i = 0; plugin_name[i]; ++i)
-		if (!isalnum(plugin_name[i]))
-		{
-			cerr << "Plugin name '" << plugin_name << '\'' << " isn't alphanumeric\n";
-			return (2);
-		}
-	if (!strstr(plugin_name.c_str(), "MQ2")) plugin_name.insert(0, "MQ2");
-	plugin_name[3] = toupper(plugin_name[3]);
+	if(!all_of(plugin_name.begin(), plugin_name.end(), &isalnum))
+	{
+		cerr << "Plugin name '" << plugin_name << '\'' << " isn't alphanumeric\n";
+		return (2);
+	}
+	if (plugin_name.find("MQ2") != 0) plugin_name.insert(0, "MQ2");
+	plugin_name[3] = toupper(static_cast<unsigned char>(plugin_name[3]));
 	path template_directory("RGTemplate");
 	if (!exists(template_directory))
 	{
