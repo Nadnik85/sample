@@ -175,6 +175,7 @@ bool bWrapped = false; // hi htw!
 char szMsg[MAX_STRING]         = {0};                // use for generic msg output
 char szDebugName[MAX_STRING]   = {0};                // debug file name
 char szCharName[MAX_STRING]    = {0};                // stores char name for INI read/write
+bool IgnoreTarget              = false;              // Used for movetocmd Underwater when using loc and not id param 
 const char szOn[10]            = "\agON\ax";         // used in outputs
 const char szOff[10]           = "\arOFF\ax";        // used in outputs
 const char szArriveMove[50]    = "/moveto location"; // output moveto arrival
@@ -3348,6 +3349,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
     // reset state of ${MoveTo.Broken} upon next '/moveto' command
     if (ucCmdUsed == CMD_MOVETO)
     {
+		//WriteChatf("[MQ2MoveUtils] Starting MoveTo Command:");
         // added moveto.stopped here as well
         pMU->StoppedMoveto = false;
         pMU->MovetoBroke   = false;
@@ -3636,6 +3638,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             {
             case CMD_MOVETO:
                 EndPreviousCmd(true);
+				IgnoreTarget = true;
                 if (isdigit(szCurrentArg[0]) || szCurrentArg[0] == '-' || szCurrentArg[0] == '.')
                 {
                     fTempY = (float)atof(szCurrentArg);
@@ -3750,6 +3753,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
         else if (!_strnicmp(szCurrentArg, "id", 3) && ucCmdUsed != CMD_MAKECAMP)
         {
             EndPreviousCmd(true, ucCmdUsed, true);
+			IgnoreTarget = false;
             PSPAWNINFO pByID = NULL;
             GetArg(szCurrentArg, szInput, uiArgNum);
             if (*szCurrentArg)
@@ -5996,18 +6000,18 @@ void MainProcess(unsigned char ucCmdUsed)
     case CMD_MOVETO:
         if (bMoveToOOR)
         {
-            if (psTarget && MOVETO->UW)
+			if (psTarget && MOVETO->UW && !IgnoreTarget)
             {
                 double dLookAngle = (double)atan2(psTarget->Z + psTarget->AvatarHeight * StateHeightMultiplier(psTarget->StandState) -
                     pChSpawn->Z - pChSpawn->AvatarHeight * StateHeightMultiplier(pChSpawn->StandState), fabs(GetDistance3D(pChSpawn->Y, pChSpawn->X, pChSpawn->Z, psTarget->Y, psTarget->X, psTarget->Z))) * HEADING_HALF / (double)PI;
                 MOVE->NewFace(dLookAngle);
-			}
+            }
 			else if (MOVETO->Z != 0.0f && MOVETO->UW)
 			{
 				double dLookAngle = (double)atan2(MOVETO->Z - pChSpawn->Z, fabs(GetDistance3D(pChSpawn->Y, pChSpawn->X, pChSpawn->Z, MOVETO->Y, MOVETO->X, MOVETO->Z))) * HEADING_HALF / (double)PI;
 				MOVE->NewFace(dLookAngle);
 			}
-            if (CAMP->Returning)
+			if (CAMP->Returning)
             {
                 fNewHeading = MOVE->SaneHead(atan2(CAMP->X - pChSpawn->X, CAMP->Y - pChSpawn->Y) * HEADING_HALF / (float)PI);
                 if (MOVETO->UseBack)
