@@ -28,7 +28,7 @@ Sub Main
 
 |==================== DO NOT ALTER THESE VALUES ====================
 /declare MacroName		string	outer	KeepToonBuffed
-/declare KeepToonBuffVer	string	outer	1.9.7
+/declare KeepToonBuffVer	string	outer	1.9.8
 /declare IniFileName		string	outer	${MacroName}_${Me.CleanName}.ini
 /call CreateIni
 
@@ -222,38 +222,40 @@ Sub CheckTargetHealth
 /declare j int local
 
 /for j 1 to ${NumberOfToons}
-
-    /if (${Target.ID}!=${Spawn[=${MyBuffTargetName[${j}]}].ID} && ${MyBuffTargetName[${j}].NotEqual[null]}) {
-         /if (${Debug}) /echo Attempting to target (${MyBuffTargetName[${j}]}) for health check.
-         /squelch /target id ${Spawn[=${MyBuffTargetName[${j}]}].ID} ${Spawn[=${MyBuffTargetName[${j}]}].Type} targetable
-         /if (${AdminDebug}) /echo /squelch /target id ${Spawn[=${MyBuffTargetName[${j}]}].ID} ${Spawn[=${MyBuffTargetName[${j}]}].Type} targetable
-         /delay 15 !${Target.ID}
-         /if (${Target.ID}!=${Spawn[=${MyBuffTargetName[${j}]}].ID} || !${Select[${Target.Type},Mercenary,PC,Pet]}) /next j       
-    }
-
+    
     |--------------------------------------------------------------------------------
-    |  ADMIN DEBUG FOR HEAL CODE
-    |--------------------------------------------------------------------------------        
-    /if (${AdminDebug}) {
-        /echo -----------
-        /if ((${Target.PctHPs}<=${HealPct}) && (${Target.Distance}<=${HealSpellRange}) && (${Target.Distance}<=${Spell[${HealSpell}].Range} || ${Target.Distance}<=${Spell[${HealSpell}].AERange})) {
-            /echo TargetType:${Select[${Target.Type},Mercenary,PC,Pet]} HEAL:${HealSpell} MANA:(${Me.CurrentMana}>${Spell[${HealSpell}].Mana}) INRANGE:(${Target.Distance}<=${Spell[${HealSpell}].Range} || ${Target.Distance}<=${Spell[${HealSpell}].AERange})
-            /echo "${TargetBuffName[${j}]}" = Heal Should Cast
-        } else {
-            /echo TargetType:${Select[${Target.Type},Mercenary,PC,Pet]} HEAL:${HealSpell} MANA:(${Me.CurrentMana}>${Spell[${HealSpell}].Mana}) INRANGE:(${Target.Distance}<=${Spell[${HealSpell}].Range} || ${Target.Distance}<=${Spell[${HealSpell}].AERange})
-            /echo "${TargetBuffName[${j}]}" = Heal will NOT Cast  
+    /if (${Spawn[=${MyBuffTargetName[${j}]}].ID} && ${MyBuffTargetName[${j}].NotEqual[null]}) {
+        /if (${Debug}) /echo \ao Attempting to target \at (${MyBuffTargetName[${j}]}) \ao for \ar health \ao check.
+        /if (${Target.ID}!=${Spawn[=${MyBuffTargetName[${j}]}].ID}) /squelch /target id ${Spawn[=${MyBuffTargetName[${j}]}].ID} ${Spawn[=${MyBuffTargetName[${j}]}].Type} targetable
+        /if (${AdminDebug}) /echo /squelch /target id ${Spawn[=${MyBuffTargetName[${j}]}].ID} ${Spawn[=${MyBuffTargetName[${j}]}].Type} targetable
+        /delay 15 !${Target.ID}
+        /if (${Target.ID}!=${Spawn[=${MyBuffTargetName[${j}]}].ID} || !${Select[${Target.Type},Mercenary,PC,Pet]}) /next j       
+
+        |--------------------------------------------------------------------------------
+        |  ADMIN DEBUG FOR HEAL CODE
+        |--------------------------------------------------------------------------------        
+        /if (${AdminDebug}) {
             /echo -----------
-            /delay 10            
+            /if ((${Target.PctHPs}<=${HealPct}) && (${Target.Distance}<=${HealSpellRange}) && (${Target.Distance}<=${Spell[${HealSpell}].Range} || ${Target.Distance}<=${Spell[${HealSpell}].AERange})) {
+                /echo TargetType:${Select[${Target.Type},Mercenary,PC,Pet]} HEAL:${HealSpell} MANA:(${Me.CurrentMana}>${Spell[${HealSpell}].Mana}) INRANGE:(${Target.Distance}<=${Spell[${HealSpell}].Range} || ${Target.Distance}<=${Spell[${HealSpell}].AERange})
+                /echo "${TargetBuffName[${j}]}" = Heal Should Cast
+            } else {
+                /echo TargetType:${Select[${Target.Type},Mercenary,PC,Pet]} HEAL:${HealSpell} MANA:(${Me.CurrentMana}>${Spell[${HealSpell}].Mana}) INRANGE:(${Target.Distance}<=${Spell[${HealSpell}].Range} || ${Target.Distance}<=${Spell[${HealSpell}].AERange})
+                /echo "${TargetBuffName[${j}]}" = Heal will NOT Cast  
+                /echo -----------
+                /delay 10            
+            }
+        }
+        |--------------------------------------------------------------------------------	
+
+        /if ((${Target.PctHPs}<=${HealPct}) && (${Target.Distance}<=${HealSpellRange})) {
+            /if (${Debug}) /echo ${MyBuffTargetName[${j}]}'s health at (${Target.PctHPs}), HEAL TIME !!!!
+            /casting "${HealSpell}" gem8
+            /call CheckCasting
+            /call CheckGlobalCooldown
         }
     }
-    |--------------------------------------------------------------------------------	
-
-    /if ((${Target.PctHPs}<=${HealPct}) && (${Target.Distance}<=${HealSpellRange})) {
-        /if (${Debug}) /echo ${MyBuffTargetName[${j}]}'s health at (${Target.PctHPs}), HEAL TIME !!!!
-        /casting "${HealSpell}" gem8
-        /call CheckCasting
-        /call CheckGlobalCooldown
-    }
+    |--------------------------------------------------------------------------------
     
 /next j
 /if (${NumberOfToons}>1) /squelch /target clear
@@ -274,55 +276,59 @@ Sub MaintainTargetBuffs
 
 /for j 1 to ${NumberOfToons}
 
-    /if (${Target.ID}!=${Spawn[=${MyBuffTargetName[${j}]}].ID} && ${MyBuffTargetName[${j}].NotEqual[null]}) {
-         /if (${Debug}) /echo Attempting to target (${MyBuffTargetName[${j}]}) for buffs.
-         /squelch /target id ${Spawn[=${MyBuffTargetName[${j}]}].ID} ${Spawn[=${MyBuffTargetName[${j}]}].Type} targetable
+    /if (${Spawn[=${MyBuffTargetName[${j}]}].ID} && ${MyBuffTargetName[${j}].NotEqual[null]}) {
+         /if (${Debug}) /echo \ao Attempting to target \at (${MyBuffTargetName[${j}]}) \ao for \ag buff \ao check.
+         /if (${Target.ID}!=${Spawn[=${MyBuffTargetName[${j}]}].ID}) /squelch /target id ${Spawn[=${MyBuffTargetName[${j}]}].ID} ${Spawn[=${MyBuffTargetName[${j}]}].Type} targetable
          /if (${AdminDebug}) /echo /squelch /target id ${Spawn[=${MyBuffTargetName[${j}]}].ID} ${Spawn[=${MyBuffTargetName[${j}]}].Type} targetable
          /delay 15 !${Target.ID}
-         /if (${Target.ID}!=${Spawn[=${MyBuffTargetName[${j}]}].ID} || !${Select[${Target.Type},Mercenary,PC,Pet]}) /next j         
+         /if (${Target.ID}!=${Spawn[=${MyBuffTargetName[${j}]}].ID} || !${Select[${Target.Type},Mercenary,PC,Pet]}) /next j 
+
+         /if (${Spawn[=${MyBuffTargetName[${j}]}].ID}!=NULL) /call PopulateBuffs
+	 
+	 |--------------------------------------------------------------------------------
+         /for i 1 to ${NumberOfBuffs} 
+                |--------------------------------------------------------------------------------
+        	|If spell name differs from buff name, use argument seperator to extract and set values. 
+                /if (${TargetBuffName[${i}].Arg[2,|].Length}) {
+                    /varset SpellToCast ${TargetBuffName[${i}].Arg[1,|]}
+                    /varset BuffIDName  ${TargetBuffName[${i}].Arg[2,|]}
+                } else {
+    	            /varset SpellToCast ${TargetBuffName[${i}]}
+                    /varset BuffIDName  ${TargetBuffName[${i}]}
+                }   
+                |--------------------------------------------------------------------------------
+	
+                |--------------------------------------------------------------------------------
+                |  ADMIN DEBUG FOR BUFF CODE
+                |--------------------------------------------------------------------------------        
+                /if (${AdminDebug}) {
+                    /echo -----------
+                    /if ((${Target.BuffsPopulated}==TRUE) && !${Target.Buff[${BuffIDName}].ID} && ${Select[${Spawn[${MyBuffTargetName[${j}]}].Type},Mercenary,PC,Pet]} && (${Me.CurrentMana}>${Spell[${SpellToCast}].Mana}) && (${Target.Distance}<=${Spell[${SpellToCast}].Range} || ${Target.Distance}<=${Spell[${SpellToCast}].AERange}) && !${Target.Buff[Resurrection Sickness].ID} && !${Target.Buff[Revival Sickness].ID}) {
+                        /echo TargetType:${Select[${Target.Type},Mercenary,PC,Pet]} BUFF:!${Target.Buff[${BuffIDName}].ID} MANA:(${Me.CurrentMana}>${Spell[${SpellToCast}].Mana}) INRANGE:(${Target.Distance}<=${Spell[${SpellToCast}].Range} || ${Target.Distance}<=${Spell[${SpellToCast}].AERange}) RezSick:!${Target.Buff[Resurrection Sickness].ID} RevivSick:!${Target.Buff[Revival Sickness].ID}
+                        /echo "${BuffIDName}" = Buff is Needed
+                    } else {
+                        /echo TargetType:${Select[${Target.Type},Mercenary,PC,Pet]} BUFF:!${Target.Buff[${BuffIDName}].ID} MANA:(${Me.CurrentMana}>${Spell[${SpellToCast}].Mana}) INRANGE:(${Target.Distance}<=${Spell[${SpellToCast}].Range} || ${Target.Distance}<=${Spell[${SpellToCast}].AERange}) RezSick:!${Target.Buff[Resurrection Sickness].ID} RevivSick:!${Target.Buff[Revival Sickness].ID}
+                        /echo "${BuffIDName}" = Buff is NOT Needed             
+                        /echo -----------
+                        /delay 10
+                    }
+                }
+                |--------------------------------------------------------------------------------		
+	
+                /if (!${Target.Buff[${BuffIDName}].ID} && ${Select[${Spawn[${MyBuffTargetName[${j}]}].Type},Mercenary,PC,Pet]} && (${Me.CurrentMana}>${Spell[${SpellToCast}].Mana}) && (${Target.Distance}<=${Spell[${SpellToCast}].Range} || ${Target.Distance}<=${Spell[${SpellToCast}].AERange}) && !${Target.Buff[Resurrection Sickness].ID} && !${Target.Buff[Revival Sickness].ID}) { 		 
+                     /if (${Debug}) /echo Attempting to cast (${SpellToCast}) on (${MyBuffTargetName[${j}]}).
+                     /casting "${SpellToCast}" gem8             
+                     /call CheckCasting
+                     /call CheckGlobalCooldown
+                     /doevents
+                }
+        /next i
+        |--------------------------------------------------------------------------------
+	
+        /if (${AssistOn} && ${Spawn[=${MyBuffTargetName[${j}]}].ID}!=NULL) /call AssistOnTarget
+    
     }
     
-    /call PupulateBuffs
-	
-    /for i 1 to ${NumberOfBuffs} 
-	    |--------------------------------------------------------------------------------
-	    |If spell name differs from buff name, use argument seperator to extract and set values. 
-            /if (${TargetBuffName[${i}].Arg[2,|].Length}) {
-                /varset SpellToCast ${TargetBuffName[${i}].Arg[1,|]}
-                /varset BuffIDName  ${TargetBuffName[${i}].Arg[2,|]}
-            } else {
-	        /varset SpellToCast ${TargetBuffName[${i}]}
-                /varset BuffIDName  ${TargetBuffName[${i}]}
-            }   
-            |--------------------------------------------------------------------------------
-	
-            |--------------------------------------------------------------------------------
-            |  ADMIN DEBUG FOR BUFF CODE
-            |--------------------------------------------------------------------------------        
-            /if (${AdminDebug}) {
-                /echo -----------
-                /if ((${Target.BuffsPopulated}==TRUE) && !${Target.Buff[${BuffIDName}].ID} && ${Select[${Spawn[${MyBuffTargetName[${j}]}].Type},Mercenary,PC,Pet]} && (${Me.CurrentMana}>${Spell[${SpellToCast}].Mana}) && (${Target.Distance}<=${Spell[${SpellToCast}].Range} || ${Target.Distance}<=${Spell[${SpellToCast}].AERange}) && !${Target.Buff[Resurrection Sickness].ID} && !${Target.Buff[Revival Sickness].ID}) {
-                    /echo TargetType:${Select[${Target.Type},Mercenary,PC,Pet]} BUFF:!${Target.Buff[${BuffIDName}].ID} MANA:(${Me.CurrentMana}>${Spell[${SpellToCast}].Mana}) INRANGE:(${Target.Distance}<=${Spell[${SpellToCast}].Range} || ${Target.Distance}<=${Spell[${SpellToCast}].AERange}) RezSick:!${Target.Buff[Resurrection Sickness].ID} RevivSick:!${Target.Buff[Revival Sickness].ID}
-                    /echo "${BuffIDName}" = Buff is Needed
-                } else {
-                    /echo TargetType:${Select[${Target.Type},Mercenary,PC,Pet]} BUFF:!${Target.Buff[${BuffIDName}].ID} MANA:(${Me.CurrentMana}>${Spell[${SpellToCast}].Mana}) INRANGE:(${Target.Distance}<=${Spell[${SpellToCast}].Range} || ${Target.Distance}<=${Spell[${SpellToCast}].AERange}) RezSick:!${Target.Buff[Resurrection Sickness].ID} RevivSick:!${Target.Buff[Revival Sickness].ID}
-                    /echo "${BuffIDName}" = Buff is NOT Needed             
-                    /echo -----------
-                    /delay 10
-                }
-            }
-            |--------------------------------------------------------------------------------		
-	
-            /if (!${Target.Buff[${BuffIDName}].ID} && ${Select[${Spawn[${MyBuffTargetName[${j}]}].Type},Mercenary,PC,Pet]} && (${Me.CurrentMana}>${Spell[${SpellToCast}].Mana}) && (${Target.Distance}<=${Spell[${SpellToCast}].Range} || ${Target.Distance}<=${Spell[${SpellToCast}].AERange}) && !${Target.Buff[Resurrection Sickness].ID} && !${Target.Buff[Revival Sickness].ID}) { 		 
-                 /if (${Debug}) /echo Attempting to cast (${SpellToCast}) on (${MyBuffTargetName[${j}]}).
-                 /casting "${SpellToCast}" gem8             
-                 /call CheckCasting
-                 /call CheckGlobalCooldown
-                 /doevents
-            }
-    /next i
-    /if (${AssistOn}) /call AssistOnTarget
-
 /next j
 /if (${NumberOfToons}>1) /squelch /target clear
  
@@ -330,9 +336,9 @@ Sub MaintainTargetBuffs
 |---------------------------------------------------------------------------------
 
 |-------------------------------------------------------------------------------- 
-| SUB: Pupulate Buffs
+| SUB: Populate Buffs
 |-------------------------------------------------------------------------------- 
-Sub PupulateBuffs
+Sub PopulateBuffs
 
 :GetTargetBuffs
 /if ((!${Target.BuffsPopulated}==TRUE) && (${NumberOfToons}>1)) {
@@ -351,20 +357,19 @@ Sub PupulateBuffs
 |-------------------------------------------------------------------------------- 
 Sub AssistOnTarget
 
-/if (${Me.TargetOfTarget.CleanName.Equal[NULL]} ||  ${Me.TargetOfTarget.Type.Equal[CORPSE]}) /return	
-    /if (${Me.TargetOfTarget.Type.Equal[NPC]} || ${Me.TargetOfTarget.Type.Equal[PET]}) {
+/if (${Me.TargetOfTarget.CleanName.Equal[NULL]} || ${Me.TargetOfTarget.Type.Equal[CORPSE]}) /return	
+    /if (${Select[${Me.TargetOfTarget.Type},NPC,PET]}) {
         /squelch /target id ${Me.TargetOfTarget.ID} ${Me.TargetOfTarget.Type} targetable
         /delay 10
 		
-        /call PupulateBuffs
+        /if (${Spawn[=${Me.Target}].ID}!=NULL && ${Select[${Me.Target.Type},NPC,PET]}) /call PopulateBuffs
 		
-        /if ((${Target.BuffsPopulated}==TRUE) && ((${Target.Type.Equal[NPC]} || ${Target.Type.Equal[PET]}) && (${Target.PctHPs}>${AssistPct})) || ${Target.Buff[${AssistSpell}].ID}) /return				
-	    /if ((${Target.BuffsPopulated}==TRUE) && (${Target.Type.Equal[NPC]} || ${Target.Type.Equal[PET]}) && (${Target.PctHPs}<${AssistPct}) && ${Target.Distance}<=${Spell[${AssistSpell}].Range}) {
+        /if (${Target.BuffsPopulated}==FALSE || !${Select[${Target.Type},NPC,PET]} || ${Target.PctHPs}>${AssistPct} || ${Target.CleanName.Equal[NULL]} || ${Target.Buff[${AssistSpell}].ID}) /return
+        /if (${Target.BuffsPopulated}==TRUE && ${Select[${Target.Type},NPC,PET]} && ${Target.PctHPs}<=${AssistPct} && ${Target.Distance}<=${Spell[${AssistSpell}].Range}) {
             /if (${Debug}) /echo Attempting to assist, casting (${AssistSpell}) on (${Target.CleanName}).
-            /echo Assisting: casting  (${AssistSpell}) on (${Me.TargetOfTarget.CleanName})
-			/casting "${AssistSpell}" gem8
+            /echo \ao Assisting: casting  \at (${AssistSpell}) \ag on \ar (${Me.TargetOfTarget.CleanName})
+            /casting "${AssistSpell}" gem8
             /call CheckCasting
-            /call CheckGlobalCooldown
         }
     }
 /squelch /target clear
