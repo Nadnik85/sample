@@ -1,7 +1,7 @@
 |------------------------------|
 |---AUTO-WAR by Noobhaxor------|
-|--------Version 1.2 O1--------|
-|---------April Update --------|
+|--------Version 1.3 v1--------|
+|---------June Update ----------|
 #turbo 80
 #Event Buff 			"Your #1# spell has worn off of #*#."
 #include autosubs.inc
@@ -39,7 +39,7 @@ Sub Main
 	/call LoadIni General AutoAssistAt		int 100
 |-Setup Aliases
 	/call AliasSetup
-	/call AutoVersionCheck 3
+	/call AutoVersionCheck 4
 |----------------------------------------------------------------------------
 | MainLoop
 |---------------------------------------------------------------------------- 
@@ -74,6 +74,10 @@ Sub CheckAggro
 /next i
 /if (${badaggro}>0&&${stayontarget}!=1) {
 	/varset autotargetid ${badaggroid}
+	/if (${Target.ID}!=${autotargetid} && ${Spawn[id ${autotargetid} npc radius 100].ID}) /target id ${autotargetid}
+	/delay 5 ${Target.ID}==${autotargetid}
+} else /if (${badaggro}==0&&${Spawn[Named npc radius 100].ID}&&${Spawn[Named npc radius 100].ID}!=${Target.ID}&&!${Target.Named}) {
+	/varset autotargetid ${Spawn[Named npc radius 100].ID}
 	/if (${Target.ID}!=${autotargetid} && ${Spawn[id ${autotargetid} npc radius 100].ID}) /target id ${autotargetid}
 	/delay 5 ${Target.ID}==${autotargetid}
 } else /if (${Target.ID}!=${Me.GroupAssistTarget.ID} && ${Spawn[id ${Me.GroupAssistTarget.ID} npc radius 100].ID}) {

@@ -1,7 +1,7 @@
 |------------------------------|
 |---AUTO-BARD by Noobhaxor-----|
-|--------Version 2.2 O1--------|
-|---------April Update --------|
+|--------Version 2.3 v1--------|
+|---------June Update ---------|
 #turbo 80
 #Event Buff 			"Your #1# spell has worn off of #*#."
 #include autosubs.inc
@@ -61,7 +61,7 @@ Sub Main
 	/call LoadIni General AutoCampHold		int 1
 	/call LoadIni General AutoAssistAt		int 98
 	/call AliasSetup
-	/call AutoVersionCheck 3
+	/call AutoVersionCheck 4
 |----------------------------------------------------------------------------
 | MainLoop
 |---------------------------------------------------------------------------- 
@@ -107,7 +107,7 @@ Sub AESongs
 |---------------------------------------------------------------------------- 
 Sub CombatSongs
 |In Combat 
-	/if (${Me.CombatAbilityReady["Reflexive Rejoinder"]}&& ${Me.PctEndurance}>10 && ${Spawn[group cleric].PctMana}<60) {
+	/if (${Me.CombatAbilityReady["Reflexive Rejoinder"]}&& ${Me.PctEndurance}>10 && (${Group.Member[${Spawn[group cleric].CleanName}].PctMana}<50||${Group.Member[${Spawn[group cleric].CleanName}].PctMana}>=1)) {
 		/docommand /doability "Reflexive Rejoinder"
 		/delay 8 !${Me.CombatAbilityReady["Reflexive Rejoinder"]}
 	}

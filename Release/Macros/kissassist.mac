@@ -2965,13 +2965,13 @@ Sub AggroCheck
             /if (${AuraSpell.Find[Earthen Strength]}) /varset TempAura Earthen Strength Effect
             /if (${AuraSpell.Find[Rathe's Strength]}) /varset TempAura Rathe's Strength Effect
             | Check if aura is up 4 parts - Mage | Everyone else | 2 auras cleric | 2 auras enchamter
-            /if (${Select[${Me.Class.ShortName},CLR,ENC,MAG]}==0 && !${Me.Aura[1].Find[${AuraName}]}) {
+            /if (${Select[${Me.Class.ShortName},CLR,ENC,MAG]}==0 && !${Me.Aura[1].Name.Find[${AuraName}]}) {
                 /goto :FoundAura
-            } else /if (${Me.Class.ShortName.Equal[MAG]} && ${Me.Pet.ID} &&  ${Me.Pet.Distance}<175 && !${TempAura.Find[effect]} && !${Me.Aura[1].Find[${TempAura}]}) {
+            } else /if (${Me.Class.ShortName.Equal[MAG]} && ${Me.Pet.ID} &&  ${Me.Pet.Distance}<175 && !${TempAura.Find[effect]} && !${Me.Aura[1].Name.Find[${TempAura}]}) {
                 /goto :FoundAura
-            } else /if (${Me.Class.ShortName.Equal[CLR]} && ((!${Me.Aura[1].Find[${AuraName}]} && !${Me.AltAbility[Spirit Mastery]}) || (!${Me.Aura[1].Find[${AuraName}]} && !${Me.Aura[2].Find[${AuraName}]} && ${Me.AltAbility[Spirit Mastery]}))) {
+            } else /if (${Me.Class.ShortName.Equal[CLR]} && ((!${Me.Aura[1].Name.Find[${AuraName}]} && !${Me.AltAbility[Spirit Mastery]}) || (!${Me.Aura[1].Name.Find[${AuraName}]} && !${Me.Aura[1].Name.Find[${AuraName}]} && ${Me.AltAbility[Spirit Mastery]}))) {
                 /goto :FoundAura
-            } else /if (${Me.Class.ShortName.Equal[ENC]} && ((!${Me.Aura[1].Find[${AuraName}]} && !${Me.AltAbility[Auroria Mastery]}) || (!${Me.Aura[1].Find[${AuraName}]} && !${Me.Aura[2].Find[${AuraName}]} && ${Me.AltAbility[Auroria Mastery]}))) {
+            } else /if (${Me.Class.ShortName.Equal[ENC]} && ((!${Me.Aura[1].Name.Find[${AuraName}]} && !${Me.AltAbility[Auroria Mastery]}) || (!${Me.Aura[1].Name.Find[${AuraName}]} && !${Me.Aura[1].Name.Find[${AuraName}]} && ${Me.AltAbility[Auroria Mastery]}))) {
                 /goto :FoundAura
             } else /return ${AuraResult}
             :FoundAura
