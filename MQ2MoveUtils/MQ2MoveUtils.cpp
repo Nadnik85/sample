@@ -6008,7 +6008,7 @@ void MainProcess(unsigned char ucCmdUsed)
             }
 			else if (MOVETO->Z != 0.0f && MOVETO->UW)
 			{
-				double dLookAngle = (double)atan2(MOVETO->Z - pChSpawn->Z, fabs(GetDistance3D(pChSpawn->Y, pChSpawn->X, pChSpawn->Z, MOVETO->Y, MOVETO->X, MOVETO->Z))) * HEADING_HALF / (double)PI;
+				double dLookAngle = (double)atan2(MOVETO->Z - pChSpawn->Z, fabs(GetDistance(pChSpawn->Y, pChSpawn->X, MOVETO->Y, MOVETO->X))) * HEADING_HALF / (double)PI;
 				MOVE->NewFace(dLookAngle);
 			}
 			if (CAMP->Returning)
