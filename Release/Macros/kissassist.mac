@@ -1,4 +1,4 @@
-| - kissassist.mac v10.0.4 by Maskoi 07/20/2017.
+| - kissassist.mac v10.0.4 by Maskoi 08/19/2017.
 | - Contributions by anonymoushero, crystane, eqmule, thenomadman, william12.
 | - ChainPull, Debuffs and combat rewrites by ctaylor22.
 | - PetTank, PullerPetTank & HunterPetTank roles developed by TreeHuginDruid
@@ -275,8 +275,8 @@ Sub Main
     /call LoadIni General CastingInterruptOn    int         0
     /declare GroupWatchPct int outer 20
     /if (${GroupWatchOn.Find[|]}) {
-        /varset GroupWatchOn ${GroupWatchOn.Arg[1,|]}
         /varset GroupWatchPct ${GroupWatchOn.Arg[2,|]}
+        /varset GroupWatchOn ${GroupWatchOn.Arg[1,|]}
     }
     /call LoadIni General EQBCOn                string      0
     /declare EQBCSay                            string      outer   bc
@@ -2670,7 +2670,7 @@ Sub AggroCheck
            /delay 5s ${Cursor.Equal[Null]}
         }
         |--------- Change to add Zone.Outdoor TLO and specific Zone.Type to stop mount cast spam.
-        /if (${MountOn} && !${Me.Mount.ID} && (${Zone.Outdoor} || ${Select[[${Zone.Type},1,2,5]}) && ${Me.CombatState.NotEqual[COMBAT]}) /call CastMount
+        /if (${MountOn} && !${Me.Mount.ID} && (${Zone.Outdoor} || ${Select[${Zone.Type},1,2,5]}) && ${Me.CombatState.NotEqual[COMBAT]}) /call CastMount
         | Call Buffs Array
         /for i 1 to ${Buffs.Size}
            /doevents
@@ -2915,7 +2915,7 @@ Sub AggroCheck
         /if (!${ReadBuffsTimer} && !${AggroTargetID}) /varset ReadBuffsTimer ${CheckBuffsTimer}s
         /if (${Macro.RunTime}>120 && !${IniNextTimer}) /varset IniNextTimer 30s
         |/if (${Me.Gem[${MiscGem}].Name.NotEqual[${ReMemMiscGem}]}) /memorize "${ReMemMiscGem}" gem${MiscGem}
-        /if (${Me.Gem[${MiscGem}].Name.NotEqual[${ReMemMiscGem}]}) /call MemSpell "${ReMemMiscGem}" ${MiscGem}
+        /if (${Me.Gem[${MiscGem}].Name.NotEqual[${ReMemMiscGem}]} && ${MiscGemRemem}) /call MemSpell "${ReMemMiscGem}" ${MiscGem}
         /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs Leave \agLine#: ${Macro.CurLine}
     /return
 | -------------------------------------------------------------------------------------
