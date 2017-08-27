@@ -28,7 +28,7 @@ Sub Main
 
 |==================== DO NOT ALTER THESE VALUES ====================
 /declare MacroName		string	outer	KeepToonBuffed
-/declare KeepToonBuffVer	string	outer	1.9.8
+/declare KeepToonBuffVer	string	outer	1.9.9
 /declare IniFileName		string	outer	${MacroName}_${Me.CleanName}.ini
 /call CreateIni
 
@@ -224,7 +224,7 @@ Sub CheckTargetHealth
 /for j 1 to ${NumberOfToons}
     
     |--------------------------------------------------------------------------------
-    /if (${Spawn[=${MyBuffTargetName[${j}]}].ID} && ${MyBuffTargetName[${j}].NotEqual[null]}) {
+    /if (${Spawn[=${MyBuffTargetName[${j}]}].ID} || (${Spawn[=${MyBuffTargetName[${j}]}].ID} && ${MyBuffTargetName[${j}].NotEqual[null]})) {
         /if (${Debug}) /echo \ao Attempting to target \at (${MyBuffTargetName[${j}]}) \ao for \ar health \ao check.
         /if (${Target.ID}!=${Spawn[=${MyBuffTargetName[${j}]}].ID}) /squelch /target id ${Spawn[=${MyBuffTargetName[${j}]}].ID} ${Spawn[=${MyBuffTargetName[${j}]}].Type} targetable
         /if (${AdminDebug}) /echo /squelch /target id ${Spawn[=${MyBuffTargetName[${j}]}].ID} ${Spawn[=${MyBuffTargetName[${j}]}].Type} targetable
@@ -276,7 +276,7 @@ Sub MaintainTargetBuffs
 
 /for j 1 to ${NumberOfToons}
 
-    /if (${Spawn[=${MyBuffTargetName[${j}]}].ID} && ${MyBuffTargetName[${j}].NotEqual[null]}) {
+    /if (${Spawn[=${MyBuffTargetName[${j}]}].ID} || (${Spawn[=${MyBuffTargetName[${j}]}].ID} && ${MyBuffTargetName[${j}].NotEqual[null]})) {
          /if (${Debug}) /echo \ao Attempting to target \at (${MyBuffTargetName[${j}]}) \ao for \ag buff \ao check.
          /if (${Target.ID}!=${Spawn[=${MyBuffTargetName[${j}]}].ID}) /squelch /target id ${Spawn[=${MyBuffTargetName[${j}]}].ID} ${Spawn[=${MyBuffTargetName[${j}]}].Type} targetable
          /if (${AdminDebug}) /echo /squelch /target id ${Spawn[=${MyBuffTargetName[${j}]}].ID} ${Spawn[=${MyBuffTargetName[${j}]}].Type} targetable
@@ -361,8 +361,8 @@ Sub AssistOnTarget
     /if (${Select[${Me.TargetOfTarget.Type},NPC,PET]}) {
         /squelch /target id ${Me.TargetOfTarget.ID} ${Me.TargetOfTarget.Type} targetable
         /delay 10
-		
-        /if (${Spawn[=${Me.Target}].ID}!=NULL && ${Select[${Me.Target.Type},NPC,PET]}) /call PopulateBuffs
+        
+        /if (${Spawn[=${Target}].ID}!=NULL && ${Select[${Target.Type},NPC,PET]}) /call PopulateBuffs
 		
         /if (${Target.BuffsPopulated}==FALSE || !${Select[${Target.Type},NPC,PET]} || ${Target.PctHPs}>${AssistPct} || ${Target.CleanName.Equal[NULL]} || ${Target.Buff[${AssistSpell}].ID}) /return
         /if (${Target.BuffsPopulated}==TRUE && ${Select[${Target.Type},NPC,PET]} && ${Target.PctHPs}<=${AssistPct} && ${Target.Distance}<=${Spell[${AssistSpell}].Range}) {
