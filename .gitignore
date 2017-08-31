@@ -6,12 +6,12 @@
 
 MQ2Auth0.h
 MacroQuest2.sln
+ISXEQ.sln
 
 *.exp
 *.pdb
 *.map
 
-Release/
 Debug/
 Intermediate/
 ISXEQ*Intermediate
