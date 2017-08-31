@@ -12,6 +12,7 @@ ISXEQ.sln
 *.pdb
 *.map
 
+Release/
 Debug/
 Intermediate/
 ISXEQ*Intermediate
