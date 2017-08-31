@@ -5,6 +5,7 @@
 .vs/
 
 MQ2Auth0.h
+MacroQuest2.sln
 
 *.exp
 *.pdb
