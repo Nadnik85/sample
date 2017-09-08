@@ -352,7 +352,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2Map", "MQ2Map\MQ2Map.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mq2telnet", "mq2telnet\mq2telnet.vcxproj", "{1DA0A350-C188-4810-B903-3B603CA2E7D7}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2AASpend", "..\..\Dropbox\work\VSTS\Very Vanilla Live\MQ2AASpend\MQ2AASpend.vcxproj", "{771E0E01-4A68-0250-EA95-42214F8D41E9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2AASpend", "MQ2AASpend\MQ2AASpend.vcxproj", "{771E0E01-4A68-0250-EA95-42214F8D41E9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2A0A06A4-E9C6-4229-82EE-BD2D4E0A7221} = {2A0A06A4-E9C6-4229-82EE-BD2D4E0A7221}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
