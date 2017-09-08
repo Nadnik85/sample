@@ -38,6 +38,7 @@
  --> /break
  --> /continue
 *****************************************************************************/
+//Updated by eqmule on sep 1 2017 for new macrostack changes, although this plugin is obsolete now since its functionality are included in core.
 
 
 #include "../MQ2Plugin.h"
@@ -58,10 +59,10 @@ VOID CommandBreak(PSPAWNINFO pChar, PCHAR szLine);
 VOID CommandContinue(PSPAWNINFO pChar, PCHAR szLine);
 
 // Helpers
-VOID EndWhile(PSPAWNINFO pChar, PMACROBLOCK pStartLine);
-VOID DoBreak(PSPAWNINFO pChar, PMACROBLOCK pStartLine, BOOL evaluate = false);
-VOID ContinueDo(PSPAWNINFO pChar, PMACROBLOCK pStartLine);
-VOID ContinueWhile(PSPAWNINFO pChar, PMACROBLOCK pStartLine);
+VOID EndWhile(PSPAWNINFO pChar, int StartLine);
+VOID DoBreak(PSPAWNINFO pChar, int StartLine, BOOL evaluate = false);
+VOID ContinueDo(PSPAWNINFO pChar, int StartLine);
+VOID ContinueWhile(PSPAWNINFO pChar, int StartLine);
 
 // Called once, when the plugin is to initialize
 PLUGIN_API VOID InitializePlugin(VOID)
@@ -90,34 +91,38 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
 // Description: Continue a /while bucle execution.Searchs the /while command
 //            and set the execution pointer over that command.
 // ***************************************************************************
-VOID ContinueWhile(PSPAWNINFO pChar, PMACROBLOCK pStartLine)
+VOID ContinueWhile(PSPAWNINFO pChar, int StartLine)
 {
-   if (!gMacroBlock) {
-      DebugSpewNoFile("EndWhile - Macro was ended before we could handle the end of while command");
-      return;
-   }
-
-   while (1)
-   {
-      if (!_strnicmp(gMacroBlock->Line.c_str(),"sub ",4))
-      {
-         gMacroBlock=pStartLine;
-         FatalError("/while ran into another subroutine");
+	if (!gMacroBlock) {
+		DebugSpewNoFile("EndWhile - Macro was ended before we could handle the end of while command");
+		return;
+	}
+	std::map<int, MACROLINE>::iterator i = gMacroBlock->Line.find(StartLine);
+	std::map<int, MACROLINE>::reverse_iterator ri(i);
+	bool bFound = false;
+	for(;ri!=gMacroBlock->Line.rend();ri++)
+	{
+		if (!_strnicmp(ri->second.Command.c_str(),"sub ",4))
+		{
+			gMacroBlock->CurrIndex=StartLine;
+			FatalError("/while ran into another subroutine");
             return;
-      }
-      if (!gMacroBlock->pPrev)
-      {
-         gMacroBlock=pStartLine;
-         FatalError("/while without pairing /endwhile");
-            return;
-      }
-      if (!_strnicmp(gMacroBlock->Line.c_str(),"/while",6))
-      {
-         gMacroBlock = gMacroBlock->pPrev;
-         break;
-      }
-      gMacroBlock = gMacroBlock->pPrev;
-   }
+		}
+		if (!_strnicmp(ri->second.Command.c_str(),"/while",6))
+		{
+			ri--;
+			if (ri != gMacroBlock->Line.rend())
+			{
+				bFound = true;
+				gMacroBlock->CurrIndex = ri->first;
+			}
+			break;
+		}
+	}
+	if (!bFound) {
+		gMacroBlock->CurrIndex=StartLine;
+		FatalError("/while without pairing /endwhile");
+	}
 }
 
 
@@ -126,30 +131,32 @@ VOID ContinueWhile(PSPAWNINFO pChar, PMACROBLOCK pStartLine)
 // Description: Ends a /while bucle execution. Searchs the /endwhile command
 //            and set the execution pointer at that command.
 // ***************************************************************************
-VOID EndWhile(PSPAWNINFO pChar, PMACROBLOCK pStartLine)
+VOID EndWhile(PSPAWNINFO pChar, int StartLine)
 {
-   if (!gMacroBlock) {
-      DebugSpewNoFile("EndWhile - Macro was ended before we could handle the end of while command");
-      return;
-   }
-
-   while (1)
-   {
-      if (!_strnicmp(gMacroBlock->Line.c_str(),"sub ",4))
-      {
-         gMacroBlock=pStartLine;
-         FatalError("/while ran into another subroutine");
-            return;
-      }
-      if (!gMacroBlock->pNext)
-      {
-         gMacroBlock=pStartLine;
-         FatalError("/while without pairing /endwhile");
-            return;
-      }
-      if (!_strnicmp(gMacroBlock->Line.c_str(),"/endwhile",9)) break;
-      gMacroBlock = gMacroBlock->pNext;
-   }
+	if (!gMacroBlock) {
+		DebugSpewNoFile("EndWhile - Macro was ended before we could handle the end of while command");
+		return;
+	}
+	std::map<int, MACROLINE>::iterator i = gMacroBlock->Line.find(StartLine);
+	bool bFound = false;
+	for (;i!=gMacroBlock->Line.end();i++)
+	{
+		if (!_strnicmp(i->second.Command.c_str(),"sub ",4))
+		{
+			gMacroBlock->CurrIndex=StartLine;
+			FatalError("/while ran into another subroutine");
+			return;
+		}
+		if (!_strnicmp(i->second.Command.c_str(), "/endwhile", 9)) {
+			gMacroBlock->CurrIndex = i->first;
+			bFound = true;
+			break;
+		}
+	}
+	if (!bFound) {
+		gMacroBlock->CurrIndex=StartLine;
+		FatalError("/while without pairing /endwhile");
+	}
 }
 
 // ***************************************************************************
@@ -157,30 +164,34 @@ VOID EndWhile(PSPAWNINFO pChar, PMACROBLOCK pStartLine)
 // Description: Continues a /do bucle execution. Searchs the /do command
 //            and set the execution pointer at that command.
 // ***************************************************************************
-VOID ContinueDo(PSPAWNINFO pChar, PMACROBLOCK pStartLine)
+VOID ContinueDo(PSPAWNINFO pChar, int StartLine)
 {
-   if (!gMacroBlock) {
-      DebugSpewNoFile("ContinueDo - Macro was ended before we could handle the do command");
-      return;
-   }
-
-   while (1)
-   {
-      if (!_strnicmp(gMacroBlock->Line.c_str(),"sub ",4))
-      {
-         gMacroBlock=pStartLine;
-         FatalError("/until without pairing /do");
-            return;
-      }
-      if (!gMacroBlock->pPrev)
-      {
-         gMacroBlock=pStartLine;
-         FatalError("/until without pairing /do");
-            return;
-      }
-      if (!_strnicmp(gMacroBlock->Line.c_str(),"/do",3)) break;
-      gMacroBlock = gMacroBlock->pPrev;
-   }
+	if (!gMacroBlock) {
+		DebugSpewNoFile("ContinueDo - Macro was ended before we could handle the do command");
+		return;
+	}
+	std::map<int, MACROLINE>::iterator i = gMacroBlock->Line.find(StartLine);
+	std::map<int, MACROLINE>::reverse_iterator ri(i);
+	bool bFound = false;
+	for (;ri!=gMacroBlock->Line.rend();ri++)
+	{
+		if (!_strnicmp(ri->second.Command.c_str(),"sub ",4))
+		{
+			gMacroBlock->CurrIndex=StartLine;
+			FatalError("/until without pairing /do");
+			return;
+		}
+		if (!_strnicmp(ri->second.Command.c_str(), "/do", 3)) {
+			gMacroBlock->CurrIndex = ri->first;
+			bFound = true;
+			break;
+		}
+	}
+	if (!bFound)
+	{
+		gMacroBlock->CurrIndex = StartLine;
+		FatalError("/until without pairing /do");
+	}
 }
 
 // ***************************************************************************
@@ -189,38 +200,42 @@ VOID ContinueDo(PSPAWNINFO pChar, PMACROBLOCK pStartLine)
 //            If evaluate is set, the function set the execution pointer at
 //            the end of the bucle, so the condition is evaluate.
 // ***************************************************************************
-VOID DoBreak(PSPAWNINFO pChar, PMACROBLOCK pStartLine, BOOL evaluate)
+VOID DoBreak(PSPAWNINFO pChar, int StartLine, BOOL evaluate)
 {
-   if (!gMacroBlock)
-   {
-      DebugSpewNoFile("DoBreak - Macro was ended before we could handle the break command");
-      return;
-   }
-
-   while (1)
-   {   
-      if (!_strnicmp(gMacroBlock->Line.c_str(),"Sub ",4))
-      {
-         gMacroBlock = pStartLine;
-         FatalError("/break or /continue called outside a bucle");
-         return;
-      }
-      if (!gMacroBlock->pNext)
-      {
-         gMacroBlock=pStartLine;
-         FatalError("/break or /continue called outside a bucle");
-            return;
-      }      
-      if (!_strnicmp(gMacroBlock->Line.c_str(),"/until",6) ||
-         !_strnicmp(gMacroBlock->Line.c_str(), "/endwhile", 9) ||
-         !_strnicmp(gMacroBlock->Line.c_str(), "/next", 4))
-      {
-         //We are on the /until or /endwhile command
-         gMacroBlock = (evaluate)?gMacroBlock->pPrev:gMacroBlock;         
-         break;
-      }
-      gMacroBlock = gMacroBlock->pNext;
-   }
+	if (!gMacroBlock)
+	{
+		DebugSpewNoFile("DoBreak - Macro was ended before we could handle the break command");
+		return;
+	}
+	std::map<int, MACROLINE>::iterator i = gMacroBlock->Line.find(StartLine);
+	bool bFound = false;
+	for (; i != gMacroBlock->Line.end(); i++)
+	{
+		if (!_strnicmp(i->second.Command.c_str(), "Sub ", 4))
+		{
+			gMacroBlock->CurrIndex = StartLine;
+			FatalError("/break or /continue called outside a bucle");
+			return;
+		}
+		if (!_strnicmp(i->second.Command.c_str(), "/until", 6) ||
+			!_strnicmp(i->second.Command.c_str(), "/endwhile", 9) ||
+			!_strnicmp(i->second.Command.c_str(), "/next", 4))
+		{
+			int index = i->first;
+			i--;
+			if (i != gMacroBlock->Line.end()) {
+				int previndex = i->first;
+				//We are on the /until or /endwhile command
+				gMacroBlock->CurrIndex = (evaluate) ? previndex : index;
+				bFound = true;
+			}
+			break;
+		}
+	}
+	if (!bFound) {
+		gMacroBlock->CurrIndex = StartLine;
+		FatalError("/break or /continue called outside a bucle");
+	}
 }
 
 // ***************************************************************************
@@ -244,7 +259,7 @@ VOID CommandContinue(PSPAWNINFO pChar, PCHAR szLine)
         return;
    }
 
-   DoBreak(pChar, gMacroBlock, true);
+   DoBreak(pChar, gMacroBlock->CurrIndex, true);
 }
 
 // ***************************************************************************
@@ -268,7 +283,7 @@ VOID CommandBreak(PSPAWNINFO pChar, PCHAR szLine)
         return;
    }
 
-   DoBreak(pChar, gMacroBlock);
+   DoBreak(pChar, gMacroBlock->CurrIndex);
 }
 
 // ***************************************************************************
@@ -352,7 +367,7 @@ VOID CommandUntil(PSPAWNINFO pChar, PCHAR szLine)
       return;
    }
    if (Result==0)
-      ContinueDo(pChar, gMacroBlock);
+      ContinueDo(pChar, gMacroBlock->CurrIndex);
       
 }
 
@@ -414,7 +429,7 @@ VOID CommandWhile(PSPAWNINFO pChar, PCHAR szLine)
       return;
    }
    if (Result==0)
-      EndWhile(pChar, gMacroBlock);
+      EndWhile(pChar, gMacroBlock->CurrIndex);
 }
 
 // ***************************************************************************
@@ -437,5 +452,5 @@ VOID CommandEndWhile(PSPAWNINFO pChar, PCHAR szLine)
         return;
    }
 
-   ContinueWhile(pChar, gMacroBlock);
+   ContinueWhile(pChar, gMacroBlock->CurrIndex);
 } 

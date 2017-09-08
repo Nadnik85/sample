@@ -22,6 +22,8 @@
 |		6. User selectable limits on number of foraged items to keep using =quest|xx setting
 | Updated: hoosierbilly added fishing item handling 5/7/17
 |
+| Updated 01 Sep 2017 by Eqmule fixed a /next i that was in the wrong place.
+|
 | Selling Contributions by
 |   drkrain - TLInv item check
 |   dewey2461 - Add sold items to ini file Event
@@ -82,9 +84,10 @@ Sub SetupAdvLootVars(string ChangeIniFile)
 	/declare SCountTrack						int					outer	0
 	/declare MLSwitchTimer						timer				outer	0
 	
-    /if (${ChangeIniFile.Length}) {
+    /if (${ChangeIniFile.NotEqual[NULL]}) {
         /varset NinjaIniFile ${ChangeIniFile}
     }
+	/echo SetupAdvLootVars: Reading from ${NinjaIniFile}
     /declare NALVersion                           string             outer   ${Ini[${NinjaIniFile},Settings,Version]}
     /if (!${Ini[${NinjaIniFile},Settings,Version].Length}) {
         /call CreateIni
@@ -704,25 +707,26 @@ Sub UseAdvLoot
 				/if (${Debugloot}) /echo DEBUGLOOT Selecting a Group.MasterLooter, line# ${Macro.CurLine}
 				/varset GMLCounter ${Group.Members}
 				/for i ${Group.Members} downto 0
-				/if (${Ini[KissAssist_${Group.Member[${i}].Name}.ini,General,LootOn].Length}) {
-					/varset ICanLoot ${Ini[KissAssist_${Group.Member[${i}].Name}.ini,General,LootOn]}
-				} else /if (${Ini[KissAssist_${EverQuest.Server}_${Group.Member[${i}].Name}.ini,General,LootOn].Length}) {
-					/varset ICanLoot ${Ini[KissAssist_${EverQuest.Server}_${Group.Member[${i}].Name}.ini,General,LootOn]}
-				} else {
-					/varset ICanLoot 1
-				}
-				/if (${Group.Member[${GMLCounter}].Type.Equal[mercenary]} || ${ICanLoot}==0) {
-					/varcalc GMLCounter ${GMLCounter}-1
-					/next i
-				}
-				/if (${GMLCounter}>=0) {
-					/echo NINJADVLOOT: ${Group.Member[${GMLCounter}].Name} has been assigned the Master Looter Role
-					/grouproles set ${Group.Member[${GMLCounter}].Name} 5
-					/delay 2s ${Group.MasterLooter.ID}
-				} else {
-					/echo NINJADVLOOT: GMLSelect was unable to select a valid MasterLooter
-					/echo NINJADVLOOT: Please assign one or more group members >> LootOn=1 << in kissassist_CharacterName.ini file
-				}
+					/if (${Ini[KissAssist_${Group.Member[${i}].Name}.ini,General,LootOn].Length}) {
+						/varset ICanLoot ${Ini[KissAssist_${Group.Member[${i}].Name}.ini,General,LootOn]}
+					} else /if (${Ini[KissAssist_${EverQuest.Server}_${Group.Member[${i}].Name}.ini,General,LootOn].Length}) {
+						/varset ICanLoot ${Ini[KissAssist_${EverQuest.Server}_${Group.Member[${i}].Name}.ini,General,LootOn]}
+					} else {
+						/varset ICanLoot 1
+					}
+					/if (${Group.Member[${GMLCounter}].Type.Equal[mercenary]} || ${ICanLoot}==0) {
+						/varcalc GMLCounter ${GMLCounter}-1
+						/continue
+					}
+					/if (${GMLCounter}>=0) {
+						/echo NINJADVLOOT: ${Group.Member[${GMLCounter}].Name} has been assigned the Master Looter Role
+						/grouproles set ${Group.Member[${GMLCounter}].Name} 5
+						/delay 2s ${Group.MasterLooter.ID}
+					} else {
+						/echo NINJADVLOOT: GMLSelect was unable to select a valid MasterLooter
+						/echo NINJADVLOOT: Please assign one or more group members >> LootOn=1 << in kissassist_CharacterName.ini file
+					}
+				/next i
 			} else {
 				/if (!${GMLSelect}) /echo NINJADVLOOT: Please assign a group member the Master Looter Role in the group window
 			}
