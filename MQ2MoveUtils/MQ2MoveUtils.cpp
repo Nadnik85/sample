@@ -8000,13 +8000,13 @@ unsigned long GetDWordAt(unsigned long ulAddress, unsigned long ulNumBytes)
 // ---------------------------------------------------------------------------
 inline unsigned char FindPointers()
 {
-   if ((addrTurnRight   = FindPattern(FixOffset(0x420000), 0x100000, patternTurnRight, maskTurnRight)) == 0)     return 1;
+   if ((addrTurnRight   = FindPattern(FixOffset(0x420000), 0x200000, patternTurnRight, maskTurnRight)) == 0)     return 1;
    if ((pulTurnRight    = (unsigned long*)GetDWordAt(addrTurnRight, 1)) == 0)                         return 2;
    if ((pulStrafeLeft   = (unsigned long*)GetDWordAt(addrTurnRight, 7)) == 0)                         return 3;
    if ((pulStrafeRight  = (unsigned long*)GetDWordAt(addrTurnRight, 13)) == 0)                        return 4;
    if ((pulAutoRun      = (unsigned long*)GetDWordAt(addrTurnRight, 27)) == 0)                        return 5;
    if ((pulTurnLeft     = (unsigned long*)GetDWordAt(addrTurnRight, 42)) == 0)                        return 6;
-   if ((addrMoveForward = FindPattern(FixOffset(0x420000), 0x100000, patternMoveForward, maskMoveForward)) == 0) return 7;
+   if ((addrMoveForward = FindPattern(FixOffset(0x420000), 0x200000, patternMoveForward, maskMoveForward)) == 0) return 7;
    if ((pulForward      = (unsigned long*)GetDWordAt(addrMoveForward, 1)) == 0)                       return 8;
    if (pulAutoRun      != (unsigned long*)GetDWordAt(addrMoveForward, 15))                            return 9;
    if ((pulBackward     = (unsigned long*)GetDWordAt(addrMoveForward, 30)) == 0)                      return 10;
