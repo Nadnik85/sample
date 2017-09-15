@@ -25,7 +25,8 @@
 #define POPUPINTERVAL      2         // interval to show up any popup text in seconds 
 #define SECONDINTERVAL      1         // 1 second interval 
 
-#include "../MQ2Plugin.h" 
+#include "../MQ2Plugin.h"
+using namespace std;
 #include <list> 
 #include <map> 
 

@@ -24,6 +24,7 @@ GNU General Public License for more details.
 #define DBG_SPEW
 
 #include "MQ2Main.h"
+
 namespace MQ2Globals
 {
 
@@ -152,6 +153,9 @@ namespace MQ2Globals
 		ppContainerMgr = (CContainerMgr**)pinstCContainerMgr;
 		ppChatManager = (CChatManager**)pinstCChatWindowManager;
 		ppFacePick = (CFacePick**)pinstCFacePick;
+		#ifdef TEST
+		ppFindItemWnd = (CFindItemWnd**)pinstCFindItemWnd;
+		#endif
 		ppInvSlotMgr = (CInvSlotMgr**)pinstCInvSlotMgr;
 		ppNoteWnd = (CNoteWnd**)pinstCNoteWnd;
 		ppBookWnd = (CBookWnd**)pinstCBookWnd;
@@ -310,15 +314,17 @@ namespace MQ2Globals
 	HINSTANCE ghInstance = NULL;
 	//PHOTKEY pHotkey = NULL;
 	BOOL gbUnload = FALSE;
+	bool gBindInProgress = false;
 	BOOL gbLoad = TRUE;
 	DWORD gpHook = NULL;
 	HMODULE ghmq2ic = 0;
 #ifndef ISXEQ
 	PMACROBLOCK gMacroBlock = NULL;
 	PMACROSTACK gMacroStack = NULL;
-	map<string, PMACROBLOCK> gMacroSubLookupMap;
+	decltype(gMacroSubLookupMap) gMacroSubLookupMap;
+	decltype(gUndeclaredVars) gUndeclaredVars;
 	PEVENTQUEUE gEventQueue = NULL;
-	PMACROBLOCK gEventFunc[NUM_EVENTS] = { NULL };
+	int gEventFunc[NUM_EVENTS] = { NULL };
 #endif
 	UCHAR gLastFind = 0;
 	DOUBLE gZFilter = 10000.0f;
@@ -421,6 +427,7 @@ namespace MQ2Globals
 	PITEMDB gItemDB = NULL;
 	BOOL bRunNextCommand = FALSE;
 	BOOL gTurbo = FALSE;
+	BOOL gWarning = FALSE;
 	PDEFINE pDefines = NULL;
     PBINDLIST pBindList = NULL;
 	CHAR gLastFindSlot[MAX_STRING] = { 0 };
@@ -450,11 +457,11 @@ namespace MQ2Globals
 
 	DWORD gnNormalEQMappableCommands;
 	PCHAR szEQMappableCommands[nEQMappableCommands];
-	map<string, unsigned long> ItemSlotMap;
+	decltype(ItemSlotMap) ItemSlotMap;
 
 	CHAR DataTypeTemp[MAX_STRING] = { 0 };
 
-	map<string, PSPAWNINFO> SpawnByName;
+	decltype(SpawnByName) SpawnByName;
 	MQRANK EQP_DistArray[3000];
 	DWORD gSpawnCount = 0;
 
@@ -667,7 +674,7 @@ namespace MQ2Globals
 #include "SpellEffects.h"
 		NULL
 	};
-	SIZE_T MAX_SPELLEFFECTS = sizeof(szSPATypes) / sizeof(PCHAR);
+	SIZE_T MAX_SPELLEFFECTS = (sizeof(szSPATypes) / sizeof(PCHAR))-1;
 
 	PCHAR szZoneExpansionName[] = {
 		"Original EQ",              //0
@@ -1011,6 +1018,8 @@ namespace MQ2Globals
 	PMQPLUGIN pPlugins = 0;
 	PMQXMLFILE pXMLFiles = 0;
 	std::map<std::string,std::string> mAliases;
+	std::map<std::string,PDATAVAR> VariableMap;
+	std::unordered_map<std::string, std::unique_ptr<MQ2DATAITEM>> MQ2DataMap;
 	PSUB pSubs = 0;
 	PMQCOMMAND pCommands = 0;
 
@@ -1145,6 +1154,7 @@ namespace MQ2Globals
 	CContainerMgr **ppContainerMgr = 0;
 	CChatManager **ppChatManager = 0;
 	CFacePick **ppFacePick = 0;
+	CFindItemWnd **ppFindItemWnd = 0;
 	CInvSlotMgr **ppInvSlotMgr = 0;
 	CNoteWnd **ppNoteWnd = 0;
 	CTipWnd **ppTipWndOFDAY = 0;
@@ -1387,6 +1397,9 @@ namespace MQ2Globals
 	INITIALIZE_EQGAME_OFFSET(pinstCAudioTriggersWindow);
 	INITIALIZE_EQGAME_OFFSET(pinstCCharacterSelect);
 	INITIALIZE_EQGAME_OFFSET(pinstCFacePick);
+	#ifdef TEST
+	INITIALIZE_EQGAME_OFFSET(pinstCFindItemWnd);
+	#endif
 	INITIALIZE_EQGAME_OFFSET(pinstCNoteWnd);
 	INITIALIZE_EQGAME_OFFSET(pinstCBookWnd);
 	INITIALIZE_EQGAME_OFFSET(pinstCPetInfoWnd);
@@ -1663,7 +1676,9 @@ namespace MQ2Globals
 	INITIALIZE_EQGAME_OFFSET(CEverQuest__IssuePetCommand);
 	INITIALIZE_EQGAME_OFFSET(CEverQuest__CreateTargetIndicator);
 	INITIALIZE_EQGAME_OFFSET(CEverQuest__DeleteTargetIndicator);
-
+	#ifdef TEST
+	INITIALIZE_EQGAME_OFFSET(CFindItemWnd__CFindItemWnd);
+	#endif
 	INITIALIZE_EQGAME_OFFSET(CGaugeWnd__CalcFillRect);
 	INITIALIZE_EQGAME_OFFSET(CGaugeWnd__CalcLinesFillRect);
 	INITIALIZE_EQGAME_OFFSET(CGaugeWnd__Draw);

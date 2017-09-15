@@ -19,7 +19,6 @@ GNU General Public License for more details.
 
 #define DBG_SPEW
 
-
 #include "MQ2Main.h"
 
 #include <memory>
@@ -57,8 +56,6 @@ BOOL MQ2Internal::RemoveMQ2Type(MQ2Type &Type)
 	MQ2DataTypeMap.erase(iter);
 	return true;
 }
-
-std::unordered_map<string, std::unique_ptr<MQ2DATAITEM>> MQ2DataMap;
 
 inline PMQ2DATAITEM FindMQ2Data(PCHAR szName)
 {
@@ -166,7 +163,7 @@ int FindMacroDataMember(MQ2Type* type, MQ2TYPEVAR& Result, PCHAR pStart, PCHAR p
 
 		return type->GetMember(Result.VarPtr, pStart, pIndex, Result) ? 1 : 0;
 	}
-	
+
 	if (type->GetMember(Result.VarPtr, pStart, pIndex, Result))
 		return 1;
 
@@ -177,11 +174,60 @@ int FindMacroDataMember(MQ2Type* type, MQ2TYPEVAR& Result, PCHAR pStart, PCHAR p
 
 	return 0;
 }
+void DumpWarning(PCHAR pStart, int index)
+{
+	MACROLINE ml = gMacroBlock->Line[index];
+	BOOL oldbAllErrorsDumpStack = bAllErrorsDumpStack;
+	BOOL oldbAllErrorsFatal = bAllErrorsFatal;
+	bAllErrorsDumpStack = FALSE;
+	bAllErrorsFatal = FALSE;
+	WriteChatf("\arWARNING: \awUndefined Variable \ag%s\aw used on line %d@%s \ay%s\ax\nMacro Paused.", pStart, ml.LineNumber, ml.SourceFile.c_str(), ml.Command.c_str());
+	gMacroPause = 1;
+	bAllErrorsDumpStack = oldbAllErrorsDumpStack;
+	bAllErrorsFatal = oldbAllErrorsFatal;
+}
 
-bool EvaluateDataExpression(MQ2TYPEVAR& Result, PCHAR pStart, PCHAR pIndex)
+static bool function_exists(const PCHAR name)
+{
+	return (gMacroBlock &&
+		(gMacroSubLookupMap.find(name) != gMacroSubLookupMap.end()));
+}
+
+static bool call_function(const PCHAR name, const PCHAR args)
+{
+	const auto saved_block = gMacroBlock->CurrIndex;
+	const auto pChar = (PSPAWNINFO)pCharSpawn;
+	CHAR sub_line[MAX_STRING];
+	strcpy_s(sub_line, name);
+	strcat_s(sub_line, " ");
+	strcat_s(sub_line, args);
+	Call(pChar, sub_line);
+	auto sub_block = gMacroBlock->Line.find(gMacroBlock->CurrIndex);
+	sub_block++;
+	gMacroBlock->CurrIndex = sub_block->first;
+	while (gMacroBlock && sub_block != gMacroBlock->Line.end())
+	{
+		DoCommand(pChar, (PCHAR)sub_block->second.Command.c_str());
+		if (!gMacroBlock)
+			break;
+		if (gMacroBlock->CurrIndex == saved_block)
+			return true; // /return happened
+		sub_block = gMacroBlock->Line.find(gMacroBlock->CurrIndex);
+		sub_block++;
+		gMacroBlock->CurrIndex = sub_block->first;
+	}
+	FatalError("No /return in Subroutine %s", name);
+	return false;
+}
+
+bool EvaluateDataExpression(MQ2TYPEVAR& Result, PCHAR pStart, PCHAR pIndex, bool function_allowed = false)
 {
 	if (!Result.Type)
 	{
+		if (!gWarning) {//if they have warnings turned on in the macro, we will disregard checking the map
+			if (gUndeclaredVars.find(pStart) != gUndeclaredVars.end())
+				return false;//its a undefined variable no point in moving on further.
+		}
 		if (PMQ2DATAITEM DataItem = FindMQ2Data(pStart))
 		{
 			if (!DataItem->Function(pIndex, Result))
@@ -204,8 +250,22 @@ bool EvaluateDataExpression(MQ2TYPEVAR& Result, PCHAR pStart, PCHAR pIndex)
 			else
 				Result = DataVar->Var;
 		}
+		else if (function_allowed && function_exists(pStart))
+		{
+			if (!call_function(pStart, pIndex))
+				return false;
+			strcpy_s(DataTypeTemp, gMacroStack->Return);
+			Result.Ptr = &DataTypeTemp[0];
+			Result.Type = pStringType;
+		}
 		else
 		{
+			if (gMacroBlock) {
+				if (gWarning) {
+					DumpWarning(pStart,gMacroBlock->CurrIndex);
+				}
+				gUndeclaredVars[pStart] = gMacroBlock->CurrIndex;
+			}
 			return false;
 		}
 	}
@@ -219,7 +279,6 @@ bool EvaluateDataExpression(MQ2TYPEVAR& Result, PCHAR pStart, PCHAR pIndex)
 		if (result <= 0)
 			return false;
 	}
-
 	return true;
 }
 
@@ -315,6 +374,7 @@ BOOL ParseMQ2DataPortion(PCHAR szOriginal, MQ2TYPEVAR &Result)
 	CHAR Index[MAX_STRING] = { 0 };
 	PCHAR pIndex = &Index[0];
 	BOOL Quote = FALSE;
+	bool function_allowed = false;
 	while (1)
 	{
 		if (*pPos == 0)
@@ -329,8 +389,8 @@ BOOL ParseMQ2DataPortion(PCHAR szOriginal, MQ2TYPEVAR &Result)
 				}
 				return TRUE;
 			}
-			
-			if (!EvaluateDataExpression(Result, pStart, pIndex))
+
+			if (!EvaluateDataExpression(Result, pStart, pIndex, function_allowed))
 				return FALSE;
 
 			// done processing
@@ -412,7 +472,7 @@ BOOL ParseMQ2DataPortion(PCHAR szOriginal, MQ2TYPEVAR &Result)
 				// index
 				*pPos = 0;
 				++pPos;
-
+				function_allowed = true;
 				Quote = false;
 				BOOL BeginParam = true;
 				while (1)
@@ -480,7 +540,7 @@ BOOL ParseMQ2DataPortion(PCHAR szOriginal, MQ2TYPEVAR &Result)
 
 						return TRUE;
 					}
-					
+
 					if (!EvaluateDataExpression(Result, pStart, pIndex))
 						return FALSE;
 
@@ -566,7 +626,7 @@ BOOL ParseMacroData(PCHAR szOriginal, SIZE_T BufferSize)
 			unsigned long NewLength = strlen(szCurrent);
 			memmove(&pBrace[NewLength + 1], &pEnd[1], strlen(&pEnd[1]) + 1);
 			int addrlen = (int)(pBrace - szOriginal);
-			memcpy_s(pBrace, BufferSize-addrlen,szCurrent, NewLength);
+			memcpy_s(pBrace, BufferSize - addrlen, szCurrent, NewLength);
 			pEnd = &pBrace[NewLength];
 			*pEnd = 0;
 		}
@@ -579,8 +639,8 @@ BOOL ParseMacroData(PCHAR szOriginal, SIZE_T BufferSize)
 		NewLength = strlen(szCurrent);
 		memmove(&pBrace[NewLength], &pEnd[1], strlen(&pEnd[1]) + 1);
 		int addrlen = (int)(pBrace - szOriginal);
-		memcpy_s(pBrace, BufferSize-addrlen,szCurrent, NewLength);
-		if (bAllowCommandParse==false) {
+		memcpy_s(pBrace, BufferSize - addrlen, szCurrent, NewLength);
+		if (bAllowCommandParse == false) {
 			bAllowCommandParse = true;
 			Changed = false;
 			break;

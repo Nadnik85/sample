@@ -11,6 +11,18 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 ******************************************************************************/
+#pragma once
+
+#include <memory>
+#include <unordered_map>
+
+struct CaseInsensitiveLess
+{
+	bool operator()(const std::string& lhs, const std::string& rhs) const noexcept
+	{
+		return (::_stricmp(lhs.c_str(), rhs.c_str()) < 0);
+	};
+};
 
 namespace MQ2Globals
 {
@@ -71,15 +83,17 @@ namespace MQ2Globals
 	EQLIB_VAR BOOL gbEQWLoaded;
 	//EQLIB_VAR PHOTKEY pHotkey;
 	EQLIB_VAR BOOL gbUnload;
+	EQLIB_VAR bool gBindInProgress;
 	EQLIB_VAR BOOL gbLoad;
 	EQLIB_VAR DWORD gpHook;
 	EQLIB_VAR HMODULE ghmq2ic;
 #ifndef ISXEQ
 	LEGACY_VAR PMACROBLOCK gMacroBlock;
 	LEGACY_VAR PMACROSTACK gMacroStack;
-	LEGACY_VAR map<string, PMACROBLOCK> gMacroSubLookupMap;
+	LEGACY_VAR std::map <std::string, int, CaseInsensitiveLess> gMacroSubLookupMap;
+	LEGACY_VAR std::map<std::string, int> gUndeclaredVars;
 	LEGACY_VAR PEVENTQUEUE gEventQueue;
-	LEGACY_VAR PMACROBLOCK gEventFunc[NUM_EVENTS];
+	LEGACY_VAR int gEventFunc[NUM_EVENTS];
 #endif
 	EQLIB_VAR UCHAR gLastFind;
 	EQLIB_VAR BOOL gInClick;
@@ -183,6 +197,7 @@ namespace MQ2Globals
 	EQLIB_VAR BOOL bRunNextCommand;
 	EQLIB_VAR BOOL bAllowCommandParse;
 	EQLIB_VAR BOOL gTurbo;
+	EQLIB_VAR BOOL gWarning;
 	EQLIB_VAR PDEFINE pDefines;
     EQLIB_VAR PBINDLIST pBindList;
 	//EQLIB_VAR CHAR gLastFindSlot[MAX_STRING];
@@ -190,7 +205,7 @@ namespace MQ2Globals
 	//EQLIB_VAR HWND ghWnd;
 	EQLIB_VAR PFILTER gpFilters;
 
-	EQLIB_VAR map<string, unsigned long> ItemSlotMap;
+	EQLIB_VAR std::map<std::string, unsigned long> ItemSlotMap;
 
 	EQLIB_VAR BOOL g_bInDXMouse;
 	EQLIB_VAR PMOUSESPOOF gMouseData;
@@ -373,6 +388,8 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD nColorFatalError;
 
 	EQLIB_VAR std::map<std::string,std::string> mAliases;
+	EQLIB_VAR std::map<std::string,PDATAVAR> VariableMap;
+	EQLIB_VAR std::unordered_map<std::string, std::unique_ptr<MQ2DATAITEM>> MQ2DataMap;
 	EQLIB_VAR PSUB pSubs;
 	EQLIB_VAR PMQCOMMAND pCommands;
 	EQLIB_VAR PMQPLUGIN pPlugins;
@@ -380,7 +397,7 @@ namespace MQ2Globals
 
 	EQLIB_VAR fGetLabelFromEQ GetLabelFromEQ;
 
-	EQLIB_VAR map<string, PSPAWNINFO> SpawnByName;
+	EQLIB_VAR std::map<std::string, PSPAWNINFO> SpawnByName;
 	//EQLIB_VAR EQPlayer **ppEQP_IDArray;
 	EQLIB_VAR MQRANK EQP_DistArray[3000];
 	EQLIB_VAR DWORD gSpawnCount;
@@ -519,6 +536,7 @@ namespace MQ2Globals
 	EQLIB_VAR CConfirmationDialog **ppConfirmationDialog;
 
 	EQLIB_VAR CFacePick **ppFacePick;
+	EQLIB_VAR CFindItemWnd **ppFindItemWnd;
 	EQLIB_VAR CInvSlotMgr **ppInvSlotMgr;
 	//EQLIB_VAR CPopupWndManager **ppPopupWndManager;
 	EQLIB_VAR CNoteWnd **ppNoteWnd;
@@ -619,6 +637,7 @@ namespace MQ2Globals
 #define pChatManager (*ppChatManager)
 #define pEQSuiteTextureLoader (ppEQSuiteTextureLoader)
 #define pFacePick (*ppFacePick)
+#define pFindItemWnd (*ppFindItemWnd)
 #define pInvSlotMgr (*ppInvSlotMgr)
 #define pPopupWndManager (*ppPopupWndManager)
 #define pNoteWnd (*ppNoteWnd)
@@ -848,6 +867,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD pinstCAudioTriggersWindow;
 	EQLIB_VAR DWORD pinstCCharacterSelect;
 	EQLIB_VAR DWORD pinstCFacePick;
+	EQLIB_VAR DWORD pinstCFindItemWnd;
 	EQLIB_VAR DWORD pinstCNoteWnd;
 	EQLIB_VAR DWORD pinstCBookWnd;
 	EQLIB_VAR DWORD pinstCPetInfoWnd;
@@ -1122,6 +1142,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD CEverQuest__IssuePetCommand;
 	EQLIB_VAR DWORD CEverQuest__CreateTargetIndicator;
 	EQLIB_VAR DWORD CEverQuest__DeleteTargetIndicator;
+	EQLIB_VAR DWORD CFindItemWnd__CFindItemWnd;
 	
 	EQLIB_VAR DWORD CGaugeWnd__CalcFillRect;
 	EQLIB_VAR DWORD CGaugeWnd__CalcLinesFillRect;

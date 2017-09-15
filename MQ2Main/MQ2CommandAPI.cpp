@@ -34,27 +34,6 @@ typedef struct _TIMEDCOMMAND
 
 PTIMEDCOMMAND pTimedCommands=0;
 
-PMACROBLOCK GetWhileBlock(DWORD line)
-{
-	
-	BOOL bFound = 0;
-	PMACROBLOCK pblock = gMacroBlock;
-	while(pblock && pblock->pPrev) {
-		if (pblock->LineNumber==line) {
-			bFound = 1;
-			break;
-		}
-		pblock=pblock->pPrev;
-	}
-	if(line==1 && pblock && pblock->LineNumber==1) {
-		return pblock;
-	}
-	if(!bFound) {
-		FatalError("Bad while block pairing");
-		return NULL;
-	}
-	return pblock->pPrev;
-}
 
 VOID HideDoCommand(PSPAWNINFO pChar, PCHAR szLine, BOOL delayed)
 {
@@ -62,7 +41,7 @@ VOID HideDoCommand(PSPAWNINFO pChar, PCHAR szLine, BOOL delayed)
     if (delayed)
     {
 		lockit lk(ghLockDelayCommand,"HideDoCommand");
-		CHAR szTheCmd[MAX_STRING] = { 0 };
+		CHAR szTheCmd[MAX_STRING];
 		strcpy_s(szTheCmd, szLine);
 		PCHATBUF pChat = 0;
 		try {
@@ -85,14 +64,13 @@ VOID HideDoCommand(PSPAWNINFO pChar, PCHAR szLine, BOOL delayed)
         return;
     }
     CAutoLock DoCommandLock(&gCommandCS);
-	CHAR szTheCmd[MAX_STRING] = { 0 };
+	CHAR szTheCmd[MAX_STRING];
 	strcpy_s(szTheCmd, szLine);
 	WeDidStuff();
-    CHAR szArg1[MAX_STRING] = {0};
-    CHAR szParam[MAX_STRING] = {0};
-    CHAR szOriginalLine[MAX_STRING] = {0};
+    CHAR szOriginalLine[MAX_STRING];
     strcpy_s(szOriginalLine,szTheCmd);
-    GetArg(szArg1,szTheCmd,1);
+	CHAR szArg1[MAX_STRING];
+	GetArg(szArg1,szTheCmd,1);
 	std::string sName = szArg1;
 	std::transform(sName.begin(), sName.end(), sName.begin(), tolower);
 	if (mAliases.find(sName) != mAliases.end()) {
@@ -102,32 +80,27 @@ VOID HideDoCommand(PSPAWNINFO pChar, PCHAR szLine, BOOL delayed)
     GetArg(szArg1,szTheCmd,1);
     if (szArg1[0]==0)
 		return;
-    strcpy_s(szParam, GetNextArg(szTheCmd));
+	CHAR szParam[MAX_STRING];
+	strcpy_s(szParam, GetNextArg(szTheCmd));
 
     if ((szArg1[0]==':') || (szArg1[0]=='{')) {
         bRunNextCommand = TRUE;
         return;
     }
-	if(gMacroBlock && gMacroBlock->LoopLine!=0) {
-		//this is a command thats inside a while loop
-		//so its time to loop back
-		gMacroBlock = GetWhileBlock(gMacroBlock->LoopLine);
-		//CHAR szData[2048] = { 0 };
-		//strcpy_s(szData, gMacroBlock->Line);
-		//BOOL tret = ParseMacroData(szData, sizeof(szData));
-		//Calculate()
-		if (szArg1[0]=='}') {
-			bRunNextCommand = TRUE;
+	if (szArg1[0]=='}') {
+		if (gMacroBlock && gMacroBlock->Line[gMacroBlock->CurrIndex].LoopStart != 0) {
+			gMacroBlock->CurrIndex = gMacroBlock->Line[gMacroBlock->CurrIndex].LoopStart;
+			extern void pop_loop();
+			pop_loop();
 			return;
 		}
-	} else if (szArg1[0]=='}') {
 		if (strstr(szTheCmd,"{")) {
 			GetArg(szArg1,szTheCmd,2);
 			if (_stricmp(szArg1,"else")) {
 				FatalError("} and { seen on the same line without an else present");
 			}
 			//          DebugSpew("DoCommand - handing {} off to FailIf");
-			FailIf(pChar,"{",gMacroBlock,TRUE);
+			FailIf(pChar,"{",gMacroBlock->CurrIndex,TRUE);
 		} else {
 			// handle this: 
 			//            /if () {
@@ -154,7 +127,6 @@ VOID HideDoCommand(PSPAWNINFO pChar, PCHAR szLine, BOOL delayed)
         pEverQuest->InterpretCmd((EQPlayer*)pChar,szOriginalLine);
         return;
     }
-
     PMQCOMMAND pCommand=pCommands;
     while(pCommand)
     {
@@ -182,7 +154,6 @@ VOID HideDoCommand(PSPAWNINFO pChar, PCHAR szLine, BOOL delayed)
         }
         pCommand=pCommand->pNext;
     }
-
     PBINDLIST pBind = pBindList;
     while( pBind )
     {
@@ -202,11 +173,23 @@ VOID HideDoCommand(PSPAWNINFO pChar, PCHAR szLine, BOOL delayed)
             {
                 if( PCHARINFO pCharInfo = (PCHARINFO)GetCharInfo() )
                 {
-                    std::string szCallFunc( pBind->szFuncName );
-                    szCallFunc += " ";
-                    szCallFunc += szParam;
-
-                    Call( pCharInfo->pSpawn, (PCHAR)szCallFunc.c_str() );
+                    std::string sCallFunc( pBind->szFuncName );
+                    sCallFunc += " ";
+                    sCallFunc += szParam;
+					CHAR szCallFunc[MAX_STRING] = { 0 };
+					strcpy_s(szCallFunc, sCallFunc.c_str());
+					ParseMacroData(szCallFunc, MAX_STRING);
+					//Call(pCharInfo->pSpawn, (PCHAR)szCallFunc.c_str());
+					if (!gMacroBlock->BindCmd.size()) {
+						if (!gBindInProgress) {
+							gBindInProgress = true;
+							gMacroBlock->BindCmd = szCallFunc;
+						}
+						else {
+							Beep(1000, 100);
+							WriteChatf("Can't execute bind while another bind is on progress");
+						}
+					}
                 }
             }
             strcpy_s( szLastCommand, szOriginalLine );
@@ -373,11 +356,26 @@ public:
                     {
                         if( PCHARINFO pCharInfo = (PCHARINFO)GetCharInfo() )
                         {
-                            std::string szCallFunc( pBind->szFuncName );
-                            szCallFunc += " ";
-                            szCallFunc += szArgs;
-
-                            Call( pCharInfo->pSpawn, (PCHAR)szCallFunc.c_str() );
+                            std::string sCallFunc( pBind->szFuncName );
+                            sCallFunc += " ";
+                            sCallFunc += szArgs;
+							CHAR szCallFunc[MAX_STRING] = { 0 };
+							strcpy_s(szCallFunc, sCallFunc.c_str());
+							ParseMacroData(szCallFunc, MAX_STRING);
+							if (!gMacroBlock->BindCmd.size()) {
+								if (!gBindInProgress) {
+									gBindInProgress = true;
+									gMacroBlock->BindCmd = szCallFunc;
+								}
+								else {
+									Beep(1000, 100);
+									WriteChatf("Can't execute bind while another bind is on progress");
+								}
+							}
+							//CHAR szOrg[MAX_STRING] = {"${Time}"};
+							//ParseMacroData(szOrg, MAX_STRING);
+							//WriteChatf("[%s] %s called",szOrg, szCallFunc.c_str());
+							//Beep(1000, 100);
                         }
                     }
                     strcpy_s( szLastCommand, szFullCommand );

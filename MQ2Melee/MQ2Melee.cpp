@@ -15,9 +15,6 @@
 //                          | 2015-02-10: Updated by Ctaylor22 addition of global downshitIf, and 60 slots for down/holy shits.
 //                          | 2015-05-23: Updated by winnower berserker TDS fixes and improvements
 //                          | 2015-07-14: Updated by Eqmule CombatabilityTimer change
-// 							| 2016-07-24  v8.0 - Eqmule  - Added string safety.
-//                          | 2016-08-30: v8.1 Updated by Eqmule GetAAbyId Level changes
-//                          | 2017-02-15: v8.2 Updated by Eqmule for xtarget changes
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
 // SHOW_ABILITY:    0=0ff, 1=Display every ability that plugin use.
 // SHOW_ATTACKING:  0=0ff, 1=Display Attacking Target
@@ -33,10 +30,12 @@
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
 // Distribution of this code in compile form without source code is prohibited.
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
+// v8.0 - Eqmule 07-22-2016 - Added string safety.
+// v8.1 - Eqmule 08-22-2017 - downflag and holyflag now takes 0, 1 or 2, if its set to 2 it tells the plugin to only parse it if a macro IS running.
 
 #define   PLUGIN_NAME  "MQ2Melee"   // Plugin Name
-#define   PLUGIN_DATE   20170215    // Plugin Date
-#define   PLUGIN_VERS   8.2         // Plugin Version
+#define   PLUGIN_DATE   20170815    // Plugin Date
+#define   PLUGIN_VERS   8.3         // Plugin Version
 
 #define   SHOW_ABILITY         0
 #define   SHOW_ATTACKING       1
@@ -83,6 +82,7 @@ PLUGIN_VERSION(PLUGIN_VERS);
 
 #include "../moveitem2.h"
 
+using namespace std;
 //MoveUtils 11.x
 void(*fStickCommand)(PSPAWNINFO pChar, char* szLine);
 bool* pbStickOn;
@@ -4335,13 +4335,17 @@ void BashPress() {
 }
 
 void Configure() {
-	long Class = GetCharInfo2()->Class;
-	long Races = GetCharInfo2()->Race;
-	long Level = GetCharInfo2()->Level;
+	PCHARINFO2 pChar2 = GetCharInfo2();
+	PCHARINFO pChar = GetCharInfo();
+	if (!pChar2 || !pChar)
+		return;
+	long Class = pChar2->Class;
+	long Races = pChar2->Race;
+	long Level = pChar2->Level;
 	int SOValue = 0;
-	sprintf_s(INIFileName, "%s\\%s_%s.ini", gszINIPath, EQADDR_SERVERNAME, GetCharInfo()->Name);
+	sprintf_s(INIFileName, "%s\\%s_%s.ini", gszINIPath, EQADDR_SERVERNAME, pChar->Name);
 	sprintf_s(section, "%s_%d_%s_%s", PLUGIN_NAME, Level, pEverQuest->GetRaceDesc(Races), pEverQuest->GetClassDesc(Class));
-	Shrouded = GetCharInfo2()->Shrouded; if (!Shrouded) section[strlen(PLUGIN_NAME)] = 0;
+	Shrouded = pChar2->Shrouded; if (!Shrouded) section[strlen(PLUGIN_NAME)] = 0;
 	BuffMax = GetCharMaxBuffSlots();
 	HaveHold = GetAAIndexByName("Pet Discipline") ? true : false;
 	if (HaveHold) {
@@ -5077,7 +5081,138 @@ PLUGIN_API void InfuriateOFF(PSPAWNINFO pChar, char* Cmd) {
 		Announce(SHOW_ENRAGING, "MQ2Melee:\agINFURIATE\ax ended, taking action!");
 	}
 }
+BOOL ParseMacroLine(PCHAR szOriginal, SIZE_T BufferSize,std::list<std::string>&out)
+{
+	// find each {}
+	PCHAR pBrace = strstr(szOriginal, "${");
+	if (!pBrace)
+		return false;
+	unsigned long NewLength;
+	BOOL Changed = false;
+	//PCHAR pPos;
+	//PCHAR pStart;
+	//PCHAR pIndex;
+	CHAR szCurrent[MAX_STRING] = { 0 };
+	//MQ2TYPEVAR Result = { 0 };
+	do
+	{
+		// find this brace's end
+		PCHAR pEnd = &pBrace[1];
+		BOOL Quote = false;
+		BOOL BeginParam = false;
+		int nBrace = 1;
+		while (nBrace)
+		{
+			++pEnd;
+			if (BeginParam)
+			{
+				BeginParam = false;
+				if (*pEnd == '\"')
+				{
+					Quote = true;
+				}
+				continue;
+			}
+			if (*pEnd == 0)
+			{// unmatched brace or quote
+				goto pmdbottom;
+			}
+			if (Quote)
+			{
+				if (*pEnd == '\"')
+				{
+					if (pEnd[1] == ']' || pEnd[1] == ',')
+					{
+						Quote = false;
+					}
+				}
+			}
+			else
+			{
+				if (*pEnd == '}')
+				{
+					nBrace--;
+				}
+				else if (*pEnd == '{')
+				{
+					nBrace++;
+				}
+				else if (*pEnd == '[' || *pEnd == ',')
+					BeginParam = true;
+			}
 
+		}
+		*pEnd = 0;
+		strcpy_s(szCurrent, &pBrace[2]);
+		if (szCurrent[0] == 0)
+		{
+			goto pmdbottom;
+		}
+		if (ParseMacroLine(szCurrent, sizeof(szCurrent),out))
+		{
+			unsigned long NewLength = strlen(szCurrent);
+			memmove(&pBrace[NewLength + 1], &pEnd[1], strlen(&pEnd[1]) + 1);
+			int addrlen = (int)(pBrace - szOriginal);
+			memcpy_s(pBrace, BufferSize - addrlen, szCurrent, NewLength);
+			pEnd = &pBrace[NewLength];
+			*pEnd = 0;
+		}
+		if(!strchr(szCurrent,'[') && !strchr(szCurrent,'.'))
+			out.push_back(szCurrent);
+
+		NewLength = strlen(szCurrent);
+		memmove(&pBrace[NewLength], &pEnd[1], strlen(&pEnd[1]) + 1);
+		int addrlen = (int)(pBrace - szOriginal);
+		memcpy_s(pBrace, BufferSize - addrlen, szCurrent, NewLength);
+		if (bAllowCommandParse == false) {
+			bAllowCommandParse = true;
+			Changed = false;
+			break;
+		}
+		else {
+			Changed = true;
+		}
+	pmdbottom:;
+	} while (pBrace = strstr(&pBrace[1], "${"));
+	if (Changed)
+		while (ParseMacroLine(szOriginal, BufferSize,out))
+		{
+			Sleep(0);
+		}
+	return Changed;
+}
+bool OKtoParseShit(std::string &str)
+{
+	CHAR szBuffer[MAX_STRING] = { 0 };
+	strcpy_s(szBuffer, str.c_str());
+	std::list<std::string> out;
+	ParseMacroLine(szBuffer, MAX_STRING, out);
+	bool bOkToCheck = true;
+	if (out.size()) {
+		for (std::list<std::string>::iterator i = out.begin(); i != out.end(); i++) {
+			bOkToCheck = false;
+			if (MQ2DataMap.find(*i) != MQ2DataMap.end()) {
+				bOkToCheck = true;
+				continue;
+			}
+			if (!bOkToCheck)
+			{
+				//ok fine we didnt find it in the tlo map...
+				//lets check variables
+				if (VariableMap.find(*i) != VariableMap.end()) {
+					bOkToCheck = true;
+					continue;
+				}
+			}
+			if (!bOkToCheck)
+			{
+				//still not found...
+				break;
+			}
+		}
+	}
+	return bOkToCheck;
+}
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
 
@@ -5085,8 +5220,28 @@ void DowntimeHandle()
 {
 	if (doSENSETRAP && idSENSETRAP.Ready(ifSENSETRAP)) idSENSETRAP.Press();
 	if (!MeleeTarg && (unsigned long)clock() > TimerAttk && Immobile) {
-		if (DOWNSHITIF.length()<5 || Evaluate((char*)("${If[" + DOWNSHITIF.substr(5, DOWNSHITIF.length() - 6) + ",1,0]}").c_str())) {
-			if (doDOWNFLAG[doDOWN] && DOWNSHIT[doDOWN].size()) EzCommand((char*)DOWNSHIT[doDOWN].c_str());
+		if (DOWNSHITIF.length() < 5 || Evaluate((char*)("${If[" + DOWNSHITIF.substr(5, DOWNSHITIF.length() - 6) + ",1,0]}").c_str())) {
+			if (DOWNSHIT[doDOWN].size()) {
+				switch (doDOWNFLAG[doDOWN])
+				{
+					case 1://not a macro dependant flag
+					{
+						EzCommand((char*)DOWNSHIT[doDOWN].c_str());
+						break;
+					}
+					case 2://a macro must be running and the variable MUST exist
+					{
+						if (gRunning) {
+							if (OKtoParseShit(DOWNSHIT[doDOWN])) {
+								EzCommand((char*)DOWNSHIT[doDOWN].c_str());
+							}
+						}
+						break;
+					}
+					default:
+						break;
+				}
+			}
 			for (long x = 1; x < 61; x++) {
 				long n = (x + doDOWN) % 60;
 				if (doDOWNFLAG[n]) {
@@ -5526,7 +5681,7 @@ void MeleeHandle()
 		// should we face target? not moving, stopped >2sec, facing>2sec and not sticking?
 		if (doFACING && Immobile && (unsigned long)clock() > TimerFace && !Sticking)
 		{
-			if (MeleeView > 30) Face(SpawnMe(), "");
+			if (MeleeView > 30) Face(SpawnMe(), "nolook");
 			TimerFace = (unsigned long)clock() + delay * 8;
 		}
 		// are we in good ranged for ranged?
@@ -5720,7 +5875,28 @@ void MeleeHandle()
 
 	// time to handle holy shit?
 	if (HOLYSHITIF.length()<5 || Evaluate((char*)("${If[" + HOLYSHITIF.substr(5, HOLYSHITIF.length() - 6) + ",1,0]}").c_str())) {
-		if (doHOLYFLAG[doHOLY] && HOLYSHIT[doHOLY].size()) EzCommand((char*)HOLYSHIT[doHOLY].c_str());
+
+		if (HOLYSHIT[doHOLY].size()) {
+			switch (doHOLYFLAG[doHOLY])
+			{
+			case 1://not a macro dependant flag
+			{
+				EzCommand((char*)HOLYSHIT[doHOLY].c_str());
+				break;
+			}
+			case 2://a macro must be running and the variable MUST exist
+			{
+				if (gRunning) {
+					if (OKtoParseShit(HOLYSHIT[doHOLY])) {
+						EzCommand((char*)HOLYSHIT[doHOLY].c_str());
+					}
+				}
+				break;
+			}
+			default:
+				break;
+			}
+		}
 		for (long x = 1; x < 61; x++)
 		{
 			long n = (x + doHOLY) % 60;

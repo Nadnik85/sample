@@ -2833,7 +2833,16 @@ public:
 		Param = 6,
 		CurLine = 7,
 		MemUse = 8,
+		CurCommand = 9,
+		StackSize = 10,
+		IsTLO = 11,
+		IsOuterVariable =12,
 	};
+	enum MacroMethods
+	{
+		Undeclared = 1,
+	};
+
 	MQ2MacroType() :MQ2Type("macro")
 	{
 		TypeMember(Name);
@@ -2844,6 +2853,12 @@ public:
 		TypeMember(Param);
 		TypeMember(CurLine);
 		TypeMember(MemUse);
+		TypeMember(CurCommand);
+		TypeMember(StackSize);
+		TypeMember(IsTLO);
+		TypeMember(IsOuterVariable);
+		
+		TypeMethod(Undeclared);
 	}
 
 	~MQ2MacroType()
@@ -3183,6 +3198,7 @@ public:
 		Not = 12,
 		Distance = 13,
 		Sqrt = 14,
+        Clamp = 15,
 	};
 	MQ2MathType() :MQ2Type("math")
 	{
@@ -3200,6 +3216,7 @@ public:
 		TypeMember(Not);//12,
 		TypeMember(Distance);
 		TypeMember(Sqrt);
+        TypeMember(Clamp);
 	}
 
 	~MQ2MathType()

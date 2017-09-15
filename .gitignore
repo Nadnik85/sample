@@ -5,8 +5,6 @@
 .vs/
 
 MQ2Auth0.h
-MacroQuest2.sln
-ISXEQ.sln
 
 *.exp
 *.pdb
@@ -19,3 +17,7 @@ ISXEQ*Intermediate
 
 
 UpgradeLog.htm
+/MacroQuest2.sln
+/ISXEQ.sln
+/MacroQuest2.sln
+/ISXEQ.sln

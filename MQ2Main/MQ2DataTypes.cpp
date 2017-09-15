@@ -777,6 +777,27 @@ bool MQ2MathType::GETMEMBER()
 			return true;
 		}
 		return false;
+    case Clamp:
+        if( char*Arg = GETFIRST() ) {
+            CHAR szMin[MAX_STRING] = { 0 };
+            CHAR szN[MAX_STRING] = { 0 };
+            CHAR szMax[MAX_STRING] = { 0 };
+
+            GetArg( szMin, Arg, 1, 0, 0, 1 );
+            GetArg( szN, Arg, 2, 0, 0, 1 );
+            GetArg( szMax, Arg, 3, 0, 0, 1 );
+
+            int Min = atol( szMin );
+            int n = atol( szN );
+            int Max = atol( szMax );
+
+            //WriteChatf( "\Clamp:\ax %s min: %d n: %d max: %d", Arg, Min, n, Max );
+
+            Dest.Int = max( Min, min( n, Max ) );
+            Dest.Type = pIntType;
+            return true;
+        }
+        return false;
 	case Distance:
 		if (ISINDEX())
 		{
@@ -843,6 +864,31 @@ bool MQ2MacroType::GETMEMBER()
 {
 	if (!gMacroStack)
 		return false;
+	PMQ2TYPEMEMBER pMethod = MQ2MacroType::FindMethod(Member);
+	if (pMethod) {
+		switch ((MacroMethods)pMethod->ID)
+		{
+			case Undeclared:
+			{
+				if (gMacroBlock && gUndeclaredVars.size()) {
+					WriteChatf("----------- Undeclared Variables (bad) -----------");
+					int count = 1;
+					for (std::map<std::string, int>::iterator i = gUndeclaredVars.begin(); i != gUndeclaredVars.end(); i++)
+					{
+						MACROLINE ml = gMacroBlock->Line[i->second];
+						WriteChatf("[%d] %s see: %d@%s: %s", count++, i->first.c_str(),ml.LineNumber,ml.SourceFile.c_str(),ml.Command.c_str());
+					}
+				}
+				else {
+					WriteChatf("No Undeclared Variables Found. (good)");
+				}
+				return true;
+			}
+			default:
+				return false;
+		}
+	}
+		
 	PMQ2TYPEMEMBER pMember = MQ2MacroType::FindMember(Member);
 	if (!pMember)
 		return false;
@@ -865,6 +911,33 @@ bool MQ2MacroType::GETMEMBER()
 		strcpy_s(DataTypeTemp, gMacroStack->Return);
 		Dest.Type = pStringType;
 		return true;
+	case IsTLO:
+	{
+		Dest.DWord = 0;
+		if (MQ2DataMap.find(GETFIRST()) != MQ2DataMap.end())
+			Dest.DWord = 1;
+		Dest.Type = pBoolType;
+		return true;
+	}
+	case IsOuterVariable:
+	{
+		Dest.DWord = 0;
+		if (VariableMap.find(GETFIRST()) != VariableMap.end())
+			Dest.DWord = 1;
+		Dest.Type = pBoolType;
+		return true;
+	}
+	case StackSize:
+	{
+		Dest.DWord = 0;
+		PMACROSTACK pStack = gMacroStack;
+		while (pStack) {
+			Dest.DWord++;
+			pStack = pStack->pNext;
+		}
+		Dest.Type = pIntType;
+		return true;
+	}
 	case Params:
 		Dest.DWord = 0;
 		{
@@ -881,13 +954,24 @@ bool MQ2MacroType::GETMEMBER()
 		TypeMember(Param);
 		/**/
 	case CurLine:
-		if (gMacroStack && gMacroStack->Location && gMacroStack->Location->LineNumber) {
-			Dest.DWord = gMacroStack->Location->LineNumber;
+		if (gMacroBlock) {
+			Dest.DWord = gMacroBlock->Line[gMacroBlock->CurrIndex].LineNumber;
 			Dest.Type = pIntType;
 			return true;
 		}
 		break;
-		case MemUse:
+	case CurCommand:
+		if (gMacroBlock) {
+			sprintf_s(DataTypeTemp, "%d@%s -> %s", gMacroBlock->Line[gMacroStack->LocationIndex].LineNumber, gMacroBlock->Line[gMacroStack->LocationIndex].SourceFile.c_str(), gMacroBlock->Line[gMacroStack->LocationIndex].Command.c_str());
+			std::string str1 = DataTypeTemp;
+			replace(str1.begin(), str1.end(), '$', '#');
+			strcpy_s(DataTypeTemp, str1.c_str());
+			Dest.Ptr = &DataTypeTemp[0];
+			Dest.Type = pStringType;
+			return true;
+		}
+		break;
+	case MemUse:
 		{	
 			int size = 0;
 			if (gMacroStack) {
@@ -896,18 +980,10 @@ bool MQ2MacroType::GETMEMBER()
 					size += sizeof(pStack);
 					pStack = pStack->pNext;
 				}
-				PMACROBLOCK pBlock = gMacroStack->Location;
-				while (pBlock) {
-					size += sizeof(pBlock);
-					pBlock = pBlock->pNext;
-				}
 			}
 			if (gMacroBlock) {
 				PMACROBLOCK pBlock = gMacroBlock;
-				while (pBlock) {
-					size += sizeof(pBlock);
-					pBlock = pBlock->pNext;
-				}
+				size += sizeof(pBlock);
 			}
 			if (gEventQueue) {
 				PEVENTQUEUE pQueue = gEventQueue;
@@ -7617,13 +7693,19 @@ bool MQ2WindowType::GETMEMBER()
 		Dest.Type = pStringType;
 		return true;
 	case Checked:
-		Dest.Int = pWnd->Checked;
+		Dest.Int = ((CButtonWnd*)pWnd)->Checked;
 		Dest.Type = pBoolType;
 		return true;
-	case Highlighted:
-		Dest.Int = pWnd->Highlighted;
+	case Highlighted://if the window in question has focus...
+	{
+		Dest.Int = false;
+		if (PCXWNDMGR pMgr = (PCXWNDMGR)pWndMgr) {
+			if ((PCSIDLWND)pWnd == pMgr->FocusWindow)
+				Dest.Int = true;
+		}
 		Dest.Type = pBoolType;
 		return true;
+	}
 	case Enabled:
 		Dest.Int = (pWnd->Enabled != 0);
 		Dest.Type = pBoolType;
@@ -7747,12 +7829,16 @@ bool MQ2WindowType::GETMEMBER()
 	case Items:
 		if (((CXWnd*)pWnd)->GetType() == UI_Listbox)
 		{
-			Dest.DWord = ((CSidlScreenWnd*)pWnd)->Items;
+			CListWnd*clist = (CListWnd*)pWnd;
+			Dest.DWord = clist->ItemsArray.Count;
 			Dest.Type = pIntType;
 		}
 		else if (((CXWnd*)pWnd)->GetType() == UI_Combobox)
 		{
-			Dest.DWord = ((CSidlScreenWnd*)pWnd->SidlText)->Items;
+			//this is a crap way of doing it, ill fix the ccombownd class someday
+			//CListWnd*clist = (CListWnd*)pWnd;
+			CSidlScreenWnd *csidl = (CSidlScreenWnd*)pWnd;
+			Dest.DWord = ((CListWnd*)csidl->SidlText)->ItemsArray.Count;
 			Dest.Type = pIntType;
 		}
 		return true;
@@ -12614,7 +12700,7 @@ bool MQ2AlertListType::GETMEMBER()
 
 		std::list<SEARCHSPAWN>ss;
 		if (CAlerts.GetAlert(theindex, ss)) {
-			list<SEARCHSPAWN>::iterator si = ss.begin();
+			auto si = ss.begin();
 			if (ss.size()>theitem) {
 				std::advance(si, theitem);
 
