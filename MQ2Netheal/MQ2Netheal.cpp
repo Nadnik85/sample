@@ -15,6 +15,7 @@
 
 #ifndef PLUGIN_API
 #include "../MQ2Plugin.h"
+using namespace std;
 PreSetup("MQ2NetHeal");
 PLUGIN_VERSION(PLUGIN_VERS);
 #include <string>

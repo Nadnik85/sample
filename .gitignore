@@ -9,18 +9,15 @@ MQ2Auth0.h
 *.exp
 *.pdb
 *.map
-*.dll
-*.lib
-*.iobj
-*.ipdb
-*.log
-*.ilk
-*.tlog
 
+Release/
 Debug/
 Intermediate/
-*/Release/
-*/Debug/
 ISXEQ*Intermediate
 
+
 UpgradeLog.htm
+/MacroQuest2.sln
+/ISXEQ.sln
+/MacroQuest2.sln
+/ISXEQ.sln

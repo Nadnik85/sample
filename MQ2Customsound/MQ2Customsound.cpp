@@ -26,6 +26,7 @@
 */
 
 #include "../MQ2Plugin.h"
+using namespace std;
 #include <mmsystem.h>
 #include <vector>
 

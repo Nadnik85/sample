@@ -8,11 +8,31 @@ Information about installing Very Vanilla can be found on RedGuides.com:
 
 https://www.redguides.com/forums/threads/26389-MacroQuest2-Beginner-s-Guide-(start-here)
 
-# Build and Test
-You can create your own "lite" version of Very Vanilla by using the code here, combined with the source for MacroQuest2 which can be cloned here:
-https://github.com/macroquest/macroquest2
+# Build and Test Very Vanilla
+1) Install Visual Studio 2017 (free edition)
 
-If you're new to compiling, you can find instructions here:
+2) Team -> Manage Connections
+
+3) Under "Local Git Repositories" Click "Clone". 
+
+4) Enter this url: https://gitlab.com/redguides/VeryVanilla.git
+Specify a local folder to place the files, and click "Clone". If it's your first time cloning, you'll be asked for your GitLab login & password.
+
+5) Go to the cloned folder. Run MQ2auth.exe
+
+6) Open RG_Vanilla.sln
+
+7) Retarget projects? Click OK
+
+8) Build -> Configuration Manager -> switch from debug to release
+
+9) Build -> Clean Solution
+
+10) Build -> Build Solution
+
+11) You did it! You'll find the goodies in the release directory. If you want MQ2Nav it needs to be compiled on its own, see brainiac's instructions on github.
+
+If you're new to compiling, you can find more detailed instructions here:
 
 http://www.macroquest2.com/wiki/index.php/MacroQuest2:Compiling
 
@@ -38,7 +58,7 @@ To add or update a macro, it's as simple as this:
 If you're working with others, or with several files, it's best to use software to avoid conflicting edits.
 
 We have a guide on using Git with Visual Studio here:
-https://www.redguides.com/forums/thr...lute-beginners
+https://www.redguides.com/forums/threads/55499-Using-git-with-Visual-Studio-2017-absolute-beginners
 
 If you want more detail, GitHub has a nice little tutorial:
 https://help.github.com/articles/set-up-git/

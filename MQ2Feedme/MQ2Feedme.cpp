@@ -37,6 +37,7 @@
 //****************************************************************//
 
 #include "../MQ2Plugin.h"
+using namespace std;
 #include <list>
 #include <string>
 

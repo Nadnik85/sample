@@ -11,7 +11,8 @@
 // and Shutdown for setup and cleanup, do NOT do it in DllMain. 
 
 
-#include "../MQ2Plugin.h" 
+#include "../MQ2Plugin.h"
+using namespace std;
 #include <list> 
 #include <iterator> 
 #include <ctype.h> 

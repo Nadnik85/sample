@@ -14,7 +14,7 @@
 #include <regex>
 
 #include "../MQ2Plugin.h"
-
+using namespace std;
 #undef MakeLower
 
 #define VNAME(v) #v

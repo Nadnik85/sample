@@ -1,6 +1,6 @@
 // MQ2Search.cpp : Defines the entry point for the DLL application.
 #include "../MQ2Plugin.h"
-
+using namespace std;
 PreSetup("MQ2Search");
 
 // GLOBAL VARIABLES

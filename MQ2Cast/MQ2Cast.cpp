@@ -20,6 +20,7 @@
 // 10.04 edited by: trev 3/28/2014  Fixed: spells not getting memmed
 // 10.05 edited by: eqmule 2/17/2016  new spell system
 // 11.0 - Eqmule 07-22-2016 - Added string safety.
+// 11.1 - Eqmule 08-22-2017 - Dont check Twisting if Mq2Twist is NOT loaded and some other tweaks to improve performance.
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
 
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
@@ -30,7 +31,7 @@ bool DEBUGGING = false;
 #include "../MQ2Plugin.h"
 #include "../Blech/Blech.h"
 PreSetup("MQ2Cast");
-PLUGIN_VERSION(11.0);
+PLUGIN_VERSION(11.1);
 #endif
 
 #define         DELAY_CAST    12000
@@ -195,7 +196,7 @@ PALTABILITY AltAbility(PCHAR ID)
 		int Values = atoi(ID);
 		for (DWORD nAbility = 0; nAbility < AA_CHAR_MAX_REAL; nAbility++) {
 			if (GetCharInfo2()->AAList[nAbility].AAIndex) {
-					if (Number) {
+				if (Number) {
 					if (PALTABILITY pAbility = GetAAByIdWrapper(GetCharInfo2()->AAList[nAbility].AAIndex)) {
 						if (pAbility->ID == Values) {
 							return pAbility;
@@ -218,7 +219,12 @@ PALTABILITY AltAbility(PCHAR ID)
 
 bool BardClass()
 {
-	return (strncmp(pEverQuest->GetClassDesc(GetCharInfo()->pSpawn->mActorClient.Class & 0xFF), "Bard", 5)) ? false : true;
+	if (PCHARINFO pChar = GetCharInfo()) {
+		if (pChar->pSpawn) {
+			return (strncmp(pEverQuest->GetClassDesc(pChar->pSpawn->mActorClient.Class & 0xFF), "Bard", 5)) ? false : true;
+		}
+	}
+	return false;
 }
 
 void Cast(PCHAR zFormat, ...)
@@ -407,11 +413,8 @@ bool Moving()
 	return (!MQ2Globals::gbMoving && (!ImmobileT || MyTimer>ImmobileT));
 }
 
-BOOL Open(PCHAR WindowName)
-{
-	PCSIDLWND pWnd = (PCSIDLWND)FindMQ2Window(WindowName);
-	return (!pWnd) ? false : (BOOL)pWnd->dShow;
-}
+CXWnd*TributeMasterWnd = 0;
+CXWnd*GuildBankWnd = 0;
 
 BOOL Paused()
 {
@@ -433,14 +436,21 @@ BOOL Paused()
 	if (pGiveWnd && (PCSIDLWND)pGiveWnd->dShow) {
 		return true;
 	}
-	if (Open("TributeMasterWnd")) {
-		return true;
+	//calling Open is super cpu expensive
+	//if (Open("TributeMasterWnd")) {
+	//I needed to change this cause it slows us down A LOT!
+	if (!TributeMasterWnd) {
+		TributeMasterWnd = FindMQ2Window("TributeMasterWnd");
+	} else {
+		if(TributeMasterWnd->dShow)
+			return true;
 	}
-	if (Open("GuildTributeMasterWnd")) {
-		return true;
+	if (!GuildBankWnd) {
+		GuildBankWnd = FindMQ2Window("GuildBankWnd");
 	}
-	if (Open("GuildBankWnd")) {
-		return true;
+	else {
+		if (GuildBankWnd->dShow)
+			return true;
 	}
 	return false;
 }
@@ -532,10 +542,10 @@ bool ItemSearch(PCHAR szItemName, long B, long E)
 		pItem = FindItemByName(szItemName, 1);
 	}
 	if (pItem) {
-		fSLOT = pItem->Contents.ItemSlot;
+		fSLOT = pItem->GlobalIndex.Index.Slot1;
 		fITEM = pItem;
 		fPACK = NULL;
-		if (PCONTENTS pPack = FindItemBySlot(pItem->Contents.ItemSlot)) {
+		if (PCONTENTS pPack = FindItemBySlot(pItem->GlobalIndex.Index.Slot1)) {
 			if (GetItemFromContents(pPack)->Type == ITEMTYPE_PACK) {
 				fPACK = pPack;
 			}
@@ -639,7 +649,9 @@ bool SpellReady(PCHAR szSpellName)
 		}
 	}
 	if (szSpellName[0] == 'M' && strlen(szSpellName) == 1) {
-		return !(Twisting = Evaluate("${If[${Twist.Twisting},1,0]}") ? true : false);
+		if (FindMQ2DataType("Twist"))
+			Twisting = (bool)Evaluate("${If[${Twist.Twisting},1,0]}");
+		return !Twisting ? true : false;
 	}
 	char zName[MAX_STRING];
 	GetArg(zName, szSpellName, 1, FALSE, FALSE, FALSE, '|');
@@ -810,7 +822,7 @@ public:
 				Dest.Type = pStringType;
 				return true;
 			case Ready:
-				Dest.DWord = (gbInZone && !Flags() && !Paused() && !Open("SpellBookWnd") && !(GetCharInfo()->Stunned) && SpellReady(Index));
+				Dest.DWord = (gbInZone && !Flags() && !Paused() && (pSpellBookWnd && !pSpellBookWnd->dShow) && !(GetCharInfo()->Stunned) && SpellReady(Index));
 				Dest.Type = pBoolType;
 				return true;
 			case Taken:
@@ -895,26 +907,31 @@ void StopHandle()
 		Stick("pause");
 		MoveS = FLAG_PROGRESS1;
 	}
-	if (Evaluate("${If[${Bool[${FollowFlag}]},1,0]}")) {
-		if (DEBUGGING) {
-			WriteChatf("[%I64u] MQ2Cast:[Immobilize]: AdvPath Pause Request.", GetTickCount642());
+	if (FindMQ2DataVariable("FollowFlag")) {
+		//looks like AdvPath.inc is loaded... ok then, fine we will check its tlo...
+		if (Evaluate("${If[${Bool[${FollowFlag}]},1,0]}")) {
+			if (DEBUGGING) {
+				WriteChatf("[%I64u] MQ2Cast:[Immobilize]: AdvPath Pause Request.", GetTickCount642());
+			}
+			Execute("/varcalc PauseFlag 1");
+			MoveA = FLAG_PROGRESS1;
 		}
-		Execute("/varcalc PauseFlag 1");
-		MoveA = FLAG_PROGRESS1;
 	}
-	if (Evaluate("${If[${AdvPath.Following} && !${AdvPath.Paused},1,0]}")) {
-		if (DEBUGGING) {
-			WriteChatf("[%I64u] MQ2Cast:[Immobilize]: MQ2AdvPath Pause Request.", GetTickCount642());
+	if (FindMQ2DataType("AdvPath")) {
+		if (Evaluate("${If[${AdvPath.Following} && !${AdvPath.Paused},1,0]}")) {
+			if (DEBUGGING) {
+				WriteChatf("[%I64u] MQ2Cast:[Immobilize]: MQ2AdvPath Pause Request.", GetTickCount642());
+			}
+			FollowPath("pause");
+			MoveF = FLAG_PROGRESS1;
 		}
-		FollowPath("pause");
-		MoveF = FLAG_PROGRESS1;
-	}
-	if (Evaluate("${If[${AdvPath.Playing} && !${AdvPath.Paused},1,0]}")) {
-		if (DEBUGGING) {
-			WriteChatf("[%I64u] MQ2Cast:[Immobilize]: MQ2AdvPath Pause Request.", GetTickCount642());
+		if (Evaluate("${If[${AdvPath.Playing} && !${AdvPath.Paused},1,0]}")) {
+			if (DEBUGGING) {
+				WriteChatf("[%I64u] MQ2Cast:[Immobilize]: MQ2AdvPath Pause Request.", GetTickCount642());
+			}
+			Path("pause");
+			MoveP = FLAG_PROGRESS1;
 		}
-		Path("pause");
-		MoveP = FLAG_PROGRESS1;
 	}
 	if (Immobile = Moving()) {
 		if (DEBUGGING) {
@@ -1534,6 +1551,8 @@ PLUGIN_API void SetGameState(unsigned long ulGameState)
 		cPendingEq = false;
 		ulTimer = 0;
 		ulTimerR = 0;
+		TributeMasterWnd = 0;
+		GuildBankWnd = 0;
 	}
 }
 
@@ -1628,7 +1647,8 @@ PLUGIN_API VOID OnPulse(VOID)
 
 		// wait for incoming chat, timers, and windows to be closed.
 		DuckF = FLAG_COMPLETE;
-		Twisting = Evaluate("${If[${Twist.Twisting},1,0]}") ? true : false;
+		if(FindMQ2DataType("Twist"))
+			Twisting = Evaluate("${If[${Twist.Twisting},1,0]}") ? true : false;
 		if (Casting) {
 			if (CastingC == CastingD) {
 				if (PSPELL Spell = GetSpellByID(CastingC))
@@ -1752,4 +1772,10 @@ void ClickBack()
 		}
 		return;
 	}
+}
+
+PLUGIN_API VOID OnReloadUI()
+{
+	TributeMasterWnd = 0;
+	GuildBankWnd = 0;
 }
