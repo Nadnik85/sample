@@ -1,5 +1,5 @@
 |Auto-Subs Shared routines across Auto series macros by Noobhaxor
-| Version 4.0 v1 June Update
+| Version 5.0 v1 September Update
 | ----------------------------------------------------------------------------
 | SUB: Compatibility with KissAssist Aliases Old and New
 | ----------------------------------------------------------------------------
@@ -38,7 +38,7 @@ Sub VarSetup
 	/declare autotargetid	int outer 0
 	/declare sittimer		timer outer 0
 	/declare enablesit		int outer 0
-	/declare AutoCampReturn	int outer 0
+	/declare ReturnToCamp	int outer 0
 	/declare AutoCampRadius	int outer 50
 	/declare AutoCampX		int outer ${Me.X}
 	/declare AutoCampY		int outer ${Me.Y}
@@ -47,7 +47,6 @@ Sub VarSetup
 	/declare numoftargets	int outer 0
 	/declare ChaseAssist	int outer 0
 	/echo -----${MacroName} LOADING------
-	/if (${AutoCampHold}==1) /echo CAUTION: Auto Camp is set!
 	/if (${Me.XTarget[1].TargetType.NotEqual[Auto Hater]}) {
 		/echo Extended Target 1 HAS TO BE SET TO Auto Hater
 		/echo ENDING MACRO -- Set Extended Target 1 to Auto
@@ -96,11 +95,11 @@ Sub VarSetup
 | -------------------------------------------------------------------------------------
 | SUB: Bind_ToggleVariable  Check whenever the player is changing any variable via /echo
 | -------------------------------------------------------------------------------------
-    Sub Bind_ToggleVariable(string Command, string Command2)
+    Sub Bind_ToggleVariable(string Command, string Command2, string Command3)
         /declare i int local
+		/declare OnOff local
         | Toggle Variables & Set Variables
         /if (${Defined[${Command}]}) {
-            /declare OnOff local
             /if (${Command2.NotEqual[NULL]}) {
                 /if (${Select[${Command2},0,off]}) {
                     /varset ${Command} 0
@@ -109,10 +108,10 @@ Sub VarSetup
                     /varset ${Command} 1
                     /varset OnOff On
                 } 
-            } else /if (${Command.NotEqual[0]}) {
-                /varset ${Command} 0
+            } else /if (${${Command}}) {
+				/varset ${Command} 0
                 /varset OnOff Off
-            } else {
+			} else {
                 /varset ${Command} 1
                 /varset OnOff On
             }
@@ -120,11 +119,11 @@ Sub VarSetup
 		|Camp Toggle
             /if (${Command.Equal[ReturnToCamp]} && ${OnOff.Equal[on]} ) {
 				/if (${AutoCampHold}!=1) /docommand /varset AutoCampHold 1
-				/if (${AutoCampReturn}!=0) /docommand /varset AutoCampReturn 0
+				/if (${ReturnToCamp}!=0) /docommand /varset ReturnToCamp 0
             } else /if (${Command.Equal[ReturnToCamp]} && ${OnOff.Equal[off]}) {
                 /echo Turning ALL Camp settings to OFF
 				/docommand /varset AutoCampHold 0
-				/docommand /varset AutoCampReturn 0
+				/docommand /varset ReturnToCamp 0
             }
 		|Chase Toon Toggle
 			/if (${Command.Equal[ChaseAssist]} && ${OnOff.Equal[on]} &&${Target.Type.Equal[PC]}) {
@@ -189,13 +188,13 @@ Sub Event_KissShit(string Line, string ISection, string IName, string IVar)
 	}
 	/if (${ISection.Equal[ReturnToCamp]}||${ISection.Equal[HoldCamp]}) {
 		/if (${AutoCampHold}!=1) /docommand /varset AutoCampHold 1
-		/if (${AutoCampReturn}!=0) /docommand /varset AutoCampReturn 0
+		/if (${ReturnToCamp}!=0) /docommand /varset ReturnToCamp 0
 	}
 	/if (${IName.Equal[CampOff]}) {
 		/echo Turning ALL Camp settings to OFF
 		/docommand /varset changetoini 1
 		/docommand /varset AutoCampHold 0
-		/docommand /varset AutoCampReturn 0
+		/docommand /varset ReturnToCamp 0
 	}
 	/if (${ISection.Equal[InstantRelease]}) {
 		/docommand /varset changetoini 1
@@ -344,43 +343,32 @@ Sub Event_KissShit(string Line, string ISection, string IName, string IVar)
 		/delay 1m !${Me.Zoning}
 		/if (${Bool[${FollowToonName}]}) /delay 1m ${Spawn[${FollowToonName}].ID}
 		/delay 50
-		/if (${AutoCampReturn}!=0) /varset AutoCampReturn 0
+		/if (${ReturnToCamp}!=0) /varset ReturnToCamp 0
 	/return
 |----------------------------------------------------------------------------
 | SUB: Load Ini
 |----------------------------------------------------------------------------
-    Sub LoadIni(string sectionName, string varName, string varType, string varValue, string varArray)
-        /if (${${varArray}.Size}>0) {
-            /declare i int local
-                /for i 1 to ${${varArray}.Size}
-                    /if (!${Ini[${IniFileName},${sectionName},${varArray}${i}].Length}) /ini "${IniFileName}" "${sectionName}" "${varArray}${i}" "${varValue}"
-                    /if (${Ini[${IniFileName},${sectionName},${varArray}${i}].Length}) /varset ${varArray}[${i}]  ${Ini[${IniFileName},${sectionName},${varArray}${i}]}
-                /next i
-            /return
-        } else {
-            /if (!${Defined[${varName}]} && ${Defined[varType]}) /declare ${varName} ${varType} outer
-            /if (!${Ini[${IniFileName},${sectionName},${varName}].Length}) {
-                /if (${varValue.Length}) {
-                    /ini "${IniFileName}" "${sectionName}" "${varName}" "${varValue}"
-                    /varset ${varName} ${varValue}
-                }
-            } else {
-                /varset ${varName} ${Ini[${IniFileName},${sectionName},${varName}]} 
-            }
-        }
+    Sub LoadIni(string sectionName, string varName, string varType, string varValue)
+     
+		/if (!${Defined[${varName}]} && ${Defined[varType]}) /declare ${varName} ${varType} outer 0
+		/if (!${Ini[${IniFileName},${sectionName},${varName}].Length}) {
+			/if (${varValue.Length}) {
+				/ini "${IniFileName}" "${sectionName}" "${varName}" "${varValue}"
+				/varset ${varName} ${varValue}
+				/echo set ${varName} ${varValue}
+			}
+		} else {
+			/varset ${varName} ${Ini[${IniFileName},${sectionName},${varName}]} 
+			/echo set ${varName} ${varValue}
+		}
+
     /return
 
 |----------------------------------------------------------------------------
 | SUB: Set Ini
 |----------------------------------------------------------------------------
-    Sub SetIni(string sectionName, string varName, string varType, string varValue, string varArray)
-        /if (${${varArray}.Size}>0) {
-            /declare i int local
-                /for i 1 to ${${varArray}.Size}
-                    /if (${Ini[${IniFileName},${sectionName},${varArray}${i}].Length}) /ini "${IniFileName}" "${sectionName}" "${varArray}${i}" "${varValue}"
-                /next i
-            /return
-        } else /if (${varValue.Length}) {
+    Sub SetIni(string sectionName, string varName, string varType, string varValue)
+        /if (${varValue.Length}) {
             /ini "${IniFileName}" "${sectionName}" "${varName}" "${varValue}"
         }
     /return
@@ -402,27 +390,27 @@ Sub FollowToon
 |----------------------------------------------------------------------------
 Sub AutoCampCheck
 |----Camp Hold
-	/if (!${Bool[${FollowToonName}]}&&${Stick.Status.Equal[OFF]}&&!${AdvPath.Following}&&${AutoCampReturn}==0&&${AutoCampHold}==1) {
+	/if (!${Bool[${FollowToonName}]}&&${Stick.Status.Equal[OFF]}&&!${AdvPath.Following}&&${ReturnToCamp}==0&&${AutoCampHold}==1) {
 		/echo No Toon to follow, pitching my tent to pwn some fools
-		/varset AutoCampReturn 1
+		/varset ReturnToCamp 1
 		/docommand /varset AutoCampX ${Me.X}
 		/docommand /varset AutoCampY ${Me.Y}
 
 		}
 |----Camp Return Logic
 	/if (${Spawn[${FollowToonName}].ID}&&(!${Me.Casting.ID})&&!${MoveTo.Moving}) {
-		/if (${AutoCampReturn}==1) {
-			/varset AutoCampReturn 0
+		/if (${ReturnToCamp}==1) {
+			/varset ReturnToCamp 0
 			/echo FollowToon Detected - Disabling Camp
 		}
 		/call FollowToon
-	} else /if (${Stick.Status.Equal[ON]}&&${AutoCampReturn}==1) {
-		/varset AutoCampReturn 0
+	} else /if (${Stick.Status.Equal[ON]}&&${ReturnToCamp}==1) {
+		/varset ReturnToCamp 0
 		/echo Stick Detected - Disabling Camp
-	} else /if (${AdvPath.Following}&&${AutoCampReturn}==1) {
-		/varset AutoCampReturn 0
+	} else /if (${AdvPath.Following}&&${ReturnToCamp}==1) {
+		/varset ReturnToCamp 0
 		/echo AdvPath Follow Detected - Disabling Camp
-	} else /if (${Stick.Status.Equal[OFF]} && !${Me.Casting.ID} && ${Math.Distance[${Me.Y},${Me.X}:${AutoCampY},${AutoCampX}]}>${AutoCampRadius} && (${Math.Distance[${Me.Y},${Me.X}:${AutoCampY},${AutoCampX}]}<400) && !${MoveTo.Moving} && ${AutoCampReturn}==1) {
+	} else /if (${Stick.Status.Equal[OFF]} && !${Me.Casting.ID} && ${Math.Distance[${Me.Y},${Me.X}:${AutoCampY},${AutoCampX}]}>${AutoCampRadius} && (${Math.Distance[${Me.Y},${Me.X}:${AutoCampY},${AutoCampX}]}<400) && !${MoveTo.Moving} && ${ReturnToCamp}==1) {
 		/moveto loc ${AutoCampY} ${AutoCampX}|on
 		:movinghome
 		/delay 5
@@ -482,7 +470,7 @@ Sub BagModRods
 |----------------------------------------------------------------------------
 Sub DeathSub
 	/echo You are sleeping with the fishes
-	/if (${AutoCampReturn}!=0) /varset AutoCampReturn 0
+	/if (${ReturnToCamp}!=0) /varset ReturnToCamp 0
     :DeathSubwait
 	/if (${Window[RespawnWnd].Open} && ${UseFellowship}==1 && ${InstantRelease}==1) {
 		/nomodkey /notify RespawnWnd RW_OptionsList listselect 1 
@@ -604,7 +592,7 @@ Sub ItemNow(string nextitem)
 | SUB: AutoVersionCheck
 |---------------------------------------------------------------------------- 
 Sub AutoVersionCheck(int autoversion)
-	/if (${autoversion}!=4) {
+	/if (${autoversion}!=5) {
 		/echo AUTOSUBS VERSION MISMATCH
 		/echo download new autosubs.inc - ending macro
 	}
@@ -624,7 +612,7 @@ Sub FindTarget
 			/varset xtid ${Me.XTarget[${xt}].ID}
 		}
 	/next xt
-|--Check target matches MA if not based of lowest hp in XTarget
+|--Check target matches MA if not based off lowest hp in XTarget
 	/if (${Target.ID}!=${Me.GroupAssistTarget.ID} && ${Group.MainAssist.ID}!=${Me.ID} && ${autotargetid}!=${Me.GroupAssistTarget.ID} && ${Spawn[id ${Me.GroupAssistTarget.ID} npc].ID}) {
 		/varset autotargetid ${Me.GroupAssistTarget.ID}
 	} else /if ((!${Group.MainAssist.ID}||${Group.MainAssist.ID}==${Me.ID})&&${Me.XTarget[1].ID}&&${Spawn[NPC id ${xtid}].ID}) {
@@ -660,8 +648,10 @@ Sub EngageTarget
 |---------------------------------------------------------------------------- 
 Sub FindNumTargets
 /declare xt int local 1
+/if (!${Defined[numoftargets]}) /declare numoftargets int outer 0
+/varset numoftargets 0
 |--Query XTarget to find npcs
 	/for xt 1 to ${Me.XTarget}
-		/if (${Spawn[id ${Me.XTarget[${xt}].ID} npc].ID}) /varcalc numoftargets ${numoftargets}+1
+		/if (${Me.XTarget[${xt}].Type.Equal[NPC]}) /varcalc numoftargets ${numoftargets}+1
 	/next xt
 /return

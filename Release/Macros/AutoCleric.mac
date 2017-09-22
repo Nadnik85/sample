@@ -1,7 +1,7 @@
 |------------------------------|
 |---AUTO-CLERIC by Noobhaxor---|
-|--------Version 3.3 v1--------|
-|--------June Update ----------|
+|--------Version 3.4 v3--------|
+|-------September Update ------|
 
 #turbo 80
 #Chat group
@@ -15,7 +15,7 @@
 #include autosubs.inc
 
 Sub Main
-|-AC Verbose addition to disable debug spam
+	/doevents flush
 	/declare acverbose		int outer 0
 	/declare MacroName       string outer AutoCleric
 	/declare IniFileName     string outer ${MacroName}_${Me.CleanName}.ini
@@ -90,7 +90,7 @@ Sub Main
 	/call LoadIni General BringYourOwnSpells	int 0
 	/declare newtank		int outer 0
 	/call VarSetup
-	/call AutoVersionCheck 4
+	/call AutoVersionCheck 5
 |-Alias setup for Ini
 	/noparse /alias /divinebuff /multiline ; /docommand ${If[${DivineBuffOn}==1,/varset DivineBuffOn 0,/varset DivineBuffOn 1]} ; /docommand ${If[${Me.Gem[${promheal}]}==${spellslots},/varcalc divinegem ${spellslots}-1,/varset divinegem ${spellslots}]} ; /varset changetoini 1 ; /echo Toggling ${DivineBuff} to ${If[${DivineBuffOn}==0,OFF,ON]}
 	/noparse /alias /promised /multiline ; /docommand ${If[${usepromheals}==1,/varset usepromheals 0,/varset usepromheals 1]} ; /docommand ${If[${Me.Gem[${DivineBuff}]}==${spellslots},/varcalc promgem ${spellslots}-1,/varset promgem ${spellslots}]} ; /varset changetoini 1 ; /echo Toggling Promised Heals to ${If[${usepromheals}==0,OFF,ON]}
@@ -142,6 +142,7 @@ Sub Main
     /if (${Me.AltAbility[Spell Casting Reinforcement].Rank}==3) /varset DurationMod 1.5
     /if (${Me.AltAbility[Spell Casting Reinforcement].Rank}==4) /varset DurationMod 1.7
     /if (${Me.AltAbility[Spell Casting Reinforcement].Rank}==5) /varset DurationMod 1.9
+	/declare epicshield		string outer NULL
 	/if (${FindItem[Harmony of the Soul].ID}) {
 		/declare epicshield		string outer Harmony of the Soul
 	} else /if (${FindItem[Aegis of Superior Divinity].ID}) {
@@ -252,8 +253,8 @@ Sub Main
 | SUB: ExtraHeal - Extra Actions to Perform
 |---------------------------------------------------------------------------- 
 Sub ExtraHeal
-	/call FindNumTargets
-	/if (((${numoftargets}>2)||(${Spawn[id ${Me.XTarget[1].ID} radius 100].Named})) && !${Me.Casting.ID} && ${extrahealcasttime}==0&&(${Me.XTarget[1].ID})) {
+	
+	/if ((${numoftargets}>2||${Me.XTarget[1].Named}) && !${Me.Casting.ID} && ${extrahealcasttime}==0&&(${Me.XTarget[1].ID})) {
 		/varset extrahealcasttime 20
 |---First Line of Defence
 		/if (${Me.AltAbilityReady[1472]}&&${Spell[${Me.AltAbility[1472]}].Stacks}) {
@@ -292,19 +293,19 @@ Sub ExtraHeal
 |---------------------------------------------------------------------------- 
 Sub ConfigHeal
 /if (${Select[${Zone.ID},795,796]}==0 && !${Raid.Members}) {
-	/if ((${Me.XTarget}>1)||(${Spawn[id ${Me.XTarget[1].ID} radius 100].Named})) {
+	/if (${Me.XTarget}>2||${Me.XTarget[1].Named}) {
 		/if (${healpoint}!=90) {
 			/varset healpoint 90
 			/varset grouphealpoint 75
 			/varset bighealpoint 60
 		}
-	} else /if (${Spawn[id ${Me.XTarget[1].ID}].Level}>=${Me.Level}) {
+	} else /if (${Me.XTarget[1].Level}>=${Me.Level}) {
 		/if (${healpoint}!=85) {
 			/varset healpoint 85
 			/varset grouphealpoint 75
 			/varset bighealpoint 60
 			}
-	} else /if (${Spawn[id ${Me.XTarget[1].ID}].Level}>=${Math.Calc[${Me.Level}-5]}) {
+	} else /if (${Me.XTarget[1].Level}>=${Math.Calc[${Me.Level}-5]}) {
 		/if (${healpoint}!=80) {
 			/varset healpoint 80
 			/varset grouphealpoint 75
@@ -417,8 +418,8 @@ Sub SpellQueue(string nextspell,int nextid)
 		/if (${acverbose}!=0) /echo Memming ${nextspell} to cast
 		/call MemSpells "${nextspell}" ${spellmisc}
 		/if (!${Me.XTarget[1].ID}) {
-			/delay 5s ${Me.GemTimer[${memspell}]}==0
-			/delay 5s ${Me.SpellReady[${memspell}]}
+			/delay 5s ${Me.GemTimer[${nextspell}]}==0
+			/delay 5s ${Me.SpellReady[${nextspell}]}
 		}
     } 
 /if (${Me.SpellReady[${nextspell}]}) {
@@ -472,11 +473,10 @@ Sub HealGroup
    
    |========Extended Target Healing
 	/for emember 1 to 10
-		/if (${Spawn[pc ${Me.XTarget[${emember}]}].ID}&&${Me.XTarget[${emember}].Type.Equal[Specific PC]}) {
-			/if (${Spawn[${Me.XTarget[${emember}]}].Hovering} || ${Spawn[${Me.XTarget[${emember}]}].Type.Equal[Corpse]}) /next emember
-			/if (${Spawn[pc ${Me.XTarget[${emember}]}].Distance}<=${healspellrange}&&(${Spawn[pc ${Me.XTarget[${emember}]}].PctHPs}<=${worsthp}) && (${Spawn[pc ${Me.XTarget[${emember}]}].PctHPs}>=1)) {
+		/if (${Spawn[pc ${Me.XTarget[${emember}]}].ID}&&${Me.XTarget[${emember}].Type.Equal[PC]} && (!${Me.XTarget[${emember}].Hovering} || ${Me.XTarget[${emember}].Type.NotEqual[Corpse]})) {
+			/if (${Me.XTarget[${emember}].Distance}<=${healspellrange}&&(${Me.XTarget[${emember}].PctHPs}<=${worsthp}) && (${Me.XTarget[${emember}].PctHPs}>=1)) {
 			   /varset worsthurtid ${Me.XTarget[${emember}].ID}
-			   /varset priorityworsthp ${Spawn[pc ${Me.XTarget[${emember}]}].PctHPs}
+			   /varset priorityworsthp ${Me.XTarget[${emember}].PctHPs}
 			 }
 		  }
    /next emember
@@ -492,12 +492,9 @@ Sub HealGroup
 			/delay 8
 			/varset reztimer 30s
 			/varset GroupBuffRecast 1
-			/next gmember
-		}
-	|========MAIN GROUP HEAL LOGIC
-		/if (!${Spawn[${Group.Member[${gmember}]}].ID}||${Spawn[${Group.Member[${gmember}]}].Hovering}||${Spawn[${Group.Member[${gmember}]}].Type.Equal[Corpse]}) /next gmember
-		/if (${Group.Member[${gmember}].ID}==${qmtarget}&&${Me.PctMana}>60&&${Group.Member[${gmember}].PctMana}<50&&${Me.AltAbilityReady[Quiet Miracle]}) /call AANow 135 ${Group.Member[${gmember}].ID}
-		/if (${Group.Member[${gmember}].Distance}<=${healspellrange}&&(${Group.Member[${gmember}].PctHPs}<100)) {
+		} 
+		/if (${Group.Member[${gmember}].ID}==${qmtarget}&&${Me.PctMana}>60&&${Group.Member[${gmember}].PctMana}<50&&${Me.AltAbilityReady[Quiet Miracle]}&&${Group}&& (!${Group.Member[${gmember}].Hovering} || ${Spawn[${Group.Member[${gmember}]}].Type.NotEqual[Corpse]})) /call AANow 135 ${Group.Member[${gmember}].ID}
+		/if (${Group.Member[${gmember}].Distance}<=${healspellrange}&&(${Group.Member[${gmember}].PctHPs}<100)&& (!${Group.Member[${gmember}].Hovering} || ${Spawn[${Group.Member[${gmember}]}].Type.NotEqual[Corpse]})) {
 			/if ((${Group.Member[${gmember}].Distance}<100)&&(${Group.Member[${gmember}].PctHPs}<${grouphealpoint})&&(${Group.Member[${gmember}].PctHPs}>=1)) /varcalc HurtMember ${HurtMember}+1
 			/if (${Group.Member[${gmember}].PctHPs}<=${worsthp}&&((${Spawn[NPC ${Me.XTarget[1].Name}].PctHPs}<=99)||${Group.Member[${gmember}].Distance}<50)&&(${priorityworsthp}>${grouphealpoint})) {
 				/varset worsthurtid ${Group.Member[${gmember}].ID}
@@ -531,7 +528,7 @@ Sub HealGroup
 		/if (${Target.Aego.ID}||${Target.Skin.ID}||${Target.Symbol.ID}&&${GroupBuffRecast}!=0) /varset GroupBuffRecast 0
 		}
 |============Time to Heal some folks
-    /if (${HurtMember}>=2&&${Me.AltAbilityReady[137]}) {
+    /if (${HurtMember}>=2&&${Me.AltAbilityReady[137]}&&${Group}) {
 		/call AANow 137 ${Me.ID}
 	} else /if (${HurtMember}>=2&&${Me.SpellReady[${groupfastheal}]}) {
 		/call SpellQueue "${groupfastheal}" ${Me.ID}

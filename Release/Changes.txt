@@ -1,9 +1,84 @@
+Sep 21 2017 by eqmule
+- Added ${Spell[x].IllusionOkWhenMounted} it returns true if the illusion spell will land when you are on a mount
+  you can call this using any spell, but it will always return true if the spell is NOT an illusion spell.
+  in fact it wont even evaluate it further if its not a illusion spell
+- Fixed the pinstCTimeLeftWnd_x offset
+
+Sep 20 2017 by eqmule
+- Updated for LIVE
+
+There will be no more public mq2 updates until I catch the guy that released the mq2 for agnarr.
+
+send me a pm or skype text: eq.mule
+if you have information. you can be anonymous.
+
+longtime friends and loyal users here that I know and trust will be given the updates by me only from now on. (at no charge of course.) mq2 is still open source and free, its just that equistructs.h eqgame.h and eqdata.h wont be distributed or updated by me anymore. those change every patch and everything prior to this day is under gpl and can of course be requested or downloaded, but from now on until this crap is resolved, I have my own NEW includes that are NOT under the gpl.
+
+I'm sick of having my hard work being taken and passed of by some leech on a server that I specifically requested we stay away from. I wont tolerate it.
+
+mq2 is free and staying off of truebox was the only price people had to pay, cant do that? no mq2 for anyone anymore.
+
+wanna step in and update it? lol go for it, it must be "easy" if eqmule can do it in a couple hours... pfft... yeah right...
+
+/eqmule (yeah I'm bitter)
+
+19 Sep 2017 by rswiders
+- Modified Math.Clamp to use the parameter list of (N, Min, Max). ie, will clamp the value N between Min and Max.
+- Added ${Group.AvgHPs} guess what it returns? - eqmule
+
+18 Sep 2017 by eqmule
+- Fixed an infinite loop bug and a variable parse bug in Eval functions. -cred bug report: creamo
+- Eval functions that take multiple arguments MUST separate those with comma(s) from now on
+  Example: (run with a cleric, war or shaman)
+  [code]
+  Sub Main
+	/declare c_argueString string outer shm clr war
+	/declare ChatSender string local ${Me} 
+
+	/if (!${checkbot["shm war clr", ${ChatSender}]}) { <-NOTE the COMMA
+		/echo ${Time} Only Func3: FALSE, this should be TRUE
+	} else {
+		/echo ${Time} Only Func3: TRUE, this should be TRUE
+	}
+  /return
+
+  Sub checkbot(selectedBots, chatSender)
+    /declare botSelected bool local FALSE
+	/echo ${Time} in Sub checkbot selectedBots=${selectedBots} chatSender=${chatSender}
+    /if (${Select[${Me.Class.ShortName},${selectedBots}]}) /varset botSelected TRUE
+  /return ${botSelected}
+  [/code]
+
+17 Sep 2017 by eqmule
+- Fixed ${Me.GukEarned}, ${Me.MMEarned}, ${Me.RujEarned}, ${Me.TakEarned}, ${Me.MirEarned} and ${Me.LDoNPoints}
+- Added a new TLO PointMercant it only have one member : Item which is a pPointMerchantItemType.
+  The pPointMerchantitemType has the following members: Name, ItemID, Price, ThemeID, IsStackable, IsLore, RaceMask, ClassMask, bCanUse
+  Usage:
+  /echo ${PointMercant} returns true if the LDON Mercant window is open and FALSE if not.
+  /echo ${PointMercant.Item[1].Price} OR /echo ${PointMercant.Item[Ebon Hammer].Price}
+  returns the Price for index 1 or whatever index Ebon Hammer is in if you do it by name.
+  etc.
+
+15 Sep 2017 starring rswiders as "the captain", eqmule as "crew member number 6" and special guest star: eqholic
+- Updated to handle the new SPA's
+- Fixed a bug in /next not taking its argument into account for nested for loops.
+- Fix for labels
+- Fixed the CSIDLWND struct (the SIDL define...) so since we have never had this right it was time, but note that
+  if your plugin uses stuff like: pwnd->SidlText and its NOT an actual CSidlScreenWnd then you need to change it to whatever window it actually is.
+  I guess questions about this should be directed to me (eqmule)
+
+plugins changed outside of core are attached here:
+http://www.macroquest2.com/phpBB3/viewtopic.php?f=29&t=11451&p=174467#p174467
+MQ2Rez
+
 14 Sep 2017 by eqmule
 - Updated for TEST
 - Fixed ${Familiar[x].} it will return familiars and not illusions now...
 -
 - Fixed a bunch of window structs that we where completely misusing anyway.
   this could require some plugin changes, contact me for help if you get errors.
+-
+- Fix: Variables that are undeclared but supplied as paramters now default to an actual NULL or 0 not the string "NULL"
 -
 - Inspecting the Blessed Spiritstaff of the Heyokah will no longer ctd you.
 - Added Math.Clamp ${Math.Clamp[Min, N, Max]} will clamp N between Min and Max. - cred derple
