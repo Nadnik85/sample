@@ -1,5 +1,8 @@
 Sep 22 2017 by redguides
-- KissAssist 10.0.6.1 & Ninjadvloot (Maskoi, ctaylor22, TreeHuginDruid) - bug fixes
+ninjadvloot updated
+
+Sep 22 2017 by redguides
+- KissAssist 10.0.6.1 & Ninjadvloot (Maskoi, ctaylor22) - bug fixes
 - Auto Macros (Noobhaxor) - Fix aliases such as /camphere, revamp of Load INI / Set INI Subs to not use second variable
 - MQ2CpuLoad (plure) - updated to handle 16 cores and 36 clients. If you need more just ask.
 - MQ2Rez (eqmule) - major bug fixes
