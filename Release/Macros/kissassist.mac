@@ -499,6 +499,7 @@ Sub Main
         /declare PetCombatOn                    int         outer   0
         /declare PetRampPullWait                int         outer   0
         /declare PetHoldOn                      int         outer   0
+        /declare PetHold                        string      outer   0
     }
 | ************************* Mez *****************************************|
     /if (${Select[${Me.Class.ShortName},BRD,ENC,NEC]}) {
