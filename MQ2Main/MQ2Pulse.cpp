@@ -77,7 +77,7 @@ BOOL DoNextCommand()
 	if (!gDelay && !gMacroPause && (!gMQPauseOnChat || *EQADDR_NOTINCHATMODE) && gMacroBlock && gMacroStack) {
 		MACROLINE ml = gMacroBlock->Line[gMacroBlock->CurrIndex];
 		if (gMacroBlock->BindStackIndex == gMacroBlock->CurrIndex) {
-			WriteChatf("Ending Bind @ %d %s",gMacroBlock->CurrIndex,ml.Command.c_str());
+			//WriteChatf("Ending Bind @ %d %s",gMacroBlock->CurrIndex,ml.Command.c_str());
 			gBindInProgress = false;
 			gMacroBlock->BindStackIndex = -1;
 		}
@@ -98,7 +98,7 @@ BOOL DoNextCommand()
 					if (i != gMacroBlock->Line.end()) {
 						i++;
 						if (i != gMacroBlock->Line.end()) {
-							WriteChatf("Starting %s @ %d %s", gMacroBlock->BindCmd.c_str(), i->first, i->second.Command.c_str());
+							//WriteChatf("Starting %s @ %d %s", gMacroBlock->BindCmd.c_str(), i->first, i->second.Command.c_str());
 							gMacroBlock->BindStackIndex = i->first;
 						}
 						else {

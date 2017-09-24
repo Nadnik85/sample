@@ -153,7 +153,7 @@ namespace MQ2Globals
 		ppContainerMgr = (CContainerMgr**)pinstCContainerMgr;
 		ppChatManager = (CChatManager**)pinstCChatWindowManager;
 		ppFacePick = (CFacePick**)pinstCFacePick;
-		#ifdef TEST
+		#ifndef EMU
 		ppFindItemWnd = (CFindItemWnd**)pinstCFindItemWnd;
 		#endif
 		ppInvSlotMgr = (CInvSlotMgr**)pinstCInvSlotMgr;
@@ -233,6 +233,7 @@ namespace MQ2Globals
 		ppRewardSelectionWnd = (CRewardSelectionWnd**)pinstRewardSelectionWnd;
 		ppConfirmationDialog = (CConfirmationDialog**)pinstCConfirmationDialog;
 		ppEQSuiteTextureLoader = (CEQSuiteTextureLoader*)pinstEQSuiteTextureLoader;
+		ppPointMerchantWnd = (PointMerchantWnd**)pinstCPointMerchantWnd;
 		
 		ppSidlMgr = (CSidlManager **)pinstCSidlManager;
 		ppWndMgr = (CXWndManager**)pinstCXWndManager;
@@ -372,7 +373,7 @@ namespace MQ2Globals
 	DWORD gEventChat = 0;
 	ULONGLONG gRunning = 0;
 	BOOL gbMoving = FALSE;
-	DWORD gMaxTurbo = 10;
+	DWORD gMaxTurbo = 40;
 	BOOL gReturn = TRUE;
 	BOOL gInClick = FALSE;
 	DWORD gbAssistComplete = 0;
@@ -1232,6 +1233,7 @@ namespace MQ2Globals
 	CRewardSelectionWnd **ppRewardSelectionWnd = 0;
 	CConfirmationDialog **ppConfirmationDialog = 0;
 	CEQSuiteTextureLoader *ppEQSuiteTextureLoader = 0;
+	PointMerchantWnd **ppPointMerchantWnd = 0;
 
 	CSidlManager **ppSidlMgr = 0;
 	CXWndManager **ppWndMgr = 0;
@@ -1397,7 +1399,7 @@ namespace MQ2Globals
 	INITIALIZE_EQGAME_OFFSET(pinstCAudioTriggersWindow);
 	INITIALIZE_EQGAME_OFFSET(pinstCCharacterSelect);
 	INITIALIZE_EQGAME_OFFSET(pinstCFacePick);
-	#ifdef TEST
+	#ifndef EMU
 	INITIALIZE_EQGAME_OFFSET(pinstCFindItemWnd);
 	#endif
 	INITIALIZE_EQGAME_OFFSET(pinstCNoteWnd);
@@ -1501,6 +1503,7 @@ namespace MQ2Globals
 	INITIALIZE_EQGAME_OFFSET(pinstCLFGuildWnd);
 	INITIALIZE_EQGAME_OFFSET(pinstCMIZoneSelectWnd);
 	INITIALIZE_EQGAME_OFFSET(pinstCConfirmationDialog);
+	INITIALIZE_EQGAME_OFFSET(pinstCPointMerchantWnd);
 	INITIALIZE_EQGAME_OFFSET(pinstCPopupWndManager);
 	INITIALIZE_EQGAME_OFFSET(pinstCProgressionSelectionWnd);
 	INITIALIZE_EQGAME_OFFSET(pinstCPvPStatsWnd);
@@ -1676,7 +1679,7 @@ namespace MQ2Globals
 	INITIALIZE_EQGAME_OFFSET(CEverQuest__IssuePetCommand);
 	INITIALIZE_EQGAME_OFFSET(CEverQuest__CreateTargetIndicator);
 	INITIALIZE_EQGAME_OFFSET(CEverQuest__DeleteTargetIndicator);
-	#ifdef TEST
+	#ifndef EMU
 	INITIALIZE_EQGAME_OFFSET(CFindItemWnd__CFindItemWnd);
 	#endif
 	INITIALIZE_EQGAME_OFFSET(CGaugeWnd__CalcFillRect);
@@ -1989,7 +1992,10 @@ namespace MQ2Globals
 	INITIALIZE_EQGAME_OFFSET(PlayerZoneClient__IsValidTeleport);
 	INITIALIZE_EQGAME_OFFSET(EQPlayer__CanSee1);
 	INITIALIZE_EQGAME_OFFSET(PlayerBase__GetVisibilityLineSegment);
-
+	#ifndef EMU
+	INITIALIZE_EQGAME_OFFSET(PlayerZoneClient__LegalPlayerRace);
+	#endif
+	
 	INITIALIZE_EQGAME_OFFSET(PlayerClient__GetPcClient);
 	INITIALIZE_EQGAME_OFFSET(PcClient__PcClient);
 	

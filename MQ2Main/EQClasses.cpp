@@ -1968,7 +1968,7 @@ FUNCTION_AT_ADDRESS(bool  CInvSlotMgr::MoveItem(ItemGlobalIndex *from, ItemGloba
 FUNCTION_AT_ADDRESS(class CInvSlot *  CInvSlotMgr::CreateInvSlot(class CInvSlotWnd *),CInvSlotMgr__CreateInvSlot);
 #endif
 #ifdef CInvSlotMgr__FindInvSlot_x
-	#ifdef TEST
+	#ifndef EMU
 		FUNCTION_AT_ADDRESS(class CInvSlot *  CInvSlotMgr::FindInvSlot(int,int,int,bool),CInvSlotMgr__FindInvSlot);
 	#else
 		FUNCTION_AT_ADDRESS(class CInvSlot *  CInvSlotMgr::FindInvSlot(int,int),CInvSlotMgr__FindInvSlot);
@@ -4475,7 +4475,7 @@ FUNCTION_AT_ADDRESS(int CharacterZoneClient::CalcAffectChange(const EQ_Spell *sp
 FUNCTION_AT_ADDRESS(int CharacterZoneClient::CalcAffectChangeGeneric(const EQ_Spell *spell, BYTE, BYTE, const EQ_Affect *, int, bool),CharacterZoneClient__CalcAffectChangeGeneric);
 #endif
 #ifdef EQ_Character__GetPCSpellAffect_x
-FUNCTION_AT_ADDRESS(class EQ_Affect *  EQ_Character::GetPCSpellAffect(int,int *,int *),EQ_Character__GetPCSpellAffect);
+FUNCTION_AT_ADDRESS(class EQ_Affect * EQ_Character::GetPCSpellAffect(int theaffect,int *slotnum,int *spaslot) const,EQ_Character__GetPCSpellAffect);
 #endif
 #ifdef EQ_Character__TotalSpellAffects_x
 FUNCTION_AT_ADDRESS(int  EQ_Character::TotalSpellAffects(unsigned char,bool,int *),EQ_Character__TotalSpellAffects);
@@ -5319,8 +5319,8 @@ FUNCTION_AT_ADDRESS(void  EQPlayer::FeetEnvironmentChange(unsigned char),EQPlaye
 #ifdef EQPlayer__HeadEnvironmentChange_x
 FUNCTION_AT_ADDRESS(void  EQPlayer::HeadEnvironmentChange(unsigned char),EQPlayer__HeadEnvironmentChange);
 #endif
-#ifdef EQPlayer__LegalPlayerRace_x
-FUNCTION_AT_ADDRESS(int  EQPlayer::LegalPlayerRace(int),EQPlayer__LegalPlayerRace);
+#ifdef PlayerZoneClient__LegalPlayerRace_x
+FUNCTION_AT_ADDRESS(int PlayerZoneClient::LegalPlayerRace(int),PlayerZoneClient__LegalPlayerRace);
 #endif
 #ifdef EQPlayer__DeleteMyMissiles_x
 FUNCTION_AT_ADDRESS(void  EQPlayer::DeleteMyMissiles(void),EQPlayer__DeleteMyMissiles);
@@ -5452,7 +5452,7 @@ FUNCTION_AT_ADDRESS(int  EQPlayer::Levitating(void),EQPlayer__Levitating);
 FUNCTION_AT_ADDRESS(void  EQPlayer::SetRace(int),EQPlayer__SetRace);
 #endif
 #ifdef EQPlayer__CanChangeForm_x
-FUNCTION_AT_ADDRESS(bool  EQPlayer::CanChangeForm(int,unsigned char),EQPlayer__CanChangeForm);
+FUNCTION_AT_ADDRESS(bool EQPlayer::CanChangeForm(int Race,BYTE Sex,float Height),EQPlayer__CanChangeForm);
 #endif
 #ifdef EQPlayer__SetNameSpriteState_x
 FUNCTION_AT_ADDRESS(int  EQPlayer::SetNameSpriteState(bool),EQPlayer__SetNameSpriteState);
@@ -8693,7 +8693,7 @@ FUNCTION_AT_ADDRESS(void  CButtonWnd::SetCheck(bool),CButtonWnd__SetCheck);
 FUNCTION_AT_ADDRESS(int  CXWnd::GetWidth(void)const ,CXWnd__GetWidth);
 #endif
 #ifdef CComboWnd__GetListRect_x
-	#ifdef TEST
+	#ifndef EMU
 		FUNCTION_AT_ADDRESS(class CXRect  CComboWnd::GetListRect(bool)const ,CComboWnd__GetListRect);
 	#else
 		FUNCTION_AT_ADDRESS(class CXRect  CComboWnd::GetListRect(void)const ,CComboWnd__GetListRect);
@@ -9169,7 +9169,7 @@ FUNCTION_AT_ADDRESS(class CSliderDrawTemplate *  CSidlManager::FindSliderDrawTem
 FUNCTION_AT_ADDRESS(class CSliderDrawTemplate *  CSidlManager::FindSliderDrawTemplate(unsigned __int32)const ,CSidlManager__FindSliderDrawTemplate1);
 #endif
 #ifdef CSidlManager__CreateXWndFromTemplate_x
-	#ifdef TEST
+	#ifndef EMU
 		FUNCTION_AT_ADDRESS(class CXWnd *  CSidlManager::CreateXWndFromTemplate(class CXWnd *,class CControlTemplate *, bool),CSidlManager__CreateXWndFromTemplate);
 	#else
 		FUNCTION_AT_ADDRESS(class CXWnd *  CSidlManager::CreateXWndFromTemplate(class CXWnd *,class CControlTemplate *),CSidlManager__CreateXWndFromTemplate);

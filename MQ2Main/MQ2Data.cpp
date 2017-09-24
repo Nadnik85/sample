@@ -1041,7 +1041,25 @@ TLO(dataFindItem)
 	{
 		bExact = true;
 		pName++;
+		char *dst = pName;
+		char *src = pName;
+		char c;
+
+		while ((c = *src++) != '\0')
+		{
+			if (c == '\\')
+			{
+				*dst++ = c;
+				if ((c = *src++) == '\0')
+					break;
+				*dst++ = c;
+			}
+			else if (c != '"')
+				*dst++ = c;
+		}
+		*dst = '\0';
 	}
+	
 	CHAR Name[MAX_STRING] = { 0 };
 	CHAR Temp[MAX_STRING] = { 0 };
 	strcpy_s(Name, pName);
@@ -2046,6 +2064,16 @@ TLO(dataAlert)
 	if (ISNUMBER()) {
 		Ret.DWord = GETNUMBER();
 		Ret.Type = pAlertType;
+		return true;
+	}
+	return false;
+}
+TLO(dataPointMerchant)
+{
+	if (pPointMerchantWnd)
+	{
+		Ret.Ptr = pPointMerchantWnd;
+		Ret.Type = pPointMerchantType;
 		return true;
 	}
 	return false;

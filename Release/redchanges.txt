@@ -1,8 +1,15 @@
-Sep 22 2017 by redguides
-ninjadvloot updated
+Sep 23 2017 by redguides
+- MQ2AutoAccept, MQ2AutoGroup, MQ2AutoLoot (eqmule) bugs fixed
+- Ninjadvloot (Maskoi) Lagcount var removed not used #warnings. v6.08
+
+Sep 23 2017 by eqmule
+- Updated for TEST
 
 Sep 22 2017 by redguides
-- KissAssist 10.0.6.1 & Ninjadvloot (Maskoi, ctaylor22) - bug fixes
+- Ninjadvloot (Maskoi, eqmule) - bug fixes for warnings
+
+Sep 22 2017 by redguides
+- KissAssist 10.0.6.1 & Ninjadvloot (Maskoi, ctaylor22) - bug fixes. No thanks to Hurricane Irma.
 - Auto Macros (Noobhaxor) - Fix aliases such as /camphere, revamp of Load INI / Set INI Subs to not use second variable
 - MQ2CpuLoad (plure) - updated to handle 16 cores and 36 clients. If you need more just ask.
 - MQ2Rez (eqmule) - major bug fixes
