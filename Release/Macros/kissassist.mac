@@ -1,4 +1,4 @@
-| - kissassist.mac v10.0.6.2 by Maskoi 09/22/2017.
+| - kissassist.mac v10.0.6.3 by Maskoi 09/23/2017.
 | - Contributions by anonymoushero, crystane, eqmule, thenomadman, william12.
 | - ChainPull, Debuffs and combat rewrites by ctaylor22.
 | - PetTank, PullerPetTank & HunterPetTank roles developed by TreeHuginDruid
@@ -170,7 +170,7 @@ Sub Main
         /varset ZoneName ${Zone.ShortName}
     }
     /declare MacroName              string      outer       KissAssist
-    /declare MacroVer               string      outer       10.0.6.2
+    /declare MacroVer               string      outer       10.0.6.3
     /declare IniFileName            string      outer         
     /declare InfoFileName           string      outer       ${MacroName}_Info.ini
     /declare ConditionsFileName     string      outer       
@@ -818,12 +818,20 @@ Sub Main
         /call SortArray Heals HealsCond 100|100 >
         /call FindSingleHeals
         /call FindGroupHeals
-        /call CreateTimersHeals
     }
+        /call CreateTimersHeals
     /call AlertAddToList 3 "${MobsToIgnore}"
     /call CreateTimersGoM
-    /if (${DPSOn}) /call SortArray DPS DPSCond 1|1 <
-    /if (${BuffsOn}) /call SortArray Buffs null 100|100 >
+    /if (${DPSOn}) {
+        /call SortArray DPS DPSCond 1|1 <
+    } else {
+        /call CreateTimersDPS
+    }
+    /if (${BuffsOn}) {
+        /call SortArray Buffs null 100|100 >
+    } else {
+        /call CreateTimersBuffs
+    }
     /if (${AggroOn}) /call SortArray Aggro AggroCond 1|1 >
     /call SortArray Burn BurnCond 1|1 >
     /if (${AutoRezOn}) /call CreateTimersRez
@@ -1647,7 +1655,7 @@ Sub Main
         /if (${DebugCombat}) /echo \atDEBUGCOMBAT CombatCast Enter \agLine#: ${Macro.CurLine}
         /declare i           int      local 0
         /declare DPSStart    int      local ${Math.Calc[${DebuffCount}+1]}
-        |/declare DPSText     string   local
+        /if (${DPSStart}>${DPS.Size}) /return
         /declare DPSAt       int      local ${AssistAt}
         /declare DPSTargetID int      local ${MyTargetID}
         /declare DPSItem     string   local
@@ -2313,8 +2321,20 @@ Sub Main
             | Wait for global cooldown active
             | /if (!${IAmABard} && ${sentFrom.NotEqual[Heal]} ) /delay 15 ${Cast.Status.Equal[I]}
             /if (${Me.GemTimer[${castWhat}]}==0 && !${IAmABard}) {
-                /casting "${castWhat}" gem${MiscGem} 3s -maxtries|2
-                /delay 5
+                | Do not cast again of spell resisted on pull. by EQMule
+				/if (${sentFrom.Equal[Pull]}) {
+		            /if (${DebugPull}) /echo \atDEBUG CastWhat Nnot going to cast twice even if resist, cause this IS a pull cast... \agLine#: ${Macro.CurLine}
+					/casting "${castWhat}" gem${MiscGem} 3s -maxtries|1
+                    /delay 30 !${Me.Casting.ID}
+					/if (${Me.XTarget}) {
+						/if (${DebugPull}) /echo \atDEBUG CastWhat get out! we got it. \agLine#: ${Macro.CurLine}
+						/varset CastResult CAST_SUCCESS
+						/return ${CastResult}
+                    }
+				} else {
+                    /casting "${castWhat}" gem${MiscGem} 3s -maxtries|2
+                    /delay 5
+                }
                 /while (${Cast.Status.Equal[C]} && ${CastResult.NotEqual[CAST_CANCELLED]}) {
                     /if (${sentFrom.Equal[SingleHeal]} && ${CastingInterruptOn}) {
                        /call KACheckHP
@@ -4143,7 +4163,7 @@ Sub Main
                         /delay 10 ${Target.ID}==${Spawn[${MainAssist} ${MainAssistType}].ID}
                     }
                 }
-                /if (${DebugHeal}) /echo \amDEBUGHEALS CheckHealth:  Tank OOG: ${Spawn[${MainAssist}].PctHPs} ${Spawn[${MainAssist} ${Spawn[${MainAssist} ${MainAssistType}].ID} ].ID}  ${Spawn[${MainAssist} ${MainAssistType}].Type.NotEqual[corpse]} \agLine#: ${Macro.CurLine}
+                /if (${DebugHeal}) /echo \amDEBUGHEALS CheckHealth:  Tank OOG: ${Spawn[${MainAssist}].PctHPs} ${Spawn[${MainAssist} ${MainAssistType}].ID}  ${Spawn[${MainAssist} ${MainAssistType}].Type.NotEqual[corpse]} \agLine#: ${Macro.CurLine}
                 |Add code to check if pet HP < needed.
                 /if (${Spawn[${MainAssist} ${MainAssistType}].PctHPs} < 100) /call SingleHeal "${MainAssist}" "${MainAssistType}" ${Spawn[${MainAssist} ${MainAssistType}].PctHPs} 6
             }
@@ -5074,8 +5094,7 @@ Sub Main
                 | If timer didn't get set above then check this
                 /if (${TempTimer}==0) {          
                     | Does the mob have one of the following debuffs if so lets skip casting
-                    /if (${Tag1.Equal[strip]} && (${Int[${Target.Beneficial.ID}]}==0 || ${Int[${Target.Beneficial.ID}]}==38728 || ${Int[${Target.Beneficial.ID}]}==38727 || ${Int[${Target.Mezzed.ID}]})) {
-                        /echo Skipping Strip ${Target.Beneficial.ID}
+                    /if (${Tag1.Equal[strip]} && (${Int[${Target.Beneficial.ID}]}==0 || ${Int[${Target.Beneficial.ID}]}==38728 || ${Int[${Target.Beneficial.ID}]}==38727)) {
                         /varset TempTimer 70
                     } else /if (${Tag2.NotEqual[always]}) {
                         /if (${Tag1.Equal[slow]} && ${Target.Slowed.ID}) {
@@ -5815,10 +5834,9 @@ Sub Main
                 /echo Removing from Alert List: ${k} ${PullIgnore.Arg[${k},|]} ${Spawn[id ${PullIgnore.Arg[${k},|]}].ID}
                 /squelch /alert remove 1 id ${PullIgnore.Arg[${k},|]}
                 /varset PullIgnore ${PullIgnore.Replace[|${PullIgnore.Arg[${k},|]},]}
-            } else {
+            } 
                 /varcalc k ${k}+1
             }
-        }
         | Clear alert list 1, add mobs to ignore alert list1, set timer to keep alert list manageable for pulling no alert 1
         /if (!${PullAlertTimer}) {
             | Add Ignore Mob list to alert list
@@ -5909,6 +5927,7 @@ Sub Main
                 /while (${j} && ${i}<=${PullCount}) {
                     /varset PullMob ${NearestSpawn[${i}, npc loc ${CampXLoc} ${CampYLoc} radius ${MaxRadius} zradius ${MaxZRange} targetable noalert 1].ID}
                     |/echo Nav Before ${PullMob}
+                    /if (!${MyTargetID} || ${PullMob}!=${MyTargetID}) {
                     /if (!${MobsToPull.Find[All for all]} && ${MobsToPull.NotEqual[All]}) {
                         /varset f2 0
                         /for k 1 to 25
@@ -5932,6 +5951,7 @@ Sub Main
                                 /varset lMobID ${PullMob}
                             }
                         }
+                    }
                     }
                     |/echo Nav After ${PullMob}
                     /if (${DebugPull}) /echo \atDEBUGPULL /echo \atDEBUGPULL FindMobToPull: ${i} ${Navigation.PathExists[id ${PullMob}]} ${Navigation.PathLength[id ${PullMob}]} ${lMobDist} ${lMobID} \agLine#: ${Macro.CurLine}
@@ -7379,6 +7399,19 @@ Sub Main
 | ----------------------------------------------------------------------------
     Sub Bind_Campfire
     /if (${Select[${Zone.ID},33506]}) /return
+        /if (${ReturnToCamp} && ${Math.Distance[${CampYLoc},${CampXLoc}]}>=10) {
+            /if (${Me.FeetWet}) {
+                /moveto set useback off
+                /moveto loc ${CampYLoc} ${CampXLoc} ${CampZLoc} uw mdist 10
+            } else {
+                |/echo MoveTo DryLand.
+                /moveto set useback on
+                /moveto loc ${CampYRandom} ${CampXRandom} ${CampZLoc} mdist 5
+            }
+            /delay 10
+        }
+        /delay 50 !${MoveTo.Moving}
+        /if (${MoveTo.Moving}) /moveto off
         /windowstate FellowshipWnd open
         /delay 10
         /nomodkey /notify FellowshipWnd FP_Subwindows tabselect 2

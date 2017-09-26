@@ -1,4 +1,4 @@
-| Ninjadvloot.inc v6.07 5/7/2017 Redguides.com 
+| Ninjadvloot.inc v6.08 9/23/2017 Redguides.com 
 | Author A_Druid_00 12/19/2005
 | Based on original looting code of toomanynames
 | The following updates were all individually posted and consolidated by Maskoi into the current version.
@@ -23,6 +23,7 @@
 | Updated: hoosierbilly added fishing item handling 5/7/17
 |
 | Updated 01 Sep 2017 by Eqmule fixed a /next i that was in the wrong place.
+| Updated 23 Sep 2017 by Maskoi/Eqmule fixed #warning errors
 |
 | Selling Contributions by
 |   drkrain - TLInv item check
@@ -68,7 +69,7 @@
 Sub SetupAdvLootVars(string ChangeIniFile)
 
     /declare CantLootID                         int                 outer 
-    /declare NinjadVersion                      string              outer   6.07
+    /declare NinjadVersion                      string              outer   6.08
     /declare InventoryFull                      int                 outer   0
     /declare NinjaIniFile                       string              outer   Loot.ini
     /declare MasterCorpseList                   string              outer   
@@ -229,7 +230,7 @@ Sub LootCorpse(CorpseID)
         /declare loottotal int  local
         :LootLag
         /varset loottotal ${Corpse.Items}
-             /if (${Debugloot}) /echo DEBUGLOOT :LootLag ${loottotal}!=${Corpse.Items} LagCount${LagCount}
+             /if (${Debugloot}) /echo DEBUGLOOT :LootLag ${loottotal}!=${Corpse.Items} 
         /delay 1s ${loottotal}!=${Corpse.Items}
         /if (${loottotal}!=${Corpse.Items}) /goto :LootLag
         /echo NINJADVLOOT: Looting ${Target.CleanName} ID:${CorpseID}.

@@ -11,17 +11,20 @@ Sep 20 2017 by eqmule
 - Updated for LIVE
 
 There will be no more public mq2 updates until I catch the guy that released the mq2 for agnarr.
-
 send me a pm or skype text: eq.mule
 if you have information. you can be anonymous.
+longtime friends and loyal users here that I know and trust will be given the updates by me only from now on.
+(at no charge of course.) 
+mq2 is still open source and free, its just that equistructs.h eqgame.h and eqdata.h wont be distributed or updated by me anymore.
+those change every patch and everything prior to this day is under gpl and can of course be requested or downloaded, 
+but from now on until this crap is resolved, I have my own NEW includes that are NOT under the gpl.
 
-longtime friends and loyal users here that I know and trust will be given the updates by me only from now on. (at no charge of course.) mq2 is still open source and free, its just that equistructs.h eqgame.h and eqdata.h wont be distributed or updated by me anymore. those change every patch and everything prior to this day is under gpl and can of course be requested or downloaded, but from now on until this crap is resolved, I have my own NEW includes that are NOT under the gpl.
-
-I'm sick of having my hard work being taken and passed of by some leech on a server that I specifically requested we stay away from. I wont tolerate it.
-
-mq2 is free and staying off of truebox was the only price people had to pay, cant do that? no mq2 for anyone anymore.
-
-wanna step in and update it? lol go for it, it must be "easy" if eqmule can do it in a couple hours... pfft... yeah right...
+I'm sick of having my hard work being taken and passed of by some leech on a server that I specifically requested we stay away from. 
+I wont tolerate it.
+mq2 is free and staying off of truebox was the only price people had to pay,
+cant do that? no mq2 for anyone anymore.
+wanna step in and update it? lol go for it, it must be "easy" if eqmule can do it in a couple hours...
+pfft... yeah right...
 
 /eqmule (yeah I'm bitter)
 
