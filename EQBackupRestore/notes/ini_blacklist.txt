@@ -1,0 +1,29 @@
+# Blacklist
+
+eqlsUIConfig.ini Has screen position information that shouldn't transfer between computers
+eqlsClient.ini Everquest Help URLS 
+LaunchPad-user.ini
+LaunchPad.ini
+Uninstaller.ini
+
+x sky/backdrops.ini
+x DecalIndicator.ini
+x Everquest/Resources/moddata.ini ???
+x npct.ini ?? what does this do??
+x path.ini
+x spoffsets.ini
+x waterswap/waterswap.ini
+
+# Optional WhiteList
+
+defaults.ini ???
+x memory.ini - memory optimizations
+x sky/sky.ini ??? Sky settings
+x TargetIndicator.ini ?? User interface option - target animation settings
+x Weather.ini
+
+VoiceChat.ini
+
+# Whitelist
+Backup all of userdata/
+
