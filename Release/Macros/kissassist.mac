@@ -1,4 +1,4 @@
-| - kissassist.mac v10.0.6.3 by Maskoi 09/23/2017.
+| - kissassist.mac v10.0.6.4 by Maskoi 09/26/2017.
 | - Contributions by anonymoushero, crystane, eqmule, thenomadman, william12.
 | - ChainPull, Debuffs and combat rewrites by ctaylor22.
 | - PetTank, PullerPetTank & HunterPetTank roles developed by TreeHuginDruid
@@ -170,7 +170,7 @@ Sub Main
         /varset ZoneName ${Zone.ShortName}
     }
     /declare MacroName              string      outer       KissAssist
-    /declare MacroVer               string      outer       10.0.6.3
+    /declare MacroVer               string      outer       10.0.6.4
     /declare IniFileName            string      outer         
     /declare InfoFileName           string      outer       ${MacroName}_Info.ini
     /declare ConditionsFileName     string      outer       
@@ -3345,7 +3345,7 @@ Sub Main
                 /for l 1 to ${IniBuffCount}
                     | Fix for stacking issues with Perfected Group Levitation there are a lot
                     /if (${IniBuffList.Arg[${l},|].Find[Group Perfected Levitation]} && !${BuffName.Find[Group Perfected Levitation]}) /goto :PGLevFix
-                    /if (${Select[${Spell[${IniBuffList.Arg[${l},|]}].WillStack[${BuffName}]},TRUE,FALSE,NULL]}>=2) {
+                    /if (!${Spell[${BuffName}].RankName.WillStack[${IniBuffList.Arg[${l},|]}]}) {
                         /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckINIBuffs IniBuffCheck Stack: ${IniBuffList.Arg[${l},|]} !Stack ${BuffName} ${Select[${Spell[${IniBuffList.Arg[${l},|]}].WillStack[${BuffName}]},TRUE,FALSE,NULL]} \agLine#: ${Macro.CurLine}
                         /goto :NextCharCheck
                     }
@@ -6136,7 +6136,7 @@ Sub Main
             /if (${DebugPull}) /echo \atDEBUGPULL PullValidate: PFlag: ${PFlag} ${Spawn[${PVPullMob}].CleanName} invalid target Reason: PCs near mob \agLine#: ${Macro.CurLine} \agLine#: ${Macro.CurLine}
                 /return 0
         }
-        | Check spawn for 100% health
+        | Check spawn for 100% health /delay 1 for server lag \
         /if (${Spawn[${PVPullMob}].PctHPs}<=99) {
             /if (${DebugPull}) /echo \atDEBUGPULL PullValidate: PFlag: ${PFlag} ${Spawn[${PVPullMob}].CleanName} invalid target Reason: Mob not 100% health \agLine#: ${Macro.CurLine} \agLine#: ${Macro.CurLine}
             | If chain pulling then target mob to update server.
@@ -7406,7 +7406,7 @@ Sub Main
             } else {
                 |/echo MoveTo DryLand.
                 /moveto set useback on
-                /moveto loc ${CampYRandom} ${CampXRandom} ${CampZLoc} mdist 5
+                /moveto loc ${CampYLoc} ${CampXLoc} ${CampZLoc} mdist 5
             }
             /delay 10
         }

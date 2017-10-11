@@ -1,3 +1,49 @@
+Oct 11 2017 by eqmule
+- Updated for TEST
+
+Oct 03 2017 by eqmule
+- /removebuff now takes parameters: -pet and -both | cred MacQ
+  /removebuff -pet buffname removes the buff from your pet ( same functionality as /removepetbuff buffname)
+  /removebuff -both buffname removes the buff from both you and your pet.
+
+Sep 28 2017 by eqmule
+- Added MQ2FamKiller
+- Added MQ2Bandolier
+- Fixed MQ2Cursor
+- Removed the voice "help" in group for mq2rez.
+
+Sep 26 2017 by eqmule
+- Updated the SPELL struct:
+- CARecastTimerID has been renamed to ReuseTimerIndex
+- Mana has been renamed to ManaCost
+- FizzleTime has been renamed to RecoveryTime
+- ReagentId has been renamed to ReagentID
+- DescriptionNumber has been renamed to DescriptionIndex
+- SubSpellGroup has been renamed to SpellSubGroup
+- Location has been renamed to ZoneType
+- DurationValue1 has been renamed to DurationCap
+plugins changed:
+MQ2NetBots
+MQ2NetHeal
+MQ2Debuffs
+MQ2Cast
+MQ2Melee
+
+Sep 25 2017 by eqmule
+- MAXTURBO has been moved to the ini file. cred: silverj
+- Set TurboLimit under the [MacroQuest] section in the macroquest.ini to whatever, it defaults to 240.
+
+- Obviously people are going to set this to 1000000000000000
+- and then completely lock up their game, cause the engine will never ever yield time to eq, but hey... its their choice now I guess.
+- I suggest you dont mess with it at all, and leave it at 240 max.
+
+- this: http://www.macroquest2.com/phpBB3/viewtopic.php?f=28&t=20394
+- and this: http://www.macroquest2.com/phpBB3/viewtopic.php?f=28&t=20393
+  has also been implemented, thanks silverj
+
+Sep 24 2017 by rswiders
+- Updated FindItemCount to include items on the cursor in the count.
+
 Sep 23 2017 by eqmule
 - Updated for TEST
 
@@ -11,20 +57,17 @@ Sep 20 2017 by eqmule
 - Updated for LIVE
 
 There will be no more public mq2 updates until I catch the guy that released the mq2 for agnarr.
+
 send me a pm or skype text: eq.mule
 if you have information. you can be anonymous.
-longtime friends and loyal users here that I know and trust will be given the updates by me only from now on.
-(at no charge of course.) 
-mq2 is still open source and free, its just that equistructs.h eqgame.h and eqdata.h wont be distributed or updated by me anymore.
-those change every patch and everything prior to this day is under gpl and can of course be requested or downloaded, 
-but from now on until this crap is resolved, I have my own NEW includes that are NOT under the gpl.
 
-I'm sick of having my hard work being taken and passed of by some leech on a server that I specifically requested we stay away from. 
-I wont tolerate it.
-mq2 is free and staying off of truebox was the only price people had to pay,
-cant do that? no mq2 for anyone anymore.
-wanna step in and update it? lol go for it, it must be "easy" if eqmule can do it in a couple hours...
-pfft... yeah right...
+longtime friends and loyal users here that I know and trust will be given the updates by me only from now on. (at no charge of course.) mq2 is still open source and free, its just that equistructs.h eqgame.h and eqdata.h wont be distributed or updated by me anymore. those change every patch and everything prior to this day is under gpl and can of course be requested or downloaded, but from now on until this crap is resolved, I have my own NEW includes that are NOT under the gpl.
+
+I'm sick of having my hard work being taken and passed of by some leech on a server that I specifically requested we stay away from. I wont tolerate it.
+
+mq2 is free and staying off of truebox was the only price people had to pay, cant do that? no mq2 for anyone anymore.
+
+wanna step in and update it? lol go for it, it must be "easy" if eqmule can do it in a couple hours... pfft... yeah right...
 
 /eqmule (yeah I'm bitter)
 
@@ -2322,8 +2365,8 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
 - Fixed a crash in /windowstate that could happen when using a (bad) Custom UI. Thanks demonstar55
 - since GetCombatAbilityTimer now accepts -1 as a timer, I have removed that check
   this means you should remove it from mq2melee as well for example:
-  this line: if (EFFECT->CARecastTimerID && TYPE != AA && EFFECT->CARecastTimerID != -1)
-  becomes this: if (EFFECT->CARecastTimerID!=0 && TYPE != AA)
+  this line: if (EFFECT->ReuseTimerIndex && TYPE != AA && EFFECT->ReuseTimerIndex != -1)
+  becomes this: if (EFFECT->ReuseTimerIndex!=0 && TYPE != AA)
 
 26 Aug 2015 by EqMule
 - Please don't use MQ2 for unattended gameplay (afk botting)
@@ -2464,12 +2507,12 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
 17 Jun 2015 by EqMule
 - Please don't use MQ2 for unattended gameplay (afk botting)
 - Updated for today's LIVE patch
-- GetCombatAbilityTimer for the LIVE build now takes 2 arguments pSpell->CARecastTimerID and pSpell->SpellGroup
+- GetCombatAbilityTimer for the LIVE build now takes 2 arguments pSpell->ReuseTimerIndex and pSpell->SpellGroup
   do a search for GetCombatAbilityTimer in your plugins and change accordingly.
 
 11 Jun 2015 by EqMule
 - Updated for the TEST build
-- GetCombatAbilityTimer for the TEST build now takes 2 arguments pSpell->CARecastTimerID and pSpell->SpellGroup
+- GetCombatAbilityTimer for the TEST build now takes 2 arguments pSpell->ReuseTimerIndex and pSpell->SpellGroup
   do a search for GetCombatAbilityTimer in your plugins and change accordingly.
   GetCombatAbilityTimer for the LIVE build has not changed. (but it will next patch.)
 - Clicking on the name of someone in the targetwindow will now open a trade if you have coin (or an item) on the cursor.

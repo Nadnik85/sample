@@ -1,3 +1,51 @@
+Oct 11 2017 by redguides
+- New Utility! EQBCS.exe (jimbob) a huge upgrade to the old mq2eqbcs.exe, runs multiple characters with no lag or errors. Stress tested. One-click to add a windows service, and many more features.
+- New Utility! EQBackupRestore.exe (rephaite) backup and restore your EverQuest & character settings. Check your /release/utilities folder. (Source available on our gitlab. )
+- MQ2AFNuke (jimbob) - Several features broken by spell casting changes a week or 2 before. Still working, but need a commit before I break it further. :) Fixed some more issues.
+- MQ2Heals (jimbob) - Fixed % bugs in ShowHelp (changed to %% to display % sign, instead of look for parameter).
+- cskillup (maskoi) - updated for #warning
+
+Oct 11 2017 by eqmule
+- Updated for TEST
+
+Oct 03 2017 by eqmule
+- /removebuff now takes parameters: -pet and -both | cred MacQ
+  /removebuff -pet buffname removes the buff from your pet ( same functionality as /removepetbuff buffname)
+  /removebuff -both buffname removes the buff from both you and your pet.
+
+Sep 28 2017 by eqmule
+- Added MQ2FamKiller
+- Added MQ2Bandolier
+- Fixed MQ2Cursor
+- Removed the voice "help" in group for mq2rez.
+
+Sep 26 2017 by redguides
+- KissAssist (maskoi, ctaylor22) updated to v10.0.6.4
+- Ninjadvloot (eqmule) updated
+plugins changed: (redbot)
+MQ2SpellSearch
+MQ2Heals
+
+Sep 26 2017 by eqmule
+- Updated the SPELL struct:
+- CARecastTimerID has been renamed to ReuseTimerIndex
+- Mana has been renamed to ManaCost
+- FizzleTime has been renamed to RecoveryTime
+- ReagentId has been renamed to ReagentID
+- DescriptionNumber has been renamed to DescriptionIndex
+- SubSpellGroup has been renamed to SpellSubGroup
+- Location has been renamed to ZoneType
+- DurationValue1 has been renamed to DurationCap
+plugins changed:
+MQ2NetBots
+MQ2NetHeal
+MQ2Debuffs
+MQ2Cast
+MQ2Melee
+
+Sep 25 2017
+- KissAssist (Maskoi & ctaylor22) - bug fixes
+
 Sep 23 2017 by redguides
 - MQ2AutoAccept, MQ2AutoGroup, MQ2AutoLoot (eqmule) bugs fixed
 - Ninjadvloot (Maskoi) Lagcount var removed not used #warnings. v6.08

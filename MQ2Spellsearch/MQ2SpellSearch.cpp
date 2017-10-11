@@ -242,7 +242,7 @@ VOID ShowSpellInfo(PSPELL pSpell)
 	CHAR szBuff[MAX_STRING]={0}; 
 
 	sprintf_s(szBuff,"-----Spell:\at%s\ax Range:\ay%.1f\ax CastTime:\ao%.2f\ax Mana:\au%d\ax", 
-		pSpell->Name, pSpell->Range, ((float)pSpell->CastTime/1000), pSpell->Mana); 
+		pSpell->Name, pSpell->Range, ((float)pSpell->CastTime/1000), pSpell->ManaCost); 
 	//show recast if its longer than normal cast refresh 
 	float fRecast = ((float)pSpell->RecastTime)/1000; 
 	if ( fRecast > (((float)pSpell->CastTime/1000) + 2.5) ) 
@@ -291,9 +291,9 @@ VOID ShowSpellInfo(PSPELL pSpell)
 		strcat_s(szBuff, szTemp); 
 	} 
 	//add duration if its defined 
-	if ( pSpell->DurationValue1 > 0 ) 
+	if ( pSpell->DurationCap > 0 ) 
 	{ 
-		sprintf_s(szTemp, "       \axDuration: \ay%.1fmins", (float)pSpell->DurationValue1/10); 
+		sprintf_s(szTemp, "       \axDuration: \ay%.1fmins", (float)pSpell->DurationCap/10); 
 		strcat_s(szBuff, szTemp); 
 	} 
 	spellout(szBuff); 
@@ -396,10 +396,10 @@ VOID ShowSpellInfo(PSPELL pSpell)
 	} 
 
 	//zone location limitations  01=Outdoors, 02=dungeons, ff=Any 
-	if ( pSpell->Location!=0xff ) 
+	if ( pSpell->ZoneType!=0xff ) 
 	{ 
 		sprintf_s(szBuff, "\awLocation Type:\au"); 
-		switch(pSpell->Location) 
+		switch(pSpell->ZoneType) 
 		{ 
 		case 1: 
 			sprintf_s(szTemp, "Outdoor Only"); 
@@ -408,7 +408,7 @@ VOID ShowSpellInfo(PSPELL pSpell)
 			sprintf_s(szTemp, "Dungeon Only"); 
 			break; 
 		default: 
-			sprintf_s(szTemp, "Unknown%03d (not any) location", pSpell->Location); 
+			sprintf_s(szTemp, "Unknown%03d (not any) location", pSpell->ZoneType); 
 			break; 
 		} 
 		strcat_s(szBuff, szTemp); 

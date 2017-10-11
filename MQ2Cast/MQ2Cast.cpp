@@ -617,9 +617,9 @@ long SpellTimer(long Type, void *Data)
 			return 2;
 		}
 		if (GetCharInfo()->pSpawn->Level<4) {
-			return (long)((PSPELL)Data)->FizzleTime * 2;
+			return (long)((PSPELL)Data)->RecoveryTime * 2;
 		}
-		return (long)((PSPELL)Data)->FizzleTime;
+		return (long)((PSPELL)Data)->RecoveryTime;
 	}
 	case TYPE_ALT:
 	{

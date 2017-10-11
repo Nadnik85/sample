@@ -15,7 +15,6 @@
 
 #ifndef PLUGIN_API
 #include "../MQ2Plugin.h"
-using namespace std;
 PreSetup("MQ2NetHeal");
 PLUGIN_VERSION(PLUGIN_VERS);
 #include <string>
@@ -24,6 +23,7 @@ PLUGIN_VERSION(PLUGIN_VERS);
 #include <map>
 #include <mmsystem.h>
 #pragma comment(lib,"winmm.lib")
+using namespace std;
 #endif PLUGIN_API
 
 enum {
@@ -660,7 +660,7 @@ public:
 					if (Current[0]) strcat_s(Current, " ");
 					_itoa_s(spell->ID, Convert, 10);
 					strcat_s(Current, Convert);
-					if (spell->DurationValue1>0) BSP[Totale++] = spell;
+					if (spell->DurationCap>0) BSP[Totale++] = spell;
 				}
 			}
 		}
@@ -672,7 +672,7 @@ public:
 						if (Current[0]) strcat_s(Current, " ");
 						_itoa_s(spell->ID, Convert, 10);
 						strcat_s(Current, Convert);
-						if (spell->DurationValue1>0) BSP[Totale++] = spell;
+						if (spell->DurationCap>0) BSP[Totale++] = spell;
 					}
 				}
 			}
@@ -684,7 +684,7 @@ public:
 				if (PSPELL spell = GetSpellByID(atol(Convert))) {
 					if (Current[0]) strcat_s(Current, " ");
 					strcat_s(Current, Convert);
-					if (spell->DurationValue1>0) BSP[Totale++] = spell;
+					if (spell->DurationCap>0) BSP[Totale++] = spell;
 				}
 			}
 		}
