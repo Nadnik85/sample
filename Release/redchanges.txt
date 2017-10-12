@@ -1,3 +1,7 @@
+Oct 12 2017 by eqmule
+- Updated for TEST
+- Updated for TEST #2
+
 Oct 11 2017 by redguides
 - New Utility! EQBCS.exe (jimbob) a huge upgrade to the old mq2eqbcs.exe, runs multiple characters with no lag or errors. Stress tested. One-click to add a windows service, and many more features.
 - New Utility! EQBackupRestore.exe (rephaite) backup and restore your EverQuest & character settings. Check your /release/utilities folder. (Source available on our gitlab. )
