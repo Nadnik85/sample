@@ -2083,7 +2083,8 @@ public:
         OutWnd->Clickable                           = 1;
         OutStruct                                   = (_CSIDLWND*)GetChildItem("CWChatOutput");
         CloseOnESC                                  = 0;
-        *(unsigned long*)&(((char*)StmlOut)[EQ_CHAT_HISTORY_OFFSET]) = 400;
+       // *(unsigned long*)&(((char*)StmlOut)[EQ_CHAT_HISTORY_OFFSET]) = 400;
+		StmlOut->MaxLines = 400;
         BitOff(WindowStyle, CWS_CLOSE);
     };
 

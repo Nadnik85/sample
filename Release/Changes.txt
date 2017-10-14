@@ -1,3 +1,14 @@
+Oct 13 2017 by eqmule
+- Updated for TEST
+- MQ2Auth.exe now produces truly unique hashes, everyone needs to rerun it.
+- You can now see what your MQ@Auth is by clicking the Show MQ2Auth menu item on the trayicon.
+  this also optionally let you copy it to the clipboard.
+- EQ_CHAT_HISTORY_OFFSET has been removed it was a pita to keep updated
+	From now on do :
+	OutputBox->MaxLines = 0x190;
+	instead of
+    (DWORD*)&(((PCHAR)OutputBox)[EQ_CHAT_HISTORY_OFFSET])=0x190; 
+
 Oct 12 2017 by eqmule
 - Updated for TEST
 - Updated for TEST #2

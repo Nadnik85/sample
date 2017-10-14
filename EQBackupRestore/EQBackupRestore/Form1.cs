@@ -216,7 +216,7 @@ namespace EQBackupRestore
 
         private void aboutToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Made by Rephaite\nExclusively for RedGuides.com", "About");
+            MessageBox.Show("This program backs up your EverQuest settings for every character. If you need help, see the thread on RedGuides. Made by Rephaite\nExclusively for RedGuides.com", "About");
         }
 
         /**
@@ -249,7 +249,7 @@ namespace EQBackupRestore
             this.redGuidesLinkLabel.LinkVisited = true;
 
             // Navigate to a URL.
-            System.Diagnostics.Process.Start("https://www.redguides.com/content/");
+            System.Diagnostics.Process.Start("https://www.redguides.com/forums/threads/58150-A-New-Way-to-Backup-and-Restore-your-EverQuest-Settings-(EQBackupRestore-exe-release)");
         }
     }
 }
