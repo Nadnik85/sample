@@ -1,9 +1,148 @@
+Oct 13 2017 by eqmule
+- Updated for TEST
+- MQ2Auth.exe now produces truly unique hashes, everyone needs to rerun it.
+- You can now see what your MQ@Auth is by clicking the Show MQ2Auth menu item on the trayicon.
+  this also optionally let you copy it to the clipboard.
+- EQ_CHAT_HISTORY_OFFSET has been removed it was a pita to keep updated
+	From now on do :
+	OutputBox->MaxLines = 0x190;
+	instead of
+    (DWORD*)&(((PCHAR)OutputBox)[EQ_CHAT_HISTORY_OFFSET])=0x190; 
+
+Oct 12 2017 by eqmule
+- Updated for TEST
+- Updated for TEST #2
+
+Oct 11 2017 by eqmule
+- Updated for TEST
+
+Oct 03 2017 by eqmule
+- /removebuff now takes parameters: -pet and -both | cred MacQ
+  /removebuff -pet buffname removes the buff from your pet ( same functionality as /removepetbuff buffname)
+  /removebuff -both buffname removes the buff from both you and your pet.
+
+Sep 28 2017 by eqmule
+- Added MQ2FamKiller
+- Added MQ2Bandolier
+- Fixed MQ2Cursor
+- Removed the voice "help" in group for mq2rez.
+
+Sep 26 2017 by eqmule
+- Updated the SPELL struct:
+- CARecastTimerID has been renamed to ReuseTimerIndex
+- Mana has been renamed to ManaCost
+- FizzleTime has been renamed to RecoveryTime
+- ReagentId has been renamed to ReagentID
+- DescriptionNumber has been renamed to DescriptionIndex
+- SubSpellGroup has been renamed to SpellSubGroup
+- Location has been renamed to ZoneType
+- DurationValue1 has been renamed to DurationCap
+plugins changed:
+MQ2NetBots
+MQ2NetHeal
+MQ2Debuffs
+MQ2Cast
+MQ2Melee
+
+Sep 25 2017 by eqmule
+- MAXTURBO has been moved to the ini file. cred: silverj
+- Set TurboLimit under the [MacroQuest] section in the macroquest.ini to whatever, it defaults to 240.
+
+- Obviously people are going to set this to 1000000000000000
+- and then completely lock up their game, cause the engine will never ever yield time to eq, but hey... its their choice now I guess.
+- I suggest you dont mess with it at all, and leave it at 240 max.
+
+- this: http://www.macroquest2.com/phpBB3/viewtopic.php?f=28&t=20394
+- and this: http://www.macroquest2.com/phpBB3/viewtopic.php?f=28&t=20393
+  has also been implemented, thanks silverj
+
+Sep 24 2017 by rswiders
+- Updated FindItemCount to include items on the cursor in the count.
+
+Sep 23 2017 by eqmule
+- Updated for TEST
+
+Sep 21 2017 by eqmule
+- Added ${Spell[x].IllusionOkWhenMounted} it returns true if the illusion spell will land when you are on a mount
+  you can call this using any spell, but it will always return true if the spell is NOT an illusion spell.
+  in fact it wont even evaluate it further if its not a illusion spell
+- Fixed the pinstCTimeLeftWnd_x offset
+
+Sep 20 2017 by eqmule
+- Updated for LIVE
+
+There will be no more public mq2 updates until I catch the guy that released the mq2 for agnarr.
+
+send me a pm or skype text: eq.mule
+if you have information. you can be anonymous.
+
+longtime friends and loyal users here that I know and trust will be given the updates by me only from now on. (at no charge of course.) mq2 is still open source and free, its just that equistructs.h eqgame.h and eqdata.h wont be distributed or updated by me anymore. those change every patch and everything prior to this day is under gpl and can of course be requested or downloaded, but from now on until this crap is resolved, I have my own NEW includes that are NOT under the gpl.
+
+I'm sick of having my hard work being taken and passed of by some leech on a server that I specifically requested we stay away from. I wont tolerate it.
+
+mq2 is free and staying off of truebox was the only price people had to pay, cant do that? no mq2 for anyone anymore.
+
+wanna step in and update it? lol go for it, it must be "easy" if eqmule can do it in a couple hours... pfft... yeah right...
+
+/eqmule (yeah I'm bitter)
+
+19 Sep 2017 by rswiders
+- Modified Math.Clamp to use the parameter list of (N, Min, Max). ie, will clamp the value N between Min and Max.
+- Added ${Group.AvgHPs} guess what it returns? - eqmule
+
+18 Sep 2017 by eqmule
+- Fixed an infinite loop bug and a variable parse bug in Eval functions. -cred bug report: creamo
+- Eval functions that take multiple arguments MUST separate those with comma(s) from now on
+  Example: (run with a cleric, war or shaman)
+  [code]
+  Sub Main
+	/declare c_argueString string outer shm clr war
+	/declare ChatSender string local ${Me} 
+
+	/if (!${checkbot["shm war clr", ${ChatSender}]}) { <-NOTE the COMMA
+		/echo ${Time} Only Func3: FALSE, this should be TRUE
+	} else {
+		/echo ${Time} Only Func3: TRUE, this should be TRUE
+	}
+  /return
+
+  Sub checkbot(selectedBots, chatSender)
+    /declare botSelected bool local FALSE
+	/echo ${Time} in Sub checkbot selectedBots=${selectedBots} chatSender=${chatSender}
+    /if (${Select[${Me.Class.ShortName},${selectedBots}]}) /varset botSelected TRUE
+  /return ${botSelected}
+  [/code]
+
+17 Sep 2017 by eqmule
+- Fixed ${Me.GukEarned}, ${Me.MMEarned}, ${Me.RujEarned}, ${Me.TakEarned}, ${Me.MirEarned} and ${Me.LDoNPoints}
+- Added a new TLO PointMercant it only have one member : Item which is a pPointMerchantItemType.
+  The pPointMerchantitemType has the following members: Name, ItemID, Price, ThemeID, IsStackable, IsLore, RaceMask, ClassMask, bCanUse
+  Usage:
+  /echo ${PointMercant} returns true if the LDON Mercant window is open and FALSE if not.
+  /echo ${PointMercant.Item[1].Price} OR /echo ${PointMercant.Item[Ebon Hammer].Price}
+  returns the Price for index 1 or whatever index Ebon Hammer is in if you do it by name.
+  etc.
+
+15 Sep 2017 starring rswiders as "the captain", eqmule as "crew member number 6" and special guest star: eqholic
+- Updated to handle the new SPA's
+- Fixed a bug in /next not taking its argument into account for nested for loops.
+- Fix for labels
+- Fixed the CSIDLWND struct (the SIDL define...) so since we have never had this right it was time, but note that
+  if your plugin uses stuff like: pwnd->SidlText and its NOT an actual CSidlScreenWnd then you need to change it to whatever window it actually is.
+  I guess questions about this should be directed to me (eqmule)
+
+plugins changed outside of core are attached here:
+http://www.macroquest2.com/phpBB3/viewtopic.php?f=29&t=11451&p=174467#p174467
+MQ2Rez
+
 14 Sep 2017 by eqmule
 - Updated for TEST
 - Fixed ${Familiar[x].} it will return familiars and not illusions now...
 -
 - Fixed a bunch of window structs that we where completely misusing anyway.
   this could require some plugin changes, contact me for help if you get errors.
+-
+- Fix: Variables that are undeclared but supplied as paramters now default to an actual NULL or 0 not the string "NULL"
 -
 - Inspecting the Blessed Spiritstaff of the Heyokah will no longer ctd you.
 - Added Math.Clamp ${Math.Clamp[Min, N, Max]} will clamp N between Min and Max. - cred derple
@@ -2241,8 +2380,8 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
 - Fixed a crash in /windowstate that could happen when using a (bad) Custom UI. Thanks demonstar55
 - since GetCombatAbilityTimer now accepts -1 as a timer, I have removed that check
   this means you should remove it from mq2melee as well for example:
-  this line: if (EFFECT->CARecastTimerID && TYPE != AA && EFFECT->CARecastTimerID != -1)
-  becomes this: if (EFFECT->CARecastTimerID!=0 && TYPE != AA)
+  this line: if (EFFECT->ReuseTimerIndex && TYPE != AA && EFFECT->ReuseTimerIndex != -1)
+  becomes this: if (EFFECT->ReuseTimerIndex!=0 && TYPE != AA)
 
 26 Aug 2015 by EqMule
 - Please don't use MQ2 for unattended gameplay (afk botting)
@@ -2383,12 +2522,12 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
 17 Jun 2015 by EqMule
 - Please don't use MQ2 for unattended gameplay (afk botting)
 - Updated for today's LIVE patch
-- GetCombatAbilityTimer for the LIVE build now takes 2 arguments pSpell->CARecastTimerID and pSpell->SpellGroup
+- GetCombatAbilityTimer for the LIVE build now takes 2 arguments pSpell->ReuseTimerIndex and pSpell->SpellGroup
   do a search for GetCombatAbilityTimer in your plugins and change accordingly.
 
 11 Jun 2015 by EqMule
 - Updated for the TEST build
-- GetCombatAbilityTimer for the TEST build now takes 2 arguments pSpell->CARecastTimerID and pSpell->SpellGroup
+- GetCombatAbilityTimer for the TEST build now takes 2 arguments pSpell->ReuseTimerIndex and pSpell->SpellGroup
   do a search for GetCombatAbilityTimer in your plugins and change accordingly.
   GetCombatAbilityTimer for the LIVE build has not changed. (but it will next patch.)
 - Clicking on the name of someone in the targetwindow will now open a trade if you have coin (or an item) on the cursor.

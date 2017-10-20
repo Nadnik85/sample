@@ -1041,7 +1041,25 @@ TLO(dataFindItem)
 	{
 		bExact = true;
 		pName++;
+		char *dst = pName;
+		char *src = pName;
+		char c;
+
+		while ((c = *src++) != '\0')
+		{
+			if (c == '\\')
+			{
+				*dst++ = c;
+				if ((c = *src++) == '\0')
+					break;
+				*dst++ = c;
+			}
+			else if (c != '"')
+				*dst++ = c;
+		}
+		*dst = '\0';
 	}
+	
 	CHAR Name[MAX_STRING] = { 0 };
 	CHAR Temp[MAX_STRING] = { 0 };
 	strcpy_s(Name, pName);
@@ -1258,6 +1276,7 @@ TLO(dataFindItemCount)
 	unsigned long Count = 0;
 	DWORD nAug = 0;
 	PCHARINFO2 pChar2 = GetCharInfo2();
+	//check toplevel slots
 	if (pChar2 && pChar2->pInventoryArray && pChar2->pInventoryArray->InventoryArray) {
 		for (unsigned long nSlot = 0; nSlot < NUM_INV_SLOTS; nSlot++)
 		{
@@ -1323,6 +1342,32 @@ TLO(dataFindItemCount)
 			}
 		}
 	}
+	//check cursor
+	if (pChar2 && pChar2->pInventoryArray && pChar2->pInventoryArray->Inventory.Cursor) {
+		if (PCONTENTS pItem = pChar2->pInventoryArray->Inventory.Cursor) {
+			if (PITEMINFO theitem = GetItemFromContents(pItem)) {
+				if (bExact) {
+					if (!_stricmp(Name, theitem->Name)) {
+						if ((theitem->Type != ITEMTYPE_NORMAL) || (((EQ_Item*)pItem)->IsStackable() != 1))
+							Count++;
+						else
+							Count += pItem->StackCount;
+					}
+				}
+				else {
+					strcpy_s(Temp, theitem->Name);
+					_strlwr_s(Temp);
+					if (strstr(Temp, Name)) {
+						if ((theitem->Type != ITEMTYPE_NORMAL) || (((EQ_Item*)pItem)->IsStackable() != 1))
+							Count++;
+						else
+							Count += pItem->StackCount;
+					}
+				}
+			}
+		}
+	}
+	//check inside bags
 	if (pChar2 && pChar2->pInventoryArray) {
 		for (unsigned long nPack = 0; nPack < 10; nPack++)
 		{
@@ -2046,6 +2091,16 @@ TLO(dataAlert)
 	if (ISNUMBER()) {
 		Ret.DWord = GETNUMBER();
 		Ret.Type = pAlertType;
+		return true;
+	}
+	return false;
+}
+TLO(dataPointMerchant)
+{
+	if (pPointMerchantWnd)
+	{
+		Ret.Ptr = pPointMerchantWnd;
+		Ret.Type = pPointMerchantType;
 		return true;
 	}
 	return false;

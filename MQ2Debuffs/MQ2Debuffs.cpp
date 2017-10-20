@@ -303,7 +303,7 @@ public:
     if(!Index[0] || !_stricmp(Index,"self") || !_stricmp(Index,"myself")) {
       for(int b=0; b<MAXBUFF_MYSELF; b++) {
         if(PSPELL spell=GetSpellByID(GetCharInfo2()->Buff[b].SpellID))
-          if(spell->DurationValue1>0) {
+          if(spell->DurationCap>0) {
             ((spell->SpellType)?bList[bSize++]:dList[dSize++])=spell;
             aList[aSize++]=spell;
           }
@@ -314,7 +314,7 @@ public:
       if(pPetInfoWnd && GetCharInfo() && GetCharInfo()->pSpawn && GetCharInfo()->pSpawn->PetID>0)
         for(int b=0; b<MAXBUFF_WARDER; b++) {
           if(PSPELL spell=GetSpellByID(((PEQPETINFOWINDOW)pPetInfoWnd)->Buff[b]))
-            if(spell->DurationValue1>0) {
+            if(spell->DurationCap>0) {
               ((spell->SpellType)?bList[bSize++]:dList[dSize++])=spell;
               aList[aSize++]=spell;
             }
@@ -325,7 +325,7 @@ public:
     for(int b=0; b<MAXBUFF_WARDER; b++) {
       GetArg(BuffID,Index,b+1);
       if(PSPELL spell=GetSpellByID(atol(BuffID)))
-        if(spell->DurationValue1>0) {
+        if(spell->DurationCap>0) {
           ((spell->SpellType)?bList[bSize++]:dList[dSize++])=spell;
           aList[aSize++]=spell;
         }

@@ -34,8 +34,8 @@
 // v8.1 - Eqmule 08-22-2017 - downflag and holyflag now takes 0, 1 or 2, if its set to 2 it tells the plugin to only parse it if a macro IS running.
 
 #define   PLUGIN_NAME  "MQ2Melee"   // Plugin Name
-#define   PLUGIN_DATE   20170815    // Plugin Date
-#define   PLUGIN_VERS   8.3         // Plugin Version
+#define   PLUGIN_DATE   20170912    // Plugin Date
+#define   PLUGIN_VERS   8.4         // Plugin Version
 
 #define   SHOW_ABILITY         0
 #define   SHOW_ATTACKING       1
@@ -51,6 +51,7 @@
 
 #define   NOID                -1
 #define   delay              250
+
 
 enum { Tiny, Small, Medium, Large, Giant, Huge }; // container sizes
 
@@ -994,1704 +995,7 @@ ssneak = { 42    ,2 },        // skill: sneak
 staunt = { 73    ,2 },        // skill: taunt
 stigclaw = { 52    ,2 };        // skill: tigerclaw
 
-char* pAGGRO[] = {
-	"aggro",
-	"[ON/OFF]?",
-	"${If[${Select[${Me.Class.ShortName},WAR,PAL,SHD]},1,0]}",
-	"${If[${meleemvi[plugin]},1,0]}",
-};
-
-char* pAGGRP[] = {
-	"aggropri",
-	"[ID] Primary (Aggro)?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${meleemvi[aggro]},1,0]}",
-};
-
-char* pAGGRS[] = {
-	"aggrosec",
-	"[ID] Offhand (Aggro)?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${meleemvi[aggro]} && ${meleemvi[aggropri]},1,0]}",
-};
-
-char* pARROW[] = {
-	"arrow",
-	"[ID] item?",
-	"0",
-	"${If[${meleemvi[plugin]} && (${Me.Skill[archery]} || ${Me.Skill[throwing]}),1,0]}",
-};
-
-char* pASSAS[] = {
-	"assassinate",
-	"Sneak/Hide/Behind/Strike/Stab [ON/OFF]?",
-	"${If[${Me.Skill[backstab]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${meleemvi[backstab]},1,0]}",
-};
-
-char* pASSLT[] = {
-	"assault",
-	"[#] Endu% Above? 0=Off",
-	"${If[${Me.CombatAbility[Assault]} || ${Me.CombatAbility[Assault Rk. II]} || ${Me.CombatAbility[Assault Rk. III]} || ${Me.CombatAbility[Battery]} || ${Me.CombatAbility[Battery Rk. II]} || ${Me.CombatAbility[Battery Rk. III]} || ${Me.CombatAbility[Onslaught]} || ${Me.CombatAbility[Onslaught Rk. II]} || ${Me.CombatAbility[Onslaught Rk. III]} || ${Me.CombatAbility[Incursion]} || ${Me.CombatAbility[Incursion Rk. II]} || ${Me.CombatAbility[Incursion Rk. III]},60,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[Assault]} || ${Me.CombatAbility[Assault Rk. II]} || ${Me.CombatAbility[Assault Rk. III]} || ${Me.CombatAbility[Battery]} || ${Me.CombatAbility[Battery Rk. II]} || ${Me.CombatAbility[Battery Rk. III]} || ${Me.CombatAbility[Onslaught]} || ${Me.CombatAbility[Onslaught Rk. II]} || ${Me.CombatAbility[Onslaught Rk. III]} || ${Me.CombatAbility[Incursion]} || ${Me.CombatAbility[Incursion Rk. II]} || ${Me.CombatAbility[Incursion Rk. III]}),1,0]}",
-};
-
-char* pDEFEN[] = {
-	"defense",
-	"[#] Endu% Above? 0=Off",
-	"${If[${Me.CombatAbility[Bracing Defense]} || ${Me.CombatAbility[Bracing Defense Rk. II]} || ${Me.CombatAbility[Bracing Defense Rk. III]} || ${Me.CombatAbility[Staunch Defense]} || ${Me.CombatAbility[Staunch Defense Rk. II]} || ${Me.CombatAbility[Staunch Defense Rk. III]} || ${Me.CombatAbility[Stalwart Defense]} || ${Me.CombatAbility[Stalwart Defense Rk. II]} || ${Me.CombatAbility[Stalwart Defense Rk. III]} || ${Me.CombatAbility[Steadfast Defense]} || ${Me.CombatAbility[Steadfast Defense Rk. II]} || ${Me.CombatAbility[Steadfast Defense Rk. III]} || ${Me.CombatAbility[Stout Defense]} || ${Me.CombatAbility[Stout Defense Rk. II]} || ${Me.CombatAbility[Stout Defense Rk. III]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[Bracing Defense]} || ${Me.CombatAbility[Bracing Defense Rk. II]} || ${Me.CombatAbility[Bracing Defense Rk. III]} || ${Me.CombatAbility[Staunch Defense]} || ${Me.CombatAbility[Staunch Defense Rk. II]} || ${Me.CombatAbility[Staunch Defense Rk. III]} || ${Me.CombatAbility[Stalwart Defense]} || ${Me.CombatAbility[Stalwart Defense Rk. II]} || ${Me.CombatAbility[Stalwart Defense Rk. III]} || ${Me.CombatAbility[Steadfast Defense]} || ${Me.CombatAbility[Steadfast Defense Rk. II]} || ${Me.CombatAbility[Steadfast Defense Rk. III]} || ${Me.CombatAbility[Stout Defense]} || ${Me.CombatAbility[Stout Defense Rk. II]} || ${Me.CombatAbility[Stout Defense Rk. III]}),1,0]}",
-};
-
-char* pBKOFF[] = {
-	"backoff",
-	"[#] Life% Below? 0=0ff",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvi[melee]} && !${meleemvi[aggro]},1,0]}",
-};
-
-char* pBSTAB[] = {
-	"backstab",
-	"[ON/OFF]?",
-	"${If[${Me.Skill[backstab]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.Skill[backstab]},1,0]}",
-};
-
-char* pBTASP[] = {
-	"asp",
-	"[ON/OFF]?",
-	"${If[${Me.AltAbility[bite of the asp]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${Me.AltAbility[bite of the asp]},1,0]}",
-};
-
-char* pBVIVI[] = {
-	"bvivi",
-	"[#] Endu% Above? 0=Off",
-	"${If[${Me.CombatAbility[Bestial Vivisection]} || ${Me.CombatAbility[Bestial Vivisection Rk. II]} || ${Me.CombatAbility[Bestial Vivisection Rk. III]} || ${Me.CombatAbility[Bestial Rending]} || ${Me.CombatAbility[Bestial Rending Rk. II]} || ${Me.CombatAbility[Bestial Rending Rk. III]} || ${Me.CombatAbility[Bestial Evulsing]} || ${Me.CombatAbility[Bestial Evulsing Rk. II]} || ${Me.CombatAbility[Bestial Evulsing Rk. III]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[Bestial Vivisection]} || ${Me.CombatAbility[Bestial Vivisection Rk. II]} || ${Me.CombatAbility[Bestial Vivisection Rk. III]} || ${Me.CombatAbility[Bestial Rending]} || ${Me.CombatAbility[Bestial Rending Rk. II]} || ${Me.CombatAbility[Bestial Rending Rk. III]} || ${Me.CombatAbility[Bestial Evulsing]} || ${Me.CombatAbility[Bestial Evulsing Rk. II]} || ${Me.CombatAbility[Bestial Evulsing Rk. III]}),1,0]}",
-};
-
-char* pBLEED[] = {
-	"bleed",
-	"[#] Endu% Above? 0=Off",
-	"${If[${Me.CombatAbility[Bleed]} || ${Me.CombatAbility[Bleed Rk. II]} || ${Me.CombatAbility[Bleed Rk. III]} || ${Me.CombatAbility[Wound]} || ${Me.CombatAbility[Wound Rk. II]} || ${Me.CombatAbility[Wound Rk. III]} || ${Me.CombatAbility[Lacerate]} || ${Me.CombatAbility[Lacerate Rk. II]} || ${Me.CombatAbility[Lacerate Rk. III]} || ${Me.CombatAbility[Gash]} || ${Me.CombatAbility[Gash Rk. II]} || ${Me.CombatAbility[Gash Rk. III]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[Bleed]} || ${Me.CombatAbility[Bleed Rk. II]} || ${Me.CombatAbility[Bleed Rk. III]}|| ${Me.CombatAbility[Wound]} || ${Me.CombatAbility[Wound Rk. II]} || ${Me.CombatAbility[Wound Rk. III]} || ${Me.CombatAbility[Lacerate]} || ${Me.CombatAbility[Lacerate Rk. II]} || ${Me.CombatAbility[Lacerate Rk. III]} || ${Me.CombatAbility[Gash]} || ${Me.CombatAbility[Gash Rk. II]} || ${Me.CombatAbility[Gash Rk. III]}),1,0]}",
-};
-
-char* pBLUST[] = {
-	"bloodlust",
-	"[#] Endu% Above? 0=Off",
-	"${If[${Me.CombatAbility[Shared Bloodlust]} || ${Me.CombatAbility[Shared Bloodlust Rk. II]} || ${Me.CombatAbility[Shared Bloodlust Rk. III]} || ${Me.CombatAbility[Shared Brutality]} || ${Me.CombatAbility[Shared Brutality Rk. II]} || ${Me.CombatAbility[Shared Brutality Rk. III]} || ${Me.CombatAbility[Shared Savagery]} || ${Me.CombatAbility[Shared Savagery Rk. II]} || ${Me.CombatAbility[Shared Savagery Rk. III]} || ${Me.CombatAbility[Shared Viciousness]} || ${Me.CombatAbility[Shared Viciousness Rk. II]} || ${Me.CombatAbility[Shared Viciousness Rk. III]} || ${Me.CombatAbility[Shared Cruelty]} || ${Me.CombatAbility[Shared Cruelty Rk. II]} || ${Me.CombatAbility[Shared Cruelty Rk. III]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[Shared Bloodlust]} || ${Me.CombatAbility[Shared Bloodlust Rk. II]} || ${Me.CombatAbility[Shared Bloodlust Rk. III]} || ${Me.CombatAbility[Shared Brutality]} || ${Me.CombatAbility[Shared Brutality Rk. II]} || ${Me.CombatAbility[Shared Brutality Rk. III]} || ${Me.CombatAbility[Shared Savagery]} || ${Me.CombatAbility[Shared Savagery Rk. II]} || ${Me.CombatAbility[Shared Savagery Rk. III]} || ${Me.CombatAbility[Shared Viciousness]} || ${Me.CombatAbility[Shared Viciousness Rk. II]} || ${Me.CombatAbility[Shared Viciousness Rk. III]} || ${Me.CombatAbility[Shared Cruelty]} || ${Me.CombatAbility[Shared Cruelty Rk. II]} || ${Me.CombatAbility[Shared Cruelty Rk. III]}),1,0]}",
-};
-
-char* pBBLOW[] = {
-	"boastful",
-	"[ON/OFF]?",
-	"${If[${Me.AltAbility[boastful bellow]},0,0]}",
-	"${If[${meleemvi[plugin]} && ${Me.AltAbility[boastful bellow]},1,0]}",
-};
-
-char* pBASHS[] = {
-	"bash",
-	"[#] Bash 0=0ff",
-	"${If[${Me.Skill[bash]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.Skill[bash]},1,0]}",
-};
-
-char* pBGING[] = {
-	"begging",
-	"[ON/OFF]?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.Skill[begging]},1,0]}",
-};
-
-char* pBOWID[] = {
-	"bow",
-	"[ID] spell/disc/aa/item?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${Me.Skill[archery]},1,0]}",
-};
-
-char* pCALLC[] = {
-	"callchallenge",
-	"[ON/OFF]?",
-	"${If[${Me.AltAbility[call of challenge]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${Me.AltAbility[call of challenge]},1,0]}",
-};
-
-char* pCFIST[] = {
-	"cloud",
-	"[#] Endu% Above? 0=Off",
-	"${If[${Me.CombatAbility[Cloud of Fists]} || ${Me.CombatAbility[Cloud of Fists Rk. II]} || ${Me.CombatAbility[Cloud of Fists Rk. III]} || ${Me.CombatAbility[Phantom Partisan]} || ${Me.CombatAbility[Phantom Partisan Rk. II]} || ${Me.CombatAbility[Phantom Partisan Rk. III]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[Cloud of Fists]} || ${Me.CombatAbility[Cloud of Fists Rk. II]} || ${Me.CombatAbility[Cloud of Fists Rk. III]} || ${Me.CombatAbility[Phantom Partisan]} || ${Me.CombatAbility[Phantom Partisan Rk. II]} || ${Me.CombatAbility[Phantom Partisan Rk. III]}),1,0]}",
-};
-
-char* pCHAMS[] = {
-	"cstrike",
-	"[ON/OFF]?",
-	"${If[${Me.AltAbility[Chameleon Strike]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${Me.AltAbility[Chameleon Strike]},1,0]}",
-};
-
-char* pCRIPS[] = {
-	"cripple",
-	"[#] Endu% Above? 0=Off",
-	"${If[${Me.CombatAbility[leg strike]} || ${Me.CombatAbility[leg cut]} || ${Me.CombatAbility[leg slice]} || ${Me.CombatAbility[crippling strike]} || ${Me.CombatAbility[tendon cleave]} || ${Me.CombatAbility[tendon cleave rk. ii]} || ${Me.CombatAbility[tendon cleave rk. iii]} || ${Me.CombatAbility[tendon sever]} || ${Me.CombatAbility[tendon sever rk. ii]} || ${Me.CombatAbility[tendon sever rk. iii]} || ${Me.CombatAbility[tendon shear]} || ${Me.CombatAbility[tendon shear rk. ii]} || ${Me.CombatAbility[tendon shear rk. iii]} || ${Me.CombatAbility[tendon lacerate]} || ${Me.CombatAbility[tendon lacerate rk. ii]} || ${Me.CombatAbility[tendon lacerate rk. iii]} || ${Me.CombatAbility[tendon Slash]} || ${Me.CombatAbility[tendon Slash rk. ii]} || ${Me.CombatAbility[tendon Slash rk. iii]} || ${Me.CombatAbility[Tendon Gash]} || ${Me.CombatAbility[Tendon Gash Rk. II]} || ${Me.CombatAbility[Tendon Gash Rk. III]} || ${Me.CombatAbility[Tendon Tear]} || ${Me.CombatAbility[Tendon Tear Rk. II]} || ${Me.CombatAbility[Tendon Tear Rk. III]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[leg strike]} || ${Me.CombatAbility[leg cut]} || ${Me.CombatAbility[leg slice]} || ${Me.CombatAbility[crippling strike]} || ${Me.CombatAbility[tendon cleave]} || ${Me.CombatAbility[tendon cleave rk. ii]} || ${Me.CombatAbility[tendon cleave rk. iii]} || ${Me.CombatAbility[tendon sever]} || ${Me.CombatAbility[tendon sever rk. ii]} || ${Me.CombatAbility[tendon sever rk. iii]} || ${Me.CombatAbility[tendon shear]} || ${Me.CombatAbility[tendon shear rk. ii]} || ${Me.CombatAbility[tendon shear rk. iii]} || ${Me.CombatAbility[tendon lacerate]} || ${Me.CombatAbility[tendon lacerate rk. ii]} || ${Me.CombatAbility[tendon lacerate rk. iii]} || ${Me.CombatAbility[tendon Slash]} || ${Me.CombatAbility[tendon Slash rk. ii]} || ${Me.CombatAbility[tendon Slash rk. iii]} || ${Me.CombatAbility[Tendon Gash]} || ${Me.CombatAbility[Tendon Gash Rk. II]} || ${Me.CombatAbility[Tendon Gash Rk. III]} || ${Me.CombatAbility[Tendon Tear]} || ${Me.CombatAbility[Tendon Tear Rk. II]} || ${Me.CombatAbility[Tendon Tear Rk. III]}),1,0]}",
-};
-
-char* pGTPUN[] = {
-	"gutpunch",
-	"[ON/OFF]?",
-	"${If[${Me.AltAbility[gut punch]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${Me.AltAbility[gut punch]},1,0]}",
-};
-
-char* pOFREN[] = {
-	"opfrenzy",
-	"[#] Endu% Above? 0=Off",
-	"${If[${Me.CombatAbility[Overpowering Frenzy]} || ${Me.CombatAbility[Overpowering Frenzy Rk. II]} || ${Me.CombatAbility[Overpowering Frenzy Rk. III]} || ${Me.CombatAbility[Overwhelming Frenzy]} || ${Me.CombatAbility[Overwhelming Frenzy Rk. II]} || ${Me.CombatAbility[Overwhelming Frenzy Rk. III]} || ${Me.CombatAbility[Conquering Frenzy]} || ${Me.CombatAbility[Conquering Frenzy Rk. II]} || ${Me.CombatAbility[Conquering Frenzy Rk. III]} || ${Me.CombatAbility[Vanquishing Frenzy]} || ${Me.CombatAbility[Vanquishing Frenzy Rk. II]} || ${Me.CombatAbility[Vanquishing Frenzy Rk. III]} || ${Me.CombatAbility[Demolishing Frenzy]} || ${Me.CombatAbility[Demolishing Frenzy Rk. II]} || ${Me.CombatAbility[Demolishing Frenzy Rk. III]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[Overpowering Frenzy]} || ${Me.CombatAbility[Overpowering Frenzy Rk. II]} || ${Me.CombatAbility[Overpowering Frenzy Rk. III]} || ${Me.CombatAbility[Overwhelming Frenzy]} || ${Me.CombatAbility[Overwhelming Frenzy Rk. II]} || ${Me.CombatAbility[Overwhelming Frenzy Rk. III]} || ${Me.CombatAbility[Conquering Frenzy]} || ${Me.CombatAbility[Conquering Frenzy Rk. II]} || ${Me.CombatAbility[Conquering Frenzy Rk. III]} || ${Me.CombatAbility[Vanquishing Frenzy]} || ${Me.CombatAbility[Vanquishing Frenzy Rk. II]} || ${Me.CombatAbility[Vanquishing Frenzy Rk. III]} || ${Me.CombatAbility[Demolishing Frenzy]} || ${Me.CombatAbility[Demolishing Frenzy Rk. II]} || ${Me.CombatAbility[Demolishing Frenzy Rk. III]}),1,0]}",
-};
-
-char* pOSTRK[] = {
-	"opportunisticstrike",
-	"[#] Endu% Above? 0=Off",
-	"${If[${Me.CombatAbility[Opportunistic Strike]} || ${Me.CombatAbility[Opportunistic Strike Rk. II]} || ${Me.CombatAbility[Opportunistic Strike Rk. III]} || ${Me.CombatAbility[Strategic Strike]} || ${Me.CombatAbility[Strategic Strike Rk. II]} || ${Me.CombatAbility[Strategic Strike Rk. III]} || ${Me.CombatAbility[Vital Strike]} || ${Me.CombatAbility[Vital Strike Rk. II]} || ${Me.CombatAbility[Vital Strike Rk. III]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[Opportunistic Strike]} || ${Me.CombatAbility[Opportunistic Strike Rk. II]} || ${Me.CombatAbility[Opportunistic Strike Rk. III]} || ${Me.CombatAbility[Strategic Strike]} || ${Me.CombatAbility[Strategic Strike Rk. II]} || ${Me.CombatAbility[Strategic Strike Rk. III]} || ${Me.CombatAbility[Vital Strike]} || ${Me.CombatAbility[Vital Strike Rk. II]} || ${Me.CombatAbility[Vital Strike Rk. III]}),1,0]}",
-};
-
-char* pRALLO[] = {
-	"rallos",
-	"[#] Endu% Above? 0=Off",
-	"${If[${Me.CombatAbility[Axe of Rallos]} || ${Me.CombatAbility[Axe of Rallos Rk. II]} || ${Me.CombatAbility[Axe of Rallos Rk. III]} || ${Me.CombatAbility[Axe of Graster]} || ${Me.CombatAbility[Axe of Graster Rk. II]} || ${Me.CombatAbility[Axe of Graster Rk. III]} || ${Me.CombatAbility[Axe of Illdaera]} || ${Me.CombatAbility[Axe of Illdaera Rk. II]} || ${Me.CombatAbility[Axe of Illdaera Rk. III]} || ${Me.CombatAbility[Axe of Zurel]} || ${Me.CombatAbility[Axe of Zurel Rk. II]} || ${Me.CombatAbility[Axe of Zurel Rk. III]} || ${Me.CombatAbility[Axe of Numicia]} || ${Me.CombatAbility[Axe of Numicia Rk. II]} || ${Me.CombatAbility[Axe of Numicia Rk. III],20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[Axe of Rallos]} || ${Me.CombatAbility[Axe of Rallos Rk. II]} || ${Me.CombatAbility[Axe of Rallos Rk. III]} || ${Me.CombatAbility[Axe of Graster]} || ${Me.CombatAbility[Axe of Graster Rk. II]} || ${Me.CombatAbility[Axe of Graster Rk. III]} || ${Me.CombatAbility[Axe of Illdaera]} || ${Me.CombatAbility[Axe of Illdaera Rk. II]} || ${Me.CombatAbility[Axe of Illdaera Rk. III]} ${Me.CombatAbility[Axe of Illdaera Rk. III]} || ${Me.CombatAbility[Axe of Zurel]} || ${Me.CombatAbility[Axe of Zurel Rk. II]} || ${Me.CombatAbility[Axe of Zurel Rk. III]} || ${Me.CombatAbility[Axe of Numicia]} || ${Me.CombatAbility[Axe of Numicia Rk. II]} || ${Me.CombatAbility[Axe of Numicia Rk. III]),1,0]}",
-};
-
-char* pSYNGY[] = {
-	"synergy",
-	"[#] Endu% Above? 0=Off",
-	"${If[${Me.CombatAbility[Calanin's Synergy]} || ${Me.CombatAbility[Calanin's Synergy Rk. II]} || ${Me.CombatAbility[Calanin's Synergy Rk. III]} || ${Me.CombatAbility[Dreamwalker's Synergy]} || ${Me.CombatAbility[Dreamwalker's Synergy Rk. II]} || ${Me.CombatAbility[Dreamwalker's Synergy Rk. III]} || ${Me.CombatAbility[Veilwalker's Synergy]} || ${Me.CombatAbility[Veilwalker's Synergy Rk. II]} || ${Me.CombatAbility[Veilwalker's Synergy Rk. III]} || ${Me.CombatAbility[Shadewalker's Synergy]} || ${Me.CombatAbility[Shadewalker's Synergy Rk. II]} || ${Me.CombatAbility[Shadewalker's Synergy Rk. III]} || ${Me.CombatAbility[Doomwalker's Synergy]} || ${Me.CombatAbility[Doomwalker's Synergy Rk. II]} || ${Me.CombatAbility[Doomwalker's Synergy Rk. III]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[Calanin's Synergy]} || ${Me.CombatAbility[Calanin's Synergy Rk. II]} || ${Me.CombatAbility[Calanin's Synergy Rk. III]} || ${Me.CombatAbility[Dreamwalker's Synergy]} || ${Me.CombatAbility[Dreamwalker's Synergy Rk. II]} || ${Me.CombatAbility[Dreamwalker's Synergy Rk. III]} || ${Me.CombatAbility[Veilwalker's Synergy]} || ${Me.CombatAbility[Veilwalker's Synergy Rk. II]} || ${Me.CombatAbility[Veilwalker's Synergy Rk. III]} || ${Me.CombatAbility[Shadewalker's Synergy]} || ${Me.CombatAbility[Shadewalker's Synergy Rk. II]} || ${Me.CombatAbility[Shadewalker's Synergy Rk. III]} || ${Me.CombatAbility[Doomwalker's Synergy]} || ${Me.CombatAbility[Doomwalker's Synergy Rk. II]} || ${Me.CombatAbility[Doomwalker's Synergy Rk. III]}),1,0]}",
-};
-
-char* pTTJAB[] = {
-	"throatjab",
-	"[ON/OFF]?",
-	"${If[${Me.AltAbility[throat jab]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${Me.AltAbility[throat jab]},1,0]}",
-};
-
-char* pBTLLP[] = {
-	"battleleap",
-	"[ON/OFF]?",
-	"${If[${Me.AltAbility[Battle Leap]},0,0]}",
-	"${If[${meleemvi[plugin]} && ${Me.AltAbility[Battle Leap]},1,0]}",
-};
-
-char* pCHFOR[] = {
-	"challengefor",
-	"[ON/OFF]?",
-	"${If[${Me.Book[challenge for honor]} || ${Me.Book[challenge for honor rk. ii]} || ${Me.Book[challenge for honor rk. iii]} || ${Me.Book[trial for honor]} || ${Me.Book[trial for honor rk. ii]} || ${Me.Book[trial for honor rk. iii]} || ${Me.Book[charge for honor]} || ${Me.Book[charge for honor rk. ii]} || ${Me.Book[charge for honor rk. iii]} || ${Me.Book[challenge for power]} || ${Me.Book[challenge for power rk. ii]} || ${Me.Book[challenge for power rk. iii]} || ${Me.Book[trial for power]} || ${Me.Book[trial for power rk. ii]} || ${Me.Book[trial for power rk. iii]} || ${Me.Book[charge for honor]} || ${Me.Book[charge for honor rk. ii]} || ${Me.Book[charge for honor rk. iii]} || ${Me.Book[confrontation for power]} || ${Me.Book[confrontation for power rk. ii]} || ${Me.Book[confrontation for power rk. iii]} || ${Me.Book[confrontation for honor]} || ${Me.Book[confrontation for honor rk. ii]} || ${Me.Book[confrontation for honor rk. iii]} || ${Me.Book[Provocation for honor]} || ${Me.Book[Provocation for honor rk. ii]} || ${Me.Book[Provocation for honor rk. iii]} || ${Me.Book[Provocation for power]} || ${Me.Book[Provocation for power rk. ii]} || ${Me.Book[Provocation for power rk. iii]} || ${Me.Book[Demand for Power]} || ${Me.Book[Demand for Power rk. ii]} || ${Me.Book[Demand for Power rk. iii]} || ${Me.Book[Demand for Honor]} || ${Me.Book[Demand for Honor rk. ii]} || ${Me.Book[Demand for Honor rk. iii]} || ${Me.Book[Impose for Power]} || ${Me.Book[Impose for Power rk. ii]} ||${Me.Book[Impose for Power rk. iii]} || ${Me.Book[Impose for Honor]} || ${Me.Book[Impose for Honor rk. ii]} ||${Me.Book[Impose for Honor rk. iii]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[aggro]} && (${Me.Book[challenge for honor]} || ${Me.Book[challenge for honor rk. ii]} || ${Me.Book[challenge for honor rk. iii]} || ${Me.Book[trial for honor]} || ${Me.Book[trial for honor rk. ii]} || ${Me.Book[trial for honor rk. iii]} || ${Me.Book[charge for honor]} || ${Me.Book[charge for honor rk. ii]} || ${Me.Book[charge for honor rk. iii]} || ${Me.Book[challenge for power]} || ${Me.Book[challenge for power rk. ii]} || ${Me.Book[challenge for power rk. iii]} || ${Me.Book[trial for power]} || ${Me.Book[trial for power rk. ii]} || ${Me.Book[trial for power rk. iii]} || ${Me.Book[charge for honor]} || ${Me.Book[charge for honor rk. ii]} || ${Me.Book[charge for honor rk. iii]} || ${Me.Book[confrontation for power]} || ${Me.Book[confrontation for power rk. ii]} || ${Me.Book[confrontation for power rk. iii]} || ${Me.Book[confrontation for honor]} || ${Me.Book[confrontation for honor rk. ii]} || ${Me.Book[confrontation for honor rk. iii]} || ${Me.Book[Provocation for honor]} || ${Me.Book[Provocation for honor rk. ii]} || ${Me.Book[Provocation for honor rk. iii]} || ${Me.Book[Provocation for power]} || ${Me.Book[Provocation for power rk. ii]} || ${Me.Book[Provocation for power rk. iii]} || ${Me.Book[Demand for Power]} || ${Me.Book[Demand for Power rk. ii]} || ${Me.Book[Demand for Power rk. iii]} || ${Me.Book[Demand for Honor]} || ${Me.Book[Demand for Honor rk. ii]} || ${Me.Book[Demand for Honor rk. iii]} || ${Me.Book[Impose for Power]} || ${Me.Book[Impose for Power rk. ii]} ||${Me.Book[Impose for Power rk. iii]} || ${Me.Book[Impose for Honor]} || ${Me.Book[Impose for Honor rk. ii]} ||${Me.Book[Impose for Honor rk. iii]}),1,0]}",
-};
-
-char* pCOMMG[] = {
-	"commanding",
-	"[#] Endu% Above? 0=0ff",
-	"${If[${Me.CombatAbility[commanding voice]},20,0]}",
-	"${If[${meleemvi[plugin]} && ${Me.CombatAbility[commanding voice]},1,0]}",
-};
-
-char* pCRYHC[] = {
-	"cryhavoc",
-	"[#] Endu% Above? 0=0ff",
-	"${If[${Me.CombatAbility[cry havoc]} || ${Me.CombatAbility[Cry Carnage]} || ${Me.CombatAbility[Cry Carnage Rk. II]} || ${Me.CombatAbility[Cry Carnage Rk. III]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[cry havoc]} || ${Me.CombatAbility[Cry Carnage]} || ${Me.CombatAbility[Cry Carnage Rk. II]} || ${Me.CombatAbility[Cry Carnage Rk. III]}),1,0]}",
-};
-
-char* pDISRM[] = {
-	"disarm",
-	"[ON/OFF]?",
-	"${If[${Me.Skill[disarm]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.Skill[disarm]},1,0]}",
-};
-
-char* pDMONK[] = {
-	"monkey",
-	"[#] Endu% Above? 0=0ff",
-	"${If[${Me.CombatAbility[Drunken Monkey Style]} || ${Me.CombatAbility[Drunken Monkey Style rk. ii]} || ${Me.CombatAbility[Drunken Monkey Style rk. iii]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[Drunken Monkey Style]} || ${Me.CombatAbility[Drunken Monkey Style rk. ii]} || ${Me.CombatAbility[Drunken Monkey Style rk. iii]}),1,0]}",
-};
-
-char* pDWNF0[] = {
-	"downflag0",
-	"[ON/OFF] downflag0?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit0].Length},1,0]}",
-};
-
-char* pDWNF1[] = {
-	"downflag1",
-	"[ON/OFF] downflag1?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit1].Length},1,0]}",
-};
-
-char* pDWNF2[] = {
-	"downflag2",
-	"[ON/OFF] downflag2?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit2].Length},1,0]}",
-};
-
-char* pDWNF3[] = {
-	"downflag3",
-	"[ON/OFF] downflag3?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit3].Length},1,0]}",
-};
-
-char* pDWNF4[] = {
-	"downflag4",
-	"[ON/OFF] downflag4?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit4].Length},1,0]}",
-};
-
-char* pDWNF5[] = {
-	"downflag5",
-	"[ON/OFF] downflag5?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit5].Length},1,0]}",
-};
-
-char* pDWNF6[] = {
-	"downflag6",
-	"[ON/OFF] downflag6?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit6].Length},1,0]}",
-};
-
-char* pDWNF7[] = {
-	"downflag7",
-	"[ON/OFF] downflag7?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit7].Length},1,0]}",
-};
-
-char* pDWNF8[] = {
-	"downflag8",
-	"[ON/OFF] downflag8?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit8].Length},1,0]}",
-};
-
-char* pDWNF9[] = {
-	"downflag9",
-	"[ON/OFF] downflag9?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit9].Length},1,0]}",
-};
-
-char* pDWNF10[] = {
-	"downflag10",
-	"[ON/OFF] downflag10?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit10].Length},1,0]}",
-};
-
-char* pDWNF11[] = {
-	"downflag11",
-	"[ON/OFF] downflag11?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit11].Length},1,0]}",
-};
-
-char* pDWNF12[] = {
-	"downflag12",
-	"[ON/OFF] downflag12?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit12].Length},1,0]}",
-};
-
-char* pDWNF13[] = {
-	"downflag13",
-	"[ON/OFF] downflag13?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit13].Length},1,0]}",
-};
-
-char* pDWNF14[] = {
-	"downflag14",
-	"[ON/OFF] downflag14?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit14].Length},1,0]}",
-};
-
-char* pDWNF15[] = {
-	"downflag15",
-	"[ON/OFF] downflag15?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit15].Length},1,0]}",
-};
-
-char* pDWNF16[] = {
-	"downflag16",
-	"[ON/OFF] downflag16?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit16].Length},1,0]}",
-};
-
-char* pDWNF17[] = {
-	"downflag17",
-	"[ON/OFF] downflag17?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit17].Length},1,0]}",
-};
-
-char* pDWNF18[] = {
-	"downflag18",
-	"[ON/OFF] downflag18?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit18].Length},1,0]}",
-};
-
-char* pDWNF19[] = {
-	"downflag19",
-	"[ON/OFF] downflag19?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit19].Length},1,0]}",
-};
-
-char* pDWNF20[] = {
-	"downflag20",
-	"[ON/OFF] downflag20?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit20].Length},1,0]}",
-};
-
-char* pDWNF21[] = {
-	"downflag21",
-	"[ON/OFF] downflag21?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit21].Length},1,0]}",
-};
-
-char* pDWNF22[] = {
-	"downflag22",
-	"[ON/OFF] downflag22?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit22].Length},1,0]}",
-};
-
-char* pDWNF23[] = {
-	"downflag23",
-	"[ON/OFF] downflag23?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit23].Length},1,0]}",
-};
-
-char* pDWNF24[] = {
-	"downflag24",
-	"[ON/OFF] downflag24?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit24].Length},1,0]}",
-};
-
-char* pDWNF25[] = {
-	"downflag25",
-	"[ON/OFF] downflag25?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit25].Length},1,0]}",
-};
-
-char* pDWNF26[] = {
-	"downflag26",
-	"[ON/OFF] downflag26?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit26].Length},1,0]}",
-};
-
-char* pDWNF27[] = {
-	"downflag27",
-	"[ON/OFF] downflag27?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit27].Length},1,0]}",
-};
-
-char* pDWNF28[] = {
-	"downflag28",
-	"[ON/OFF] downflag28?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit28].Length},1,0]}",
-};
-
-char* pDWNF29[] = {
-	"downflag29",
-	"[ON/OFF] downflag29?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit29].Length},1,0]}",
-};
-
-char* pDWNF30[] = {
-	"downflag30",
-	"[ON/OFF] downflag30?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit30].Length},1,0]}",
-};
-
-char* pDWNF31[] = {
-	"downflag31",
-	"[ON/OFF] downflag31?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit31].Length},1,0]}",
-};
-
-char* pDWNF32[] = {
-	"downflag32",
-	"[ON/OFF] downflag32?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit32].Length},1,0]}",
-};
-
-char* pDWNF33[] = {
-	"downflag33",
-	"[ON/OFF] downflag33?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit33].Length},1,0]}",
-};
-
-char* pDWNF34[] = {
-	"downflag34",
-	"[ON/OFF] downflag34?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit34].Length},1,0]}",
-};
-
-char* pDWNF35[] = {
-	"downflag35",
-	"[ON/OFF] downflag35?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit35].Length},1,0]}",
-};
-
-char* pDWNF36[] = {
-	"downflag36",
-	"[ON/OFF] downflag36?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit36].Length},1,0]}",
-};
-
-char* pDWNF37[] = {
-	"downflag37",
-	"[ON/OFF] downflag37?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit37].Length},1,0]}",
-};
-
-char* pDWNF38[] = {
-	"downflag38",
-	"[ON/OFF] downflag38?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit38].Length},1,0]}",
-};
-
-char* pDWNF39[] = {
-	"downflag39",
-	"[ON/OFF] downflag39?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit39].Length},1,0]}",
-};
-
-char* pDWNF40[] = {
-	"downflag40",
-	"[ON/OFF] downflag40?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit40].Length},1,0]}",
-};
-
-char* pDWNF41[] = {
-	"downflag41",
-	"[ON/OFF] downflag41?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit41].Length},1,0]}",
-};
-
-char* pDWNF42[] = {
-	"downflag42",
-	"[ON/OFF] downflag42?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit42].Length},1,0]}",
-};
-
-char* pDWNF43[] = {
-	"downflag43",
-	"[ON/OFF] downflag43?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit43].Length},1,0]}",
-};
-
-char* pDWNF44[] = {
-	"downflag44",
-	"[ON/OFF] downflag44?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit44].Length},1,0]}",
-};
-
-char* pDWNF45[] = {
-	"downflag45",
-	"[ON/OFF] downflag45?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit45].Length},1,0]}",
-};
-
-char* pDWNF46[] = {
-	"downflag46",
-	"[ON/OFF] downflag46?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit46].Length},1,0]}",
-};
-
-char* pDWNF47[] = {
-	"downflag47",
-	"[ON/OFF] downflag47?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit47].Length},1,0]}",
-};
-
-char* pDWNF48[] = {
-	"downflag48",
-	"[ON/OFF] downflag48?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit48].Length},1,0]}",
-};
-
-char* pDWNF49[] = {
-	"downflag49",
-	"[ON/OFF] downflag49?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit49].Length},1,0]}",
-};
-
-char* pDWNF50[] = {
-	"downflag50",
-	"[ON/OFF] downflag50?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit50].Length},1,0]}",
-};
-char* pDWNF51[] = {
-	"downflag51",
-	"[ON/OFF] downflag51?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit51].Length},1,0]}",
-};
-
-char* pDWNF52[] = {
-	"downflag52",
-	"[ON/OFF] downflag52?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit52].Length},1,0]}",
-};
-
-char* pDWNF53[] = {
-	"downflag53",
-	"[ON/OFF] downflag53?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit53].Length},1,0]}",
-};
-
-char* pDWNF54[] = {
-	"downflag54",
-	"[ON/OFF] downflag54?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit54].Length},1,0]}",
-};
-
-char* pDWNF55[] = {
-	"downflag55",
-	"[ON/OFF] downflag55?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit55].Length},1,0]}",
-};
-
-char* pDWNF56[] = {
-	"downflag56",
-	"[ON/OFF] downflag56?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit56].Length},1,0]}",
-};
-
-char* pDWNF57[] = {
-	"downflag57",
-	"[ON/OFF] downflag57?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit57].Length},1,0]}",
-};
-
-char* pDWNF58[] = {
-	"downflag58",
-	"[ON/OFF] downflag58?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit58].Length},1,0]}",
-};
-
-char* pDWNF59[] = {
-	"downflag59",
-	"[ON/OFF] downflag59?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit59].Length},1,0]}",
-};
-
-char* pDWNF60[] = {
-	"downflag60",
-	"[ON/OFF] downflag60?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[downshit60].Length},1,0]}",
-};
-
-char* pDRPNC[] = {
-	"dragonpunch",
-	"[ON/OFF]?",
-	"${If[${Me.Skill[dragon punch]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.Skill[dragon punch]},1,0]}",
-};
-
-char* pEAGLE[] = {
-	"eaglestrike",
-	"[ON/OFF]?",
-	"${If[${Me.Skill[eagle strike]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.Skill[eagle strike]},1,0]}",
-};
-
-char* pERAGE[] = {
-	"enrage",
-	"[ON/OFF]?",
-	"1",
-	"${If[${meleemvi[plugin]},1,0]}",
-};
-
-char* pESCAP[] = {
-	"escape",
-	"[#] Life% Below? 0=0ff",
-	"${If[${Me.AltAbility[escape]},20,0]}",
-	"${If[${meleemvi[plugin]} && !${meleemvi[aggro]} && ${Me.AltAbility[escape]},1,0]}",
-};
-
-char* pERKCK[] = {
-	"enragingkick",
-	"[#] Life% Below? 0=0ff",
-	"${If[${Me.CombatAbility[Enraging Crescent Kicks]} || ${Me.CombatAbility[Enraging Crescent Kicks Rk. II]} || ${Me.CombatAbility[Enraging Crescent Kicks Rk. III]} || ${Me.CombatAbility[Enraging Heel Kicks]} || ${Me.CombatAbility[Enraging Heel Kicks Rk. II]} || ${Me.CombatAbility[Enraging Heel Kicks Rk. III]} || ${Me.CombatAbility[Enraging Cut Kicks]} || ${Me.CombatAbility[Enraging Cut Kicks Rk. II]} || ${Me.CombatAbility[Enraging Cut Kicks Rk. III]} ,20,0]}",
-	"${If[${meleemvi[plugin]} && !${meleemvi[aggro]} && (${Me.CombatAbility[Enraging Crescent Kicks]} || ${Me.CombatAbility[Enraging Crescent Kicks Rk. II]} || ${Me.CombatAbility[Enraging Crescent Kicks Rk. III]} || ${Me.CombatAbility[Enraging Heel Kicks]} || ${Me.CombatAbility[Enraging Heel Kicks Rk. II]} || ${Me.CombatAbility[Enraging Heel Kicks Rk. III]})|| ${Me.CombatAbility[Enraging Cut Kicks]} || ${Me.CombatAbility[Enraging Cut Kicks Rk. II]} || ${Me.CombatAbility[Enraging Cut Kicks Rk. III]},1,0]}",
-};
-
-char* pEVADE[] = {
-	"evade",
-	"[#] [ON/OFF]?",
-	"${If[${Me.Skill[hide]} && ${Me.Class.ShortName.Equal[ROG]},1,0]}",
-	"${If[${meleemvi[plugin]} && !${meleemvi[aggro]} && ${Me.Skill[hide]} && ${Me.Class.ShortName.Equal[ROG]},1,0]}",
-};
-
-char* pEYEGO[] = {
-	"eyegouge",
-	"[ON/OFF]?",
-	"${If[${Me.AltAbility[eye gouge]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${Me.AltAbility[eye gouge]},1,0]}",
-};
-
-char* pFEIGN[] = {
-	"feigndeath",
-	"[#] Life% Below? 0=0ff",
-	"${If[${Select[${Me.Class.ShortName},BST,SHD,NEC,MNK]},30,0]}",
-	"${If[${meleemvi[plugin]} && !${meleemvi[aggro]} && ${Select[${Me.Class.ShortName},BST,SHD,NEC,MNK]},1,0]}",
-};
-
-char* pFACES[] = {
-	"facing",
-	"[ON/OFF] Face Target (Range)?",
-	"1",
-	"${If[${meleemvi[plugin]} && ${meleemvi[range]},1,0]}",
-};
-
-char* pFALLS[] = {
-	"falls",
-	"[ON/OFF] Auto-Feign?",
-	"0",
-	"${If[${meleemvi[plugin]} && !${meleemvi[aggro]} && ${Me.Class.ShortName.Equal[MNK]},1,0]}",
-};
-
-char* pFERAL[] = {
-	"feralswipe",
-	"[ON/OFF]?",
-	"${If[${Me.AltAbility[feral swipe]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${Me.AltAbility[feral swipe]},1,0]}",
-};
-
-char* pFIELD[] = {
-	"fieldarm",
-	"[#] Endu% Above? 0=Off",
-	"${If[${Me.CombatAbility[Field Armorer]} || ${Me.CombatAbility[Field Armorer Rk. II]} || ${Me.CombatAbility[Field Armorer Rk. III]} || ${Me.CombatAbility[Field Outfitter]} || ${Me.CombatAbility[Field Outfitter Rk. II]} || ${Me.CombatAbility[Field Outfitter Rk. III]} || ${Me.CombatAbility[Field Defender]} || ${Me.CombatAbility[Field Defender Rk. II]} || ${Me.CombatAbility[Field Defender Rk. III]} || ${Me.CombatAbility[Field Guardian]} || ${Me.CombatAbility[Field Guardian Rk. II]} || ${Me.CombatAbility[Field Guardian Rk. III]} || ${Me.CombatAbility[Field Protector]} || ${Me.CombatAbility[Field Protector Rk. II]} || ${Me.CombatAbility[Field Protector Rk. III]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[Field Armorer]} || ${Me.CombatAbility[Field Armorer Rk. II]} || ${Me.CombatAbility[Field Armorer Rk. III]} || ${Me.CombatAbility[Field Outfitter]} || ${Me.CombatAbility[Field Outfitter Rk. II]} || ${Me.CombatAbility[Field Outfitter Rk. III]} || ${Me.CombatAbility[Field Defender]} || ${Me.CombatAbility[Field Defender Rk. II]} || ${Me.CombatAbility[Field Defender Rk. III]} || ${Me.CombatAbility[Field Guardian]} || ${Me.CombatAbility[Field Guardian Rk. II]} || ${Me.CombatAbility[Field Guardian Rk. III]} || ${Me.CombatAbility[Field Protector]} || ${Me.CombatAbility[Field Protector Rk. II]} || ${Me.CombatAbility[Field Protector Rk. III]}),1,0]}",
-};
-
-char* pFISTS[] = {
-	"fistsofwu",
-	"[#] Endu% Above? 0=0ff",
-	"${If[${Me.CombatAbility[fists of wu]},20,0]}",
-	"${If[${meleemvi[plugin]} && ${Me.CombatAbility[fists of wu]},1,0]}",
-};
-
-char* pFCLAW[] = {
-	"fclaw",
-	"[#] Endu% Above? 0=0ff",
-	"${If[${Me.CombatAbility[flurry of claws]} || ${Me.CombatAbility[flurry of claws rk. ii]} || ${Me.CombatAbility[flurry of claws rk. iii]} || ${Me.CombatAbility[tumult of claws]} || ${Me.CombatAbility[tumult of claws rk. ii]} || ${Me.CombatAbility[tumult of claws rk. iii]} || ${Me.CombatAbility[clamor of claws]} || ${Me.CombatAbility[clamor of claws rk. ii]} || ${Me.CombatAbility[clamor of claws rk. iii]} || ${Me.CombatAbility[tempest of claws]} || ${Me.CombatAbility[tempest of claws rk. ii]} || ${Me.CombatAbility[tempest of claws rk. iii]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[flurry of claws]} || ${Me.CombatAbility[flurry of claws rk. ii]} || ${Me.CombatAbility[flurry of claws rk. iii]} || ${Me.CombatAbility[tumult of claws]} || ${Me.CombatAbility[tumult of claws rk. ii]} || ${Me.CombatAbility[tumult of claws rk. iii]} || ${Me.CombatAbility[clamor of claws]} || ${Me.CombatAbility[clamor of claws rk. ii]} || ${Me.CombatAbility[clamor of claws rk. iii]} || ${Me.CombatAbility[tempest of claws]} || ${Me.CombatAbility[tempest of claws rk. ii]} || ${Me.CombatAbility[tempest of claws rk. iii]}),1,0]}",
-};
-
-char* pFLYKC[] = {
-	"flyingkick",
-	"[ON/OFF]?",
-	"${If[${Me.Skill[flying kick]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.Skill[flying kick]},1,0]}",
-};
-
-char* pFORAG[] = {
-	"forage",
-	"[ON/OFF]?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${Me.Skill[forage]},1,0]}",
-};
-
-char* pFRENZ[] = {
-	"frenzy",
-	"[ON/OFF]?",
-	"${If[${Me.Skill[frenzy]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[frenzy]} && ${Me.Skill[frenzy]},1,0]}",
-};
-
-char* pFKICK[] = {
-	"ferociouskick",
-	"[ON/OFF]?",
-	"${If[${Me.AltAbility[ferocious kick]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${Me.AltAbility[ferocious kick]},1,0]}",
-};
-
-char* pGORSM[] = {
-	"gorillasmash",
-	"[ON/OFF]?",
-	"${If[${Me.AltAbility[gorilla smash]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${Me.AltAbility[gorilla smash]},1,0]}",
-};
-
-char* pGBLDE[] = {
-	"gblade",
-	"[#] Endu% Above? 0=Off",
-	"${If[${Me.CombatAbility[Gouging Blade]} || ${Me.CombatAbility[Gouging Blade Rk. II]} || ${Me.CombatAbility[Gouging Blade Rk. III]} || ${Me.CombatAbility[Gashing Blade]} || ${Me.CombatAbility[Gashing Blade Rk. II]} || ${Me.CombatAbility[Gashing Blade Rk. III]} || ${Me.CombatAbility[Lacerating Blade]} || ${Me.CombatAbility[Lacerating Blade Rk. II]} || ${Me.CombatAbility[Lacerating Blade Rk. III]},20,0]}",
-	"${If[${meleemvi[plugin]} && ${Me.CombatAbility[Gouging Blade]} || ${Me.CombatAbility[Gouging Blade Rk. II]} || ${Me.CombatAbility[Gouging Blade Rk. III]} || ${Me.CombatAbility[Gashing Blade]} || ${Me.CombatAbility[Gashing Blade Rk. II]} || ${Me.CombatAbility[Gashing Blade Rk. III]} || ${Me.CombatAbility[Lacerating Blade]} || ${Me.CombatAbility[Lacerating Blade Rk. II]} || ${Me.CombatAbility[Lacerating Blade Rk. III]},1,0]}",
-};
-
-char* pHARMT[] = {
-	"harmtouch",
-	"[ON/OFF]?",
-	"${If[${Me.AltAbility[harm touch].ID},1,0]}",
-	"${If[${meleemvi[plugin]} && ${Me.AltAbility[harm touch]}   && ${Me.Class.ShortName.Equal[SHD]},1,0]}",
-};
-
-char* pHIDES[] = {
-	"hide",
-	"[ON/OFF]?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${Me.Skill[hide]},1,0]}",
-};
-
-char* pHOLF0[] = {
-	"holyflag0",
-	"[ON/OFF] holyflag0?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit0].Length},1,0]}",
-};
-
-char* pHOLF1[] = {
-	"holyflag1",
-	"[ON/OFF] holyflag1?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit1].Length},1,0]}",
-};
-
-char* pHOLF2[] = {
-	"holyflag2",
-	"[ON/OFF] holyflag2?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit2].Length},1,0]}",
-};
-
-char* pHOLF3[] = {
-	"holyflag3",
-	"[ON/OFF] holyflag3?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit3].Length},1,0]}",
-};
-
-char* pHOLF4[] = {
-	"holyflag4",
-	"[ON/OFF] holyflag4?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit4].Length},1,0]}",
-};
-
-char* pHOLF5[] = {
-	"holyflag5",
-	"[ON/OFF] holyflag5?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit5].Length},1,0]}",
-};
-
-char* pHOLF6[] = {
-	"holyflag6",
-	"[ON/OFF] holyflag6?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit6].Length},1,0]}",
-};
-
-char* pHOLF7[] = {
-	"holyflag7",
-	"[ON/OFF] holyflag7?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit7].Length},1,0]}",
-};
-
-char* pHOLF8[] = {
-	"holyflag8",
-	"[ON/OFF] holyflag8?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit8].Length},1,0]}",
-};
-
-char* pHOLF9[] = {
-	"holyflag9",
-	"[ON/OFF] holyflag9?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit9].Length},1,0]}",
-};
-
-char* pHOLF10[] = {
-	"holyflag10",
-	"[ON/OFF] holyflag10?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit10].Length},1,0]}",
-};
-
-char* pHOLF11[] = {
-	"holyflag11",
-	"[ON/OFF] holyflag11?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit11].Length},1,0]}",
-};
-
-char* pHOLF12[] = {
-	"holyflag12",
-	"[ON/OFF] holyflag12?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit12].Length},1,0]}",
-};
-
-char* pHOLF13[] = {
-	"holyflag13",
-	"[ON/OFF] holyflag13?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit13].Length},1,0]}",
-};
-
-char* pHOLF14[] = {
-	"holyflag14",
-	"[ON/OFF] holyflag14?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit14].Length},1,0]}",
-};
-
-char* pHOLF15[] = {
-	"holyflag15",
-	"[ON/OFF] holyflag15?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit15].Length},1,0]}",
-};
-
-char* pHOLF16[] = {
-	"holyflag16",
-	"[ON/OFF] holyflag16?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit16].Length},1,0]}",
-};
-
-char* pHOLF17[] = {
-	"holyflag17",
-	"[ON/OFF] holyflag17?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit17].Length},1,0]}",
-};
-
-char* pHOLF18[] = {
-	"holyflag18",
-	"[ON/OFF] holyflag18?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit18].Length},1,0]}",
-};
-
-char* pHOLF19[] = {
-	"holyflag19",
-	"[ON/OFF] holyflag19?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit19].Length},1,0]}",
-};
-
-char* pHOLF20[] = {
-	"holyflag20",
-	"[ON/OFF] holyflag20?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit20].Length},1,0]}",
-};
-
-char* pHOLF21[] = {
-	"holyflag21",
-	"[ON/OFF] holyflag21?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit21].Length},1,0]}",
-};
-
-char* pHOLF22[] = {
-	"holyflag22",
-	"[ON/OFF] holyflag22?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit22].Length},1,0]}",
-};
-
-char* pHOLF23[] = {
-	"holyflag23",
-	"[ON/OFF] holyflag23?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit23].Length},1,0]}",
-};
-
-char* pHOLF24[] = {
-	"holyflag24",
-	"[ON/OFF] holyflag24?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit24].Length},1,0]}",
-};
-
-char* pHOLF25[] = {
-	"holyflag25",
-	"[ON/OFF] holyflag25?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit25].Length},1,0]}",
-};
-
-char* pHOLF26[] = {
-	"holyflag26",
-	"[ON/OFF] holyflag26?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit26].Length},1,0]}",
-};
-
-char* pHOLF27[] = {
-	"holyflag27",
-	"[ON/OFF] holyflag27?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit27].Length},1,0]}",
-};
-
-char* pHOLF28[] = {
-	"holyflag28",
-	"[ON/OFF] holyflag28?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit28].Length},1,0]}",
-};
-
-char* pHOLF29[] = {
-	"holyflag29",
-	"[ON/OFF] holyflag29?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit29].Length},1,0]}",
-};
-
-char* pHOLF30[] = {
-	"holyflag30",
-	"[ON/OFF] holyflag30?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit30].Length},1,0]}",
-};
-
-char* pHOLF31[] = {
-	"holyflag31",
-	"[ON/OFF] holyflag31?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit31].Length},1,0]}",
-};
-
-char* pHOLF32[] = {
-	"holyflag32",
-	"[ON/OFF] holyflag32?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit32].Length},1,0]}",
-};
-
-char* pHOLF33[] = {
-	"holyflag33",
-	"[ON/OFF] holyflag33?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit33].Length},1,0]}",
-};
-
-char* pHOLF34[] = {
-	"holyflag34",
-	"[ON/OFF] holyflag34?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit34].Length},1,0]}",
-};
-
-char* pHOLF35[] = {
-	"holyflag35",
-	"[ON/OFF] holyflag35?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit35].Length},1,0]}",
-};
-
-char* pHOLF36[] = {
-	"holyflag36",
-	"[ON/OFF] holyflag36?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit36].Length},1,0]}",
-};
-
-char* pHOLF37[] = {
-	"holyflag37",
-	"[ON/OFF] holyflag37?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit37].Length},1,0]}",
-};
-
-char* pHOLF38[] = {
-	"holyflag38",
-	"[ON/OFF] holyflag38?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit38].Length},1,0]}",
-};
-
-char* pHOLF39[] = {
-	"holyflag39",
-	"[ON/OFF] holyflag39?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit39].Length},1,0]}",
-};
-
-char* pHOLF40[] = {
-	"holyflag40",
-	"[ON/OFF] holyflag40?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit40].Length},1,0]}",
-};
-
-char* pHOLF41[] = {
-	"holyflag41",
-	"[ON/OFF] holyflag41?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit41].Length},1,0]}",
-};
-
-char* pHOLF42[] = {
-	"holyflag42",
-	"[ON/OFF] holyflag42?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit42].Length},1,0]}",
-};
-
-char* pHOLF43[] = {
-	"holyflag43",
-	"[ON/OFF] holyflag43?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit43].Length},1,0]}",
-};
-
-char* pHOLF44[] = {
-	"holyflag44",
-	"[ON/OFF] holyflag44?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit44].Length},1,0]}",
-};
-
-char* pHOLF45[] = {
-	"holyflag45",
-	"[ON/OFF] holyflag45?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit45].Length},1,0]}",
-};
-
-char* pHOLF46[] = {
-	"holyflag46",
-	"[ON/OFF] holyflag46?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit46].Length},1,0]}",
-};
-
-char* pHOLF47[] = {
-	"holyflag47",
-	"[ON/OFF] holyflag47?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit47].Length},1,0]}",
-};
-
-char* pHOLF48[] = {
-	"holyflag48",
-	"[ON/OFF] holyflag48?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit48].Length},1,0]}",
-};
-
-char* pHOLF49[] = {
-	"holyflag49",
-	"[ON/OFF] holyflag49?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit49].Length},1,0]}",
-};
-
-char* pHOLF50[] = {
-	"holyflag50",
-	"[ON/OFF] holyflag50?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit50].Length},1,0]}",
-};
-char* pHOLF51[] = {
-	"holyflag51",
-	"[ON/OFF] holyflag51?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit51].Length},1,0]}",
-};
-
-char* pHOLF52[] = {
-	"holyflag52",
-	"[ON/OFF] holyflag52?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit52].Length},1,0]}",
-};
-
-char* pHOLF53[] = {
-	"holyflag53",
-	"[ON/OFF] holyflag53?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit53].Length},1,0]}",
-};
-
-char* pHOLF54[] = {
-	"holyflag54",
-	"[ON/OFF] holyflag54?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit54].Length},1,0]}",
-};
-
-char* pHOLF55[] = {
-	"holyflag55",
-	"[ON/OFF] holyflag55?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit55].Length},1,0]}",
-};
-
-char* pHOLF56[] = {
-	"holyflag56",
-	"[ON/OFF] holyflag56?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit56].Length},1,0]}",
-};
-
-char* pHOLF57[] = {
-	"holyflag57",
-	"[ON/OFF] holyflag57?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit57].Length},1,0]}",
-};
-
-char* pHOLF58[] = {
-	"holyflag58",
-	"[ON/OFF] holyflag58?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit58].Length},1,0]}",
-};
-
-char* pHOLF59[] = {
-	"holyflag59",
-	"[ON/OFF] holyflag59?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit59].Length},1,0]}",
-};
-
-char* pHOLF60[] = {
-	"holyflag60",
-	"[ON/OFF] holyflag60?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvs[holyshit60].Length},1,0]}",
-};
-
-char* pINFUR[] = {
-	"infuriate",
-	"[ON/OFF]?",
-	"1",
-	"${If[${meleemvi[plugin]},1,0]}",
-};
-
-char* pINTIM[] = {
-	"intimidation",
-	"[ON/OFF]?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.Skill[intimidation]},1,0]}",
-};
-
-char* pJOLTS[] = {
-	"jolt",
-	"Every [#] of Hits,0=0ff",
-	"0",
-	"${If[${meleemvi[plugin]} && !${meleemvi[aggro]} && ${Select[${Me.Class.ShortName},BER,BST,RNG]},1,0]}",
-};
-
-char* pJKICK[] = {
-	"jltkicks",
-	"[#] Endu% Above? 0=0ff",
-	"${If[${Me.CombatAbility[jolting kicks]} || ${Me.CombatAbility[jolting kicks rk. ii]} || ${Me.CombatAbility[jolting kicks rk. iii]} || ${Me.CombatAbility[Jolting Snapkicks]} || ${Me.CombatAbility[Jolting Snapkicks rk. ii]} || ${Me.CombatAbility[Jolting Snapkicks rk. iii]} || ${Me.CombatAbility[Jolting Frontkicks]} || ${Me.CombatAbility[Jolting Frontkicks rk. ii]} || ${Me.CombatAbility[Jolting Frontkicks rk. iii]} || ${Me.CombatAbility[Jolting Hook kicks]} || ${Me.CombatAbility[Jolting Hook kicks rk. ii]} || ${Me.CombatAbility[Jolting Hook kicks rk. iii]} || ${Me.CombatAbility[Jolting Crescent kicks]} || ${Me.CombatAbility[Jolting Crescent kicks rk. ii]} || ${Me.CombatAbility[Jolting Crescent kicks rk. iii]} || ${Me.CombatAbility[Jolting Heel Kicks]} || ${Me.CombatAbility[Jolting Heel Kicks rk. ii]} || ${Me.CombatAbility[Jolting Heel Kicks rk. iii]} || ${Me.CombatAbility[Jolting Cut Kicks]} || ${Me.CombatAbility[Jolting Cut Kicks rk. ii]} || ${Me.CombatAbility[Jolting Cut Kicks rk. iii]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[jolting kicks]} || ${Me.CombatAbility[jolting kicks rk. ii]} || ${Me.CombatAbility[jolting kicks rk. iii]} || ${Me.CombatAbility[Jolting Snapkicks]} || ${Me.CombatAbility[Jolting Snapkicks rk. ii]} || ${Me.CombatAbility[Jolting Snapkicks rk. iii]} || ${Me.CombatAbility[Jolting Frontkicks]} || ${Me.CombatAbility[Jolting Frontkicks rk. ii]} || ${Me.CombatAbility[Jolting Frontkicks rk. iii]} || ${Me.CombatAbility[Jolting Hook kicks]} || ${Me.CombatAbility[Jolting Hook kicks rk. ii]} || ${Me.CombatAbility[Jolting Hook kicks rk. iii]} || ${Me.CombatAbility[Jolting Crescent kicks]} || ${Me.CombatAbility[Jolting Crescent kicks rk. ii]} || ${Me.CombatAbility[Jolting Crescent kicks rk. iii]} || ${Me.CombatAbility[Jolting Heel Kicks]} || ${Me.CombatAbility[Jolting Heel Kicks rk. ii]} || ${Me.CombatAbility[Jolting Heel Kicks rk. iii]} || ${Me.CombatAbility[Jolting Cut Kicks]} || ${Me.CombatAbility[Jolting Cut Kicks rk. ii]} || ${Me.CombatAbility[Jolting Cut Kicks rk. iii]}),1,0]}",
-};
-
-char* pJUGUL[] = {
-	"jugular",
-	"[#] Endu% Above? 0=0ff",
-	"${If[${Me.CombatAbility[Jugular Slash]} || ${Me.CombatAbility[Jugular Slash rk. ii]} || ${Me.CombatAbility[Jugular Slash rk. iii]} || ${Me.CombatAbility[Jugular Slice]} || ${Me.CombatAbility[Jugular Slice rk. ii]} || ${Me.CombatAbility[Jugular Slice rk. iii]} || ${Me.CombatAbility[Jugular Sever]} || ${Me.CombatAbility[Jugular Sever rk. ii]} || ${Me.CombatAbility[Jugular Sever rk. iii]} || ${Me.CombatAbility[Jugular Gash]} || ${Me.CombatAbility[Jugular Gash rk. ii]} || ${Me.CombatAbility[Jugular Gash rk. iii]} || ${Me.CombatAbility[Jugular Lacerate]} || ${Me.CombatAbility[Jugular Lacerate rk. ii]} || ${Me.CombatAbility[Jugular Lacerate rk. iii]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[Jugular Slash]} || ${Me.CombatAbility[Jugular Slash rk. ii]} || ${Me.CombatAbility[Jugular Slash rk. iii]} || ${Me.CombatAbility[Jugular Slice]} || ${Me.CombatAbility[Jugular Slice rk. ii]} || ${Me.CombatAbility[Jugular Slice rk. iii]} || ${Me.CombatAbility[Jugular Sever]} || ${Me.CombatAbility[Jugular Sever rk. ii]} || ${Me.CombatAbility[Jugular Sever rk. iii]} || ${Me.CombatAbility[Jugular Gash]} || ${Me.CombatAbility[Jugular Gash rk. ii]} || ${Me.CombatAbility[Jugular Gash rk. iii]} || ${Me.CombatAbility[Jugular Lacerate]} || ${Me.CombatAbility[Jugular Lacerate rk. ii]} || ${Me.CombatAbility[Jugular Lacerate rk. iii]}),1,0]}",
-};
-
-char* pKICKS[] = {
-	"kick",
-	"[ON/OFF]?",
-	"${If[${Me.Skill[kick]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.Skill[kick]},1,0]}",
-};
-
-char* pKNEES[] = {
-	"kneestrike",
-	"[ON/OFF]?",
-	"${If[${Me.AltAbility[knee strike]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${Me.AltAbility[knee strike]},1,0]}",
-};
-
-char* pKNFPL[] = {
-	"knifeplay",
-	"[#] Endu% Above? 0=Off",
-	"${If[${Me.CombatAbility[Knifeplay]} || ${Me.CombatAbility[Knifeplay Rk. II]} || ${Me.CombatAbility[Knifeplay Rk. III]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[Knifeplay]} || ${Me.CombatAbility[Knifeplay Rk. II]} || ${Me.CombatAbility[Knifeplay Rk. III]}),1,0]}",
-};
-
-char* pLHAND[] = {
-	"layhand",
-	"[#] MyLife% Below? 0=0ff",
-	"${If[${Me.AltAbility[Lay on Hands]},20,0]}",
-	"${If[${meleemvi[plugin]} && ${Me.AltAbility[Lay on Hands]} && ${Me.Class.ShortName.Equal[PAL]},1,0]}",
-};
-
-char* pLCLAW[] = {
-	"leopardclaw",
-	"[#] Endu% Above? 0=0ff",
-	"${If[${Me.CombatAbility[leopard claw]} || ${Me.CombatAbility[dragon fang]} || ${Me.CombatAbility[clawstriker's flurry]} || ${Me.CombatAbility[clawstriker's flurry rk. ii]} || ${Me.CombatAbility[clawstriker's flurry rk. iii]} || ${Me.CombatAbility[wheel of fists]} || ${Me.CombatAbility[wheel of fists rk. ii]} || ${Me.CombatAbility[wheel of fists rk. iii]} || ${Me.CombatAbility[Six-Step Pattern]} || ${Me.CombatAbility[Six-Step Pattern rk. ii]} || ${Me.CombatAbility[Six-Step Pattern rk. iii]} || ${Me.CombatAbility[Seven-Step Pattern]} || ${Me.CombatAbility[Seven-Step Pattern rk. ii]} || ${Me.CombatAbility[Seven-Step Pattern rk. iii]} || ${Me.CombatAbility[Eight-Step Pattern]} || ${Me.CombatAbility[Eight-Step Pattern Rk. II]} || ${Me.CombatAbility[Eight-Step Pattern Rk. III]} || ${Me.CombatAbility[Torrent of Fists]} || ${Me.CombatAbility[Torrent of Fists Rk. II]} || ${Me.CombatAbility[Torrent of Fists Rk. III]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[leopard claw]} || ${Me.CombatAbility[dragon fang]} || ${Me.CombatAbility[clawstriker's flurry]} || ${Me.CombatAbility[clawstriker's flurry rk. ii]} || ${Me.CombatAbility[clawstriker's flurry rk. iii]} || ${Me.CombatAbility[wheel of fists]} || ${Me.CombatAbility[wheel of fists rk. ii]} || ${Me.CombatAbility[wheel of fists rk. iii]} || ${Me.CombatAbility[Six-Step Pattern]} || ${Me.CombatAbility[Six-Step Pattern rk. ii]} || ${Me.CombatAbility[Six-Step Pattern rk. iii]} || ${Me.CombatAbility[Seven-Step Pattern]} || ${Me.CombatAbility[Seven-Step Pattern rk. ii]} || ${Me.CombatAbility[Seven-Step Pattern rk. iii]} || ${Me.CombatAbility[Eight-Step Pattern]} || ${Me.CombatAbility[Eight-Step Pattern Rk. II]} || ${Me.CombatAbility[Eight-Step Pattern Rk. III]} || ${Me.CombatAbility[Torrent of Fists]} || ${Me.CombatAbility[Torrent of Fists Rk. II]} || ${Me.CombatAbility[Torrent of Fists Rk. III]}),1,0]}",
-};
-
-char* pMELEE[] = {
-	"melee",
-	"[ON/OFF] Melee Mode? 0=0ff",
-	"${If[${Select[${Me.Class.ShortName},WAR,PAL,RNG,SHD,MNK,BRD,ROG,BST,BER]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[melee]},1,0]}",
-};
-
-char* pMELEP[] = {
-	"meleepri",
-	"[ID] Primary (Melee)?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvi[melee]} && !${meleemvi[aggro]},1,0]}",
-};
-
-char* pMELES[] = {
-	"meleesec",
-	"[ID] Offhand (Melee)?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvi[melee]} && !${meleemvi[aggro]},1,0]} && ${meleemvi[meleepri]}",
-};
-
-char* pMENDS[] = {
-	"mend",
-	"[#] MyLife% Below? 0=0ff",
-	"${If[${Me.Skill[mend]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${Me.Skill[mend]},1,0]}",
-};
-
-char* pPETAS[] = {
-	"petassist",
-	"[ON/OFF] Assist Me?",
-	"${If[${Select[${Me.Class.ShortName},SHD,DRU,SHM,NEC,MAG,ENC,BST]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[petassist]} && ${Select[${Me.Class.ShortName},SHD,DRU,SHM,NEC,MAG,ENC,BST]},1,0]}",
-};
-
-char* pPETDE[] = {
-	"petdelay",
-	"[#] # Sec Delay Before Engaging?",
-	"${If[${Select[${Me.Class.ShortName},SHD,DRU,SHM,NEC,MAG,ENC,BST]},0,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[petassist]} && ${Select[${Me.Class.ShortName},SHD,DRU,SHM,NEC,MAG,ENC,BST]},1,0]}",
-};
-
-char* pPETRN[] = {
-	"petrange",
-	"[#] Target/Pet in this range?",
-	"${If[${Select[${Me.Class.ShortName},SHD,DRU,SHM,NEC,MAG,ENC,BST]},75,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[petassist]} && ${Select[${Me.Class.ShortName},SHD,DRU,SHM,NEC,MAG,ENC,BST]},1,0]}",
-};
-
-char* pPETMN[] = {
-	"petmend",
-	"[#] Mend Pet Life % Below 0=0ff?",
-	"${If[${Me.AltAbility[mend companion]},20,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[petassist]} && ${Me.AltAbility[mend companion]},1,0]}",
-};
-
-char* pPETENG[] = {
-	"petengagehps",
-	"[#] TargetCurrentHPS% Below? 0=0ff",
-	"${If[${Select[${Me.Class.ShortName},SHD,DRU,SHM,NEC,MAG,ENC,BST]},98,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[petassist]} && ${Select[${Me.Class.ShortName},SHD,DRU,SHM,NEC,MAG,ENC,BST]},1,0]}",
-};
-
-char* pPICKP[] = {
-	"pickpocket",
-	"[ON/OFF]?",
-	"${If[${Me.Skill[pick pockets]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.Skill[pick pockets]},1,0]}",
-};
-
-char* pPINPT[] = {
-	"pinpoint",
-	"[#] Endu% Above? 0=0ff",
-	"${If[${Me.CombatAbility[Pinpoint Vulnerability]} || ${Me.CombatAbility[Pinpoint Vulnerability rk. ii]} || ${Me.CombatAbility[Pinpoint Vulnerability rk. iii]} || ${Me.CombatAbility[Pinpoint Weaknesses]} || ${Me.CombatAbility[Pinpoint Weaknesses rk. ii]} || ${Me.CombatAbility[Pinpoint Weaknesses rk. iii]} || ${Me.CombatAbility[Pinpoint Vitals]} || ${Me.CombatAbility[Pinpoint Vitals rk. ii]} || ${Me.CombatAbility[Pinpoint Vitals rk. iii]} || ${Me.CombatAbility[Pinpoint Flaws]} || ${Me.CombatAbility[Pinpoint Flaws rk. ii]} || ${Me.CombatAbility[Pinpoint Flaws rk. iii]} || ${Me.CombatAbility[Pinpoint Liabilities]} || ${Me.CombatAbility[Pinpoint Liabilities rk. ii]} || ${Me.CombatAbility[Pinpoint Liabilities rk. iii]} || ${Me.CombatAbility[Pinpoint Deficiencies]} || ${Me.CombatAbility[Pinpoint Deficiencies rk. ii]} || ${Me.CombatAbility[Pinpoint Deficiencies rk. iii]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[Pinpoint Vulnerability]} || ${Me.CombatAbility[Pinpoint Vulnerability rk. ii]} || ${Me.CombatAbility[Pinpoint Vulnerability rk. iii]} || ${Me.CombatAbility[Pinpoint Weaknesses]} || ${Me.CombatAbility[Pinpoint Weaknesses rk. ii]} || ${Me.CombatAbility[Pinpoint Weaknesses rk. iii]} || ${Me.CombatAbility[Pinpoint Vitals]} || ${Me.CombatAbility[Pinpoint Vitals rk. ii]} || ${Me.CombatAbility[Pinpoint Vitals rk. iii]} || ${Me.CombatAbility[Pinpoint Flaws]} || ${Me.CombatAbility[Pinpoint Flaws rk. ii]} || ${Me.CombatAbility[Pinpoint Flaws rk. iii]} || ${Me.CombatAbility[Pinpoint Liabilities]} || ${Me.CombatAbility[Pinpoint Liabilities rk. ii]} || ${Me.CombatAbility[Pinpoint Liabilities rk. iii]} || ${Me.CombatAbility[Pinpoint Deficiencies]} || ${Me.CombatAbility[Pinpoint Deficiencies rk. ii]} || ${Me.CombatAbility[Pinpoint Deficiencies rk. iii]}),1,0]}",
-};
-
-char* pPLUGS[] = {
-	"plugin",
-	"[ON/OFF]?",
-	"1",
-	"${If[${meleemvi[plugin]},1,0]}",
-};
-
-char* pPOKER[] = {
-	"poker",
-	"[ID] item?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${Me.Skill[backstab]},1,0]}",
-};
-
-char* pHFAST[] = {
-	"pothealfast",
-	"[#] MyLife% Below? 0=0ff (FAST)",
-	"${If[${meleemvi[idpothealfast]},30,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[idpothealfast]},1,0]}",
-};
-
-char* pHOVER[] = {
-	"pothealover",
-	"[#] MyLife% Below? 0=0ff (OVER)",
-	"${If[${meleemvi[idpothealover]},20,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[idpothealover]},1,0]}",
-};
-
-char* pPRVKO[] = {
-	"provokeonce",
-	"[ON/OFF]?",
-	"${If[${Select[${Me.Class.ShortName},WAR,PAL,SHD,MNK,BER]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[aggro]} && ${Select[${Me.Class.ShortName},WAR,PAL,SHD,MNK,BER]},1,0]}",
-};
-
-char* pPRVKM[] = {
-	"provokemax",
-	"[#] Counter? ,1=try once, 0=0ff",
-	"${If[${Select[${Me.Class.ShortName},WAR,PAL,SHD,MNK,BER]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[aggro]} && ${Select[${Me.Class.ShortName},WAR,PAL,SHD,MNK,BER]},1,0]}",
-};
-
-char* pPRVKE[] = {
-	"provokeend",
-	"[#] Stop when Target Life% Below?",
-	"${If[${Select[${Me.Class.ShortName},WAR,PAL,SHD,MNK,BER]},20,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[aggro]} && ${meleemvi[provokemax]} && ${Select[${Me.Class.ShortName},WAR,PAL,SHD,MNK,BER]},1,0]}",
-};
-
-char* pPRVK0[] = {
-	"provoke0",
-	"[ID] spell/disc/aa/item?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvi[aggro]} && ${meleemvi[provokemax]} && ${Select[${Me.Class.ShortName},WAR,PAL,SHD,MNK,BER]},1,0]}",
-};
-
-char* pPRVK1[] = {
-	"provoke1",
-	"[ID] spell/disc/aa/item?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvi[aggro]} && ${meleemvi[provokemax]} && ${Select[${Me.Class.ShortName},WAR,PAL,SHD,MNK,BER]},1,0]}",
-};
-
-char* pRAVOL[] = {
-	"ragevolley",
-	"[#] Endu% Above? 0=0ff",
-	"${If[${Me.CombatAbility[rage volley]} || ${Me.CombatAbility[destroyer's volley]} || ${Me.CombatAbility[giantslayer's volley]} || ${Me.CombatAbility[giantslayer's volley rk. ii]} || ${Me.CombatAbility[giantslayer's volley rk. iii]} || ${Me.CombatAbility[annihilator's volley]} || ${Me.CombatAbility[annihilator's volley rk. ii]} || ${Me.CombatAbility[annihilator's volley rk. iii]} || ${Me.CombatAbility[decimator's volley]} || ${Me.CombatAbility[decimator's volley rk. ii]} || ${Me.CombatAbility[decimator's volley rk. iii]} || ${Me.CombatAbility[Eradicator's Volley]} || ${Me.CombatAbility[Eradicator's Volley rk. ii]} || ${Me.CombatAbility[Eradicator's Volley rk. iii]} || ${Me.CombatAbility[Savage Volley]} || ${Me.CombatAbility[Savage Volley rk. ii]} || ${Me.CombatAbility[Savage Volley rk. iii]} || ${Me.CombatAbility[Sundering Volley]} || ${Me.CombatAbility[Sundering Volley rk. ii]} || ${Me.CombatAbility[Sundering Volley rk. iii]} || ${Me.CombatAbility[Brutal Volley]} || ${Me.CombatAbility[Brutal Volley rk. ii]} || ${Me.CombatAbility[Brutal Volley rk. iii]} || ${Me.CombatAbility[Demolishing Volley]} || ${Me.CombatAbility[Demolishing Volley rk. ii]} || ${Me.CombatAbility[Demolishing Volley rk. iii]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[rage volley]} || ${Me.CombatAbility[destroyer's volley]} || ${Me.CombatAbility[giantslayer's volley]} || ${Me.CombatAbility[giantslayer's volley rk. ii]} || ${Me.CombatAbility[giantslayer's volley rk. iii]} || ${Me.CombatAbility[annihilator's volley]} || ${Me.CombatAbility[annihilator's volley rk. ii]} || ${Me.CombatAbility[annihilator's volley rk. iii]} || ${Me.CombatAbility[decimator's volley]} || ${Me.CombatAbility[decimator's volley rk. ii]} || ${Me.CombatAbility[decimator's volley rk. iii]} || ${Me.CombatAbility[Eradicator's Volley]} || ${Me.CombatAbility[Eradicator's Volley rk. ii]} || ${Me.CombatAbility[Eradicator's Volley rk. iii]} || ${Me.CombatAbility[Savage Volley]} || ${Me.CombatAbility[Savage Volley rk. ii]} || ${Me.CombatAbility[Savage Volley rk. iii]} || ${Me.CombatAbility[Sundering Volley]} || ${Me.CombatAbility[Sundering Volley rk. ii]} || ${Me.CombatAbility[Sundering Volley rk. iii]} || ${Me.CombatAbility[Brutal Volley]} || ${Me.CombatAbility[Brutal Volley rk. ii]} || ${Me.CombatAbility[Brutal Volley rk. iii]} || ${Me.CombatAbility[Demolishing Volley]} || ${Me.CombatAbility[Demolishing Volley rk. ii]} || ${Me.CombatAbility[Demolishing Volley rk. iii]}),1,0]}",
-};
-
-char* pRAKES[] = {
-	"rake",
-	"[#] Endu% Above? 0=Off",
-	"${If[${Me.CombatAbility[rake]} || ${Me.CombatAbility[harrow]} || ${Me.CombatAbility[harrow rk. ii]} || ${Me.CombatAbility[harrow rk. iii]} || ${Me.CombatAbility[foray]} || ${Me.CombatAbility[foray rk. ii]} || ${Me.CombatAbility[foray rk. iii]} || ${Me.CombatAbility[rush]} || ${Me.CombatAbility[rush rk. ii]} || ${Me.CombatAbility[rush rk. iii]} || ${Me.CombatAbility[Barrage]} || ${Me.CombatAbility[Barrage rk. ii]} || ${Me.CombatAbility[Barrage rk. iii]} || ${Me.CombatAbility[Pummel]} || ${Me.CombatAbility[Pummel rk. ii]} || ${Me.CombatAbility[Pummel rk. iii]} || ${Me.CombatAbility[Maul]} || ${Me.CombatAbility[Maul rk. ii]} || ${Me.CombatAbility[Maul rk. iii]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[rake]} || ${Me.CombatAbility[harrow]} || ${Me.CombatAbility[harrow rk. ii]} || ${Me.CombatAbility[harrow rk. iii]} || ${Me.CombatAbility[foray]} || ${Me.CombatAbility[foray rk. ii]} || ${Me.CombatAbility[foray rk. iii]} || ${Me.CombatAbility[rush]} || ${Me.CombatAbility[rush rk. ii]} || ${Me.CombatAbility[rush rk. iii]} || ${Me.CombatAbility[Barrage]} || ${Me.CombatAbility[Barrage rk. ii]} || ${Me.CombatAbility[Barrage rk. iii]} || ${Me.CombatAbility[Pummel]} || ${Me.CombatAbility[Pummel rk. ii]} || ${Me.CombatAbility[Pummel rk. iii]} || ${Me.CombatAbility[Maul]} || ${Me.CombatAbility[Maul rk. ii]} || ${Me.CombatAbility[Maul rk. iii]}),1,0]}",
-};
-
-char* pRANGE[] = {
-	"range",
-	"[#] Max Range? 0=0ff",
-	"0",
-	"${If[${meleemvi[plugin]},1,0]}",
-};
-
-char* pRAVEN[] = {
-	"ravens",
-	"[ON/OFF]?",
-	"${If[${Me.AltAbility[raven's claw]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${Me.AltAbility[raven's claw]},1,0]}",
-};
-
-char* pRESUM[] = {
-	"resume",
-	"[#] Life% Above? 100=0ff",
-	"75",
-	"${If[${meleemvi[plugin]} && !${meleemvi[aggro]},1,0]}",
-};
-
-char* pRGHTI[] = {
-	"rightidg",
-	"[#] Endu% Above? 0=Off",
-	"${If[${Me.CombatAbility[Righteous Indignation]} || ${Me.CombatAbility[Righteous Indignation rk. ii]} || ${Me.CombatAbility[Righteous Indignation rk. iii]} || ${Me.CombatAbility[Righteous Vexation]} || ${Me.CombatAbility[Righteous Vexation rk. ii]} || ${Me.CombatAbility[Righteous Vexation rk. iii]} || ${Me.CombatAbility[Righteous Umbrage]} || ${Me.CombatAbility[Righteous Umbrage rk. ii]} || ${Me.CombatAbility[Righteous Umbrage rk. iii]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[Righteous Indignation]} || ${Me.CombatAbility[Righteous Indignation rk. ii]} || ${Me.CombatAbility[Righteous Indignation rk. iii]} || ${Me.CombatAbility[Righteous Vexation]} || ${Me.CombatAbility[Righteous Vexation rk. ii]} || ${Me.CombatAbility[Righteous Vexation rk. iii]} || ${Me.CombatAbility[Righteous Umbrage]} || ${Me.CombatAbility[Righteous Umbrage rk. ii]} || ${Me.CombatAbility[Righteous Umbrage rk. iii]}),1,0]}",
-};
-
-char* pRKICK[] = {
-	"roundkick",
-	"[ON/OFF]?",
-	"${If[${Me.Skill[round kick]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.Skill[round kick]},1,0]}",
-};
-
-char* pSBLADES[] = {
-	"stormblades",
-	"[#] Endu% Above? 0=0ff",
-	"${If[${Me.CombatAbility[focused storm of blades]} || ${Me.CombatAbility[focused storm of blades rk. ii]} || ${Me.CombatAbility[focused storm of blades rk. iii]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[focused storm of blades]} || ${Me.CombatAbility[focused storm of blades rk. ii]} || ${Me.CombatAbility[focused storm of blades rk. iii]}),1,0]}",
-};
-
-char* pSELOK[] = {
-	"selos",
-	"[ON/OFF]?",
-	"${If[${Me.AltAbility[selo's kick]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${Me.AltAbility[selo's kick]},1,0]}",
-};
-
-char* pSENSE[] = {
-	"sensetraps",
-	"[ON/OFF]?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${Me.Skill[sensetraps]},1,0]}",
-};
-
-char* pSHIEL[] = {
-	"shield",
-	"[ID] item?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${Me.Skill[bash]},0,0]}",
-};
-
-char* pSLAMS[] = {
-	"slam",
-	"[ON/OFF]?",
-	"${If[${Select[${Me.Race.ID},2,9,10]},1,0]}", // 2=barbarian 9=troll 10=ogre
-	"${If[${meleemvi[plugin]} && ${${Select[${Me.Race.ID},2,9,10]},1,0]}",
-};
-
-char* pSLAPF[] = {
-	"slapface",
-	"[#] Endu% Above? 0=Off",
-	"${If[${Me.CombatAbility[Slap in the Face]} || ${Me.CombatAbility[Slap in the Face rk. ii]} || ${Me.CombatAbility[Slap in the Face rk. iii]} || ${Me.CombatAbility[Kick in the Teeth]} || ${Me.CombatAbility[Kick in the Teeth rk. ii]} || ${Me.CombatAbility[Kick in the Teeth rk. iii]} || ${Me.CombatAbility[Punch in the Throat]} || ${Me.CombatAbility[Punch in the Throat rk. ii]} || ${Me.CombatAbility[Punch in the Throat rk. iii]} || ${Me.CombatAbility[Kick in the Shins]} || ${Me.CombatAbility[Kick in the Shins rk. ii]} || ${Me.CombatAbility[Kick in the Shins rk. iii]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[Slap in the Face]} || ${Me.CombatAbility[Slap in the Face rk. ii]} || ${Me.CombatAbility[Slap in the Face rk. iii]} || ${Me.CombatAbility[Kick in the Teeth]} || ${Me.CombatAbility[Kick in the Teeth rk. ii]} || ${Me.CombatAbility[Kick in the Teeth rk. iii]} || ${Me.CombatAbility[Punch in the Throat]} || ${Me.CombatAbility[Punch in the Throat rk. ii]} || ${Me.CombatAbility[Punch in the Throat rk. iii]} || ${Me.CombatAbility[Kick in the Shins]} || ${Me.CombatAbility[Kick in the Shins rk. ii]} || ${Me.CombatAbility[Kick in the Shins rk. iii]}),1,0]}",
-};
-
-char* pSNEAK[] = {
-	"sneak",
-	"[ON/OFF]?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${Me.Skill[sneak]},1,0]}",
-};
-
-char* pSTAND[] = {
-	"standup",
-	"[ON/OFF] Authorize to StandUp?",
-	"0",
-	"${If[${meleemvi[plugin]},1,0]}",
-};
-
-char* pSTEEL[] = {
-	"steely",
-	"[ON/OFF]",
-	"${If[${Select[${Me.Class.ShortName},PAL,SHD]} && (${Me.Book[Steely Stance]} || ${Me.Book[Steely Stance rk. ii]} || ${Me.Book[Steely Stance rk. iii]} || ${Me.Book[Stubborn Stance]} || ${Me.Book[Stubborn Stance rk. ii]} || ${Me.Book[Stubborn Stance rk. iii]} || ${Me.Book[Stoic Stance]} || ${Me.Book[Stoic Stance rk. ii]} || ${Me.Book[Stoic Stance rk. iii]} || ${Me.Book[Steadfast Stance]} || ${Me.Book[Steadfast Stance rk. ii]} || ${Me.Book[Steadfast Stance rk. iii]} || ${Me.Book[Staunch Stance]} || ${Me.Book[Staunch Stance rk. ii]} || ${Me.Book[Staunch Stance rk. iii]}),0,0]}",
-	"${If[${meleemvi[plugin]} && ${Select[${Me.Class.ShortName},PAL,SHD]} && (${Me.Book[Steely Stance]} || ${Me.Book[Steely Stance rk. ii]} || ${Me.Book[Steely Stance rk. iii]} || ${Me.Book[Stubborn Stance]} || ${Me.Book[Stubborn Stance rk. ii]} || ${Me.Book[Stubborn Stance rk. iii]} || ${Me.Book[Stoic Stance]} || ${Me.Book[Stoic Stance rk. ii]} || ${Me.Book[Stoic Stance rk. iii]} || ${Me.Book[Steadfast Stance]} || ${Me.Book[Steadfast Stance rk. ii]} || ${Me.Book[Steadfast Stance rk. iii]} || ${Me.Book[Staunch Stance]} || ${Me.Book[Staunch Stance rk. ii]} || ${Me.Book[Staunch Stance rk. iii]}),1,0]}",
-};
-
-char* pSTIKKB[] = {
-	"stickbreak",
-	"0=Normal, 1=Allow BreakOnKB",
-	"0",
-	"${If[${meleemvi[plugin]} && ${Stick.Status.NotEqual[NULL]},1,0]}",
-};
-
-char* pSTIKNR[] = {
-	"sticknorange",
-	"0=Normal, 1=No Range Check",
-	"0",
-	"${If[${meleemvi[plugin]} && ${Stick.Status.NotEqual[NULL]},1,0]}",
-};
-
-char* pSTIKR[] = {
-	"stickrange",
-	"[#] Target in Range? 0=0ff",
-	"${If[${Stick.Status.NotEqual[NULL]},75,0]}",
-	"${If[${meleemvi[plugin]} && ${Stick.Status.NotEqual[NULL]} && ${meleemvi[stickrange]},1,0]}",
-};
-
-char* pSTIKD[] = {
-	"stickdelay",
-	"[#] Sec to Wait Target in Range?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${Stick.Status.NotEqual[NULL]},1,0]}",
-};
-
-char* pSTIKM[] = {
-	"stickmode",
-	"[ON/OFF] Use stickcmd from ini?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${Stick.Status.NotEqual[NULL]},1,0]}",
-};
-
-char* pSTRIK[] = {
-	"strike",
-	"Use best sneak attack disc [ON/OFF]?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${meleemvi[backstab]} && ${meleemvi[idstrike]},1,0]}",
-};
-
-char* pSTRIKM[] = {
-	"strikemode",
-	"[ON/OFF] Use strikecmd from ini?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${Stick.Status.NotEqual[NULL]},1,0]}",
-};
-
-char* pSTUNS[] = {
-	"stunning",
-	"[#] Target Life% Below? 0=0ff",
-	"0",
-	"${If[${meleemvi[plugin]},1,0]}",
-};
-
-char* pSTUN0[] = {
-	"stun0",
-	"[ID] spell/disc/aa/item?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvi[stunning]},1,0]}",
-};
-
-char* pSTUN1[] = {
-	"stun1",
-	"[ID] spell/disc/aa/item?",
-	"0",
-	"${If[${meleemvi[plugin]} && ${meleemvi[stunning]},1,0]}",
-};
-
-char* pTAUNT[] = {
-	"taunt",
-	"[ON/OFF]?",
-	"${If[${Me.Skill[taunt]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${meleemvi[aggro]} && ${Me.Skill[taunt]},1,0]}",
-};
-
-char* pTHIEF[] = {
-	"thiefeye",
-	"[#] Endu% Above? 0=0ff",
-	"${If[${Me.CombatAbility[thief's eyes]} || ${Me.CombatAbility[Thief's Vision]} || ${Me.CombatAbility[Thief's Vision Rk. II]} || ${Me.CombatAbility[Thief's Vision Rk. III]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[thief's eyes]} || ${Me.CombatAbility[Thief's Vision]} || ${Me.CombatAbility[Thief's Vision Rk. II]} || ${Me.CombatAbility[Thief's Vision Rk. III]}),1,0]}",
-};
-
-char* pTHROW[] = {
-	"throwstone",
-	"[#] Endu% Above? 0=0ff",
-	"0",
-	"${If[${meleemvi[plugin]} && ${Me.CombatAbility[throw stone]},1,0]}",
-};
-
-char* pTIGER[] = {
-	"tigerclaw",
-	"[ON/OFF]?",
-	"${If[${Me.Skill[tiger claw]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.Skill[tiger claw]},1,0]}",
-};
-
-char* pTWIST[] = {
-	"twistedshank",
-	"[ON/OFF]?",
-	"${If[${Me.AltAbility[twisted shank]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.AltAbility[twisted shank]},1,0]}",
-};
-
-char* pVIGAX[] = {
-	"vigaxe",
-	"[#] Endu% Above? 0=Off",
-	"${If[${Me.CombatAbility[Vigorous Axe Throw]} || ${Me.CombatAbility[Vigorous Axe Throw Rk. II]} || ${Me.CombatAbility[Vigorous Axe Throw Rk. III]} || ${Me.CombatAbility[Energetic Axe Throw]} || ${Me.CombatAbility[Energetic Axe Throw Rk. II]} || ${Me.CombatAbility[Energetic Axe Throw Rk. III]} || ${Me.CombatAbility[Spirited Axe Throw]} || ${Me.CombatAbility[Spirited Axe Throw Rk. II]} || ${Me.CombatAbility[Spirited Axe Throw Rk. III]} || ${Me.CombatAbility[Brutal Axe Throw]} || ${Me.CombatAbility[Brutal Axe Throw Rk. II]} || ${Me.CombatAbility[Brutal Axe Throw Rk. III]} || ${Me.CombatAbility[Demolishing Axe Throw]} || ${Me.CombatAbility[Demolishing Axe Throw Rk. II]} || ${Me.CombatAbility[Demolishing Axe Throw Rk. III]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[Vigorous Axe Throw]} || ${Me.CombatAbility[Vigorous Axe Throw Rk. II]} || ${Me.CombatAbility[Vigorous Axe Throw Rk. III]} || ${Me.CombatAbility[Energetic Axe Throw]} || ${Me.CombatAbility[Energetic Axe Throw Rk. II]} || ${Me.CombatAbility[Energetic Axe Throw Rk. III]} || ${Me.CombatAbility[Spirited Axe Throw]} || ${Me.CombatAbility[Spirited Axe Throw Rk. II]} || ${Me.CombatAbility[Spirited Axe Throw Rk. III]} || ${Me.CombatAbility[Brutal Axe Throw]} || ${Me.CombatAbility[Brutal Axe Throw Rk. II]} || ${Me.CombatAbility[Brutal Axe Throw Rk. III]} || ${Me.CombatAbility[Demolishing Axe Throw]} || ${Me.CombatAbility[Demolishing Axe Throw Rk. II]} || ${Me.CombatAbility[Demolishing Axe Throw Rk. III]}),1,0]}",
-};
-
-char* pVIGDR[] = {
-	"vigdagger",
-	"[#] Endu% Above? 0=Off",
-	"${If[${Me.CombatAbility[Vigorous Dagger-Throw]} || ${Me.CombatAbility[Vigorous Dagger-Throw Rk. II]} || ${Me.CombatAbility[Vigorous Dagger-Throw Rk. III]} || ${Me.CombatAbility[Vigorous Dagger-Strike]} || ${Me.CombatAbility[Vigorous Dagger-Strike Rk. II]} || ${Me.CombatAbility[Vigorous Dagger-Strike Rk. III]} || ${Me.CombatAbility[Energetic Dagger-Strike]} || ${Me.CombatAbility[Energetic Dagger-Strike Rk. II]} || ${Me.CombatAbility[Energetic Dagger-Strike Rk. III]} || ${Me.CombatAbility[Energetic Dagger-Throw]} || ${Me.CombatAbility[Energetic Dagger-Throw Rk. II]} || ${Me.CombatAbility[Energetic Dagger-Throw Rk. III]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[Vigorous Dagger-Throw]} || ${Me.CombatAbility[Vigorous Dagger-Throw Rk. II]} || ${Me.CombatAbility[Vigorous Dagger-Throw Rk. III]} || ${Me.CombatAbility[Vigorous Dagger-Strike]} || ${Me.CombatAbility[Vigorous Dagger-Strike Rk. II]} || ${Me.CombatAbility[Vigorous Dagger-Strike Rk. III]} || ${Me.CombatAbility[Energetic Dagger-Strike]} || ${Me.CombatAbility[Energetic Dagger-Strike Rk. II]} || ${Me.CombatAbility[Energetic Dagger-Strike Rk. III]} || ${Me.CombatAbility[Energetic Dagger-Throw]} || ${Me.CombatAbility[Energetic Dagger-Throw Rk. II]} || ${Me.CombatAbility[Energetic Dagger-Throw Rk. III]}),1,0]}",
-};
-
-char* pVIGSN[] = {
-	"vigshuriken",
-	"[#] Endu% Above? 0=Off",
-	"${If[${Me.CombatAbility[Vigorous Shuriken]} || ${Me.CombatAbility[Vigorous Shuriken Rk. II]} || ${Me.CombatAbility[Vigorous Shuriken Rk. III]},20,0]}",
-	"${If[${meleemvi[plugin]} && (${Me.CombatAbility[Vigorous Shuriken]} || ${Me.CombatAbility[Vigorous Shuriken Rk. II]} || ${Me.CombatAbility[Vigorous Shuriken Rk. III]}),1,0]}",
-};
-
-char* pWITHS[] = {
-	"withstand",
-	"[#] Endu% Above? 0=Off",
-	"${If[${Select[${Me.Class.ShortName},PAL,SHD]} && (${Me.CombatAbility[withstand]} || ${Me.CombatAbility[withstand rk. ii]} || ${Me.CombatAbility[withstand rk. iii]} || ${Me.CombatAbility[defy]} || ${Me.CombatAbility[defy rk. ii]} || ${Me.CombatAbility[defy rk. iii]} || ${Me.CombatAbility[Reprove]} || ${Me.CombatAbility[Reprove rk. ii]} || ${Me.CombatAbility[Reprove rk. iii]} || ${Me.CombatAbility[Repel]} || ${Me.CombatAbility[Repel rk. ii]} || ${Me.CombatAbility[Repel rk. iii]}),20,0]}",
-	"${If[${meleemvi[plugin]} && ${Select[${Me.Class.ShortName},PAL,SHD]} && (${Me.CombatAbility[withstand]} || ${Me.CombatAbility[withstand rk. ii]} || ${Me.CombatAbility[withstand rk. iii]} || ${Me.CombatAbility[defy]} || ${Me.CombatAbility[defy rk. ii]} || ${Me.CombatAbility[defy rk. iii]} || ${Me.CombatAbility[Reprove]} || ${Me.CombatAbility[Reprove rk. ii]} || ${Me.CombatAbility[Reprove rk. iii]} || ${Me.CombatAbility[Repel]} || ${Me.CombatAbility[Repel rk. ii]} || ${Me.CombatAbility[Repel rk. iii]}),1,0]}",
-};
-
-char* pYAULP[] = {
-	"yaulp",
-	"[ON/OFF]?",
-	"${If[${Me.AltAbility[yaulp]},1,0]}",
-	"${If[${meleemvi[plugin]} && ${Me.AltAbility[yaulp]},0,0]}",
-};
+#include "Abilities.h"
 
 char* UI_PetBack = "back";
 char* UI_PetAttk = "attack";
@@ -2731,6 +1035,7 @@ PSTR            WinTexte(CXWnd *Wnd, char* ScreenID, PSTR Buffer);
 
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
+long doDEBUG;
 
 void Announce(unsigned long Wanted, char* Format, ...) {
 	char Output[MAX_STRING] = { 0 }; va_list vaList; va_start(vaList, Format); vsprintf_s(Output, Format, vaList);
@@ -2741,7 +1046,7 @@ void Announce(unsigned long Wanted, char* Format, ...) {
 			if (Request) Result |= Request(Output, Wanted);
 			pPlugin = pPlugin->pNext;
 		}
-		if (!Result && Wanted) WriteChatf("%s", Output);
+		if (!Result && ( Wanted || doDEBUG ) ) WriteChatf("%s", Output);
 	}
 }
 
@@ -3428,25 +1733,25 @@ public:
 			}
 			if (!BardClass && IsCasting())         return 0x08;  // already casting
 			if (WinState((CXWnd*)pSpellBookWnd)) return 0x09;  // spellbook open
-			if ((EFFECT->CARecastTimerID || EFFECT->CARecastTimerID == -1) && TYPE != AA)
+			if ((EFFECT->ReuseTimerIndex || EFFECT->ReuseTimerIndex == -1) && TYPE != AA)
 			{
-				//DebugSpew("EFFECT->CARecastTimerID Name: %s  ID: %d Type: %dVal: %d", NAME, ID, TYPE, EFFECT->CARecastTimerID);
+				//DebugSpew("EFFECT->ReuseTimerIndex Name: %s  ID: %d Type: %dVal: %d", NAME, ID, TYPE, EFFECT->ReuseTimerIndex);
 				#ifndef EMU
-				if (((unsigned long)pPCData->GetCombatAbilityTimer(EFFECT->CARecastTimerID, EFFECT->SpellGroup) - (unsigned long)time(NULL)) < 0) return 0x16; // dicipline timer not ready
+				if (((unsigned long)pPCData->GetCombatAbilityTimer(EFFECT->ReuseTimerIndex, EFFECT->SpellGroup) - (unsigned long)time(NULL)) < 0) return 0x16; // dicipline timer not ready
 				#else
-				if (((unsigned long)pPCData->GetCombatAbilityTimer(EFFECT->CARecastTimerID) - (unsigned long)time(NULL)) < 0) return 0x16; // dicipline timer not ready
+				if (((unsigned long)pPCData->GetCombatAbilityTimer(EFFECT->ReuseTimerIndex) - (unsigned long)time(NULL)) < 0) return 0x16; // dicipline timer not ready
 				#endif
 			}
-			if ((long)EFFECT->ReagentId[0]>0 && (long)CountItemByID(EFFECT->ReagentId[0]) < (long)EFFECT->ReagentCount[0])        return 0x0A;  // out of reagent
+			if ((long)EFFECT->ReagentID[0]>0 && (long)CountItemByID(EFFECT->ReagentID[0]) < (long)EFFECT->ReagentCount[0])        return 0x0A;  // out of reagent
 			if (EFFECT->EnduranceCost && GetCharInfo2()->Endurance < EFFECT->EnduranceCost)                              return 0x0B;  // out of endurance
-			if (EFFECT->Mana && GetCharInfo2()->Mana < EFFECT->Mana)                                                     return 0x0C;  // out of mana
+			if (EFFECT->ManaCost && GetCharInfo2()->Mana < EFFECT->ManaCost)                                                     return 0x0C;  // out of mana
 			if (!EFFECT->SpellType)
 			{
 				if (!pTarget)                                                                                              return 0x0D;  // no target
 				float SpellRange = (EFFECT->Range) ? EFFECT->Range : EFFECT->AERange;
 				if (SpellRange && !InRange(SpawnMe(), (PSPAWNINFO)pTarget, SpellRange))                                      return 0x0E;  // out of range
 			}
-			else if (EFFECT->DurationValue1>0)
+			else if (EFFECT->DurationCap>0)
 			{
 				if (EFFECT->DurationWindow)
 				{
@@ -3535,12 +1840,21 @@ public:
 
 	int Press() {
 		int Casted = false;
-		if (Found() && (unsigned long)clock() > READY) {
+		bool bFound = Found() != 0;
+		if (bFound && (unsigned long)clock() > READY) {
 			Announce(SHOW_ABILITY, "%s::Activate [\ay%s\ax].", PLUGIN_NAME, NAME);
 			if (TYPE == SKILL)     Casted = SKPress(ID);
 			else if (TYPE == DISC) Casted = CAPress(ID);
 			else if (TYPE >= AA)   Casted = Casting(COMM);
 			if (Casted) READY = (unsigned long)clock() + REUSE;
+		}
+		else if( !bFound && doDEBUG > 1 )
+		{
+			Announce(SHOW_ABILITY, "%s::Ability Not Found [\ay%s\ax].", PLUGIN_NAME, NAME);
+		}
+		else if( doDEBUG > 1 )
+		{
+			Announce(SHOW_ABILITY, "%s::Abilty Not Ready [\ay%s\ax].", PLUGIN_NAME, NAME);
 		}
 		return Casted;
 	}
@@ -6050,250 +4364,251 @@ PLUGIN_API void InitializePlugin()
 	GetPrivateProfileString("Settings", "MeleeKeys", "z", MeleeKey, sizeof(MeleeKey), INIFileName);
 	GetPrivateProfileString("Settings", "RangeKeys", "x", RangeKey, sizeof(RangeKey), INIFileName);
 
-	CmdListe.clear();
-	MapInsert(&CmdListe, Option(pAGGRO[0], pAGGRO[1], pAGGRO[2], pAGGRO[3], AggroReset, &doAGGRO));
-	MapInsert(&CmdListe, Option(pAGGRP[0], pAGGRP[1], pAGGRP[2], pAGGRP[3], NULL, &elAGGROPRI));
-	MapInsert(&CmdListe, Option(pAGGRS[0], pAGGRS[1], pAGGRS[2], pAGGRS[3], NULL, &elAGGROSEC));
-	MapInsert(&CmdListe, Option(pARROW[0], pARROW[1], pARROW[2], pARROW[3], NULL, &elARROWS));
-	MapInsert(&CmdListe, Option(pASSLT[0], pASSLT[1], pASSLT[2], pASSLT[3], NULL, &doASSAULT));
-	MapInsert(&CmdListe, Option(pASSAS[0], pASSAS[1], pASSAS[2], pASSAS[3], NULL, &doASSASSINATE));
-	MapInsert(&CmdListe, Option(pBKOFF[0], pBKOFF[1], pBKOFF[2], pBKOFF[3], NULL, &doBACKOFF));
-	MapInsert(&CmdListe, Option(pBSTAB[0], pBSTAB[1], pBSTAB[2], pBSTAB[3], NULL, &doBACKSTAB));
-	MapInsert(&CmdListe, Option(pBASHS[0], pBASHS[1], pBASHS[2], pBASHS[3], NULL, &doBASH));
-	MapInsert(&CmdListe, Option(pBGING[0], pBGING[1], pBGING[2], pBGING[3], NULL, &doBEGGING));
-	MapInsert(&CmdListe, Option(pBTASP[0], pBTASP[1], pBTASP[2], pBTASP[3], NULL, &doASP));
-	MapInsert(&CmdListe, Option(pBLEED[0], pBLEED[1], pBLEED[2], pBLEED[3], NULL, &doBLEED));
-	MapInsert(&CmdListe, Option(pBLUST[0], pBLUST[1], pBLUST[2], pBLUST[3], NULL, &doBLOODLUST));
-	MapInsert(&CmdListe, Option(pBVIVI[0], pBVIVI[1], pBVIVI[2], pBVIVI[3], NULL, &doBVIVI));
-	MapInsert(&CmdListe, Option(pCFIST[0], pCFIST[1], pCFIST[2], pCFIST[3], NULL, &doCLOUD));
-	MapInsert(&CmdListe, Option(pBBLOW[0], pBBLOW[1], pBBLOW[2], pBBLOW[3], NULL, &doBOASTFUL));
-	MapInsert(&CmdListe, Option(pCALLC[0], pCALLC[1], pCALLC[2], pCALLC[3], NULL, &doCALLCHALLENGE));
-	MapInsert(&CmdListe, Option(pCHAMS[0], pCHAMS[1], pCHAMS[2], pCHAMS[3], NULL, &doCSTRIKE));
-	MapInsert(&CmdListe, Option(pGTPUN[0], pGTPUN[1], pGTPUN[2], pGTPUN[3], NULL, &doGUTPUNCH));
-	MapInsert(&CmdListe, Option(pOSTRK[0], pOSTRK[1], pOSTRK[2], pOSTRK[3], NULL, &doOPPORTUNISTICSTRIKE));
-	MapInsert(&CmdListe, Option(pTTJAB[0], pTTJAB[1], pTTJAB[2], pTTJAB[3], NULL, &doTHROATJAB));
-	MapInsert(&CmdListe, Option(pBTLLP[0], pBTLLP[1], pBTLLP[2], pBTLLP[3], NULL, &doBATTLELEAP));
-	MapInsert(&CmdListe, Option(pCHFOR[0], pCHFOR[1], pCHFOR[2], pCHFOR[3], NULL, &doCHALLENGEFOR));
-	MapInsert(&CmdListe, Option(pCOMMG[0], pCOMMG[1], pCOMMG[2], pCOMMG[3], NULL, &doCOMMANDING));
-	MapInsert(&CmdListe, Option(pCRIPS[0], pCRIPS[1], pCRIPS[2], pCRIPS[3], NULL, &doCRIPPLE));
-	MapInsert(&CmdListe, Option(pCRYHC[0], pCRYHC[1], pCRYHC[2], pCRYHC[3], NULL, &doCRYHAVOC));
-	MapInsert(&CmdListe, Option(pDEFEN[0], pDEFEN[1], pDEFEN[2], pDEFEN[3], NULL, &doDEFENSE));
-	MapInsert(&CmdListe, Option(pDISRM[0], pDISRM[1], pDISRM[2], pDISRM[3], NULL, &doDISARM));
-	MapInsert(&CmdListe, Option(pDMONK[0], pDMONK[1], pDMONK[2], pDMONK[3], NULL, &doMONKEY));
-	MapInsert(&CmdListe, Option(pDWNF0[0], pDWNF0[1], pDWNF0[2], pDWNF0[3], NULL, &doDOWNFLAG[0]));
-	MapInsert(&CmdListe, Option(pDWNF1[0], pDWNF1[1], pDWNF1[2], pDWNF1[3], NULL, &doDOWNFLAG[1]));
-	MapInsert(&CmdListe, Option(pDWNF2[0], pDWNF2[1], pDWNF2[2], pDWNF2[3], NULL, &doDOWNFLAG[2]));
-	MapInsert(&CmdListe, Option(pDWNF3[0], pDWNF3[1], pDWNF3[2], pDWNF3[3], NULL, &doDOWNFLAG[3]));
-	MapInsert(&CmdListe, Option(pDWNF4[0], pDWNF4[1], pDWNF4[2], pDWNF4[3], NULL, &doDOWNFLAG[4]));
-	MapInsert(&CmdListe, Option(pDWNF5[0], pDWNF5[1], pDWNF5[2], pDWNF5[3], NULL, &doDOWNFLAG[5]));
-	MapInsert(&CmdListe, Option(pDWNF6[0], pDWNF6[1], pDWNF6[2], pDWNF6[3], NULL, &doDOWNFLAG[6]));
-	MapInsert(&CmdListe, Option(pDWNF7[0], pDWNF7[1], pDWNF7[2], pDWNF7[3], NULL, &doDOWNFLAG[7]));
-	MapInsert(&CmdListe, Option(pDWNF8[0], pDWNF8[1], pDWNF8[2], pDWNF8[3], NULL, &doDOWNFLAG[8]));
-	MapInsert(&CmdListe, Option(pDWNF9[0], pDWNF9[1], pDWNF9[2], pDWNF9[3], NULL, &doDOWNFLAG[9]));
-	MapInsert(&CmdListe, Option(pDWNF10[0], pDWNF10[1], pDWNF10[2], pDWNF10[3], NULL, &doDOWNFLAG[10]));
-	MapInsert(&CmdListe, Option(pDWNF11[0], pDWNF11[1], pDWNF11[2], pDWNF11[3], NULL, &doDOWNFLAG[11]));
-	MapInsert(&CmdListe, Option(pDWNF12[0], pDWNF12[1], pDWNF12[2], pDWNF12[3], NULL, &doDOWNFLAG[12]));
-	MapInsert(&CmdListe, Option(pDWNF13[0], pDWNF13[1], pDWNF13[2], pDWNF13[3], NULL, &doDOWNFLAG[13]));
-	MapInsert(&CmdListe, Option(pDWNF14[0], pDWNF14[1], pDWNF14[2], pDWNF14[3], NULL, &doDOWNFLAG[14]));
-	MapInsert(&CmdListe, Option(pDWNF15[0], pDWNF15[1], pDWNF15[2], pDWNF15[3], NULL, &doDOWNFLAG[15]));
-	MapInsert(&CmdListe, Option(pDWNF16[0], pDWNF16[1], pDWNF16[2], pDWNF16[3], NULL, &doDOWNFLAG[16]));
-	MapInsert(&CmdListe, Option(pDWNF17[0], pDWNF17[1], pDWNF17[2], pDWNF17[3], NULL, &doDOWNFLAG[17]));
-	MapInsert(&CmdListe, Option(pDWNF18[0], pDWNF18[1], pDWNF18[2], pDWNF18[3], NULL, &doDOWNFLAG[18]));
-	MapInsert(&CmdListe, Option(pDWNF19[0], pDWNF19[1], pDWNF19[2], pDWNF19[3], NULL, &doDOWNFLAG[19]));
-	MapInsert(&CmdListe, Option(pDWNF20[0], pDWNF20[1], pDWNF20[2], pDWNF20[3], NULL, &doDOWNFLAG[20]));
-	MapInsert(&CmdListe, Option(pDWNF21[0], pDWNF21[1], pDWNF21[2], pDWNF21[3], NULL, &doDOWNFLAG[21]));
-	MapInsert(&CmdListe, Option(pDWNF22[0], pDWNF22[1], pDWNF22[2], pDWNF22[3], NULL, &doDOWNFLAG[22]));
-	MapInsert(&CmdListe, Option(pDWNF23[0], pDWNF23[1], pDWNF23[2], pDWNF23[3], NULL, &doDOWNFLAG[23]));
-	MapInsert(&CmdListe, Option(pDWNF24[0], pDWNF24[1], pDWNF24[2], pDWNF24[3], NULL, &doDOWNFLAG[24]));
-	MapInsert(&CmdListe, Option(pDWNF25[0], pDWNF25[1], pDWNF25[2], pDWNF25[3], NULL, &doDOWNFLAG[25]));
-	MapInsert(&CmdListe, Option(pDWNF26[0], pDWNF26[1], pDWNF26[2], pDWNF26[3], NULL, &doDOWNFLAG[26]));
-	MapInsert(&CmdListe, Option(pDWNF27[0], pDWNF27[1], pDWNF27[2], pDWNF27[3], NULL, &doDOWNFLAG[27]));
-	MapInsert(&CmdListe, Option(pDWNF28[0], pDWNF28[1], pDWNF28[2], pDWNF28[3], NULL, &doDOWNFLAG[28]));
-	MapInsert(&CmdListe, Option(pDWNF29[0], pDWNF29[1], pDWNF29[2], pDWNF29[3], NULL, &doDOWNFLAG[29]));
-	MapInsert(&CmdListe, Option(pDWNF30[0], pDWNF30[1], pDWNF30[2], pDWNF30[3], NULL, &doDOWNFLAG[30]));
-	MapInsert(&CmdListe, Option(pDWNF31[0], pDWNF31[1], pDWNF31[2], pDWNF31[3], NULL, &doDOWNFLAG[31]));
-	MapInsert(&CmdListe, Option(pDWNF32[0], pDWNF32[1], pDWNF32[2], pDWNF32[3], NULL, &doDOWNFLAG[32]));
-	MapInsert(&CmdListe, Option(pDWNF33[0], pDWNF33[1], pDWNF33[2], pDWNF33[3], NULL, &doDOWNFLAG[33]));
-	MapInsert(&CmdListe, Option(pDWNF34[0], pDWNF34[1], pDWNF34[2], pDWNF34[3], NULL, &doDOWNFLAG[34]));
-	MapInsert(&CmdListe, Option(pDWNF35[0], pDWNF35[1], pDWNF35[2], pDWNF35[3], NULL, &doDOWNFLAG[35]));
-	MapInsert(&CmdListe, Option(pDWNF36[0], pDWNF36[1], pDWNF36[2], pDWNF36[3], NULL, &doDOWNFLAG[36]));
-	MapInsert(&CmdListe, Option(pDWNF37[0], pDWNF37[1], pDWNF37[2], pDWNF37[3], NULL, &doDOWNFLAG[37]));
-	MapInsert(&CmdListe, Option(pDWNF38[0], pDWNF38[1], pDWNF38[2], pDWNF38[3], NULL, &doDOWNFLAG[38]));
-	MapInsert(&CmdListe, Option(pDWNF39[0], pDWNF39[1], pDWNF39[2], pDWNF39[3], NULL, &doDOWNFLAG[39]));
-	MapInsert(&CmdListe, Option(pDWNF40[0], pDWNF40[1], pDWNF40[2], pDWNF40[3], NULL, &doDOWNFLAG[40]));
-	MapInsert(&CmdListe, Option(pDWNF41[0], pDWNF41[1], pDWNF41[2], pDWNF41[3], NULL, &doDOWNFLAG[41]));
-	MapInsert(&CmdListe, Option(pDWNF42[0], pDWNF42[1], pDWNF42[2], pDWNF42[3], NULL, &doDOWNFLAG[42]));
-	MapInsert(&CmdListe, Option(pDWNF43[0], pDWNF43[1], pDWNF43[2], pDWNF43[3], NULL, &doDOWNFLAG[43]));
-	MapInsert(&CmdListe, Option(pDWNF44[0], pDWNF44[1], pDWNF44[2], pDWNF44[3], NULL, &doDOWNFLAG[44]));
-	MapInsert(&CmdListe, Option(pDWNF45[0], pDWNF45[1], pDWNF45[2], pDWNF45[3], NULL, &doDOWNFLAG[45]));
-	MapInsert(&CmdListe, Option(pDWNF46[0], pDWNF46[1], pDWNF46[2], pDWNF46[3], NULL, &doDOWNFLAG[46]));
-	MapInsert(&CmdListe, Option(pDWNF47[0], pDWNF47[1], pDWNF47[2], pDWNF47[3], NULL, &doDOWNFLAG[47]));
-	MapInsert(&CmdListe, Option(pDWNF48[0], pDWNF48[1], pDWNF48[2], pDWNF48[3], NULL, &doDOWNFLAG[48]));
-	MapInsert(&CmdListe, Option(pDWNF49[0], pDWNF49[1], pDWNF49[2], pDWNF49[3], NULL, &doDOWNFLAG[49]));
-	MapInsert(&CmdListe, Option(pDWNF50[0], pDWNF50[1], pDWNF50[2], pDWNF50[3], NULL, &doDOWNFLAG[50]));
-	MapInsert(&CmdListe, Option(pDWNF51[0], pDWNF51[1], pDWNF51[2], pDWNF51[3], NULL, &doDOWNFLAG[51]));
-	MapInsert(&CmdListe, Option(pDWNF52[0], pDWNF52[1], pDWNF52[2], pDWNF52[3], NULL, &doDOWNFLAG[52]));
-	MapInsert(&CmdListe, Option(pDWNF53[0], pDWNF53[1], pDWNF53[2], pDWNF53[3], NULL, &doDOWNFLAG[53]));
-	MapInsert(&CmdListe, Option(pDWNF54[0], pDWNF54[1], pDWNF54[2], pDWNF54[3], NULL, &doDOWNFLAG[54]));
-	MapInsert(&CmdListe, Option(pDWNF55[0], pDWNF55[1], pDWNF55[2], pDWNF55[3], NULL, &doDOWNFLAG[55]));
-	MapInsert(&CmdListe, Option(pDWNF56[0], pDWNF56[1], pDWNF56[2], pDWNF56[3], NULL, &doDOWNFLAG[56]));
-	MapInsert(&CmdListe, Option(pDWNF57[0], pDWNF57[1], pDWNF57[2], pDWNF57[3], NULL, &doDOWNFLAG[57]));
-	MapInsert(&CmdListe, Option(pDWNF58[0], pDWNF58[1], pDWNF58[2], pDWNF58[3], NULL, &doDOWNFLAG[58]));
-	MapInsert(&CmdListe, Option(pDWNF59[0], pDWNF59[1], pDWNF59[2], pDWNF59[3], NULL, &doDOWNFLAG[59]));
-	MapInsert(&CmdListe, Option(pDWNF60[0], pDWNF60[1], pDWNF60[2], pDWNF60[3], NULL, &doDOWNFLAG[60]));
-	MapInsert(&CmdListe, Option(pDRPNC[0], pDRPNC[1], pDRPNC[2], pDRPNC[3], NULL, &doDRAGONPUNCH));
-	MapInsert(&CmdListe, Option(pEAGLE[0], pEAGLE[1], pEAGLE[2], pEAGLE[3], NULL, &doEAGLESTRIKE));
-	MapInsert(&CmdListe, Option(pERAGE[0], pERAGE[1], pERAGE[2], pERAGE[3], NULL, &doENRAGE));
-	MapInsert(&CmdListe, Option(pERKCK[0], pERKCK[1], pERKCK[2], pERKCK[3], NULL, &doENRAGINGKICK));
-	MapInsert(&CmdListe, Option(pESCAP[0], pESCAP[1], pESCAP[2], pESCAP[3], NULL, &doESCAPE));
-	MapInsert(&CmdListe, Option(pEVADE[0], pEVADE[1], pEVADE[2], pEVADE[3], NULL, &doEVADE));
-	MapInsert(&CmdListe, Option(pEYEGO[0], pEYEGO[1], pEYEGO[2], pEYEGO[3], NULL, &doEYEGOUGE));
-	MapInsert(&CmdListe, Option(pFEIGN[0], pFEIGN[1], pFEIGN[2], pFEIGN[3], NULL, &doFEIGNDEATH));
-	MapInsert(&CmdListe, Option(pFACES[0], pFACES[1], pFACES[2], pFACES[3], NULL, &doFACING));
-	MapInsert(&CmdListe, Option(pFALLS[0], pFALLS[1], pFALLS[2], pFALLS[3], NULL, &doFALLS));
-	MapInsert(&CmdListe, Option(pFERAL[0], pFERAL[1], pFERAL[2], pFERAL[3], NULL, &doFERALSWIPE));
-	MapInsert(&CmdListe, Option(pFIELD[0], pFIELD[1], pFIELD[2], pFIELD[3], NULL, &doFIELDARM));
-	MapInsert(&CmdListe, Option(pFISTS[0], pFISTS[1], pFISTS[2], pFISTS[3], NULL, &doFISTSOFWU));
-	MapInsert(&CmdListe, Option(pFCLAW[0], pFCLAW[1], pFCLAW[2], pFCLAW[3], NULL, &doFCLAW));
-	MapInsert(&CmdListe, Option(pFKICK[0], pFKICK[1], pFKICK[2], pFKICK[3], NULL, &doFEROCIOUSKICK));
-	MapInsert(&CmdListe, Option(pFLYKC[0], pFLYKC[1], pFLYKC[2], pFLYKC[3], NULL, &doFLYINGKICK));
-	MapInsert(&CmdListe, Option(pFORAG[0], pFORAG[1], pFORAG[2], pFORAG[3], NULL, &doFORAGE));
-	MapInsert(&CmdListe, Option(pFRENZ[0], pFRENZ[1], pFRENZ[2], pFRENZ[3], NULL, &doFRENZY));
-	MapInsert(&CmdListe, Option(pGBLDE[0], pGBLDE[1], pGBLDE[2], pGBLDE[3], NULL, &doGBLADE));
-	MapInsert(&CmdListe, Option(pGORSM[0], pGORSM[1], pGORSM[2], pGORSM[3], NULL, &doGORILLASMASH));
-	MapInsert(&CmdListe, Option(pHARMT[0], pHARMT[1], pHARMT[2], pHARMT[3], NULL, &doHARMTOUCH));
-	MapInsert(&CmdListe, Option(pHIDES[0], pHIDES[1], pHIDES[2], pHIDES[3], NULL, &doHIDE));
-	MapInsert(&CmdListe, Option(pHOLF0[0], pHOLF0[1], pHOLF0[2], pHOLF0[3], NULL, &doHOLYFLAG[0]));
-	MapInsert(&CmdListe, Option(pHOLF1[0], pHOLF1[1], pHOLF1[2], pHOLF1[3], NULL, &doHOLYFLAG[1]));
-	MapInsert(&CmdListe, Option(pHOLF2[0], pHOLF2[1], pHOLF2[2], pHOLF2[3], NULL, &doHOLYFLAG[2]));
-	MapInsert(&CmdListe, Option(pHOLF3[0], pHOLF3[1], pHOLF3[2], pHOLF3[3], NULL, &doHOLYFLAG[3]));
-	MapInsert(&CmdListe, Option(pHOLF4[0], pHOLF4[1], pHOLF4[2], pHOLF4[3], NULL, &doHOLYFLAG[4]));
-	MapInsert(&CmdListe, Option(pHOLF5[0], pHOLF5[1], pHOLF5[2], pHOLF5[3], NULL, &doHOLYFLAG[5]));
-	MapInsert(&CmdListe, Option(pHOLF6[0], pHOLF6[1], pHOLF6[2], pHOLF6[3], NULL, &doHOLYFLAG[6]));
-	MapInsert(&CmdListe, Option(pHOLF7[0], pHOLF7[1], pHOLF7[2], pHOLF7[3], NULL, &doHOLYFLAG[7]));
-	MapInsert(&CmdListe, Option(pHOLF8[0], pHOLF8[1], pHOLF8[2], pHOLF8[3], NULL, &doHOLYFLAG[8]));
-	MapInsert(&CmdListe, Option(pHOLF9[0], pHOLF9[1], pHOLF9[2], pHOLF9[3], NULL, &doHOLYFLAG[9]));
-	MapInsert(&CmdListe, Option(pHOLF10[0], pHOLF10[1], pHOLF10[2], pHOLF10[3], NULL, &doHOLYFLAG[10]));
-	MapInsert(&CmdListe, Option(pHOLF11[0], pHOLF11[1], pHOLF11[2], pHOLF11[3], NULL, &doHOLYFLAG[11]));
-	MapInsert(&CmdListe, Option(pHOLF12[0], pHOLF12[1], pHOLF12[2], pHOLF12[3], NULL, &doHOLYFLAG[12]));
-	MapInsert(&CmdListe, Option(pHOLF13[0], pHOLF13[1], pHOLF13[2], pHOLF13[3], NULL, &doHOLYFLAG[13]));
-	MapInsert(&CmdListe, Option(pHOLF14[0], pHOLF14[1], pHOLF14[2], pHOLF14[3], NULL, &doHOLYFLAG[14]));
-	MapInsert(&CmdListe, Option(pHOLF15[0], pHOLF15[1], pHOLF15[2], pHOLF15[3], NULL, &doHOLYFLAG[15]));
-	MapInsert(&CmdListe, Option(pHOLF16[0], pHOLF16[1], pHOLF16[2], pHOLF16[3], NULL, &doHOLYFLAG[16]));
-	MapInsert(&CmdListe, Option(pHOLF17[0], pHOLF17[1], pHOLF17[2], pHOLF17[3], NULL, &doHOLYFLAG[17]));
-	MapInsert(&CmdListe, Option(pHOLF18[0], pHOLF18[1], pHOLF18[2], pHOLF18[3], NULL, &doHOLYFLAG[18]));
-	MapInsert(&CmdListe, Option(pHOLF19[0], pHOLF19[1], pHOLF19[2], pHOLF19[3], NULL, &doHOLYFLAG[19]));
-	MapInsert(&CmdListe, Option(pHOLF20[0], pHOLF20[1], pHOLF20[2], pHOLF20[3], NULL, &doHOLYFLAG[20]));
-	MapInsert(&CmdListe, Option(pHOLF21[0], pHOLF21[1], pHOLF21[2], pHOLF21[3], NULL, &doHOLYFLAG[21]));
-	MapInsert(&CmdListe, Option(pHOLF22[0], pHOLF22[1], pHOLF22[2], pHOLF22[3], NULL, &doHOLYFLAG[22]));
-	MapInsert(&CmdListe, Option(pHOLF23[0], pHOLF23[1], pHOLF23[2], pHOLF23[3], NULL, &doHOLYFLAG[23]));
-	MapInsert(&CmdListe, Option(pHOLF24[0], pHOLF24[1], pHOLF24[2], pHOLF24[3], NULL, &doHOLYFLAG[24]));
-	MapInsert(&CmdListe, Option(pHOLF25[0], pHOLF25[1], pHOLF25[2], pHOLF25[3], NULL, &doHOLYFLAG[25]));
-	MapInsert(&CmdListe, Option(pHOLF26[0], pHOLF26[1], pHOLF26[2], pHOLF26[3], NULL, &doHOLYFLAG[26]));
-	MapInsert(&CmdListe, Option(pHOLF27[0], pHOLF27[1], pHOLF27[2], pHOLF27[3], NULL, &doHOLYFLAG[27]));
-	MapInsert(&CmdListe, Option(pHOLF28[0], pHOLF28[1], pHOLF28[2], pHOLF28[3], NULL, &doHOLYFLAG[28]));
-	MapInsert(&CmdListe, Option(pHOLF29[0], pHOLF29[1], pHOLF29[2], pHOLF29[3], NULL, &doHOLYFLAG[29]));
-	MapInsert(&CmdListe, Option(pHOLF30[0], pHOLF30[1], pHOLF30[2], pHOLF30[3], NULL, &doHOLYFLAG[30]));
-	MapInsert(&CmdListe, Option(pHOLF31[0], pHOLF31[1], pHOLF31[2], pHOLF31[3], NULL, &doHOLYFLAG[31]));
-	MapInsert(&CmdListe, Option(pHOLF32[0], pHOLF32[1], pHOLF32[2], pHOLF32[3], NULL, &doHOLYFLAG[32]));
-	MapInsert(&CmdListe, Option(pHOLF33[0], pHOLF33[1], pHOLF33[2], pHOLF33[3], NULL, &doHOLYFLAG[33]));
-	MapInsert(&CmdListe, Option(pHOLF34[0], pHOLF34[1], pHOLF34[2], pHOLF34[3], NULL, &doHOLYFLAG[34]));
-	MapInsert(&CmdListe, Option(pHOLF35[0], pHOLF35[1], pHOLF35[2], pHOLF35[3], NULL, &doHOLYFLAG[35]));
-	MapInsert(&CmdListe, Option(pHOLF36[0], pHOLF36[1], pHOLF36[2], pHOLF36[3], NULL, &doHOLYFLAG[36]));
-	MapInsert(&CmdListe, Option(pHOLF37[0], pHOLF37[1], pHOLF37[2], pHOLF37[3], NULL, &doHOLYFLAG[37]));
-	MapInsert(&CmdListe, Option(pHOLF38[0], pHOLF38[1], pHOLF38[2], pHOLF38[3], NULL, &doHOLYFLAG[38]));
-	MapInsert(&CmdListe, Option(pHOLF39[0], pHOLF39[1], pHOLF39[2], pHOLF39[3], NULL, &doHOLYFLAG[39]));
-	MapInsert(&CmdListe, Option(pHOLF40[0], pHOLF40[1], pHOLF40[2], pHOLF40[3], NULL, &doHOLYFLAG[40]));
-	MapInsert(&CmdListe, Option(pHOLF41[0], pHOLF41[1], pHOLF41[2], pHOLF41[3], NULL, &doHOLYFLAG[41]));
-	MapInsert(&CmdListe, Option(pHOLF42[0], pHOLF42[1], pHOLF42[2], pHOLF42[3], NULL, &doHOLYFLAG[42]));
-	MapInsert(&CmdListe, Option(pHOLF43[0], pHOLF43[1], pHOLF43[2], pHOLF43[3], NULL, &doHOLYFLAG[43]));
-	MapInsert(&CmdListe, Option(pHOLF44[0], pHOLF44[1], pHOLF44[2], pHOLF44[3], NULL, &doHOLYFLAG[44]));
-	MapInsert(&CmdListe, Option(pHOLF45[0], pHOLF45[1], pHOLF45[2], pHOLF45[3], NULL, &doHOLYFLAG[45]));
-	MapInsert(&CmdListe, Option(pHOLF46[0], pHOLF46[1], pHOLF46[2], pHOLF46[3], NULL, &doHOLYFLAG[46]));
-	MapInsert(&CmdListe, Option(pHOLF47[0], pHOLF47[1], pHOLF47[2], pHOLF47[3], NULL, &doHOLYFLAG[47]));
-	MapInsert(&CmdListe, Option(pHOLF48[0], pHOLF48[1], pHOLF48[2], pHOLF48[3], NULL, &doHOLYFLAG[48]));
-	MapInsert(&CmdListe, Option(pHOLF49[0], pHOLF49[1], pHOLF49[2], pHOLF49[3], NULL, &doHOLYFLAG[49]));
-	MapInsert(&CmdListe, Option(pHOLF50[0], pHOLF50[1], pHOLF50[2], pHOLF50[3], NULL, &doHOLYFLAG[50]));
-	MapInsert(&CmdListe, Option(pHOLF51[0], pHOLF51[1], pHOLF51[2], pHOLF51[3], NULL, &doHOLYFLAG[51]));
-	MapInsert(&CmdListe, Option(pHOLF52[0], pHOLF52[1], pHOLF52[2], pHOLF52[3], NULL, &doHOLYFLAG[52]));
-	MapInsert(&CmdListe, Option(pHOLF53[0], pHOLF53[1], pHOLF53[2], pHOLF53[3], NULL, &doHOLYFLAG[53]));
-	MapInsert(&CmdListe, Option(pHOLF54[0], pHOLF54[1], pHOLF54[2], pHOLF54[3], NULL, &doHOLYFLAG[54]));
-	MapInsert(&CmdListe, Option(pHOLF55[0], pHOLF55[1], pHOLF55[2], pHOLF55[3], NULL, &doHOLYFLAG[55]));
-	MapInsert(&CmdListe, Option(pHOLF56[0], pHOLF56[1], pHOLF56[2], pHOLF56[3], NULL, &doHOLYFLAG[56]));
-	MapInsert(&CmdListe, Option(pHOLF57[0], pHOLF57[1], pHOLF57[2], pHOLF57[3], NULL, &doHOLYFLAG[57]));
-	MapInsert(&CmdListe, Option(pHOLF58[0], pHOLF58[1], pHOLF58[2], pHOLF58[3], NULL, &doHOLYFLAG[58]));
-	MapInsert(&CmdListe, Option(pHOLF59[0], pHOLF59[1], pHOLF59[2], pHOLF59[3], NULL, &doHOLYFLAG[59]));
-	MapInsert(&CmdListe, Option(pHOLF60[0], pHOLF60[1], pHOLF60[2], pHOLF60[3], NULL, &doHOLYFLAG[60]));
-	MapInsert(&CmdListe, Option(pINFUR[0], pINFUR[1], pINFUR[2], pINFUR[3], NULL, &doINFURIATE));
-	MapInsert(&CmdListe, Option(pINTIM[0], pINTIM[1], pINTIM[2], pINTIM[3], NULL, &doINTIMIDATION));
-	MapInsert(&CmdListe, Option(pJOLTS[0], pJOLTS[1], pJOLTS[2], pJOLTS[3], NULL, &doJOLT));
-	MapInsert(&CmdListe, Option(pJKICK[0], pJKICK[1], pJKICK[2], pJKICK[3], NULL, &doJLTKICKS));
-	MapInsert(&CmdListe, Option(pJUGUL[0], pJUGUL[1], pJUGUL[2], pJUGUL[3], NULL, &doJUGULAR));
-	MapInsert(&CmdListe, Option(pKICKS[0], pKICKS[1], pKICKS[2], pKICKS[3], NULL, &doKICK));
-	MapInsert(&CmdListe, Option(pKNEES[0], pKNEES[1], pKNEES[2], pKNEES[3], NULL, &doKNEESTRIKE));
-	MapInsert(&CmdListe, Option(pKNFPL[0], pKNFPL[1], pKNFPL[2], pKNFPL[3], NULL, &doKNIFEPLAY));
-	MapInsert(&CmdListe, Option(pLHAND[0], pLHAND[1], pLHAND[2], pLHAND[3], NULL, &doLAYHAND));
-	MapInsert(&CmdListe, Option(pLCLAW[0], pLCLAW[1], pLCLAW[2], pLCLAW[3], NULL, &doLEOPARDCLAW));
-	MapInsert(&CmdListe, Option(pMELEE[0], pMELEE[1], pMELEE[2], pMELEE[3], NULL, &doMELEE));
-	MapInsert(&CmdListe, Option(pMELEP[0], pMELEP[1], pMELEP[2], pMELEP[3], NULL, &elMELEEPRI));
-	MapInsert(&CmdListe, Option(pMELES[0], pMELES[1], pMELES[2], pMELES[3], NULL, &elMELEESEC));
-	MapInsert(&CmdListe, Option(pMENDS[0], pMENDS[1], pMENDS[2], pMENDS[3], NULL, &doMEND));
-	MapInsert(&CmdListe, Option(pBOWID[0], pBOWID[1], pBOWID[2], pBOWID[3], NULL, &elRANGED));
-	MapInsert(&CmdListe, Option(pOFREN[0], pOFREN[1], pOFREN[2], pOFREN[3], NULL, &doOPFRENZY));
-	MapInsert(&CmdListe, Option(pPETAS[0], pPETAS[1], pPETAS[2], pPETAS[3], NULL, &doPETASSIST));
-	MapInsert(&CmdListe, Option(pPETDE[0], pPETDE[1], pPETDE[2], pPETDE[3], NULL, &doPETDELAY));
-	MapInsert(&CmdListe, Option(pPETRN[0], pPETRN[1], pPETRN[2], pPETRN[3], NULL, &doPETRANGE));
-	MapInsert(&CmdListe, Option(pPETMN[0], pPETMN[1], pPETMN[2], pPETMN[3], NULL, &doPETMEND));
-	MapInsert(&CmdListe, Option(pPETENG[0], pPETENG[1], pPETENG[2], pPETENG[3], NULL, &doPETENGAGEHPS));
-	MapInsert(&CmdListe, Option(pPICKP[0], pPICKP[1], pPICKP[2], pPICKP[3], NULL, &doPICKPOCKET));
-	MapInsert(&CmdListe, Option(pPINPT[0], pPINPT[1], pPINPT[2], pPINPT[3], NULL, &doPINPOINT));
-	MapInsert(&CmdListe, Option(pPOKER[0], pPOKER[1], pPOKER[2], pPOKER[3], NULL, &elPOKER));
-	MapInsert(&CmdListe, Option(pHFAST[0], pHFAST[1], pHFAST[2], pHFAST[3], NULL, &doPOTHEALFAST));
-	MapInsert(&CmdListe, Option(pHOVER[0], pHOVER[1], pHOVER[2], pHOVER[3], NULL, &doPOTHEALOVER));
-	MapInsert(&CmdListe, Option(pPRVKM[0], pPRVKM[1], pPRVKM[2], pPRVKM[3], AggroReset, &doPROVOKEMAX));
-	MapInsert(&CmdListe, Option(pPRVKE[0], pPRVKE[1], pPRVKE[2], pPRVKE[3], NULL, &doPROVOKEEND));
-	MapInsert(&CmdListe, Option(pPRVKO[0], pPRVKO[1], pPRVKO[2], pPRVKO[3], NULL, &doPROVOKEONCE));
-	MapInsert(&CmdListe, Option(pPRVK0[0], pPRVK0[1], pPRVK0[2], pPRVK0[3], NULL, &idPROVOKE[0]));
-	MapInsert(&CmdListe, Option(pPRVK1[0], pPRVK1[1], pPRVK1[2], pPRVK1[3], NULL, &idPROVOKE[1]));
-	MapInsert(&CmdListe, Option(pRAVOL[0], pRAVOL[1], pRAVOL[2], pRAVOL[3], NULL, &doRAGEVOLLEY));
-	MapInsert(&CmdListe, Option(pRAKES[0], pRAKES[1], pRAKES[2], pRAKES[3], NULL, &doRAKE));
-	MapInsert(&CmdListe, Option(pRALLO[0], pRALLO[1], pRALLO[2], pRALLO[3], NULL, &doRALLOS));
-	MapInsert(&CmdListe, Option(pRANGE[0], pRANGE[1], pRANGE[2], pRANGE[3], RangeReset, &doRANGE));
-	MapInsert(&CmdListe, Option(pRAVEN[0], pRAVEN[1], pRAVEN[2], pRAVEN[3], NULL, &doRAVENS));
-	MapInsert(&CmdListe, Option(pRESUM[0], pRESUM[1], pRESUM[2], pRESUM[3], NULL, &doRESUME));
-	MapInsert(&CmdListe, Option(pRGHTI[0], pRGHTI[1], pRGHTI[2], pRGHTI[3], NULL, &doRIGHTIND));
-	MapInsert(&CmdListe, Option(pRKICK[0], pRKICK[1], pRKICK[2], pRKICK[3], NULL, &doROUNDKICK));
-	MapInsert(&CmdListe, Option(pSENSE[0], pSENSE[1], pSENSE[2], pSENSE[3], NULL, &doSENSETRAP));
-	MapInsert(&CmdListe, Option(pPLUGS[0], pPLUGS[1], pPLUGS[2], pPLUGS[3], NULL, &doSKILL));
-	MapInsert(&CmdListe, Option(pSELOK[0], pSELOK[1], pSELOK[2], pSELOK[3], NULL, &doSELOS));
-	MapInsert(&CmdListe, Option(pSLAMS[0], pSLAMS[1], pSLAMS[2], pSLAMS[3], NULL, &doSLAM));
-	MapInsert(&CmdListe, Option(pSLAPF[0], pSLAPF[1], pSLAPF[2], pSLAPF[3], NULL, &doSLAPFACE));
-	MapInsert(&CmdListe, Option(pSNEAK[0], pSNEAK[1], pSNEAK[2], pSNEAK[3], NULL, &doSNEAK));
-	MapInsert(&CmdListe, Option(pSTAND[0], pSTAND[1], pSTAND[2], pSTAND[3], NULL, &doSTAND));
-	MapInsert(&CmdListe, Option(pSTEEL[0], pSTEEL[1], pSTEEL[2], pSTEEL[3], NULL, &doSTEELY));
-	MapInsert(&CmdListe, Option(pSTIKR[0], pSTIKR[1], pSTIKR[2], pSTIKR[3], StickReset, &doSTICKRANGE));
-	MapInsert(&CmdListe, Option(pSTIKKB[0], pSTIKKB[1], pSTIKKB[2], pSTIKKB[3], StickReset, &doSTICKBREAK));
-	MapInsert(&CmdListe, Option(pSTIKNR[0], pSTIKNR[1], pSTIKNR[2], pSTIKNR[3], StickReset, &doSTICKNORANGE));
-	MapInsert(&CmdListe, Option(pSTIKD[0], pSTIKD[1], pSTIKD[2], pSTIKD[3], StickReset, &doSTICKDELAY));
-	MapInsert(&CmdListe, Option(pSTIKM[0], pSTIKM[1], pSTIKM[2], pSTIKM[3], NULL, &doSTICKMODE));
-	MapInsert(&CmdListe, Option(pSBLADES[0], pSBLADES[1], pSBLADES[2], pSBLADES[3], NULL, &doSTORMBLADES));
-	MapInsert(&CmdListe, Option(pSTRIKM[0], pSTRIKM[1], pSTRIKM[2], pSTRIKM[3], NULL, &doSTRIKEMODE));
-	MapInsert(&CmdListe, Option(pSTUNS[0], pSTUNS[1], pSTUNS[2], pSTUNS[3], NULL, &doSTUNNING));
-	MapInsert(&CmdListe, Option(pSTUN0[0], pSTUN0[1], pSTUN0[2], pSTUN0[3], NULL, &idSTUN[0]));
-	MapInsert(&CmdListe, Option(pSTUN1[0], pSTUN1[1], pSTUN1[2], pSTUN1[3], NULL, &idSTUN[1]));
-	MapInsert(&CmdListe, Option(pSTRIK[0], pSTRIK[1], pSTRIK[2], pSTRIK[3], NULL, &doSTRIKE));
-	MapInsert(&CmdListe, Option(pSYNGY[0], pSYNGY[1], pSYNGY[2], pSYNGY[3], NULL, &doSYNERGY));
-	MapInsert(&CmdListe, Option(pTAUNT[0], pTAUNT[1], pTAUNT[2], pTAUNT[3], NULL, &doTAUNT));
-	MapInsert(&CmdListe, Option(pTHIEF[0], pTHIEF[1], pTHIEF[2], pTHIEF[3], NULL, &doTHIEFEYE));
-	MapInsert(&CmdListe, Option(pTHROW[0], pTHROW[1], pTHROW[2], pTHROW[3], NULL, &doTHROWSTONE));
-	MapInsert(&CmdListe, Option(pTIGER[0], pTIGER[1], pTIGER[2], pTIGER[3], NULL, &doTIGERCLAW));
-	MapInsert(&CmdListe, Option(pTWIST[0], pTWIST[1], pTWIST[2], pTWIST[3], NULL, &doTWISTEDSHANK));
-	MapInsert(&CmdListe, Option(pSHIEL[0], pSHIEL[1], pSHIEL[2], pSHIEL[3], NULL, &elSHIELD));
-	MapInsert(&CmdListe, Option(pVIGAX[0], pVIGAX[1], pVIGAX[2], pVIGAX[3], NULL, &doVIGAXE));
-	MapInsert(&CmdListe, Option(pVIGDR[0], pVIGDR[1], pVIGDR[2], pVIGDR[3], NULL, &doVIGDAGGER));
-	MapInsert(&CmdListe, Option(pVIGSN[0], pVIGSN[1], pVIGSN[2], pVIGSN[3], NULL, &doVIGSHURIKEN));
-	MapInsert(&CmdListe, Option(pWITHS[0], pWITHS[1], pWITHS[2], pWITHS[3], NULL, &doWITHSTAND));
-	MapInsert(&CmdListe, Option(pYAULP[0], pYAULP[1], pYAULP[2], pYAULP[3], NULL, &doYAULP));
+    CmdListe.clear();
+    REGISTER_ABILITY_OPTION( pDEBUG, NULL, &doDEBUG);
+    REGISTER_ABILITY_OPTION( pAGGRO, AggroReset, &doAGGRO);
+    REGISTER_ABILITY_OPTION( pAGGRP, NULL, &elAGGROPRI);
+    REGISTER_ABILITY_OPTION( pAGGRS, NULL, &elAGGROSEC);
+    REGISTER_ABILITY_OPTION( pARROW, NULL, &elARROWS);
+    REGISTER_ABILITY_OPTION( pASSLT, NULL, &doASSAULT);
+    REGISTER_ABILITY_OPTION( pASSAS, NULL, &doASSASSINATE);
+    REGISTER_ABILITY_OPTION( pBKOFF, NULL, &doBACKOFF);
+    REGISTER_ABILITY_OPTION( pBSTAB, NULL, &doBACKSTAB);
+    REGISTER_ABILITY_OPTION( pBASHS, NULL, &doBASH);
+    REGISTER_ABILITY_OPTION( pBGING, NULL, &doBEGGING);
+    REGISTER_ABILITY_OPTION( pBTASP, NULL, &doASP);
+    REGISTER_ABILITY_OPTION( pBLEED, NULL, &doBLEED);
+    REGISTER_ABILITY_OPTION( pBLUST, NULL, &doBLOODLUST);
+    REGISTER_ABILITY_OPTION( pBVIVI, NULL, &doBVIVI);
+    REGISTER_ABILITY_OPTION( pCFIST, NULL, &doCLOUD);
+    REGISTER_ABILITY_OPTION( pBBLOW, NULL, &doBOASTFUL);
+    REGISTER_ABILITY_OPTION( pCALLC, NULL, &doCALLCHALLENGE);
+    REGISTER_ABILITY_OPTION( pCHAMS, NULL, &doCSTRIKE);
+    REGISTER_ABILITY_OPTION( pGTPUN, NULL, &doGUTPUNCH);
+    REGISTER_ABILITY_OPTION( pOSTRK, NULL, &doOPPORTUNISTICSTRIKE);
+    REGISTER_ABILITY_OPTION( pTTJAB, NULL, &doTHROATJAB);
+    REGISTER_ABILITY_OPTION( pBTLLP, NULL, &doBATTLELEAP);
+    REGISTER_ABILITY_OPTION( pCHFOR, NULL, &doCHALLENGEFOR);
+    REGISTER_ABILITY_OPTION( pCOMMG, NULL, &doCOMMANDING);
+    REGISTER_ABILITY_OPTION( pCRIPS, NULL, &doCRIPPLE);
+    REGISTER_ABILITY_OPTION( pCRYHC, NULL, &doCRYHAVOC);
+    REGISTER_ABILITY_OPTION( pDEFEN, NULL, &doDEFENSE);
+    REGISTER_ABILITY_OPTION( pDISRM, NULL, &doDISARM);
+    REGISTER_ABILITY_OPTION( pDMONK, NULL, &doMONKEY);
+    REGISTER_ABILITY_OPTION( pDWNF0, NULL, &doDOWNFLAG[0]);
+    REGISTER_ABILITY_OPTION( pDWNF1, NULL, &doDOWNFLAG[1]);
+    REGISTER_ABILITY_OPTION( pDWNF2, NULL, &doDOWNFLAG[2]);
+    REGISTER_ABILITY_OPTION( pDWNF3, NULL, &doDOWNFLAG[3]);
+    REGISTER_ABILITY_OPTION( pDWNF4, NULL, &doDOWNFLAG[4]);
+    REGISTER_ABILITY_OPTION( pDWNF5, NULL, &doDOWNFLAG[5]);
+    REGISTER_ABILITY_OPTION( pDWNF6, NULL, &doDOWNFLAG[6]);
+    REGISTER_ABILITY_OPTION( pDWNF7, NULL, &doDOWNFLAG[7]);
+    REGISTER_ABILITY_OPTION( pDWNF8, NULL, &doDOWNFLAG[8]);
+    REGISTER_ABILITY_OPTION( pDWNF9, NULL, &doDOWNFLAG[9]);
+    REGISTER_ABILITY_OPTION( pDWNF10, NULL, &doDOWNFLAG[10]);
+    REGISTER_ABILITY_OPTION( pDWNF11, NULL, &doDOWNFLAG[11]);
+    REGISTER_ABILITY_OPTION( pDWNF12, NULL, &doDOWNFLAG[12]);
+    REGISTER_ABILITY_OPTION( pDWNF13, NULL, &doDOWNFLAG[13]);
+    REGISTER_ABILITY_OPTION( pDWNF14, NULL, &doDOWNFLAG[14]);
+    REGISTER_ABILITY_OPTION( pDWNF15, NULL, &doDOWNFLAG[15]);
+    REGISTER_ABILITY_OPTION( pDWNF16, NULL, &doDOWNFLAG[16]);
+    REGISTER_ABILITY_OPTION( pDWNF17, NULL, &doDOWNFLAG[17]);
+    REGISTER_ABILITY_OPTION( pDWNF18, NULL, &doDOWNFLAG[18]);
+    REGISTER_ABILITY_OPTION( pDWNF19, NULL, &doDOWNFLAG[19]);
+    REGISTER_ABILITY_OPTION( pDWNF20, NULL, &doDOWNFLAG[20]);
+    REGISTER_ABILITY_OPTION( pDWNF21, NULL, &doDOWNFLAG[21]);
+    REGISTER_ABILITY_OPTION( pDWNF22, NULL, &doDOWNFLAG[22]);
+    REGISTER_ABILITY_OPTION( pDWNF23, NULL, &doDOWNFLAG[23]);
+    REGISTER_ABILITY_OPTION( pDWNF24, NULL, &doDOWNFLAG[24]);
+    REGISTER_ABILITY_OPTION( pDWNF25, NULL, &doDOWNFLAG[25]);
+    REGISTER_ABILITY_OPTION( pDWNF26, NULL, &doDOWNFLAG[26]);
+    REGISTER_ABILITY_OPTION( pDWNF27, NULL, &doDOWNFLAG[27]);
+    REGISTER_ABILITY_OPTION( pDWNF28, NULL, &doDOWNFLAG[28]);
+    REGISTER_ABILITY_OPTION( pDWNF29, NULL, &doDOWNFLAG[29]);
+    REGISTER_ABILITY_OPTION( pDWNF30, NULL, &doDOWNFLAG[30]);
+    REGISTER_ABILITY_OPTION( pDWNF31, NULL, &doDOWNFLAG[31]);
+    REGISTER_ABILITY_OPTION( pDWNF32, NULL, &doDOWNFLAG[32]);
+    REGISTER_ABILITY_OPTION( pDWNF33, NULL, &doDOWNFLAG[33]);
+    REGISTER_ABILITY_OPTION( pDWNF34, NULL, &doDOWNFLAG[34]);
+    REGISTER_ABILITY_OPTION( pDWNF35, NULL, &doDOWNFLAG[35]);
+    REGISTER_ABILITY_OPTION( pDWNF36, NULL, &doDOWNFLAG[36]);
+    REGISTER_ABILITY_OPTION( pDWNF37, NULL, &doDOWNFLAG[37]);
+    REGISTER_ABILITY_OPTION( pDWNF38, NULL, &doDOWNFLAG[38]);
+    REGISTER_ABILITY_OPTION( pDWNF39, NULL, &doDOWNFLAG[39]);
+    REGISTER_ABILITY_OPTION( pDWNF40, NULL, &doDOWNFLAG[40]);
+    REGISTER_ABILITY_OPTION( pDWNF41, NULL, &doDOWNFLAG[41]);
+    REGISTER_ABILITY_OPTION( pDWNF42, NULL, &doDOWNFLAG[42]);
+    REGISTER_ABILITY_OPTION( pDWNF43, NULL, &doDOWNFLAG[43]);
+    REGISTER_ABILITY_OPTION( pDWNF44, NULL, &doDOWNFLAG[44]);
+    REGISTER_ABILITY_OPTION( pDWNF45, NULL, &doDOWNFLAG[45]);
+    REGISTER_ABILITY_OPTION( pDWNF46, NULL, &doDOWNFLAG[46]);
+    REGISTER_ABILITY_OPTION( pDWNF47, NULL, &doDOWNFLAG[47]);
+    REGISTER_ABILITY_OPTION( pDWNF48, NULL, &doDOWNFLAG[48]);
+    REGISTER_ABILITY_OPTION( pDWNF49, NULL, &doDOWNFLAG[49]);
+    REGISTER_ABILITY_OPTION( pDWNF50, NULL, &doDOWNFLAG[50]);
+    REGISTER_ABILITY_OPTION( pDWNF51, NULL, &doDOWNFLAG[51]);
+    REGISTER_ABILITY_OPTION( pDWNF52, NULL, &doDOWNFLAG[52]);
+    REGISTER_ABILITY_OPTION( pDWNF53, NULL, &doDOWNFLAG[53]);
+    REGISTER_ABILITY_OPTION( pDWNF54, NULL, &doDOWNFLAG[54]);
+    REGISTER_ABILITY_OPTION( pDWNF55, NULL, &doDOWNFLAG[55]);
+    REGISTER_ABILITY_OPTION( pDWNF56, NULL, &doDOWNFLAG[56]);
+    REGISTER_ABILITY_OPTION( pDWNF57, NULL, &doDOWNFLAG[57]);
+    REGISTER_ABILITY_OPTION( pDWNF58, NULL, &doDOWNFLAG[58]);
+    REGISTER_ABILITY_OPTION( pDWNF59, NULL, &doDOWNFLAG[59]);
+    REGISTER_ABILITY_OPTION( pDWNF60, NULL, &doDOWNFLAG[60]);
+    REGISTER_ABILITY_OPTION( pDRPNC, NULL, &doDRAGONPUNCH);
+    REGISTER_ABILITY_OPTION( pEAGLE, NULL, &doEAGLESTRIKE);
+    REGISTER_ABILITY_OPTION( pERAGE, NULL, &doENRAGE);
+    REGISTER_ABILITY_OPTION( pERKCK, NULL, &doENRAGINGKICK);
+    REGISTER_ABILITY_OPTION( pESCAP, NULL, &doESCAPE);
+    REGISTER_ABILITY_OPTION( pEVADE, NULL, &doEVADE);
+    REGISTER_ABILITY_OPTION( pEYEGO, NULL, &doEYEGOUGE);
+    REGISTER_ABILITY_OPTION( pFEIGN, NULL, &doFEIGNDEATH);
+    REGISTER_ABILITY_OPTION( pFACES, NULL, &doFACING);
+    REGISTER_ABILITY_OPTION( pFALLS, NULL, &doFALLS);
+    REGISTER_ABILITY_OPTION( pFERAL, NULL, &doFERALSWIPE);
+    REGISTER_ABILITY_OPTION( pFIELD, NULL, &doFIELDARM);
+    REGISTER_ABILITY_OPTION( pFISTS, NULL, &doFISTSOFWU);
+    REGISTER_ABILITY_OPTION( pFCLAW, NULL, &doFCLAW);
+    REGISTER_ABILITY_OPTION( pFKICK, NULL, &doFEROCIOUSKICK);
+    REGISTER_ABILITY_OPTION( pFLYKC, NULL, &doFLYINGKICK);
+    REGISTER_ABILITY_OPTION( pFORAG, NULL, &doFORAGE);
+    REGISTER_ABILITY_OPTION( pFRENZ, NULL, &doFRENZY);
+    REGISTER_ABILITY_OPTION( pGBLDE, NULL, &doGBLADE);
+    REGISTER_ABILITY_OPTION( pGORSM, NULL, &doGORILLASMASH);
+    REGISTER_ABILITY_OPTION( pHARMT, NULL, &doHARMTOUCH);
+    REGISTER_ABILITY_OPTION( pHIDES, NULL, &doHIDE);
+    REGISTER_ABILITY_OPTION( pHOLF0, NULL, &doHOLYFLAG[0]);
+    REGISTER_ABILITY_OPTION( pHOLF1, NULL, &doHOLYFLAG[1]);
+    REGISTER_ABILITY_OPTION( pHOLF2, NULL, &doHOLYFLAG[2]);
+    REGISTER_ABILITY_OPTION( pHOLF3, NULL, &doHOLYFLAG[3]);
+    REGISTER_ABILITY_OPTION( pHOLF4, NULL, &doHOLYFLAG[4]);
+    REGISTER_ABILITY_OPTION( pHOLF5, NULL, &doHOLYFLAG[5]);
+    REGISTER_ABILITY_OPTION( pHOLF6, NULL, &doHOLYFLAG[6]);
+    REGISTER_ABILITY_OPTION( pHOLF7, NULL, &doHOLYFLAG[7]);
+    REGISTER_ABILITY_OPTION( pHOLF8, NULL, &doHOLYFLAG[8]);
+    REGISTER_ABILITY_OPTION( pHOLF9, NULL, &doHOLYFLAG[9]);
+    REGISTER_ABILITY_OPTION( pHOLF10, NULL, &doHOLYFLAG[10]);
+    REGISTER_ABILITY_OPTION( pHOLF11, NULL, &doHOLYFLAG[11]);
+    REGISTER_ABILITY_OPTION( pHOLF12, NULL, &doHOLYFLAG[12]);
+    REGISTER_ABILITY_OPTION( pHOLF13, NULL, &doHOLYFLAG[13]);
+    REGISTER_ABILITY_OPTION( pHOLF14, NULL, &doHOLYFLAG[14]);
+    REGISTER_ABILITY_OPTION( pHOLF15, NULL, &doHOLYFLAG[15]);
+    REGISTER_ABILITY_OPTION( pHOLF16, NULL, &doHOLYFLAG[16]);
+    REGISTER_ABILITY_OPTION( pHOLF17, NULL, &doHOLYFLAG[17]);
+    REGISTER_ABILITY_OPTION( pHOLF18, NULL, &doHOLYFLAG[18]);
+    REGISTER_ABILITY_OPTION( pHOLF19, NULL, &doHOLYFLAG[19]);
+    REGISTER_ABILITY_OPTION( pHOLF20, NULL, &doHOLYFLAG[20]);
+    REGISTER_ABILITY_OPTION( pHOLF21, NULL, &doHOLYFLAG[21]);
+    REGISTER_ABILITY_OPTION( pHOLF22, NULL, &doHOLYFLAG[22]);
+    REGISTER_ABILITY_OPTION( pHOLF23, NULL, &doHOLYFLAG[23]);
+    REGISTER_ABILITY_OPTION( pHOLF24, NULL, &doHOLYFLAG[24]);
+    REGISTER_ABILITY_OPTION( pHOLF25, NULL, &doHOLYFLAG[25]);
+    REGISTER_ABILITY_OPTION( pHOLF26, NULL, &doHOLYFLAG[26]);
+    REGISTER_ABILITY_OPTION( pHOLF27, NULL, &doHOLYFLAG[27]);
+    REGISTER_ABILITY_OPTION( pHOLF28, NULL, &doHOLYFLAG[28]);
+    REGISTER_ABILITY_OPTION( pHOLF29, NULL, &doHOLYFLAG[29]);
+    REGISTER_ABILITY_OPTION( pHOLF30, NULL, &doHOLYFLAG[30]);
+    REGISTER_ABILITY_OPTION( pHOLF31, NULL, &doHOLYFLAG[31]);
+    REGISTER_ABILITY_OPTION( pHOLF32, NULL, &doHOLYFLAG[32]);
+    REGISTER_ABILITY_OPTION( pHOLF33, NULL, &doHOLYFLAG[33]);
+    REGISTER_ABILITY_OPTION( pHOLF34, NULL, &doHOLYFLAG[34]);
+    REGISTER_ABILITY_OPTION( pHOLF35, NULL, &doHOLYFLAG[35]);
+    REGISTER_ABILITY_OPTION( pHOLF36, NULL, &doHOLYFLAG[36]);
+    REGISTER_ABILITY_OPTION( pHOLF37, NULL, &doHOLYFLAG[37]);
+    REGISTER_ABILITY_OPTION( pHOLF38, NULL, &doHOLYFLAG[38]);
+    REGISTER_ABILITY_OPTION( pHOLF39, NULL, &doHOLYFLAG[39]);
+    REGISTER_ABILITY_OPTION( pHOLF40, NULL, &doHOLYFLAG[40]);
+    REGISTER_ABILITY_OPTION( pHOLF41, NULL, &doHOLYFLAG[41]);
+    REGISTER_ABILITY_OPTION( pHOLF42, NULL, &doHOLYFLAG[42]);
+    REGISTER_ABILITY_OPTION( pHOLF43, NULL, &doHOLYFLAG[43]);
+    REGISTER_ABILITY_OPTION( pHOLF44, NULL, &doHOLYFLAG[44]);
+    REGISTER_ABILITY_OPTION( pHOLF45, NULL, &doHOLYFLAG[45]);
+    REGISTER_ABILITY_OPTION( pHOLF46, NULL, &doHOLYFLAG[46]);
+    REGISTER_ABILITY_OPTION( pHOLF47, NULL, &doHOLYFLAG[47]);
+    REGISTER_ABILITY_OPTION( pHOLF48, NULL, &doHOLYFLAG[48]);
+    REGISTER_ABILITY_OPTION( pHOLF49, NULL, &doHOLYFLAG[49]);
+    REGISTER_ABILITY_OPTION( pHOLF50, NULL, &doHOLYFLAG[50]);
+    REGISTER_ABILITY_OPTION( pHOLF51, NULL, &doHOLYFLAG[51]);
+    REGISTER_ABILITY_OPTION( pHOLF52, NULL, &doHOLYFLAG[52]);
+    REGISTER_ABILITY_OPTION( pHOLF53, NULL, &doHOLYFLAG[53]);
+    REGISTER_ABILITY_OPTION( pHOLF54, NULL, &doHOLYFLAG[54]);
+    REGISTER_ABILITY_OPTION( pHOLF55, NULL, &doHOLYFLAG[55]);
+    REGISTER_ABILITY_OPTION( pHOLF56, NULL, &doHOLYFLAG[56]);
+    REGISTER_ABILITY_OPTION( pHOLF57, NULL, &doHOLYFLAG[57]);
+    REGISTER_ABILITY_OPTION( pHOLF58, NULL, &doHOLYFLAG[58]);
+    REGISTER_ABILITY_OPTION( pHOLF59, NULL, &doHOLYFLAG[59]);
+    REGISTER_ABILITY_OPTION( pHOLF60, NULL, &doHOLYFLAG[60]);
+    REGISTER_ABILITY_OPTION( pINFUR, NULL, &doINFURIATE);
+    REGISTER_ABILITY_OPTION( pINTIM, NULL, &doINTIMIDATION);
+    REGISTER_ABILITY_OPTION( pJOLTS, NULL, &doJOLT);
+    REGISTER_ABILITY_OPTION( pJKICK, NULL, &doJLTKICKS);
+    REGISTER_ABILITY_OPTION( pJUGUL, NULL, &doJUGULAR);
+    REGISTER_ABILITY_OPTION( pKICKS, NULL, &doKICK);
+    REGISTER_ABILITY_OPTION( pKNEES, NULL, &doKNEESTRIKE);
+    REGISTER_ABILITY_OPTION( pKNFPL, NULL, &doKNIFEPLAY);
+    REGISTER_ABILITY_OPTION( pLHAND, NULL, &doLAYHAND);
+    REGISTER_ABILITY_OPTION( pLCLAW, NULL, &doLEOPARDCLAW);
+    REGISTER_ABILITY_OPTION( pMELEE, NULL, &doMELEE);
+    REGISTER_ABILITY_OPTION( pMELEP, NULL, &elMELEEPRI);
+    REGISTER_ABILITY_OPTION( pMELES, NULL, &elMELEESEC);
+    REGISTER_ABILITY_OPTION( pMENDS, NULL, &doMEND);
+    REGISTER_ABILITY_OPTION( pBOWID, NULL, &elRANGED);
+    REGISTER_ABILITY_OPTION( pOFREN, NULL, &doOPFRENZY);
+    REGISTER_ABILITY_OPTION( pPETAS, NULL, &doPETASSIST);
+    REGISTER_ABILITY_OPTION( pPETDE, NULL, &doPETDELAY);
+    REGISTER_ABILITY_OPTION( pPETRN, NULL, &doPETRANGE);
+    REGISTER_ABILITY_OPTION( pPETMN, NULL, &doPETMEND);
+    REGISTER_ABILITY_OPTION( pPETENG, NULL, &doPETENGAGEHPS);
+    REGISTER_ABILITY_OPTION( pPICKP, NULL, &doPICKPOCKET);
+    REGISTER_ABILITY_OPTION( pPINPT, NULL, &doPINPOINT);
+    REGISTER_ABILITY_OPTION( pPOKER, NULL, &elPOKER);
+    REGISTER_ABILITY_OPTION( pHFAST, NULL, &doPOTHEALFAST);
+    REGISTER_ABILITY_OPTION( pHOVER, NULL, &doPOTHEALOVER);
+    REGISTER_ABILITY_OPTION( pPRVKM, AggroReset, &doPROVOKEMAX);
+    REGISTER_ABILITY_OPTION( pPRVKE, NULL, &doPROVOKEEND);
+    REGISTER_ABILITY_OPTION( pPRVKO, NULL, &doPROVOKEONCE);
+    REGISTER_ABILITY_OPTION( pPRVK0, NULL, &idPROVOKE[0]);
+    REGISTER_ABILITY_OPTION( pPRVK1, NULL, &idPROVOKE[1]);
+    REGISTER_ABILITY_OPTION( pRAVOL, NULL, &doRAGEVOLLEY);
+    REGISTER_ABILITY_OPTION( pRAKES, NULL, &doRAKE);
+    REGISTER_ABILITY_OPTION( pRALLO, NULL, &doRALLOS);
+    REGISTER_ABILITY_OPTION( pRANGE, RangeReset, &doRANGE);
+    REGISTER_ABILITY_OPTION( pRAVEN, NULL, &doRAVENS);
+    REGISTER_ABILITY_OPTION( pRESUM, NULL, &doRESUME);
+    REGISTER_ABILITY_OPTION( pRGHTI, NULL, &doRIGHTIND);
+    REGISTER_ABILITY_OPTION( pRKICK, NULL, &doROUNDKICK);
+    REGISTER_ABILITY_OPTION( pSENSE, NULL, &doSENSETRAP);
+    REGISTER_ABILITY_OPTION( pPLUGS, NULL, &doSKILL);
+    REGISTER_ABILITY_OPTION( pSELOK, NULL, &doSELOS);
+    REGISTER_ABILITY_OPTION( pSLAMS, NULL, &doSLAM);
+    REGISTER_ABILITY_OPTION( pSLAPF, NULL, &doSLAPFACE);
+    REGISTER_ABILITY_OPTION( pSNEAK, NULL, &doSNEAK);
+    REGISTER_ABILITY_OPTION( pSTAND, NULL, &doSTAND);
+    REGISTER_ABILITY_OPTION( pSTEEL, NULL, &doSTEELY);
+    REGISTER_ABILITY_OPTION( pSTIKR, StickReset, &doSTICKRANGE);
+    REGISTER_ABILITY_OPTION( pSTIKKB, StickReset, &doSTICKBREAK);
+    REGISTER_ABILITY_OPTION( pSTIKNR, StickReset, &doSTICKNORANGE);
+    REGISTER_ABILITY_OPTION( pSTIKD, StickReset, &doSTICKDELAY);
+    REGISTER_ABILITY_OPTION( pSTIKM, NULL, &doSTICKMODE);
+    REGISTER_ABILITY_OPTION( pSBLADES, NULL, &doSTORMBLADES);
+    REGISTER_ABILITY_OPTION( pSTRIKM, NULL, &doSTRIKEMODE);
+    REGISTER_ABILITY_OPTION( pSTUNS, NULL, &doSTUNNING);
+    REGISTER_ABILITY_OPTION( pSTUN0, NULL, &idSTUN[0]);
+    REGISTER_ABILITY_OPTION( pSTUN1, NULL, &idSTUN[1]);
+    REGISTER_ABILITY_OPTION( pSTRIK, NULL, &doSTRIKE);
+    REGISTER_ABILITY_OPTION( pSYNGY, NULL, &doSYNERGY);
+    REGISTER_ABILITY_OPTION( pTAUNT, NULL, &doTAUNT);
+    REGISTER_ABILITY_OPTION( pTHIEF, NULL, &doTHIEFEYE);
+    REGISTER_ABILITY_OPTION( pTHROW, NULL, &doTHROWSTONE);
+    REGISTER_ABILITY_OPTION( pTIGER, NULL, &doTIGERCLAW);
+    REGISTER_ABILITY_OPTION( pTWIST, NULL, &doTWISTEDSHANK);
+    REGISTER_ABILITY_OPTION( pSHIEL, NULL, &elSHIELD);
+    REGISTER_ABILITY_OPTION( pVIGAX, NULL, &doVIGAXE);
+    REGISTER_ABILITY_OPTION( pVIGDR, NULL, &doVIGDAGGER);
+    REGISTER_ABILITY_OPTION( pVIGSN, NULL, &doVIGSHURIKEN);
+    REGISTER_ABILITY_OPTION( pWITHS, NULL, &doWITHSTAND);
+    REGISTER_ABILITY_OPTION( pYAULP, NULL, &doYAULP);
 
 	IniListe.clear();
 	MapInsert(&IniListe, Option("assaultif", "", "", "", NULL, &ifASSAULT));

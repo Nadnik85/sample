@@ -1,4 +1,4 @@
-| Ninjadvloot.inc v6.06 5/7/2017 Redguides.com 
+| Ninjadvloot.inc v6.08 9/23/2017 Redguides.com 
 | Author A_Druid_00 12/19/2005
 | Based on original looting code of toomanynames
 | The following updates were all individually posted and consolidated by Maskoi into the current version.
@@ -22,6 +22,8 @@
 |		6. User selectable limits on number of foraged items to keep using =quest|xx setting
 | Updated: hoosierbilly added fishing item handling 5/7/17
 |
+| Updated 01 Sep 2017 by Eqmule fixed a /next i that was in the wrong place.
+|| Updated 23 Sep 2017 by Maskoi/Eqmule fixed #warning errors
 | Selling Contributions by
 |   drkrain - TLInv item check
 |   dewey2461 - Add sold items to ini file Event
@@ -65,8 +67,8 @@
 
 Sub SetupAdvLootVars(string ChangeIniFile)
 
-    /declare CantLootID                         int                 outer 
-    /declare NinjadVersion                      string              outer   6.07
+    /declare CantLootID							int                 outer 
+    /declare NinjadVersion                      string              outer   6.06
     /declare InventoryFull                      int                 outer   0
     /declare NinjaIniFile                       string              outer   Loot.ini
     /declare MasterCorpseList                   string              outer   
@@ -83,8 +85,9 @@ Sub SetupAdvLootVars(string ChangeIniFile)
 	/declare MLSwitchTimer						timer				outer	0
 	
    /if (${ChangeIniFile.Length} && ${ChangeIniFile.NotEqual[null]}) {
-        /varset NinjaIniFile ${ChangeIniFile}
-    }
+		/varset NinjaIniFile ${ChangeIniFile}
+	}
+	/echo SetupAdvLootVars: Reading from ${NinjaIniFile}
     /declare NALVersion                           string             outer   ${Ini[${NinjaIniFile},Settings,Version]}
     /if (!${Ini[${NinjaIniFile},Settings,Version].Length}) {
         /call CreateIni
@@ -226,8 +229,10 @@ Sub LootCorpse(CorpseID)
         /declare loottotal int  local
         :LootLag
         /varset loottotal ${Corpse.Items}
-             /if (${Debugloot}) /echo DEBUGLOOT :LootLag ${loottotal}!=${Corpse.Items} LagCount${LagCount}
-        /delay 1s ${loottotal}!=${Corpse.Items}
+        /if (${Debugloot}) {
+			/echo DEBUGLOOT :LootLag ${loottotal}!=${Corpse.Items} 
+        }
+		/delay 1s ${loottotal}!=${Corpse.Items}
         /if (${loottotal}!=${Corpse.Items}) /goto :LootLag
         /echo NINJADVLOOT: Looting ${Target.CleanName} ID:${CorpseID}.
         /for i 1 to ${loottotal}
@@ -340,7 +345,7 @@ Sub Event_Forage(S0)
 			/varset ForagedMaxKeep ${Ini[${NinjaIniFile},"${ForagedItem.Left[1]}","${ForagedItem}"].Arg[2,|]}
 			/if (${ForagedMaxKeep}==NULL) /varset ForagedMaxKeep 1
  			/if (!${Select[${ForagedIniEntry},Ignore,Keep,Destroy,Sell,Quest]}) {
-                /if (${Cursor.ID}) /ini "${NinjaIniFile}" "${Cursor.Name.Left[1]}" "${Cursor.Name}" Keep
+			/if (${Cursor.ID}) /ini "${NinjaIniFile}" "${Cursor.Name.Left[1]}" "${Cursor.Name}" Keep
                 /if (${S0.Find[caught]}) {
 					/echo Ninjadvloot: New fishing item >> ${Cursor.Name}=Keep << added to ${NinjaIniFile} file.
 				} else /echo Ninjadvloot: New foraging item >> ${Cursor.Name}=Keep << added to ${NinjaIniFile} file.
@@ -356,20 +361,20 @@ Sub Event_Forage(S0)
 					/if (${S0.Find[caught]}) {
 						/echo Ninjadvloot: Destroyed fishing item ${ForagedItem}.
 					} else /echo Ninjadvloot: Destroyed forage item ${ForagedItem}.
-            }
+				}
 				/delay 5
-                /if (${Cursor.Name.Equal[${ForagedItem}]})     /destroy
+				/if (${Cursor.Name.Equal[${ForagedItem}]}) /destroy
                 /delay ${Math.Calc[${LootLagDelay}+10]} !${Cursor.ID}
 			} else /if ((${ForagedIniEntry.Equal[Keep]} || ${ForagedIniEntry.Equal[Sell]} || ${FindItemCount[=${Cursor.Name}]}<${ForagedMaxKeep}) && (!${Cursor.Lore} || !${FindItem[=${Cursor.Name}].ID}) && (${Me.FreeInventory} || (${FindItemCount[=${Cursor.Name}]} && ${Cursor.Stackable} && ${Cursor.FreeStack}))) {
                 /if (${LootForageSpam} && ${S0.Find[caught]}) {
 					/echo Ninjadvloot: Keeping fishing item ${ForagedItem}.
 				} else /echo Ninjadvloot: Keeping forage item ${ForagedItem}.
 				}
-                /autoinventory
+				/autoinventory
                 /delay ${Math.Calc[${LootLagDelay}+10]} !${Cursor.ID}
-        }
+		}
 		/delay 5
-    /if (${Cursor.ID}) /goto :MoreToAutoInventory
+		/if (${Cursor.ID}) /goto :MoreToAutoInventory
 	/if (${Debugloot}) /echo DEBUGLOOT Leaving Sub Forage items
 /return
 
@@ -704,25 +709,26 @@ Sub UseAdvLoot
 				/if (${Debugloot}) /echo DEBUGLOOT Selecting a Group.MasterLooter, line# ${Macro.CurLine}
 				/varset GMLCounter ${Group.Members}
 				/for i ${Group.Members} downto 0
-				/if (${Ini[KissAssist_${Group.Member[${i}].Name}.ini,General,LootOn].Length}) {
-					/varset ICanLoot ${Ini[KissAssist_${Group.Member[${i}].Name}.ini,General,LootOn]}
-				} else /if (${Ini[KissAssist_${EverQuest.Server}_${Group.Member[${i}].Name}.ini,General,LootOn].Length}) {
-					/varset ICanLoot ${Ini[KissAssist_${EverQuest.Server}_${Group.Member[${i}].Name}.ini,General,LootOn]}
-				} else {
-					/varset ICanLoot 1
-				}
-				/if (${Group.Member[${GMLCounter}].Type.Equal[mercenary]} || ${ICanLoot}==0) {
-					/varcalc GMLCounter ${GMLCounter}-1
-					/next i
-				}
-				/if (${GMLCounter}>=0) {
-					/echo NINJADVLOOT: ${Group.Member[${GMLCounter}].Name} has been assigned the Master Looter Role
-					/grouproles set ${Group.Member[${GMLCounter}].Name} 5
-					/delay 2s ${Group.MasterLooter.ID}
-				} else {
-					/echo NINJADVLOOT: GMLSelect was unable to select a valid MasterLooter
-					/echo NINJADVLOOT: Please assign one or more group members >> LootOn=1 << in kissassist_CharacterName.ini file
-				}
+					/if (${Ini[KissAssist_${Group.Member[${i}].Name}.ini,General,LootOn].Length}) {
+						/varset ICanLoot ${Ini[KissAssist_${Group.Member[${i}].Name}.ini,General,LootOn]}
+					} else /if (${Ini[KissAssist_${EverQuest.Server}_${Group.Member[${i}].Name}.ini,General,LootOn].Length}) {
+						/varset ICanLoot ${Ini[KissAssist_${EverQuest.Server}_${Group.Member[${i}].Name}.ini,General,LootOn]}
+					} else {
+						/varset ICanLoot 1
+					}
+					/if (${Group.Member[${GMLCounter}].Type.Equal[mercenary]} || ${ICanLoot}==0) {
+						/varcalc GMLCounter ${GMLCounter}-1
+						/continue
+					}
+					/if (${GMLCounter}>=0) {
+						/echo NINJADVLOOT: ${Group.Member[${GMLCounter}].Name} has been assigned the Master Looter Role
+						/grouproles set ${Group.Member[${GMLCounter}].Name} 5
+						/delay 2s ${Group.MasterLooter.ID}
+					} else {
+						/echo NINJADVLOOT: GMLSelect was unable to select a valid MasterLooter
+						/echo NINJADVLOOT: Please assign one or more group members >> LootOn=1 << in kissassist_CharacterName.ini file
+					}
+				/next i
 			} else {
 				/if (!${GMLSelect}) /echo NINJADVLOOT: Please assign a group member the Master Looter Role in the group window
 			}
@@ -843,8 +849,8 @@ Sub UseAdvLoot
 			/varset i 1
 			:NextSItem
 			/if (!${Me.FreeInventory}) /return
-            /varset ITSCount ${AdvLoot.SCount}
-                /varset ITPName ${AdvLoot.SList[${i}].Name}
+			/varset ITSCount ${AdvLoot.SCount}
+			/varset ITPName ${AdvLoot.SList[${i}].Name}
 			/varset IniEntry ${Ini[${NinjaIniFile},"${ITPName.Left[1]}","${ITPName}"].Arg[1,|]}
 			/if (${Debugloot}) /echo DEBUGLOOT: SharedList: item# ${i}, ItemName=${ITPName}, IniFile=${NinjaIniFile}, IniEntry=${IniEntry}, line# ${Macro.CurLine}
 
@@ -859,17 +865,17 @@ Sub UseAdvLoot
 					/varset IniEntry Keep
 					/echo NINJADVLOOT: Adding NoDrop item ${ITPName}=Keep to ${NinjaIniFile} file.
 				} else {
-                        /ini "${NinjaIniFile}" "${ITPName.Left[1]}" "${ITPName}" Ignore
+					/ini "${NinjaIniFile}" "${ITPName.Left[1]}" "${ITPName}" Ignore
 					/varset IniEntry Ignore
 					/echo NINJADVLOOT: Adding NoDrop item ${ITPName}=Ignore to ${NinjaIniFile} file.
-                    }
+				}
 				/delay ${Math.Calc[${LootLagDelay}+10]}
-                }  
+			}
 			| Leave items marked ignore on corpse
 			/if (${AdvLoot.SList[${i}].ID} && ${Select[${IniEntry},Ignore]}) {
 				/if (${Debugloot}||${SpamLootInfo}) /echo NINJADVLOOT: SharedList: ${ITPName} is set to ${IniEntry}. Leaving item.
 				/delay 3s !${AdvLoot.LootInProgress}
-                    /advloot shared ${i} leave
+				/advloot shared ${i} leave
 				/delay 3s !${AdvLoot.LootInProgress}
 				/if (${LootLagDelay}) /delay ${LootLagDelay}
 				/if (${i}<=${ITSCount}) /goto :NextSItem
@@ -922,21 +928,21 @@ Sub UseAdvLoot
 			/if (${AdvLoot.SList[${i}].ID} && ${Select[${IniEntry},Keep,Sell,Destroy,Null]} && ${AdvLoot.SList[${i}].No}==false && !${FindItem[=${AdvLoot.SList[${i}].Name}].Lore} && !${FindItemBank[=${AdvLoot.SList[${i}].Name}].Lore}) {
 				/if (${Debugloot}||${SpamLootInfo}) /echo NINJADVLOOT: SharedList: ${ITPName} is marked ${IniEntry}. Que item to personal list.
 				/delay 3s !${AdvLoot.LootInProgress}
-                        /advloot shared ${i} giveto ${Me.Name}
+				/advloot shared ${i} giveto ${Me.Name}
 				/delay 3s !${AdvLoot.LootInProgress}
 				/if (${LootLagDelay}) /delay ${LootLagDelay}
 				/if (${i}<=${ITSCount}) /goto :NextSItem
-                    }
-                }
+			}
+		}
 
 | Loot/destroy anything in personal list
-        /if (${AdvLoot.PCount}) {
+		/if (${AdvLoot.PCount}) {
 			/if (${Debugloot}) /echo DEBUGLOOT: Everyone process PList, line# ${Macro.CurLine}
 			/varset ITSCount ${AdvLoot.PCount}
 			/if (${ITLootCount}==0) /varset ITLootCount ${AdvLoot.PCount}
 			/for k ${ITSCount} downto 1
 			/if (!${Me.FreeInventory}) /return
-                /varset ITPName ${AdvLoot.PList[${k}].Name}
+			/varset ITPName ${AdvLoot.PList[${k}].Name}
 			/varset IniEntry ${Ini[${NinjaIniFile},"${ITPName.Left[1]}","${ITPName}"].Arg[1,|]}
 			/varset ITStackSize ${AdvLoot.PList[${k}].StackSize}
 			/if (${Debugloot}) /echo DEBUGLOOT: PList: item# ${k}, Name=${ITPName}, IniFile=${NinjaIniFile}, IniEntry=${IniEntry}, StackSize=${ITStackSize}, line# ${Macro.CurLine}
@@ -950,7 +956,7 @@ Sub UseAdvLoot
 				/if (${LootLagDelay}) /delay ${LootLagDelay}
 				/goto :NextPItem
 			}
-                | Add item to ini if it not in there
+			| Add item to ini if it not in there
 			/if (${AdvLoot.PList[${k}].NoDrop} && !${Select[${IniEntry},Ignore,Keep,Destroy,Sell,Quest]}) {
 				/if (${NoDropDefault.Arg[1,|].Equal[Quest]}) {
 					/ini "${NinjaIniFile}" "${ITPName.Left[1]}" "${ITPName}" Quest|1
@@ -982,24 +988,24 @@ Sub UseAdvLoot
 				/varset ITStack ${FindItem[=${ITPName}].StackSize}
 				/if (${ITStack}>20) /varset ITStack 20
 				/if (${Math.Calc[${ITStack}*(${FindItem[=${ITPName}].Value}/1000)]} < ${StackPlatValue} && !${FindItem[=${ITPName}].WornSlots}) {
-                        /ini "${NinjaIniFile}" "${ITPName.Left[1]}" "${ITPName}" Ignore
+					/ini "${NinjaIniFile}" "${ITPName.Left[1]}" "${ITPName}" Ignore
 					/echo NINJADVLOOT: Adding worthless ${ITPName}=Ignore to the ${NinjaIniFile} file.
 					/varset IniEntry Ignore
-                    } else {
-                        /ini "${NinjaIniFile}" "${ITPName.Left[1]}" "${ITPName}" Keep
+				} else {
+					/ini "${NinjaIniFile}" "${ITPName.Left[1]}" "${ITPName}" Keep
 					/echo NINJADVLOOT: Adding valuable ${ITPName}=Keep to the ${NinjaIniFile} file.
 					/varset IniEntry Keep
-                    }
-                } 
+				}
+			}
 			| Leave items marked ignore on corpse
 			/if  (${Select[${IniEntry},Ignore]}||${AdvLoot.PList[${k}].Never}==true) {
 				/if (${Debugloot}||${SpamLootInfo}) /echo NINJADVLOOT: PList: ${ITPName} is marked ${IniEntry}. Leaving item.
 				/delay 3s !${AdvLoot.LootInProgress}
-                    /advloot personal ${k} leave
+				/advloot personal ${k} leave
 				/delay 3s !${AdvLoot.LootInProgress}
 				/if (${LootLagDelay}) /delay ${LootLagDelay}
-                    /goto :NextPItem
-                }
+				/goto :NextPItem
+			}
 			| Check quantity of Quest items and loot or leave
 			/if (${Select[${IniEntry},Quest]}) {
 				/varset KeepAmount ${Ini[${NinjaIniFile},"${ITPName.Left[${i}]}","${ITPName}"].Arg[2,|]}
@@ -1016,29 +1022,29 @@ Sub UseAdvLoot
 				} else {
 					/if (${Debugloot}||${SpamLootInfo}) /echo NINJADVLOOT: PList: I already have ${FindItemCount[=${ITPName}]} of ${KeepAmount} ${ITPName}(s) leave it
 					/delay 3s !${AdvLoot.LootInProgress}
-                    /advloot personal ${k} leave
+					/advloot personal ${k} leave
 					/if (${LootLagDelay}) /delay ${LootLagDelay}
 				}
-                    /goto :NextPItem
-                }
+				/goto :NextPItem
+			}
 			| Loot remaining items keep/sell/destroy
 			/if (${Select[${IniEntry},Keep,Destroy,Sell]}) {
 				/if (${Debugloot}||${SpamLootInfo}) /echo NINJADVLOOT: PList: Looting Item# ${k}, ${ITPName}=${IniEntry}
 				/delay 3s !${AdvLoot.LootInProgress}
-                    /advloot personal ${k} loot
+				/advloot personal ${k} loot
 				/delay 3s !${AdvLoot.LootInProgress}
 				/delay ${Math.Calc[${LootLagDelay}+5]}
-                    /if (${Window[ConfirmationDialogBox].Open}) {
-                        /nomodkey /notify ConfirmationDialogBox Yes_Button leftmouseup
+				/if (${Window[ConfirmationDialogBox].Open}) {
+					/nomodkey /notify ConfirmationDialogBox Yes_Button leftmouseup
 					/delay ${Math.Calc[${LootLagDelay}+10]}
-                    }
-                    /if (${Select[${IniEntry},Destroy]}) {
+				}
+				/if (${Select[${IniEntry},Destroy]}) {
 					/if (${LootLagDelay}) /delay ${LootLagDelay}
 					/call HandleItem "${ITPName}" Destroy "${ITStackSize}"
-                    }
-                }
-                :NextPItem
-            /next k 
+				}
+			}
+			:NextPItem
+			/next k
 			| Report Bag Space
 			/if (${SpamLootInfo}) {
 				/if (${Debugloot}) /echo DEBUGLOOT Report available bag space, line# ${Macro.CurLine}
@@ -1049,8 +1055,8 @@ Sub UseAdvLoot
 				}
 				/next k
 				/echo NINJADVLOOT: free bag space = ${FreeBagSpace}, looting stops if <= ${SaveBagSlots} 
-        }
-    }
+			}
+		}
 	}
 	/varset LootTimer ${Math.Calc[${Math.Rand[5]}+8]}s
 	/varset SubEnd ${Macro.RunTime}

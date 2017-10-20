@@ -3,14 +3,12 @@ Sub Main
 /delay 1
 /if (${myclass.Equal[Cleric]}) {
 	/target id ${Spawn[group tank].ID}
-	/timed 5 /mac Autocleric
-	/end
+	/delay 5 ${Target.ID}==${Spawn[group tank].ID}
+	/mac Autocleric
 } else /if (${myclass.Equal[Warrior]}) {
-	/timed 5 /mac Autowarrior
-	/end
+	/mac Autowarrior
 } else /if (${myclass.Equal[Bard]}) {
-	/timed 5 /mac Autobard
-	/end
+	/mac Autobard
 } else {
 	/target id ${Spawn[group tank].ID}
 	/delay 5 ${Target.ID}==${Spawn[group tank].ID}

@@ -18,7 +18,6 @@ GNU General Public License for more details.
 #ifndef ISXEQ
 
 #define DBG_SPEW
-#define MAXTURBO 120
 
 #ifdef ISXEQ_LEGACY
 #include "../ISXEQLegacy/ISXEQLegacy.h"
@@ -110,7 +109,21 @@ VOID Delay(PSPAWNINFO pChar, PCHAR szLine)
 	}
 	gDelay = VarValue;
 	bRunNextCommand = false;
-	//    DebugSpewNoFile("Delay - %d",gDelay);
+	if (gDelayCondition[0]) {
+		CHAR szCond[MAX_STRING];
+		strcpy_s(szCond, gDelayCondition);
+		ParseMacroParameter(GetCharInfo()->pSpawn, szCond);
+		DOUBLE Result;
+		if (!Calculate(szCond, Result)) {
+			FatalError("Failed to parse /delay condition '%s', non-numeric encountered", szCond);
+			return;
+		}
+		if (Result != 0) {
+			// DebugSpewNoFile("/delay ending early, conditions met");
+			gDelay = 0;
+			bRunNextCommand = true;
+		}
+	}
 }
 PCHAR GetFuncParam(PCHAR szMacroLine, DWORD ParamNum, PCHAR szParamName, size_t ParamNameLen, PCHAR szParamType, size_t ParamTypeLen)
 {
@@ -287,11 +300,11 @@ BOOL AddMacroLine(PCHAR FileName, PCHAR szLine, size_t Linelen, int *LineNumber,
 			GetArg(szArg, szLine, 2);
 			gMaxTurbo = atoi(szArg);
 			if (gMaxTurbo == 0)
-				gMaxTurbo = 40;
-			else if (gMaxTurbo>MAXTURBO)
+				gMaxTurbo = 80;
+			else if (gMaxTurbo>gTurboLimit)
 			{
-				MacroError("#turbo %d is too high, setting at %d (maximum)", gMaxTurbo, MAXTURBO);
-				gMaxTurbo = MAXTURBO;
+				MacroError("#turbo %d is too high, setting at %d (maximum)", gMaxTurbo, gTurboLimit);
+				gMaxTurbo = gTurboLimit;
 			}
 		}
 		else if (!_strnicmp(szLine, "#define ", 8)) {
@@ -318,13 +331,18 @@ BOOL AddMacroLine(PCHAR FileName, PCHAR szLine, size_t Linelen, int *LineNumber,
 			GetArg(szArg2, szLine, 3);
 			if ((szArg1[0] != 0) && (szArg2[0] != 0)) {
 				sprintf_s(pEvent->szName, "Sub Event_%s", szArg1);
-				if (char*pDest = strstr(szArg2, "${")) {//its a variable...
+				if (char*pDest = strstr(szArg2, "${")) {
+					//its a variable... so we must "/declare" it for them...
 					CHAR szVar[MAX_STRING] = { 0 };
 					strcpy_s(szVar, &pDest[2]);
 					if (pDest = strchr(szVar, '}')) {
 						pDest[0] = '\0';
 						if (VariableMap.find(szVar) == VariableMap.end()) {
-							AddMQ2DataVariable(szVar, "", pStringType, &pMacroVariables, "");
+							//we dont know what the macro will varset this to, so we just
+							//default it to the same name as the key...
+							//cant set it to "" cause then it triggers on every single line of
+							//chat before they /varset it to something... (if they ever)
+							AddMQ2DataVariable(szVar, "", pStringType, &pMacroVariables, "NULL");
 						}
 					}
 				}
@@ -450,7 +468,7 @@ VOID Macro(PSPAWNINFO pChar, PCHAR szLine)
 	gMacroBlock->CurrIndex = 0;
 	gMacroBlock->BindStackIndex = -1;
 
-	gMaxTurbo = 40;
+	gMaxTurbo = 80;
 	gTurbo = true;
 	GetArg(szTemp, szLine, 1);
 	Params = GetNextArg(szLine);
@@ -1139,11 +1157,6 @@ VOID DoEvents(PSPAWNINFO pChar, PCHAR szLine)
 {
 	if (!gEventQueue || !gMacroStack)
 		return;
-	if (gMacroBlock->BindStackIndex != -1) {
-		Beep(1000, 100);
-		WriteChatf("Bind in progress in doevents, not gonna screw it up, returning");
-		return;
-	}
 	CHAR Arg1[MAX_STRING] = { 0 };
 	CHAR Arg2[MAX_STRING] = { 0 };
 
@@ -1188,11 +1201,15 @@ VOID DoEvents(PSPAWNINFO pChar, PCHAR szLine)
 				PEVENTQUEUE pEventNext = gEventQueue->pNext;
 				ClearMQ2DataVariables(&gEventQueue->Parameters);
 				DebugSpewNoFile("Doevents: Deleting gEventQueue %d %s", gEventQueue->Type, gEventQueue->Name.c_str());
-				//free(gEventQueue);
 				delete gEventQueue;
 				gEventQueue = pEventNext;
 			}
 		}
+		return;
+	}
+	if (gMacroBlock->BindStackIndex != -1) {
+		//we need to return if this happens cause if we run an event
+		//while a bind is running we screw up the macro stack... -eqmule
 		return;
 	}
 	PEVENTQUEUE pEvent = gEventQueue;
@@ -1257,7 +1274,7 @@ VOID DoEvents(PSPAWNINFO pChar, PCHAR szLine)
 		}
 		DebugSpewNoFile("DoEvents - Deleted event: %d %s", pEvent->Type, pEvent->Name.c_str());
 		delete pEvent;
-		bRunNextCommand = FALSE;
+		bRunNextCommand = TRUE;
 	}
 }
 
@@ -1342,6 +1359,7 @@ VOID For(PSPAWNINFO pChar, PCHAR szLine)
 	loop.type = Loop::Type::For;
 	loop.first_line = gMacroBlock->CurrIndex;
 	loop.last_line = 0;
+	loop.for_variable = ArgLoop;
 	push_loop(loop);
 	/*I want to do this, but people have been doing shit like /for i 1 to 1 for years and they count on it to go through once... 
 	int iStart = atoi(ArgStart);
@@ -1473,14 +1491,19 @@ VOID Continue(PSPAWNINFO pChar, PCHAR szLine)
 	auto i = gMacroBlock->Line.find(gMacroBlock->CurrIndex);
 	while (++i != gMacroBlock->Line.end())
 	{
-		if (!_strnicmp(i->second.Command.c_str(), "/next", 5))
+		const char* line = i->second.Command.c_str();
+		if (!_strnicmp(line, "/next", 5))
 		{
+			CHAR for_var[MAX_STRING];
+			GetArg(for_var, line, 2);
+			if (_stricmp(for_var, loop.for_variable.c_str()))
+				continue;
 			loop.last_line = i->first;
 			--i;
 			gMacroBlock->CurrIndex = i->first;
 			return;
 		}
-		if (!_strnicmp(i->second.Command.c_str(), "Sub ", 4))
+		if (!_strnicmp(line, "Sub ", 4))
 		{
 			break;
 		}
@@ -1516,14 +1539,18 @@ VOID Break(PSPAWNINFO pChar, PCHAR szLine)
 	auto i = gMacroBlock->Line.find(gMacroBlock->CurrIndex);
 	while (++i != gMacroBlock->Line.end())
 	{
-		if (!_strnicmp(i->second.Command.c_str(), "/next", 5))
+		const char *line = i->second.Command.c_str();
+		if (!_strnicmp(line, "/next", 5))
 		{
+			CHAR for_var[MAX_STRING];
+			GetArg(for_var, line, 2);
+			if (_stricmp(for_var, loop.for_variable.c_str())) continue;
 			gMacroBlock->CurrIndex = i->first;
 			loop.last_line = i->first;;
 			pop_loop();
 			return;
 		}
-		if (!_strnicmp(i->second.Command.c_str(), "Sub ", 4))
+		if (!_strnicmp(line, "Sub ", 4))
 		{
 			break;
 		}
