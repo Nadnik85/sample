@@ -1,7 +1,16 @@
+Oct 21 2017 by eqmule
+- Updated for BETA
+- Updated for TEST
+- We are currently testing the new build server for LIVE builds, pm me for an invite.
+
+Oct 18 2017 by eqmule
+- Updated for LIVE
+- The latest zip is located here: http://www.mq2update.com/MQ2-Latest.zip
+
 Oct 13 2017 by eqmule
 - Updated for TEST
 - MQ2Auth.exe now produces truly unique hashes, everyone needs to rerun it.
-- You can now see what your MQ@Auth is by clicking the Show MQ2Auth menu item on the trayicon.
+- You can now see what your MQ2Auth is by clicking the Show MQ2Auth menu item on the trayicon.
   this also optionally let you copy it to the clipboard.
 - EQ_CHAT_HISTORY_OFFSET has been removed it was a pita to keep updated
 	From now on do :

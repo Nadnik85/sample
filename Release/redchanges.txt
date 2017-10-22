@@ -1,3 +1,14 @@
+Oct 21 2017 by redguides
+- MQ2Posse (plure) Fixed "feature" in mq2posse when you turned it off and on people that were on the list before you turned it off weren't being recognized as friend/strangers.
+
+Oct 21 2017 by eqmule
+- Updated for BETA
+- Updated for TEST
+- We are currently testing the new build server for LIVE builds, pm me for an invite.
+
+Oct 18 2017 by eqmule
+- Updated for LIVE
+
 Oct 13 2017 by redguides
 - MQ2Netbots (woobs, eqmule, et. al) updated! This was in the Oct 11th update but I forgot to mention it.
 - MQ2EQBC, MQ2MoveUtils had EQ_CHAT_HISTORY_OFFSET removed, let me know if there are any issues.
