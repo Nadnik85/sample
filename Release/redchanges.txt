@@ -1,3 +1,47 @@
+Nob 1 2017 by redguides
+- New Plugin! MQ2EasyFind (redguides community) added to official compile. Congrats and thank you to all the donors! Rewards shipping this week.
+- bazaar.mac (Tone & GerGuy) unofficial fixes pending review by maskoi
+- auto macros (Noobhaxor) 4.0 released! auto.mac, autobard.mac, autocleric.mac, and autowarrior.mac with more changes than I can list, please read the Auto Macros Megathread in the "macro mania" forum.
+- bas.mac aka barter auto seller (ctaylor22, kaen01) unofficial fixes pending review by ctaylor22
+- MQ2AFNuke (jimbob) Updated for some AA changes
+- giveitems.mac (Sym, kaen01) Fixed the macro so it now works. Added the ability to just sit to end the macro when you done giving things.
+
+Nov 01 2017 by eqmule
+Updated for BETA
+
+Oct 31 2017 by eqmule
+Updated for BETA
+
+Oct 30 2017 by eqmule
+Updated for BETA
+
+Oct 29 2017 by eqmule
+Updated for BETA
+
+Oct 28 2017 by eqmule
+Updated for BETA
+
+Oct 27 2017 by eqmule
+Updated for BETA
+
+Oct 26 2017 by eqmule
+Updated for BETA
+
+Oct 25 2017 by eqmule
+Updated for BETA
+
+Oct 24 2017 by demonstar55
+Added ${Target.MyBuffDuration} it returns your buffs duration on the target.
+
+Oct 24 2017 by eqmule
+- Updated for BETA
+
+Oct 23 2017 by eqmule
+- Updated for BETA
+
+Oct 22 2017 by eqmule
+- Updated for BETA
+
 Oct 21 2017 by redguides
 - MQ2Posse (plure) Fixed "feature" in mq2posse when you turned it off and on people that were on the list before you turned it off weren't being recognized as friend/strangers.
 

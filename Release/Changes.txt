@@ -1,3 +1,39 @@
+Nov 01 2017 by eqmule
+- Updated for BETA
+
+Oct 31 2017 by eqmule
+- Updated for BETA
+
+Oct 30 2017 by eqmule
+- Updated for BETA
+
+Oct 29 2017 by eqmule
+- Updated for BETA
+
+Oct 28 2017 by eqmule
+- Updated for BETA
+
+Oct 27 2017 by eqmule
+- Updated for BETA
+
+Oct 26 2017 by eqmule
+- Updated for BETA
+
+Oct 25 2017 by eqmule
+- Updated for BETA
+
+Oct 24 2017 by demonstar55
+- Added ${Target.MyBuffDuration} it returns your buffs duration on the target.
+
+Oct 24 2017 by eqmule
+- Updated for BETA
+
+Oct 23 2017 by eqmule
+- Updated for BETA
+
+Oct 22 2017 by eqmule
+- Updated for BETA
+
 Oct 21 2017 by eqmule
 - Updated for BETA
 - Updated for TEST

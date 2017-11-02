@@ -1,5 +1,5 @@
 |Auto-Subs Shared routines across Auto series macros by Noobhaxor
-| Version 5.0 v1 September Update
+| Version 5.0 
 | ----------------------------------------------------------------------------
 | SUB: Compatibility with KissAssist Aliases Old and New
 | ----------------------------------------------------------------------------
@@ -59,6 +59,8 @@ Sub VarSetup
 	/call CheckPlugin MQ2AdvPath
 	/call UnCheckPlugin MQ2Twist
 	/squelch /rez accept on
+    /squelch /rez loot off
+	/squelch /rez pct 90
 /return
 |------------------------KissAssist Alias 9.2.4 Updates-----------------------
 | ----------------------------------------------------------------------------

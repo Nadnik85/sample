@@ -1,6 +1,6 @@
 |------------------------------|
 |---AUTO-BARD by Noobhaxor-----|
-|--------Version 2.4 v1--------|
+|--------Version 2.4.2 --------|
 |-----September Update --------|
 
 #turbo 80
@@ -45,11 +45,14 @@ Sub Main
 	/declare bmsongtimer	timer outer 0
 	/declare aeslowtimer	timer outer 0
 	/declare epicsword		string outer NULL
-	/declare darksword		string outer Darkened Breath of Harmony
+	/declare darksword		string outer NULL
+	/if (${FindItem[Darkened Breath of Harmony].ID}) {
+		/varset darksword Darkened Breath of Harmony
+	}
 	/if (${FindItem[Prismatic Dragon Blade].ID}) {
-		/declare epicsword		string outer Prismatic Dragon Blade
+		/varset epicsword Prismatic Dragon Blade
 	} else /if (${FindItem[Blade of Vesagran].ID}) {
-		/declare epicsword		string outer Blade of Vesagran
+		/varset epicsword Blade of Vesagran
 	}
 	/call VarSetup
 |-Config Options
@@ -101,7 +104,7 @@ Sub BardBurn
 | SUB: AESongs
 |---------------------------------------------------------------------------- 
 Sub AESongs
-	/if (${Me.XTarget}>1 && ${SpawnCount[NPC radius 30]}>1 &&${Me.GemTimer[${aoemezsong}]}==0&& ${castready}==0&&${Me.CurrentMana}>${Spell[${aoemezsong}].Mana}) {
+	/if (${Me.XTarget}>1 && ${SpawnCount[NPC radius 30]}>1 &&${Me.GemTimer[${aoemezsong}]}==0&& ${castready}==0&&${Me.CurrentMana}>${Spell[${aoemezsong}].Mana}&&${Me.Gem[${aoemezsong}]}) {
 		/call SongQueue "${aoemezsong}"
 	}
 /return
@@ -115,22 +118,22 @@ Sub CombatSongs
 		/docommand /doability "Reflexive Rejoinder"
 		/delay 8 !${Me.CombatAbilityReady["Reflexive Rejoinder"]}
 	}
-	/if (${Target.Type.Equal[NPC]} && ${Target.Distance}<150&&${Me.GemTimer[${slowsong}]}==0 && !${Spell[${Target.Buff[${slowsong}]}].ID}&&${UseSlow}) {
+	/if (${Target.Type.Equal[NPC]} && ${Target.Distance}<150&&${Me.GemTimer[${slowsong}]}==0 && !${Spell[${Target.Buff[${slowsong}]}].ID}&&${UseSlow}&&${Me.Gem[${slowsong}]}) {
 		/call SongQueue "${slowsong}"
-	} else /if (${Me.GemTimer[${bmsong}]}==0&&${bmsongtimer}==0) {
+	} else /if (${Me.GemTimer[${bmsong}]}==0&&${bmsongtimer}==0&&${Me.Gem[${bmsong}]}) {
 		/call SongQueue "${bmsong}"
 		/varset bmsongtimer 1m
 	} else /if (${FindItem[${darksword}].ID} && ${FindItem[${darksword}].Timer}==0 && ${Me.Song[Doben's Spry Sonata Rk. II].Duration}<4000) {
 		/call ItemNow "${darksword}"
-	} else /if (${Me.GemTimer[${song1}]}==0&&${Me.Song[${song1}].Duration}<4000&&${Me.CurrentMana}>${Spell[${song1}].Mana}) {
+	} else /if (${Me.GemTimer[${song1}]}==0&&${Me.Song[${song1}].Duration}<4000&&${Me.CurrentMana}>${Spell[${song1}].Mana}&&${Me.Gem[${song1}]}) {
 		/call SongQueue "${song1}"
-	} else /if (${Me.GemTimer[${song2}]}==0&&${Me.Song[${song2}].Duration}<4000&&${Me.CurrentMana}>${Spell[${song2}].Mana}) {
+	} else /if (${Me.GemTimer[${song2}]}==0&&${Me.Song[${song2}].Duration}<4000&&${Me.CurrentMana}>${Spell[${song2}].Mana}&&${Me.Gem[${song2}]}) {
 		/call SongQueue "${song2}"
-	} else /if (${Me.GemTimer[${song3}]}==0&&${Me.Song[${song3}].Duration}<4000&&${Me.CurrentMana}>${Spell[${song3}].Mana}) {
+	} else /if (${Me.GemTimer[${song3}]}==0&&${Me.Song[${song3}].Duration}<4000&&${Me.CurrentMana}>${Spell[${song3}].Mana}&&${Me.Gem[${song3}]}) {
 		/call SongQueue "${song3}"
-	} else /if (${Me.GemTimer[${song4}]}==0&&${Me.Song[${song4}].Duration}<4000&&${Me.CurrentMana}>${Spell[${song4}].Mana}) {
+	} else /if (${Me.GemTimer[${song4}]}==0&&${Me.Song[${song4}].Duration}<4000&&${Me.CurrentMana}>${Spell[${song4}].Mana}&&${Me.Gem[${song4}]}) {
 		/call SongQueue "${song4}"
-	} else /if (${Me.GemTimer[${song5}]}==0&&${Me.Song[${song5}].Duration}<4000&&${Me.CurrentMana}>${Spell[${song5}].Mana}) {
+	} else /if (${Me.GemTimer[${song5}]}==0&&${Me.Song[${song5}].Duration}<4000&&${Me.CurrentMana}>${Spell[${song5}].Mana}&&${Me.Gem[${song5}]}) {
 		/call SongQueue "${song5}"
 	}
 /return
@@ -139,9 +142,9 @@ Sub CombatSongs
 |---------------------------------------------------------------------------- 
 Sub DowntimeSongs
 |Out of Combat
-	/if (!${Spell[${Me.Aura[1]}].ID} && !${Me.Moving} && !${Me.Invis} && !${Me.Sitting} && ${Me.State.NotEqual[FEIGN]}&&${castready}==0&&!${Me.Combat}&&${Me.XTarget}==0) {
+	/if (!${Spell[${Me.Aura[1]}].ID} && !${Me.Moving} && !${Me.Invis} && !${Me.Sitting} && ${Me.State.NotEqual[FEIGN]}&&${castready}==0&&!${Me.Combat}&&${Me.XTarget}==0&&${Me.Gem[${aurasong}]}) {
 		/call SongQueue "${aurasong}"
-	} else /if (${Me.PctMana}>80&&${Group}&&${Me.GemTimer[${regensong}]}==0&&!${Me.Invis}&& !${Me.Sitting}&&${castready}==0&&!${Me.Combat}&&${Me.XTarget}==0&&(${Spawn[group healer].PctMana}<80||${Spawn[group tank].PctMana}<80)) {
+	} else /if (${Me.PctMana}>80&&${Group}&&${Me.GemTimer[${regensong}]}==0&&!${Me.Invis}&& !${Me.Sitting}&&${castready}==0&&!${Me.Combat}&&${Me.XTarget}==0&&(${Spawn[group healer].PctMana}<80||${Spawn[group tank].PctMana}<80)&&${Me.Gem[${regensong}]}) {
 		/call SongQueue "${regensong}"
 	} else /if (${Select[${Me.Casting.ID},${Spell[${song1}].ID},${Spell[${song3}].ID},${Spell[${song4}].ID},${Spell[${song2}].ID},${Spell[${song5}].ID}]}>0&& !${Me.Invis}&&!${Me.Combat}&&${Me.XTarget}==0) {
 		/stopcast 
