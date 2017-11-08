@@ -2510,6 +2510,21 @@ public:
 
 	bool ToString(MQ2VARPTR VarPtr, PCHAR Destination)
 	{
+#if defined(BETA) || defined(TEST)
+		CMerchantWnd *pcm = (CMerchantWnd*)pMerchantWnd;
+		PEQMERCHWINDOW peqm = (PEQMERCHWINDOW)pMerchantWnd;
+		if (pcm)
+		{
+			int sz = pcm->PageHandlers.Begin->pObject->ItemContainer.m_length;
+			if (sz) {
+				if (VarPtr.Int >= 0 && VarPtr.Int < sz) {
+					strcpy_s(Destination, MAX_STRING, pcm->PageHandlers.Begin->pObject->ItemContainer.m_array[VarPtr.Int].pCont->Item2->Name);
+					return true;
+				}
+			}
+		}
+		return false;
+#else
 		if (pPointMerchantWnd && pPointMerchantWnd->NumItems)
 		{
 			if (VarPtr.Int >= 0 && VarPtr.Int < pPointMerchantWnd->NumItems) {
@@ -2518,6 +2533,7 @@ public:
 			}
 		}
 		return false;
+#endif
 	}
 	bool FromData(MQ2VARPTR &VarPtr, MQ2TYPEVAR &Source)
 	{
@@ -2554,7 +2570,11 @@ public:
 
 	bool ToString(MQ2VARPTR VarPtr, PCHAR Destination)
 	{
+#if defined(BETA) || defined(TEST)
+		if (pMerchantWnd && pMerchantWnd->dShow)
+#else
 		if (pPointMerchantWnd && pPointMerchantWnd->dShow)
+#endif
 		{
 			strcpy_s(Destination,MAX_STRING, "TRUE");
 		}
@@ -4687,6 +4707,7 @@ public:
 		BuffsPopulated = 38,
         MyBuff = 39,
         MyBuffCount = 40,
+		MyBuffDuration = 41,
 	};
 
 #ifdef ISBOXER_COMPAT
@@ -4735,6 +4756,7 @@ public:
 		TypeMember(BuffsPopulated);
         TypeMember(MyBuff);
         TypeMember(MyBuffCount);
+		TypeMember(MyBuffDuration);
 	}
 
 	~MQ2TargetType()
