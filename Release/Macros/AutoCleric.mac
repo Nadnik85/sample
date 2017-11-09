@@ -1,9 +1,8 @@
 |------------------------------|
 |---AUTO-CLERIC by Noobhaxor---|
-|--------Version 3.4 v3--------|
-|-------September Update ------|
+|--------Version 4.0.1 --------|
+|------ 10-31-2017 Update -----|
 
-#turbo 80
 #Chat group
 #Chat tell
 #Chat raid
@@ -22,17 +21,17 @@ Sub Main
 |-Set Main Tank
 	/if (${Target.ID}) {
 		/declare tankname 	string outer ${Target.Name}
-		/declare tanktype 	string outer ${Target.Type}
+		/declare tankid 	string outer ${Target.ID}
 	} else /if (${Group}) {
 		/echo No Target Selected - Switching to First Group Member
 		/squelch /keypress f2
 		/delay 1s ${Target.ID}
 		/declare tankname 	string outer ${Target.Name}
-		/declare tanktype 	string outer ${Target.Type}
+		/declare tankid 	string outer ${Target.ID}
 	} else {
 		/echo No Group or Target - Switching to Self Heal mode
 		/declare tankname	string outer ${Me.Name}
-		/declare tanktype 	string outer pc
+		/declare tankid 	string outer ${Me.ID}
 	}		
 |-Declare spell variables
 	/if (${Me.AltAbility[Mnemonic Retention].Rank}==4) {
@@ -51,25 +50,69 @@ Sub Main
 		/declare spellmisc 	int outer 8
 		/declare spellslots int outer 7
 	}
-	/declare spellgem		int outer 1
-	/declare promgem		int outer 0
-	/declare divinegem		int outer ${spellslots}
-	/declare wardspell		string outer "NULL"
-	/declare remedyheal1	string outer "NULL"
-	/declare remedyheal2	string outer "NULL"
-	/declare patchheal		string outer "NULL"
-	/declare patchheal2		string outer "NULL"
-	/declare groupfastheal	string outer "NULL"
-	/declare groupheal		string outer "NULL"
-	/declare promheal		string outer "NULL"
-	/declare bigheal1		string outer "NULL"
-	/declare bigheal2		string outer "NULL"
-	/declare yaulpspell		string outer "NULL"
-	/declare stunnuke		string outer "NULL"
-	/declare healnuke1		string outer "NULL"
-	/declare healnuke2		string outer "NULL"
-	/declare nukeheal1		string outer "NULL"
-	/declare nukeheal2		string outer "NULL"
+	/declare spellgem				int             outer 1
+	/declare promgem				int             outer 0
+	/declare divinegem				int             outer ${spellslots}
+	/declare wardspell		        string          outer NULL
+	/declare remedyheal1	        string          outer NULL
+	/declare remedyheal2	        string          outer NULL
+	/declare patchheal		        string          outer NULL
+	/declare patchheal2		        string          outer NULL
+	/declare groupfastheal	        string          outer NULL
+	/declare groupheal		        string          outer NULL
+	/declare promheal		        string          outer NULL
+	/declare bigheal1		        string          outer NULL
+	/declare bigheal2		        string          outer NULL
+	/declare yaulpspell		        string          outer NULL
+	/declare stunnuke		        string          outer NULL
+	/declare healnuke1		        string          outer NULL
+	/declare healnuke2		        string          outer NULL
+	/declare nukeheal1		        string          outer NULL
+	/declare nukeheal2		        string          outer NULL
+	/declare healpoint				int             outer 80
+	/declare grouphealpoint			int             outer 75
+	/declare bighealpoint			int             outer 60
+	/declare patchhealpoint			int             outer 44
+	/declare patchheal2point		int             outer 34
+	/declare clickhealpoint			int             outer 35
+	/declare reversenpcid			int             outer 0
+	/declare reztimer				timer           outer 0
+	/declare hottimer				timer           outer 0
+	/declare bufftimer				timer           outer 0
+	/declare groupbufftimer			timer           outer 0
+	/declare ReverseDS				string          outer NULL
+	/declare SelfBuff				string          outer NULL
+	/declare GroupHPBuff			string          outer NULL
+	/declare GroupBuff				string          outer NULL
+	/declare TankBuff				string          outer NULL
+	/declare GroupVieBuff			string          outer NULL
+	/declare GroupSymbolBuff		string          outer NULL
+	/declare StunLevel				int             outer 0
+	/declare SymbolBuff		        string          outer NULL
+	/declare HPBuff			        string          outer NULL
+	/declare aurabuff1 		        string          outer NULL
+	/declare aurabuff2 		        string          outer NULL
+	/declare DivineBuff		        string          outer NULL
+	/declare NoCures				int             outer 0
+	/declare PromisedTimer			timer			outer 0
+	/declare GroupBuffRecast    	int 			outer 0
+	/declare GroupDeBuffed			int 			outer 0
+	/declare TankBuffRecast     	int 			outer 0
+	/declare DivineBuffRecast   	int 			outer 0
+	/declare SymbolBuffRecast   	int 			outer 0
+	/declare HPBuffRecast       	int 			outer 0
+	/declare ShiningBuffRecast  	int 			outer 0
+	/declare GroupVieBuffRecast 	int 			outer 0
+	/declare BuffRecastTimer		timer 			outer 0
+	/declare ClickHealTimer			timer 			outer 0
+	/declare CureTimer				timer 			outer 0
+	/declare healspellrange     	int 			outer 200
+	/declare promhealrange      	int 			outer 200
+    /declare grouphealrange     	int 			outer 100
+	/declare GoMana 				int 			outer 0
+	/declare Emeralds				int 			outer 0
+	/declare Pearls					int 			outer 0
+	/declare TankBuffMatch 			string 			outer ${TankBuff}
 |-Grab Options from INI
 	/call LoadIni Spells mountitem		string "Bracelet of the Severed Hand"
 	/call LoadIni General AutoRez 			int 1
@@ -80,7 +123,7 @@ Sub Main
 	/call LoadIni General usepromheals		int 1
 	/call LoadIni General DivineBuffOn		int 0
 	/call LoadIni General usedruid			int 0
-	/call LoadIni General FollowToonName string "NULL"
+	/call LoadIni General FollowToonName string NULL
 	/call LoadIni General AutoCampHold		int 0
 	/call LoadIni General UseFellowship 	int 1
 	/call LoadIni General InstantRelease 	int 1
@@ -107,35 +150,8 @@ Sub Main
 	/noparse /alias /nocures /multiline ; /docommand /varset NoCures 1 ; /echo WILL NOT CAST ANY CURES
 |--General Alias Setup
 	/call AliasSetup
-|-Macro Setup Variables and Stuff
-	/declare healpoint				int outer 80
-	/declare grouphealpoint			int outer 75
-	/declare bighealpoint			int outer 60
-	/declare patchhealpoint			int outer 44
-	/declare patchheal2point		int outer 34
-	/declare clickhealpoint			int outer 35
-	/declare reversenpcid			int outer 0
-	/declare reztimer				timer outer 0
-	/declare hottimer				timer outer 0
-	/declare bufftimer				timer outer 0
-	/declare groupbufftimer			timer outer 0
-	/declare ReverseDS				string outer "NULL"
-	/declare SelfBuff				string outer "NULL"
-	/declare GroupHPBuff			string outer "NULL"
-	/declare GroupBuff				string outer "NULL"
-	/declare TankBuff				string outer "NULL"
-	/declare GroupVieBuff			string outer "NULL"
-	/declare GroupSymbolBuff		string outer "NULL"
-	/declare StunLevel				int outer 0
-	/declare SymbolBuff		string outer "NULL"
-	/declare HPBuff			string outer "NULL"
-	/declare aurabuff1 		string outer "NULL"
-	/declare aurabuff2 		string outer "NULL"
-	/declare DivineBuff		string outer "NULL"
-	/declare NoCures				int outer 0
 	/call CheckSpells
 	/call CheckBuffs
-| Set AA DurationMod for various timer from Spell Casting Reinforcement AA
 	/declare DurationMod			int outer 1
     /if (${Me.AltAbility[Spell Casting Reinforcement].Rank}==1) /varset DurationMod 1.15
     /if (${Me.AltAbility[Spell Casting Reinforcement].Rank}==2) /varset DurationMod 1.3
@@ -144,44 +160,13 @@ Sub Main
     /if (${Me.AltAbility[Spell Casting Reinforcement].Rank}==5) /varset DurationMod 1.9
 	/declare epicshield		string outer NULL
 	/if (${FindItem[Harmony of the Soul].ID}) {
-		/declare epicshield		string outer Harmony of the Soul
+		/varset epicshield Harmony of the Soul
 	} else /if (${FindItem[Aegis of Superior Divinity].ID}) {
-		/declare epicshield		string outer Aegis of Superior Divinity
+		/varset epicshield Aegis of Superior Divinity
 	}
 	/declare epicwand		string outer Water Sprinkler of Nem Ankh
-	/declare CastResult		string outer
-	/declare PromisedTimer	timer outer 0
-	/declare GroupBuffRecast int outer 0
-	/declare GroupDeBuffed	int outer 0
-	/declare TankBuffRecast int outer 0
-	/declare DivineBuffRecast int outer 0
-	/declare SymbolBuffRecast int outer 0
-	/declare HPBuffRecast int outer 0
-	/declare ShiningBuffRecast int outer 0
-	/declare GroupVieBuffRecast int outer 0
-	/declare BuffRecastTimer	timer outer 0
-	/declare ClickHealTimer		timer outer 0
-	/declare CureTimer			timer outer 0
-	/declare healspellrange int outer ${Spell[${remedyheal1}].Range}
-	/declare promhealrange int outer ${Spell[${promheal}].Range}
-    /declare grouphealrange int outer ${Spell[${groupheal}].AERange}
-	/declare GoMana 		int outer 0
-	/declare Emeralds		int outer 0
-	/declare Pearls			int outer 0
-	/declare TankBuffMatch 	string outer ${TankBuff}
 	/varset Emeralds ${FindItem[=Emerald].StackCount}
 	/varset Pearls ${FindItem[=Emerald].StackCount}
-|-First Ten Extended Targets get declared and analysed
-	/declare Me.XTarget[10]		string outer
-	/declare xt int local
-		/for xt 1 to 10
-			/if (${Me.XTarget[${xt}].Type.Equal[Specific PC]}) {
-				/varset Me.XTarget[${xt}] ${Me.XTarget[xt].Name}
-				/echo ${Me.XTarget[${xt}].Name} Detected in Extended Target Added to Heals
-				} else {
-				/varset Me.XTarget[${xt}] NULL
-				}
-		/next xt
 |-Aura Error Checking
 	/declare cleanaura1		string outer ${aurabuff1}
 	/declare cleanaura2		string outer ${aurabuff2}
@@ -215,7 +200,6 @@ Sub Main
 		/varset GroupBuff ${GroupHPBuff}
 	}
 	/declare oldtank		string outer NULL
-	/declare oldtanktype	string outer NULL
 	/if (${MakeCamp.Status.Equal[ON]}) /makecamp off
 	/if (${AutoCampHold}==1) /echo Warning: Cleric is set to Camp
 |-Cursor ID
@@ -232,17 +216,18 @@ Sub Main
 :mainloop
 	/if (${Me.Zoning}) /call Zoning
   	/if (${changetoini}==1) /call INIChanges
-	/call TankChangeCheck
 	/if (${Cursor.ID}) /call BagModRods
 	/doevents
+	/call TankChangeCheck
 	/call ConfigHeal
 	/call ExtraHeal
 	/if (${Me.Song["Touch of the Divine"].ID}) /call DALogic
 	/if ((${Me.PctAggro}>90||${Me.XTarget[2].PctAggro}>90||${Me.XTarget[3].PctAggro}>90)&&(${Me.PctHPs}<=${grouphealpoint})&&(!${Me.Buff[Sanctuary].ID})) /call AggroCheck
 	/if (${Me.Hovering}) /call DeathSub
-	/if (!${Me.Casting.ID}) /call HealGroup
+	/if (!${Me.Casting.ID}&&(${Me.XTarget[1].ID}||!${Me.Invis})) /call HealXT
+	/if (!${Me.Casting.ID}&&(${Me.XTarget[1].ID}||!${Me.Invis})) /call HealGroup
 	/if ((${Me.PctMana}<=98)&&!${Me.Moving}&&!${Me.Invis}) /call MedTime
-	/if ((${AutoRez}==1)&&(${Me.CombatState.NotEqual[COMBAT]})&&(!${Me.Moving})&&(!${Me.Invis})) /call RezCheck
+	/if ((${AutoRez}==1)&&(!${Me.Moving})&&(!${Me.Invis})) /call RezCheck
 	/if ((${Me.PctMana}>=30)&&(!${Me.Casting.ID})&&(!${Me.XTarget[1].ID})&&(!${Me.Invis})&&!${MoveTo.Moving}) /call BuffCheck
 	/if ((${Me.PctMana}>=30)&&(!${Me.Casting.ID})&&(!${Me.XTarget[1].ID})&&(!${Me.Invis})&&!${MoveTo.Moving}&&${groupbufftimer}==0) /call BuffGroup
 	/if (!${Me.XTarget[1].ID}) /call AutoCampCheck
@@ -274,7 +259,7 @@ Sub ExtraHeal
 			/call AANow 6488
 		}
 	}
-	/if (!${Spawn[mercenary ${Group.Member[1].ID}].ID} && ${Window[MMGW_ManageWnd].Child[MMGW_SuspendButton].Enabled} && ${Mercenary.State.Equal[DEAD]}) {
+	/if (${Group} && ${Window[MMGW_ManageWnd].Child[MMGW_SuspendButton].Enabled} && ${Mercenary.State.Equal[DEAD]}) {
 		/notify MMGW_ManageWnd MMGW_SuspendButton LeftMouseUp
 		/delay 2s ${Spawn[mercenary ${Group.Member[1].ID}].ID}
 	}
@@ -331,59 +316,58 @@ Sub ConfigHeal
 /return
 
 |----------------------------------------------------------------------------
-| SUB: HealQueue
+| SUB: Group HealQueue
 |---------------------------------------------------------------------------- 
 Sub HealQueue(int nextid)
 	/declare nexthealspell		string local NULL
+	/declare groupmembertoheal	string local ${Spawn[ID ${nextid}].Name}
 |===Check to see if we can heal
-	/if (${Spawn[ID ${nextid}].FeetWet}!=${Me.FeetWet}) /return
-	/if (!${Spawn[${nextid}].ID}||${Spawn[${nextid}].Hovering}||${Spawn[${nextid}].Type.Equal[Corpse]}) /return
-|====Cleric AA for self protection
-	/if (${nextid}==${Me.ID}&&${Spawn[${nextid}].PctHPs}<=${healpoint}&&(${Me.AltAbilityReady[Divine Retribution]})) /call AANow 392
-|====Check for buffs that block heals
+	/if (${Group.Member[${groupmembertoheal}].FeetWet}!=${Me.FeetWet}) /return
+	/if (${Group.Member[${groupmembertoheal}].Hovering}||${Group.Member[${groupmembertoheal}].Type.Equal[Corpse]}) /return
 	/if (${Me.Buff[Withering Physicality XIII].ID} && ${Me.Buff[Withering Faith XIII].ID}&& ${Me.AltAbilityReady[41]}) /call AANow 41 ${Me.ID}
 	/if (${Me.Buff[Withering Physicality XIII].ID} && ${Me.Buff[Withering Faith XIII].ID}&& ${Me.AltAbilityReady[626]}) /call AANow 626 ${Me.ID}
-|====Divine Guardian used when Burst of Life is on cooldown or Named or 3 or more Extended Targets
-	/if ((${nextid}==${Spawn[${tanktype} ${tankname}].ID})&&${Me.AltAbilityReady[463]}&&(${Spawn[${nextid}].PctHPs}>${bighealpoint})&&(!${Me.AltAbilityReady[Burst of Life]}||(${Me.XTarget}>2)||(${Spawn[id ${Me.XTarget[1].ID} radius 100].Named}))) /call AANow 463 ${Spawn[${tanktype} ${tankname}].ID}
-|====Focused Regen on Main Tank when Named engaged or 3 or more Extended Targets
-	/if (((${Spawn[id ${Me.XTarget[1].ID} radius 100].Named})||(${Me.XTarget}>2))&&(${nextid}==${Spawn[${tanktype} ${tankname}].ID})&&${Me.AltAbilityReady[1065]}&&(${Spawn[${nextid}].PctHPs}>${bighealpoint})&&!${Target.Buff[Regeneration].ID}) /call AANow 1065 ${Spawn[${tanktype} ${tankname}].ID}
-|=====MAIN Heals
-	/if ((${Me.SpellReady[${patchheal2}]})&&(${Spawn[${nextid}].PctHPs}<=${patchheal2point})&&(${Spawn[${nextid}].PctHPs}>=1)&&${Me.XTarget}>=1&&${Me.CurrentMana}>${Spell[${patchheal2}].Mana}) {
+
+|====Cleric AAs before heals
+	/if (${nextid}==${Me.ID}&&${Group.Member[${groupmembertoheal}].PctHPs}<=${healpoint}&&(${Me.AltAbilityReady[Divine Retribution]})) /call AANow 392
+	/if (${nextid}==${tankid} && ${Group.Member[${groupmembertoheal}].PctHPs}>${bighealpoint} && (${Me.XTarget}>2||${Spawn[id ${Me.XTarget[1].ID} radius 100].Named})) {
+		/if (${Me.AltAbilityReady[463]}) /call AANow 463 ${tankid}
+		/if (${Me.AltAbilityReady[1065]}) /call AANow 1065 ${tankid}
+	}
+|=====Determine which heal to use
+	/if ((${Me.SpellReady[${patchheal2}]})&&(${Group.Member[${groupmembertoheal}].PctHPs}<=${patchheal2point})&&(${Group.Member[${groupmembertoheal}].PctHPs}>=1)&&${Me.XTarget}>=1&&${Me.CurrentMana}>${Spell[${patchheal2}].Mana}) {
 			/varset nexthealspell ${patchheal2}
-		} else /if ((${Me.AltAbilityReady[Burst of Life]})&&(${Spawn[${nextid}].PctHPs}<=${clickhealpoint})&&${ClickHealTimer}==0&&${Me.XTarget}>=1) {
+		} else /if ((${Me.AltAbilityReady[Burst of Life]})&&(${Group.Member[${groupmembertoheal}].PctHPs}<=${clickhealpoint})&&${ClickHealTimer}==0&&${Me.XTarget}>=1) {
 			/varset ClickHealTimer 20
 			/call AANow 7689 ${nextid}
-		} else /if ((${Spawn[${nextid}].PctHPs}<=${clickhealpoint})&&(${Me.AltAbilityReady[Divine Arbitration]})&&${ClickHealTimer}==0&&${Spawn[${nextid}].Type.NotEqual[Pet]}&&${Me.XTarget}>=1) {
+		} else /if ((${Group.Member[${groupmembertoheal}].PctHPs}<=${clickhealpoint})&&(${Me.AltAbilityReady[Divine Arbitration]})&&${ClickHealTimer}==0&&${Group.Member[${groupmembertoheal}].Type.NotEqual[Pet]}&&${Me.XTarget}>=1) {
 			/varset ClickHealTimer 20
 			/call AANow 169
 			/if (${Me.AltAbilityReady[38]}) /call AANow 38
-		} else /if (${FindItem[${epicshield}].ID} && ${FindItem[${epicshield}].Timer}==0 && ${Spawn[${nextid}].PctHPs}<=${clickhealpoint}&&${ClickHealTimer}==0&&${Spawn[${nextid}].Type.NotEqual[Pet]}&&${Me.XTarget}>=1) {
+		} else /if (${FindItem[${epicshield}].ID} && ${FindItem[${epicshield}].Timer}==0 && ${Group.Member[${groupmembertoheal}].PctHPs}<=${clickhealpoint}&&${ClickHealTimer}==0&&${Group.Member[${groupmembertoheal}].Type.NotEqual[Pet]}&&${Me.XTarget}>=1) {
 			/varset ClickHealTimer 20
 			/call ItemNow "${epicshield}"
-		} else /if ((${Me.SpellReady[${patchheal}]})&&(${Spawn[${nextid}].PctHPs}<=${patchhealpoint})&&(${Spawn[${nextid}].PctHPs}>=1)&&${Me.XTarget}>=1&&${Me.CurrentMana}>${Spell[${patchheal}].Mana}) {
+		} else /if ((${Me.SpellReady[${patchheal}]})&&(${Group.Member[${groupmembertoheal}].PctHPs}<=${patchhealpoint})&&(${Group.Member[${groupmembertoheal}].PctHPs}>=1)&&${Me.XTarget}>=1&&${Me.CurrentMana}>${Spell[${patchheal}].Mana}) {
 			/varset nexthealspell ${patchheal}
-		} else /if ((${Me.SpellReady[${wardspell}]})&&(${Spawn[${nextid}].PctHPs}<=${bighealpoint})&&${Spawn[${nextid}].Type.NotEqual[Pet]}&&${Me.XTarget}>=1&&!${Target.Buff[${wardspell}].ID}&&${hottimer}==0&&${Me.CurrentMana}>${Spell[${wardspell}].Mana}) {
+		} else /if ((${Me.SpellReady[${wardspell}]})&&(${Group.Member[${groupmembertoheal}].PctHPs}<=${bighealpoint})&&${Group.Member[${groupmembertoheal}].Type.NotEqual[Pet]}&&${Me.XTarget}>=1&&!${Target.Buff[${wardspell}].ID}&&${hottimer}==0&&${Me.CurrentMana}>${Spell[${wardspell}].Mana}) {
 			/varset nexthealspell ${wardspell}
 			/varcalc hottimer ${Spell[${wardspell}].Duration.TotalSeconds}*${DurationMod}*10
-		} else /if ((${Me.SpellReady[${bigheal1}]})&&(${Spawn[${nextid}].PctHPs}<=${bighealpoint})&&${Me.CurrentMana}>${Spell[${bigheal1}].Mana}&&${NoCures}!=1) {
+		} else /if ((${Me.SpellReady[${bigheal1}]})&&(${Group.Member[${groupmembertoheal}].PctHPs}<=${bighealpoint})&&${Me.CurrentMana}>${Spell[${bigheal1}].Mana}&&${NoCures}!=1) {
 			/varset nexthealspell ${bigheal1}
-		} else /if ((${Me.SpellReady[${bigheal2}]})&&(${Spawn[${nextid}].PctHPs}<=${bighealpoint})&&${Me.CurrentMana}>${Spell[${bigheal2}].Mana}&&${NoCures}!=1) {
+		} else /if ((${Me.SpellReady[${bigheal2}]})&&(${Group.Member[${groupmembertoheal}].PctHPs}<=${bighealpoint})&&${Me.CurrentMana}>${Spell[${bigheal2}].Mana}&&${NoCures}!=1) {
 			/varset nexthealspell ${bigheal2}
-	|====Nuke Heals
-		} else /if ((${Spawn[NPC los ${Me.XTarget[1].Name}].Distance}<150)&&(${Me.SpellReady[${healnuke1}]})&&(${Spawn[${nextid}].PctHPs}<=${healpoint})&&(${Spawn[NPC ${Me.XTarget[1].Name}].PctHPs}<90)&&(${Spawn[NPC ${Me.XTarget[1].Name}].PctHPs}>10)&&${Me.PctAggro}<50&&(${Me.PctMana}>=${Manatonuke})&&(${nextid}==${Spawn[${tanktype} ${tankname}].ID})&&${Me.CurrentMana}>${Spell[${healnuke1}].Mana}) {
+		} else /if ((${Spawn[NPC los ${Me.XTarget[1].Name}].Distance}<150)&&(${Me.SpellReady[${healnuke1}]})&&(${Group.Member[${groupmembertoheal}].PctHPs}<=${healpoint})&&(${Me.XTarget[1].PctHPs}<90)&&(${Me.XTarget[1].PctHPs}>10)&&${Me.PctAggro}<50&&(${Me.PctMana}>=${Manatonuke})&&(${nextid}==${tankid})&&${Me.CurrentMana}>${Spell[${healnuke1}].Mana}) {
 			/varset nexthealspell ${healnuke1}
-		} else /if ((${Spawn[NPC los ${Me.XTarget[1].Name}].Distance}<150)&&(${Me.SpellReady[${healnuke2}]})&&(${Spawn[${nextid}].PctHPs}<=${healpoint})&&(${Spawn[NPC ${Me.XTarget[1].Name}].PctHPs}<90)&&(${Spawn[NPC ${Me.XTarget[1].Name}].PctHPs}>10)&&${Me.PctAggro}<50&&(${Me.PctMana}>=${Manatonuke})&&(${nextid}==${Spawn[${tanktype} ${tankname}].ID})&&${Me.CurrentMana}>${Spell[${healnuke2}].Mana}) {
+		} else /if ((${Spawn[NPC los ${Me.XTarget[1].Name}].Distance}<150)&&(${Me.SpellReady[${healnuke2}]})&&(${Group.Member[${groupmembertoheal}].PctHPs}<=${healpoint})&&(${Me.XTarget[1].PctHPs}<90)&&(${Me.XTarget[1].PctHPs}>10)&&${Me.PctAggro}<50&&(${Me.PctMana}>=${Manatonuke})&&(${nextid}==${tankid})&&${Me.CurrentMana}>${Spell[${healnuke2}].Mana}) {
 			/varset nexthealspell ${healnuke2}
-		} else /if ((${Me.SpellReady[${nukeheal1}]})&&(${Spawn[${Me.XTarget[1].Name}].Distance}<${Spell[${nukeheal1}].Range})&&(${Spawn[NPC los ${Me.XTarget[1].Name}].Distance}<150)&&(${Spawn[NPC ${Me.XTarget[1].Name}].PctHPs}<90)&&(${Spawn[NPC ${Me.XTarget[1].Name}].PctHPs}>10)&&${Me.PctAggro}<50&&(${Me.PctMana}>=${Manatonuke})&&(${Spawn[${nextid}].PctHPs}<=${healpoint})&&${Me.CurrentMana}>${Spell[${nukeheal1}].Mana}) {
+		} else /if ((${Me.SpellReady[${nukeheal1}]})&&(${Spawn[NPC los ${Me.XTarget[1].Name}].Distance}<150)&&(${Me.XTarget[1].PctHPs}<90)&&(${Me.XTarget[1].PctHPs}>10)&&${Me.PctAggro}<50&&(${Me.PctMana}>=${Manatonuke})&&(${Group.Member[${groupmembertoheal}].PctHPs}<=${healpoint})&&${Me.CurrentMana}>${Spell[${nukeheal1}].Mana}) {
 			/call SpellQueue "${nukeheal1}" ${Me.XTarget[1].ID}
-		} else /if ((${Me.SpellReady[${nukeheal2}]})&&(${Spawn[${Me.XTarget[1].Name}].Distance}<${Spell[${nukeheal2}].Range})&&(${Spawn[NPC los ${Me.XTarget[1].Name}].Distance}<150)&&(${Spawn[NPC ${Me.XTarget[1].Name}].PctHPs}<90)&&(${Spawn[NPC ${Me.XTarget[1].Name}].PctHPs}>10)&&${Me.PctAggro}<50&&(${Me.PctMana}>=${Manatonuke})&&(${Spawn[${nextid}].PctHPs}<=${healpoint})&&${Me.CurrentMana}>${Spell[${nukeheal2}].Mana}) {
+		} else /if ((${Me.SpellReady[${nukeheal2}]})&&(${Spawn[NPC los ${Me.XTarget[1].Name}].Distance}<150)&&(${Me.XTarget[1].PctHPs}<90)&&(${Me.XTarget[1].PctHPs}>10)&&${Me.PctAggro}<50&&(${Me.PctMana}>=${Manatonuke})&&(${Group.Member[${groupmembertoheal}].PctHPs}<=${healpoint})&&${Me.CurrentMana}>${Spell[${nukeheal2}].Mana}) {
 			/call SpellQueue "${nukeheal2}" ${Me.XTarget[1].ID}
-	|-====Remedy Lines
-		} else /if ((${Me.SpellReady[${remedyheal1}]})&&(${Spawn[${nextid}].PctHPs}<=${healpoint})&&!${remedyheal1.Equal[Complete Heal]}&&${Me.CurrentMana}>${Spell[${remedyheal1}].Mana}) {
+		} else /if ((${Me.SpellReady[${remedyheal1}]})&&(${Group.Member[${groupmembertoheal}].PctHPs}<=${healpoint})&&!${remedyheal1.Equal[Complete Heal]}&&${Me.CurrentMana}>${Spell[${remedyheal1}].Mana}) {
 			/varset nexthealspell ${remedyheal1}
-		} else /if ((${Me.SpellReady[${remedyheal1}]})&&(${Spawn[${nextid}].PctHPs}<=${healpoint})&&${remedyheal1.Equal[Complete Heal]}&&${Select[${Spawn[${nextid}].Class.ShortName},WAR,SHD,PAL]}>0&&${Me.CurrentMana}>${Spell[${remedyheal1}].Mana}) {
+		} else /if ((${Me.SpellReady[${remedyheal1}]})&&(${Group.Member[${groupmembertoheal}].PctHPs}<=${healpoint})&&${remedyheal1.Equal[Complete Heal]}&&${Select[${Group.Member[${groupmembertoheal}].Class.ShortName},WAR,SHD,PAL]}>0&&${Me.CurrentMana}>${Spell[${remedyheal1}].Mana}) {
 			/varset nexthealspell ${remedyheal1}
-		} else /if ((${Me.SpellReady[${remedyheal2}]})&&(${Spawn[${nextid}].PctHPs}<=${healpoint})&&${Me.CurrentMana}>${Spell[${remedyheal2}].Mana}) {
+		} else /if ((${Me.SpellReady[${remedyheal2}]})&&(${Group.Member[${groupmembertoheal}].PctHPs}<=${healpoint})&&${Me.CurrentMana}>${Spell[${remedyheal2}].Mana}) {
 			/varset nexthealspell ${remedyheal2}
 		}
 	/if (${Bool[${nexthealspell}]}) {
@@ -399,8 +383,8 @@ Sub HealQueue(int nextid)
 		/delay 10 ${Window[CastingWindow].Open}
 		/delay ${Math.Calc[(${Spell[${nexthealspell}].MyCastTime}*10)+5]} !${Me.Casting.ID}
 		/if (${Cast.Result.Equal[CAST_SUCCESS]}) {
-			/if ((!${EQBC.Connected} || !${Bool[${Plugin[MQ2EQBC]}]})&&${acverbose}!=0) /docommand /echo [+o+]${nexthealspell} =>> ${Spawn[${nextid}]} <<=[+x+]
-			/if (${EQBC.Connected}&&${acverbose}!=0) /docommand /bc [+o+]${nexthealspell} =>> ${Spawn[${nextid}]} <<=[+x+]
+			/if ((!${EQBC.Connected} || !${Bool[${Plugin[MQ2EQBC]}]})&&${acverbose}!=0) /docommand /echo [+o+]${nexthealspell} =>> ${groupmembertoheal} <<=[+x+]
+			/if (${EQBC.Connected}&&${acverbose}!=0) /docommand /bc [+o+]${nexthealspell} =>> ${groupmembertoheal} <<=[+x+]
 		}
 	}
 /return
@@ -410,32 +394,33 @@ Sub HealQueue(int nextid)
 |---------------------------------------------------------------------------- 
 Sub SpellQueue(string nextspell,int nextid)
 	/if (${Me.CurrentMana}<${Spell[${nextspell}].Mana}) /return
-	/if (${Spawn[ID ${nextid}].FeetWet}!=${Me.FeetWet}) /return
+	/if (!${Me.Book[${nextspell}]}) /return
 	/if (${Me.Sitting}) /stand
 	/if (${Window[SpellBookWnd]}) /book
-	/if ( !${Me.Gem[${nextspell}]} ) { 
+	
+	/if (!${Me.Gem[${nextspell}]}) { 
 		/delay 1s !${Me.Casting.ID}
-		/if (${acverbose}!=0) /echo Memming ${nextspell} to cast
 		/call MemSpells "${nextspell}" ${spellmisc}
 		/if (!${Me.XTarget[1].ID}) {
 			/delay 5s ${Me.GemTimer[${nextspell}]}==0
 			/delay 5s ${Me.SpellReady[${nextspell}]}
 		}
-    } 
-/if (${Me.SpellReady[${nextspell}]}) {
-	/if (${Target.ID}!=${Spawn[${nextid}].ID}) {
+    }
+
+	/if (${Me.SpellReady[${nextspell}]}) {
+	/if (${Target.ID}!=${nextid}) {
 		/if (${Me.Combat}) /squelch /attack off
-		/target id ${Spawn[${nextid}].ID}
-		/delay 10 ${Target.ID}==${Spawn[${nextid}].ID}
+		/target id ${nextid}
+		/delay 10 ${Target.ID}==${nextid}
+		/if (${Target.FeetWet}!=${Me.FeetWet}) /return
 	}
 	/cast "${nextspell}"
 	/delay 10 ${Window[CastingWindow].Open}
 	/delay ${Math.Calc[(${Spell[${nextspell}].MyCastTime}*10)+15]} !${Me.Casting.ID}
-	/if (((!${EQBC.Connected} || !${Bool[${Plugin[MQ2EQBC]}]})&&${acverbose}!=0)&&(${Cast.Result.Equal[CAST_SUCCESS]})) /docommand /echo [+o+]${nextspell} =>> ${Spawn[${nextid}]} <<=[+x+]
-	/if ((${EQBC.Connected}&&${acverbose}!=0)&&(${Cast.Result.Equal[CAST_SUCCESS]})) /docommand /bc [+o+]${nextspell} =>> ${Spawn[${nextid}]} <<=[+x+]
+	/if (((!${EQBC.Connected} || !${Bool[${Plugin[MQ2EQBC]}]})&&${acverbose}!=0)&&(${Cast.Result.Equal[CAST_SUCCESS]})) /docommand /echo [+o+]${nextspell} =>> ${Spawn[ID ${nextid}].Name} <<=[+x+]
+	/if ((${EQBC.Connected}&&${acverbose}!=0)&&(${Cast.Result.Equal[CAST_SUCCESS]})) /docommand /bc [+o+]${nextspell} =>> ${Spawn[ID ${nextid}].Name} <<=[+x+]
 	}
-	/varset CastResult ${Cast.Result}
-/return ${CastResult}
+/return
 
 |----------------------------------------------------------------------------
 | SUB: BuffGroup
@@ -451,66 +436,93 @@ Sub BuffGroup
 			/if (${Target.ID}&&${Target.BuffsPopulated}==TRUE&&!${Target.Aego.ID}&&!${Target.Skin.ID}&&!${Target.Symbol.ID}&&!${Spell[${Target.Buff[${GroupBuff}]}].ID}&&${GroupBuffRecast}!=1) /varset GroupBuffRecast 1
 		}
 	/next bmember
-	/if (${Spawn[${tanktype} ${tankname}].ID}) {
-		/target id ${Spawn[${tanktype} ${tankname}].ID}
-	} else {
-		/target id ${Me.ID}
-	}
 /return
 
+|----------------------------------------------------------------------------
+| SUB: HealXT
+|---------------------------------------------------------------------------- 
+Sub HealXT
+	/declare emember			int local 0
+	/declare worsthurtid		int local 0
+	/declare worsthp			int local 100
+	/declare worsthurtname		string local NULL
+	/declare nexthealspell		string local NULL
+	
+/for emember 1 to 10
+	/if (${Me.XTarget[${emember}].Type.Equal[PC]} && (!${Me.XTarget[${emember}].Hovering} || ${Me.XTarget[${emember}].Type.NotEqual[Corpse]})) {
+		/if (${Me.XTarget[${emember}].Distance}<=200 && ${Me.XTarget[${emember}].PctHPs}<=${worsthp} && ${Me.XTarget[${emember}].PctHPs}>=1) {
+		   /varset worsthurtid ${Me.XTarget[${emember}].ID}
+		   /varset worsthurtname ${Me.XTarget[${emember}].Name}
+		   /varset worsthp ${Me.XTarget[${emember}].PctHPs}
+		}
+   }
+/next emember
+
+/if (${worsthp}<=${grouphealpoint}) {
+		/if ((${Me.SpellReady[${patchheal2}]})&&(${Me.XTarget[${worsthurtname}].PctHPs}<=${patchheal2point})&&(${Me.XTarget[${worsthurtname}].PctHPs}>=1)&&${Me.XTarget}>=1&&${Me.CurrentMana}>${Spell[${patchheal2}].Mana}) {
+			/varset nexthealspell ${patchheal2}
+		} else /if ((${Me.AltAbilityReady[Burst of Life]})&&(${Me.XTarget[${worsthurtname}].PctHPs}<=${clickhealpoint})&&${ClickHealTimer}==0&&${Me.XTarget}>=1) {
+			/varset ClickHealTimer 20
+			/call AANow 7689 ${nextid}
+		} else /if ((${Me.SpellReady[${patchheal}]})&&(${Me.XTarget[${worsthurtname}].PctHPs}<=${patchhealpoint})&&(${Me.XTarget[${worsthurtname}].PctHPs}>=1)&&${Me.XTarget}>=1&&${Me.CurrentMana}>${Spell[${patchheal}].Mana}) {
+			/varset nexthealspell ${patchheal}
+		} else /if ((${Me.SpellReady[${wardspell}]})&&(${Me.XTarget[${worsthurtname}].PctHPs}<=${bighealpoint})&&${Me.XTarget[${worsthurtname}].Type.NotEqual[Pet]}&&${Me.XTarget}>=1&&!${Target.Buff[${wardspell}].ID}&&${hottimer}==0&&${Me.CurrentMana}>${Spell[${wardspell}].Mana}) {
+			/varset nexthealspell ${wardspell}
+			/varcalc hottimer ${Spell[${wardspell}].Duration.TotalSeconds}*${DurationMod}*10
+		} else /if ((${Me.SpellReady[${bigheal1}]})&&(${Me.XTarget[${worsthurtname}].PctHPs}<=${bighealpoint})&&${Me.CurrentMana}>${Spell[${bigheal1}].Mana}&&${NoCures}!=1) {
+			/varset nexthealspell ${bigheal1}
+		} else /if ((${Me.SpellReady[${bigheal2}]})&&(${Me.XTarget[${worsthurtname}].PctHPs}<=${bighealpoint})&&${Me.CurrentMana}>${Spell[${bigheal2}].Mana}&&${NoCures}!=1) {
+			/varset nexthealspell ${bigheal2}
+		} else /if ((${Spawn[NPC los ${Me.XTarget[1].Name}].Distance}<150)&&(${Me.SpellReady[${healnuke1}]})&&(${Me.XTarget[${worsthurtname}].PctHPs}<=${healpoint})&&(${Me.XTarget[1].PctHPs}<90)&&(${Me.XTarget[1].PctHPs}>10)&&${Me.PctAggro}<50&&(${Me.PctMana}>=${Manatonuke})&&(${nextid}==${tankid})&&${Me.CurrentMana}>${Spell[${healnuke1}].Mana}) {
+			/varset nexthealspell ${healnuke1}
+		} else /if ((${Spawn[NPC los ${Me.XTarget[1].Name}].Distance}<150)&&(${Me.SpellReady[${healnuke2}]})&&(${Me.XTarget[${worsthurtname}].PctHPs}<=${healpoint})&&(${Me.XTarget[1].PctHPs}<90)&&(${Me.XTarget[1].PctHPs}>10)&&${Me.PctAggro}<50&&(${Me.PctMana}>=${Manatonuke})&&(${nextid}==${tankid})&&${Me.CurrentMana}>${Spell[${healnuke2}].Mana}) {
+			/varset nexthealspell ${healnuke2}
+		} else /if ((${Me.SpellReady[${nukeheal1}]})&&(${Spawn[NPC los ${Me.XTarget[1].Name}].Distance}<150)&&(${Me.XTarget[1].PctHPs}<90)&&(${Me.XTarget[1].PctHPs}>10)&&${Me.PctAggro}<50&&(${Me.PctMana}>=${Manatonuke})&&(${Me.XTarget[${worsthurtname}].PctHPs}<=${healpoint})&&${Me.CurrentMana}>${Spell[${nukeheal1}].Mana}) {
+			/call SpellQueue "${nukeheal1}" ${Me.XTarget[1].ID}
+		} else /if ((${Me.SpellReady[${nukeheal2}]})&&(${Spawn[NPC los ${Me.XTarget[1].Name}].Distance}<150)&&(${Me.XTarget[1].PctHPs}<90)&&(${Me.XTarget[1].PctHPs}>10)&&${Me.PctAggro}<50&&(${Me.PctMana}>=${Manatonuke})&&(${Me.XTarget[${worsthurtname}].PctHPs}<=${healpoint})&&${Me.CurrentMana}>${Spell[${nukeheal2}].Mana}) {
+			/call SpellQueue "${nukeheal2}" ${Me.XTarget[1].ID}
+		} else /if ((${Me.SpellReady[${remedyheal1}]})&&(${Me.XTarget[${worsthurtname}].PctHPs}<=${healpoint})&&!${remedyheal1.Equal[Complete Heal]}&&${Me.CurrentMana}>${Spell[${remedyheal1}].Mana}) {
+			/varset nexthealspell ${remedyheal1}
+		} else /if ((${Me.SpellReady[${remedyheal1}]})&&(${Me.XTarget[${worsthurtname}].PctHPs}<=${healpoint})&&${remedyheal1.Equal[Complete Heal]}&&${Select[${Me.XTarget[${worsthurtname}].Class.ShortName},WAR,SHD,PAL]}>0&&${Me.CurrentMana}>${Spell[${remedyheal1}].Mana}) {
+			/varset nexthealspell ${remedyheal1}
+		} else /if ((${Me.SpellReady[${remedyheal2}]})&&(${Me.XTarget[${worsthurtname}].PctHPs}<=${healpoint})&&${Me.CurrentMana}>${Spell[${remedyheal2}].Mana}) {
+			/varset nexthealspell ${remedyheal2}
+		}
+	/call SpellQueue "${nexthealspell}" ${worsthurtid}
+	}
+
+/return
 |----------------------------------------------------------------------------
 | SUB: HealGroup
 |---------------------------------------------------------------------------- 
 Sub HealGroup
-
-   /declare worsthurtid		int local 0
-   /declare petworsthp 		int local 100
-   /declare worsthp 		int local 100
-   /declare priorityworsthp	int local 100
-   /declare gmember			int local 0
-   /declare emember			int local 0
-   /declare HurtMember      int local 0
-   
-   |========Extended Target Healing
-	/for emember 1 to 10
-		/if (${Spawn[pc ${Me.XTarget[${emember}]}].ID}&&${Me.XTarget[${emember}].Type.Equal[PC]} && (!${Me.XTarget[${emember}].Hovering} || ${Me.XTarget[${emember}].Type.NotEqual[Corpse]})) {
-			/if (${Me.XTarget[${emember}].Distance}<=${healspellrange}&&(${Me.XTarget[${emember}].PctHPs}<=${worsthp}) && (${Me.XTarget[${emember}].PctHPs}>=1)) {
-			   /varset worsthurtid ${Me.XTarget[${emember}].ID}
-			   /varset priorityworsthp ${Me.XTarget[${emember}].PctHPs}
-			 }
-		  }
-   /next emember
+	/declare petworsthp 		int local 100
+	/declare worsthp 			int local 100
+	/declare worsthurtid		int local 0
+	/declare worsthurtname		string local NULL
+	/declare gmember			int local 0
+	/declare HurtMember     	int local 0
+	
    /for gmember 0 to ${Group}
-	|========RESURRECTION PART
-		/if (${Spawn[${Group.Member[${gmember}]}].Type.NotEqual[Mercenary]} && (${Spawn[${Group.Member[${gmember}]}].Hovering} || ${Spawn[${Group.Member[${gmember}]}].Type.Equal[Corpse]}) && (${Me.AltAbilityReady[Blessing of Resurrection]})&&(${reztimer}==0)&&(${AutoRez}==1)&&${Group.Member[${gmember}].Distance}<=200&&(!${Me.Moving})&&(!${Me.Invis})&&${Group.Member[${gmember}].ID}!=${Me.ID}) {
-			/if (${Me.Combat}) /squelch /attack off
-			/target id ${Group.Member[${gmember}].ID}
-			/delay 5 ${Target.ID}==${Group.Member[${gmember}].ID}
-			/if (${Group.Member[${gmember}].Distance}<100) /corpse
-			/delay 10 ${Group.Member[${gmember}].Distance}<10
-			/casting "Blessing of Resurrection" alt -targetid|${Group.Member[${gmember}].ID}
-			/delay 8
-			/varset reztimer 30s
-			/varset GroupBuffRecast 1
-		} 
-		/if (${Group.Member[${gmember}].ID}==${qmtarget}&&${Me.PctMana}>60&&${Group.Member[${gmember}].PctMana}<50&&${Me.AltAbilityReady[Quiet Miracle]}&&${Group}&& (!${Group.Member[${gmember}].Hovering} || ${Spawn[${Group.Member[${gmember}]}].Type.NotEqual[Corpse]})) /call AANow 135 ${Group.Member[${gmember}].ID}
-		/if (${Group.Member[${gmember}].Distance}<=${healspellrange}&&(${Group.Member[${gmember}].PctHPs}<100)&& (!${Group.Member[${gmember}].Hovering} || ${Spawn[${Group.Member[${gmember}]}].Type.NotEqual[Corpse]})) {
+		/if (${Group.Member[${gmember}].ID}==${qmtarget}&&${Me.PctMana}>60&&${Group.Member[${gmember}].PctMana}<50&&${Me.AltAbilityReady[Quiet Miracle]}&&${Group}&& (!${Group.Member[${gmember}].Hovering} || ${Group.Member[${gmember}].Type.NotEqual[Corpse]})) /call AANow 135 ${Group.Member[${gmember}].ID}
+		/if (${Group.Member[${gmember}].Distance}<=${healspellrange}&& ${Group.Member[${gmember}].PctHPs}<100 && (!${Group.Member[${gmember}].Hovering} || ${Group.Member[${gmember}].Type.NotEqual[Corpse]})) {
 			/if ((${Group.Member[${gmember}].Distance}<100)&&(${Group.Member[${gmember}].PctHPs}<${grouphealpoint})&&(${Group.Member[${gmember}].PctHPs}>=1)) /varcalc HurtMember ${HurtMember}+1
-			/if (${Group.Member[${gmember}].PctHPs}<=${worsthp}&&((${Spawn[NPC ${Me.XTarget[1].Name}].PctHPs}<=99)||${Group.Member[${gmember}].Distance}<50)&&(${priorityworsthp}>${grouphealpoint})) {
+			/if (${Group.Member[${gmember}].PctHPs}<=${worsthp}&&((${Me.XTarget[1].PctHPs}<=99)||${Group.Member[${gmember}].Distance}<50)) {
 				/varset worsthurtid ${Group.Member[${gmember}].ID}
+				/varset worsthurtname ${Group.Member[${gmember}].Name}
 				/varset worsthp ${Group.Member[${gmember}].PctHPs}
 			}
          }
-	|========Pet Heal Logic
 		/if (${Group.Member[${gmember}].Pet.ID}) {
 			 /if (${Group.Member[${gmember}].Pet.Distance}<=${healspellrange}&&(${Group.Member[${gmember}].Pet.PctHPs}<=${worsthp})&&(${Group.Member[${gmember}].Pet.PctHPs}<=${pethealpoint})&&${pethealpoint}>0&&(${priorityworsthp}>${grouphealpoint})&&(${worsthp}>${grouphealpoint})) {         
 			   /varset worsthurtid ${Group.Member[${gmember}].Pet.ID}
+			   /varset worsthurtname ${Group.Member[${gmember}].Pet.Name}
 			   /varset petworsthp ${Group.Member[${gmember}].Pet.PctHPs}
 			 }
 		  }
    /next gmember
 |=============Main Tank Buff Check
-   /if (${Target.ID}==${Spawn[${tanktype} ${tankname}].ID}&&${Target.BuffsPopulated}==TRUE) {
+   /if (${Target.ID}==${tankid}&&${Target.BuffsPopulated}==TRUE) {
 		/if (!${Spell[${Target.Buff[${DivineBuff}]}].ID}&&${DivineBuffRecast}!=1) {
 			/varset DivineBuffRecast 1
 			/varset bufftimer 10s
@@ -527,7 +539,7 @@ Sub HealGroup
 		/if (${Spell[${Target.Buff[${TankBuffMatch}]}].ID}&&${TankBuffRecast}!=0) /varset TankBuffRecast 0
 		/if (${Target.Aego.ID}||${Target.Skin.ID}||${Target.Symbol.ID}&&${GroupBuffRecast}!=0) /varset GroupBuffRecast 0
 		}
-|============Time to Heal some folks
+|============Group Healing
     /if (${HurtMember}>=2&&${Me.AltAbilityReady[137]}&&${Group}) {
 		/call AANow 137 ${Me.ID}
 	} else /if (${HurtMember}>=2&&${Me.SpellReady[${groupfastheal}]}) {
@@ -536,12 +548,12 @@ Sub HealGroup
 		/call SpellQueue "${groupheal}" ${Me.ID}
 	} else /if (${Me.PctHPs}<=${grouphealpoint}) {
 		/call HealQueue ${Me.ID}
-	} else /if ((${usepromheals}==1)&&(${PromisedTimer}==0)&&(${Spawn[${tanktype} ${tankname}].Distance}<=${promhealrange})&&${Me.XTarget[1].ID}&&${Spawn[${tanktype} ${tankname}].ID}&&${Me.GemTimer[${promheal}]}==0&&(${Spawn[${tanktype} ${tankname}].PctHPs}>${bighealpoint})) {
-		/call SpellQueue "${promheal}" ${Spawn[${tanktype} ${tankname}].ID}
+	} else /if ((${usepromheals}==1)&&(${PromisedTimer}==0)&&(${Group.Member[${tankname}].Distance}<=${promhealrange})&&${Me.XTarget[1].ID}&&${Group.Member[${tankname}].PctHPs}>=1&&${Me.GemTimer[${promheal}]}==0&&(${Group.Member[${tankname}].PctHPs}>${bighealpoint})) {
+		/call SpellQueue "${promheal}" ${tankid}
 		/if ((${Macro.Return.Equal[CAST_SUCCESS]})||(${Macro.Return.Equal[CAST_TAKEHOLD]})) /varset PromisedTimer 21s
-	} else /if ((${Spawn[${tanktype} ${tankname}].Distance}<=${healspellrange})&&(${Spawn[${tanktype} ${tankname}].PctHPs}<=${healpoint})&&${Spawn[${tanktype} ${tankname}].ID}) {
-		/call HealQueue ${Spawn[${tanktype} ${tankname}].ID}
-	} else /if ((${Spawn[${worsthurtid}].Distance}<=${healspellrange})&&!${Me.Casting.ID}&&(${priorityworsthp}<=${grouphealpoint}||${worsthp}<=${grouphealpoint}||${petworsthp}<=${grouphealpoint})&&${Spawn[${worsthurtid}].ID}) {
+	} else /if ((${Group.Member[${tankname}].Distance}<=${healspellrange})&&(${Group.Member[${tankname}].PctHPs}<=${healpoint})&&${Group.Member[${tankname}].PctHPs}>=1) {
+		/call HealQueue ${tankid}
+	} else /if ((${Group.Member[${worsthurtname}].Distance}<=${healspellrange})&&(${worsthp}<=${grouphealpoint}||${petworsthp}<=${grouphealpoint})&&${Group.Member[${worsthurtname}].PctHPs}>=1) {
 		/call HealQueue ${worsthurtid}
 	} else /if ((${Me.Poisoned.ID}||${Me.Diseased.ID})&&${NoCures}!=1&& (${Me.AltAbilityReady[153]}||${Me.AltAbilityReady[41]}||${Me.AltAbilityReady[1062]}) && ${CureTimer}==0 && !${Me.Casting.ID}) {) {
 		/call GroupCure ${Me.ID}
@@ -549,7 +561,7 @@ Sub HealGroup
 		/call GroupCure ${Target.ID}
 	} else /if (${Target.Buff[Gift of Living Death].ID}&& ${CureTimer}==0 && !${Me.Casting.ID}) {) {
 		/call SingleCure ${Target.ID}
-	} else /if ((${DivineBuffOn}==1)&&(${DivineBuffRecast}==1)&&(!${Me.Casting.ID})&&(${Spell[${DivineBuff}].Range}>${Spawn[${tanktype} ${tankname}].Distance})&&(${Spawn[${tanktype} ${tankname}].ID})&&(!${Spawn[${tanktype} ${tankname}].Hovering})&&(${Spawn[${tanktype} ${tankname}].PctHPs}>${healpoint})&&${bufftimer}==0) {
+	} else /if ((${DivineBuffOn}==1)&&(${DivineBuffRecast}==1)&&(!${Me.Casting.ID})&&(${Spell[${DivineBuff}].Range}>${Group.Member[${tankname}].Distance})&&(${Group.Member[${tankname}].PctHPs}>=1)&&(!${Group.Member[${tankname}].Hovering})&&(${Group.Member[${tankname}].PctHPs}>${healpoint})&&${bufftimer}==0) {
 			/call DivineUsage
 	} else /if ((${Me.PctMana}>=${Manatonuke})&&(${Me.XTarget[1].ID})&&(!${Raid.Members})&&${UseMelee}==1) {
 		/call Offense
@@ -561,34 +573,28 @@ Sub HealGroup
 |----------------------------------------------------------------------------
 Sub MedTime
    /doevents
-   /if ((${Me.AltAbilityReady[Veturika's Perseverance]})&&(${Me.PctMana}<=60)&&(${Select[${Zone.ID},344,345,202]}==0)&&!${Spawn[corpse ${Me} radius 150 zradius 50].ID}) {
-		/if ((!${Me.Buff[Revival Sickness].ID}&&!${Me.Buff[Resurrection Sickness].ID})) /call AANow 798
-		/if (${Me.XTarget[1].ID}) /call AANow 798
-	} else /if ((${Me.AltAbilityReady[Quiet Miracle]})&&(${Me.PctMana}<=55)&&(${Select[${Zone.ID},344,345,202]}==0)&&!${Spawn[corpse ${Me} radius 150 zradius 50].ID}) {
-		/if ((!${Me.Buff[Revival Sickness].ID}&&!${Me.Buff[Resurrection Sickness].ID})) {
-			/call AANow 135 ${Me.ID}
-		} else /if (${Me.XTarget[1].ID}) {
-			/call AANow 135 ${Me.ID}
-		}
+   /if (${Me.AltAbilityReady[Veturika's Perseverance]}&&${Me.PctMana}<=60&&${Select[${Zone.ID},344,345,202]}==0&&${Me.XTarget[1].ID}) {
+		/call AANow 798
+	} else /if (${Me.AltAbilityReady[Quiet Miracle]}&&${Me.PctMana}<=55&&${Select[${Zone.ID},344,345,202]}==0&&${Me.XTarget[1].ID}) {
+		/call AANow 135 ${Me.ID}
 	}
-	/if (${FindItem[Transvergence].ID}&&(${Me.PctMana}<=50)) /useitem "${FindItem[Transvergence]}"
-	/if (${FindItem[Modulation].ID}&&(${Me.PctMana}<=50)) /useitem "${FindItem[Modulation]}"
-   |---Remove crap buffs
-   /if (!${Defined[meb]}) /declare meb int local 0
-   /if (!${Defined[findbuff]}) /declare findbuff string local
-   /for meb 1 to 42
-		/varset findbuff ${Me.Buff[${meb}]}
-		/if (${findbuff.Find[Strength of]}) /removebuff ${findbuff}
-		/if (${findbuff.Find[Spiritual V]}) /removebuff ${findbuff}
-		/if (${findbuff.Find[Spiritual Strength]}) /removebuff ${findbuff}
-		/if (${findbuff.Find[Spiritual Brawn]}) /removebuff ${findbuff}
-		/if (${findbuff.Find[Focus]}) /removebuff ${findbuff}
-   /next meb
-   |---SIT Check
-   /call SitCheck
+	/if (${FindItem[Transvergence].ID} && ${FindItem[Transvergence].Timer}==0 && ${Me.PctMana}<=50 && ${Me.XTarget[1].ID}) /useitem "${FindItem[Transvergence]}"
+	/if (${FindItem[Modulation].ID} && ${FindItem[Modulation].Timer}==0 && ${Me.PctMana}<=50 && ${Me.XTarget[1].ID}) /useitem "${FindItem[Modulation]}"
+|---SIT Check
+   /if ((${Me.Moving} || ${Me.XTarget[1].ID} || ${MoveTo.Moving} || ${Me.CombatState.Equal[COMBAT]} || ${Stick.Status.Equal[ON]} || ${AdvPath.Following}) && (${enablesit}==1)) /varset enablesit 0
+|--Out of Combat MedTime - Sitting
+	/if (${Me.Standing} && !${Me.Moving} && ${Stick.Status.Equal[OFF]} && !${Me.XTarget[1].ID} && !${MoveTo.Moving} && !${AdvPath.Following} && ${Me.CombatState.NotEqual[COMBAT]}&&${Me.CombatState.NotEqual[DEBUFFED]}&&${enablesit}==0&&(${Me.PctMana}<=80&&${Me.MaxMana}>1000 || ${Me.PctEndurance}<=80)) {
+		/varset enablesit 1
+	} else /if (${sittimer}==0&&${enablesit}==0&&${Me.Sitting}&&(${Me.Moving} || ${Me.XTarget[1].ID} || ${MoveTo.Moving} || ${Me.CombatState.Equal[COMBAT]} || ${Stick.Status.Equal[ON]} || ${AdvPath.Following})) {
+		/stand
+		/varset sittimer 10s
+	} else /if (${sittimer}==0&&${enablesit}==1&&!${Me.Sitting}) {
+		/sit
+		/varset sittimer 10s
+	}
    /if (${enablesit}==0&&!${Me.Mount.ID} && ${Zone.Outdoor} && ${FindItem[${mountitem}].ID} && !${Me.XTarget[1].ID} && !${MoveTo.Moving} && !${AdvPath.Following} && ${Stick.Status.Equal[OFF]} && !${Me.FeetWet} && !${Me.Invis}&&${UseMelee}!=1) {
 		/call ItemNow "${mountitem}"
-	} else /if (${enablesit}==0&&(${Me.AltAbilityReady[489]})&&(!${Me.Mount.ID})&&(!${Me.Buff[${Me.AltAbility[489].Spell}].ID})&&(${Spell[${Me.AltAbility[489].Spell}].Stacks})) {
+	} else /if (${enablesit}==0&&(${Me.XTarget[1].ID} || ${Me.CombatState.Equal[DEBUFFED]})&&(${Me.AltAbilityReady[489]})&&(!${Me.Mount.ID})&&(!${Me.Buff[${Me.AltAbility[489].Spell}].ID})&&(${Spell[${Me.AltAbility[489].Spell}].Stacks})) {
 		/call AANow 489
 	} else /if (${enablesit}==0&&(${GoMana}==0)&&(${Me.XTarget[1].ID} || ${Me.CombatState.Equal[DEBUFFED]})&&(!${Me.Mount.ID})&&(${Me.SpellReady[${yaulpspell}]})&&(!${Me.Buff[${yaulpspell}].ID})&&(${Spell[${yaulpspell}].Stacks})) {
 		/cast "${yaulpspell}"
@@ -613,7 +619,7 @@ Sub Offense
 		} else /if ((${Me.AltAbilityReady[Smite the Wicked]})&&(${Spawn[NPC id ${autotargetid}].Distance}<200)&&(${tarstring.Find[ndead]}>=2)&&(${Me.AltAbility[Smite the Wicked]})) {
 			/call AANow 711 ${autotargetid}}
 	|==Stun Nukes
-		} else /if (${Spawn[${tanktype} ${tankname}].PctHPs}>${healpoint}&&(${Me.SpellReady[${stunnuke}]})&&(${Spawn[NPC id ${autotargetid}].Distance}<${Spell[${stunnuke}].Range})&&${Spawn[NPC id ${autotargetid}].Level}<=${StunLevel}) {
+		} else /if (${Group.Member[${tankname}].PctHPs}>${healpoint}&&(${Me.SpellReady[${stunnuke}]})&&(${Spawn[NPC id ${autotargetid}].Distance}<${Spell[${stunnuke}].Range})&&${Spawn[NPC id ${autotargetid}].Level}<=${StunLevel}) {
 			/call SpellQueue "${stunnuke}" ${autotargetid}
 		}		
 	}
@@ -627,11 +633,15 @@ Sub Offense
     /declare CorpseCount int local
 	/declare GroupCorpseCount int local
     /declare RezID int local
-	/varset CorpseCount ${SpawnCount[pccorpse noalert 3 radius 100 zradius 50]}
-	/varset GroupCorpseCount ${SpawnCount[pccorpse group radius 100 zradius 50]}
+	/varset CorpseCount ${SpawnCount[pccorpse guild noalert 3 radius 100 zradius 50]}
+	/varset GroupCorpseCount ${SpawnCount[pccorpse group noalert 3 radius 100 zradius 50]}
     
     /if (${Spawn[corpse ${Me} radius 100 zradius 50].ID}) {
 		/varset RezID ${Spawn[corpse ${Me} radius 100 zradius 50].ID}
+		/target id ${RezID}
+		/delay 5 ${Target.ID}==${RezID}
+		/corpse
+		/delay 5 ${Target.Distance}<10
 		/if (${Me.AltAbilityReady[Blessing of Resurrection]}) {
 			/casting "Blessing of Resurrection" alt -targetid|${RezID}
 			/delay 8
@@ -644,20 +654,35 @@ Sub Offense
 	} else /if ((!${Me.Hovering})&&(${GroupCorpseCount}>0)) {
         /for i 1 to ${GroupCorpseCount}
 			/varset RezID ${NearestSpawn[${i},pccorpse group radius 100 zradius 50].ID}
+			/if (${Spawn[noalert 4 id ${RezID}].ID}) {
+				/target id ${RezID}
+				/delay 5 ${Target.ID}==${RezID}
+				/corpse
+				/alert add 4 corpse "${Spawn[${RezID}]}"
+			}
 			/if (${Me.AltAbilityReady[Blessing of Resurrection]}) {
 				/casting "Blessing of Resurrection" alt -targetid|${RezID}
 				/delay 8
+				/if (${Cast.Result.Equal[CAST_SUCCESS]}) /alert add 3 corpse "${Spawn[${RezID}]}"
 			} else /if ((${FindItem[${epicwand}].ID}) && (${FindItem[${epicwand}].Timer}==0)&&!${Me.AltAbility[3800]}) {
 				/casting "${epicwand}" item -targetid|${RezID}
 				/delay 10s !${Me.Casting.ID}
+				/if (${Cast.Result.Equal[CAST_SUCCESS]}) /alert add 3 corpse "${Spawn[${RezID}]}"
 			} else /if (${Me.Book[Reviviscence]}&&${Me.CurrentMana}>${Spell[Reviviscence].Mana}&&!${Me.AltAbility[Blessing of Resurrection]}) {
 				/call SpellQueue "Reviviscence" ${RezID}
+				/if (${Cast.Result.Equal[CAST_SUCCESS]}) /alert add 3 corpse "${Spawn[${RezID}]}"
 			}
         /next i      
 	|-Will not rez in Guild lobby - Guild Hall - Plane of Knowledge
 	} else /if ((!${Me.Hovering})&&(${CorpseCount}>0)&&(${Select[${Zone.ID},344,345,202]}==0)) {
         /for i 1 to ${CorpseCount}
-			/varset RezID ${NearestSpawn[${i},pccorpse noalert 3 radius 100 zradius 50].ID}
+			/varset RezID ${NearestSpawn[${i},pccorpse guild radius 100 zradius 50].ID}
+			/if (${Spawn[noalert 4 id ${RezID}].ID}) {
+				/target id ${RezID}
+				/delay 5 ${Target.ID}==${RezID}
+				/corpse
+				/alert add 4 corpse "${Spawn[${RezID}]}"
+			}
 			/if (${Me.AltAbilityReady[Blessing of Resurrection]}) {
 				/casting "Blessing of Resurrection" alt -targetid|${RezID}
 				/delay 8 !${Me.Casting.ID}
@@ -668,6 +693,7 @@ Sub Offense
 				/if (${Cast.Result.Equal[CAST_SUCCESS]}) /alert add 3 corpse "${Spawn[${RezID}]}"
 			} else /if (${Me.Book[Reviviscence]}&&${Me.CurrentMana}>${Spell[Reviviscence].Mana}&&!${Me.AltAbility[Blessing of Resurrection]}) {
 				/call SpellQueue "Reviviscence" ${RezID}
+				/if (${Cast.Result.Equal[CAST_SUCCESS]}) /alert add 3 corpse "${Spawn[${RezID}]}"
 			}
         /next i      
     }
@@ -682,10 +708,10 @@ Sub Offense
 		} else /if (!${Me.Aego.ID}&&!${Me.Skin.ID}&&!${Me.Symbol.ID}&&${Me.Book[${GroupBuff}]}&&!${Spell[${Me.Buff[${GroupBuff}]}].ID}&&${Me.CurrentMana}>${Spell[${GroupBuff}].Mana}) {
 			/call SpellQueue "${GroupBuff}" ${Me.ID}
 		} else /if (${GroupBuffRecast}==1&&${Me.Book[${GroupBuff}]}&&${bufftimer}==0&&${Me.CurrentMana}>${Spell[${GroupBuff}].Mana}) {
-			/call SpellQueue "${GroupBuff}" ${Spawn[${tanktype} ${tankname}].ID}
+			/call SpellQueue "${GroupBuff}" ${tankid}
 			/varset GroupBuffRecast 0
-		} else /if ((${TankBuffRecast}==1)&&(!${Me.Casting.ID})&&(${Spell[${TankBuff}].Range}>${Spawn[${tanktype} ${tankname}].Distance})&&(${Spawn[${tanktype} ${tankname}].ID})&&(!${Spawn[${tankname}].Hovering})&&${Me.Book[${TankBuff}]}&&${bufftimer}==0&&&&${Me.CurrentMana}>${Spell[${TankBuff}].Mana}) {
-			/call SpellQueue "${TankBuff}" ${Spawn[${tanktype} ${tankname}].ID}
+		} else /if ((${TankBuffRecast}==1)&&(!${Me.Casting.ID})&&(${Spell[${TankBuff}].Range}>${Group.Member[${tankname}].Distance})&&(${tankid})&&(!${Spawn[${tankname}].Hovering})&&${Me.Book[${TankBuff}]}&&${bufftimer}==0&&&&${Me.CurrentMana}>${Spell[${TankBuff}].Mana}) {
+			/call SpellQueue "${TankBuff}" ${tankid}
 			/varset TankBuffRecast 0
 		} else /if ((!${Me.Casting.ID})&&(${Spell[${SymbolBuff}].Range}>${Spawn[${SymbolBuffRecast}].Distance})&&(${Spawn[${SymbolBuffRecast}].ID})&&(!${Spawn[${SymbolBuffRecast}].Hovering})&&${Me.Book[${SymbolBuff}]}&&&&${Me.CurrentMana}>${Spell[${SymbolBuff}].Mana}&&${bufftimer}==0) {
 			/call SpellQueue "${SymbolBuff}" ${Spawn[${SymbolBuffRecast}].ID}
@@ -696,7 +722,7 @@ Sub Offense
 		} else /if ((!${Me.Casting.ID})&&(${Spell[${TankBuff}].Range}>${Spawn[${ShiningBuffRecast}].Distance})&&(${Spawn[${ShiningBuffRecast}].ID})&&(!${Spawn[${ShiningBuffRecast}].Hovering})&&${Me.Book[${TankBuff}]}&&${Me.CurrentMana}>${Spell[${TankBuff}].Mana}&&${bufftimer}==0) {
 			/call SpellQueue "${TankBuff}" ${Spawn[${ShiningBuffRecast}].ID}
 			/varset ShiningBuffRecast 0
-		} else /if ((${DivineBuffOn}==1)&&(${DivineBuffRecast}==1)&&(!${Me.Casting.ID})&&(${Spell[${DivineBuff}].Range}>${Spawn[${tanktype} ${tankname}].Distance})&&(${Spawn[${tanktype} ${tankname}].ID})&&(!${Spawn[${tanktype} ${tankname}].Hovering})&&${Me.Book[${DivineBuff}]}&&${bufftimer}==0&&${Me.CurrentMana}>${Spell[${DivineBuff}].Mana}) {
+		} else /if ((${DivineBuffOn}==1)&&(${DivineBuffRecast}==1)&&(!${Me.Casting.ID})&&(${Spell[${DivineBuff}].Range}>${Group.Member[${tankname}].Distance})&&(${Group.Member[${tankname}].PctHPs}>=1)&&(!${Group.Member[${tankname}].Hovering})&&${Me.Book[${DivineBuff}]}&&${bufftimer}==0&&${Me.CurrentMana}>${Spell[${DivineBuff}].Mana}) {
 			/call DivineUsage
 			/varset DivineBuffRecast 0
 		} else /if (${Bool[${aurabuff1}]} && (!${Me.Casting.ID}) && !${Me.Aura[1].Name.Find[${cleanaura1}]} && !${Me.Aura[2].Name.Find[${cleanaura1}]}&&${Me.Book[${aurabuff1}]}&&${Me.CurrentMana}>${Spell[${aurabuff1}].Mana}) {
@@ -711,8 +737,8 @@ Sub Offense
 | SUB: DA Logic 
 |----------------------------------------------------------------------------
 Sub DALogic
-	/echo Touch of the Divine detected!
 	/if (${Me.Song["Touch of the Divine"].ID}) {
+		/echo Touch of the Divine detected!
 		/removebuff Touch of the Divine
 		/delay 5 !${Me.Song["Touch of the Divine"].ID}
     }
@@ -800,7 +826,7 @@ Sub DivineUsage
 		/varset DivineBuffOn 0
 		/varset changetoini 1
 	} else {
-		/call SpellQueue "${DivineBuff}" ${Spawn[${tanktype} ${tankname}].ID}
+		/call SpellQueue "${DivineBuff}" ${tankid}
 		/if ((${Macro.Return.Equal[CAST_SUCCESS]})||(${Macro.Return.Equal[CAST_TAKEHOLD]})) /varset DivineBuffRecast 0
 	}
 /return
@@ -828,29 +854,23 @@ Sub BuffSetup
 | SUB: TankChangeCheck
 |---------------------------------------------------------------------------- 
 Sub TankChangeCheck
-	/if (!${Spawn[${tanktype} ${tankname}].ID}) {
+	/if (!${Group.Member[${tankname}].PctHPs}>=1) {
 		/if (!${Bool[${oldtank}]}) /varset oldtank ${tankname}
-		/if (!${Bool[${oldtanktype}]}) /varset oldtanktype ${tanktype}
 		/if (${Spawn[group notid ${Me.ID} radius 150].ID}) {
 			/echo Tank Gone - Switching to Nearest Group Member Alive
 			/varset tankname ${Spawn[group notid ${Me.ID} radius 150]}
-			/varset tanktype ${Spawn[group notid ${Me.ID} radius 150].Type}
 		} else {
 			/echo Tank and Group Gone - Switching to Self Heal mode
 			/varset tankname ${Me.Name}
-			/varset tanktype pc
 		}
 	}
-	/if (${Spawn[${oldtanktype} ${oldtank}].ID}) {
+	/if (${Group.Member[${oldtank}].ID}) {
 		/echo Tank is Back - Switching him back to maintank
 		/varset tankname ${oldtank}
-		/varset tanktype ${oldtanktype}
 		/varset oldtank NULL
-		/varset oldtanktype NULL
 	}
 	/if (${newtank}==1) {
 		/docommand /varset tankname ${Target.Name}
-		/docommand /varset tanktype ${Target.Type}
 		/echo Main Tank set to ${tankname}
 		/varset newtank 0
 	}

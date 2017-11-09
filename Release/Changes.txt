@@ -1,3 +1,87 @@
+Nov 08 2017 by eqmule
+- Updated for TEST
+- Updated for BETA
+- Added a new command: /usercamera - feature request by Bogreaper
+  You can use it to set the current camera as well as save/load settings for user camera 1
+  NOTE: "User Camera 1" is actually camera number 3 in the client...
+  Cameras are defined as follows:
+  0 = First Person Cam
+  1 = Overhead Cam
+  2 = Chase Cam
+  3 = User Cam 1
+  4 = User Cam 2
+  5 = Tether Cam
+  6 = Zoom Cam
+  7 = Internal Cam (don't ask, it just is ok. It is used for things like when you edit the facial features of your character etc.)
+
+  Just type /usercamera without any arguments to see help for it.
+  It will display the current active camera in the Selector Window titlebar, this can be toggled with /usercamera on/off default is on.
+  Example: switch to camrea 3 by doing /usercamera 3
+           Then, adjust it how you like it, type /usercamera save
+		   Ok, that's it, next time u want to get back to that EXACT camera position, you just do /usercamera load
+		   You can create hotkey(s) as well.
+		   Optional: you can do /usercamera save eqmule and it will save it for eqmule (or whatever your chanracter name is), same thing with load.
+		   if you omit the character name, it just saves is as a global camera.
+
+
+Nov 07 2017 by eqmule
+- Updated for BETA
+
+Nov 06 2017 by eqmule
+- Updated for BETA #2
+
+Nov 06 2017 by eqmule
+- Updated for BETA
+
+Nov 05 2017 by eqmule
+- Updated for BETA
+
+Nov 04 2017 by eqmule
+- Updated for BETA
+
+Nov 03 2017 by eqmule
+- Updated for BETA
+- Merchant Window TLO Fixed.
+
+Nov 02 2017 by eqmule
+- Updated for BETA
+
+Nov 01 2017 by eqmule
+- Updated for BETA
+
+Oct 31 2017 by eqmule
+- Updated for BETA
+
+Oct 30 2017 by eqmule
+- Updated for BETA
+
+Oct 29 2017 by eqmule
+- Updated for BETA
+
+Oct 28 2017 by eqmule
+- Updated for BETA
+
+Oct 27 2017 by eqmule
+- Updated for BETA
+
+Oct 26 2017 by eqmule
+- Updated for BETA
+
+Oct 25 2017 by eqmule
+- Updated for BETA
+
+Oct 24 2017 by demonstar55
+- Added ${Target.MyBuffDuration} it returns your buffs duration on the target.
+
+Oct 24 2017 by eqmule
+- Updated for BETA
+
+Oct 23 2017 by eqmule
+- Updated for BETA
+
+Oct 22 2017 by eqmule
+- Updated for BETA
+
 Oct 21 2017 by eqmule
 - Updated for BETA
 - Updated for TEST

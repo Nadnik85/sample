@@ -1,0 +1,291 @@
+| giveitems.mac - Sym 8.26.2017 exclusively for RedGuides.com
+| kaen01 fixed some variables, fixed the command wait loop. 10.13.2017
+|
+| Gives all tradeskill items or one of each collection item to targeted pc or banker
+| Usage: /mac giveitems
+|
+| Once running the following commands are available. Only first two characters of command are checked for ease of typing.
+|
+|/giveitem pc tradeskill
+|/giveitem pc tr
+|   Gives all tradeskill items to targeted pc, unless the item is on the exclude list
+|
+|/giveitem pc collection
+|/giveitem pc co
+|   Gives one of each collection item you have
+|
+|/giveitem exclude
+|/giveitem ex
+|   Add item on cursor to exclude list then autoinventory the item
+|
+|/giveitem banker tradeskill
+|/giveitem ba tr
+|   Opens targeted banker (if not already open) and /autobanks all tradeskill items you have, unless the item is on the exclude list
+|
+|/giveitem banker collection
+|/giveitem ba co
+|   Opens selected banker (if not already open) and /autobanks all collection items you have
+|
+| /giveitem dryrun
+| /giveitem dr
+|   Toggles dryrun mode. This just goes through the motions and tells you what would be given so you can make sure your exclude list is correct.
+|
+| /giveitem fullstacks
+| /giveitem fu
+|   Forces full stack pickups. Useful to bank all of your collection items.
+|
+| /giveitem cursor
+| /giveitem cu
+|   Uses MQ2Cursor command /cursor 1 stack on each collection item. If you don't use MQ2Cursor, ignore this.
+
+|#warning
+#bind GiveCommand	/giveitem
+
+Sub Main
+    /declare IniFile string outer giveitems.ini
+    /declare MaxInvSlots int outer 10
+    /declare Bag int outer
+    /declare Slot int outer
+    /declare ItemType int outer 0
+    /declare DryRun int outer 0
+    /declare ItemName string outer
+    /declare FullStack int outer 0
+    /declare ForceFullStack int outer 0
+    /declare Pickup int outer 0
+    
+    /echo \atGiveItems.mac :: v1.2 :: by Sym for RedGuides.com
+    /echo \atGives tradeskill or collection items to another player or bank. All options can be shorted to the first two letters for ease of typing.
+    /echo \at
+    /echo \ag/giveitem pc tradeskill\ay - Gives all tradeskill items to targeted pc, unless the item is on the exclude list
+    /echo \ag/giveitem pc collection\ay - Gives one of each collection item you have
+    /echo \ag/giveitem exclude\ay - Add item on cursor to exclude list then autoinventory the item
+    /echo \ag/giveitem banker tradeskill\ay - /autobanks all tradeskill items you have to targeted banker NPC, unless the item is on the exclude list
+    /echo \ag/giveitem banker collection\ay - /autobanks all collection items you have to targeted banker NPC
+    /echo \ag/giveitem dryrun\ay - Toggles dryrun mode. Notifies only, no actual item touching
+    /echo \ag/giveitem fullstacks\ay - Forces full stack pickups. Used to bank or give all of your collection items instead of just one.
+    /echo \ag/giveitem cursor\ay - Executes \at/cursor 1 stack\ay on each collection item. If you don't use MQ2Cursor, ignore this.
+	/echo \at
+	/echo \ay Sitting will end the macro.
+    
+    /while (${Me.Standing}) {
+		/call CommandSub
+	}
+/return
+
+Sub CommandSub
+	/doevents
+	/delay 1s
+/return
+
+
+Sub Bind_GiveCommand(string pp0,string pp1)
+			/if (${pp1.Left[2].Equal[co]}) /varset ItemType 0
+		/if (${pp1.Left[2].Equal[tr]}) /varset ItemType 1
+		
+   
+		/if (${pp0.Left[2].Equal[dr]}) {
+			/if (${DryRun}) {
+				/echo \atDryRun mode is \ar*OFF*
+				/varset DryRun 0
+			} else {
+				/echo \atDryRun mode is \ag*ON*
+				/varset DryRun 1
+			}
+		}       
+    
+		/if (${Defined[pp0]} && ${pp0.Left[2].Equal[fu]}) {
+			/if (${ForceFullStack}) {
+				/echo \atForceFullStack is \ar*OFF*
+				/varset ForceFullStack 0
+			} else {
+				/echo \atForceFullStack is \ag*ON*
+				/varset ForceFullStack 1
+			}
+		}
+
+		/if (${pp0.Left[2].Equal[pc]}) /call GiveItemsToPC
+		/if (${pp0.Left[2].Equal[ba]}) /call GiveItemsToBanker
+		/if (${pp0.Left[2].Equal[ex]}) /call ExcludeItem
+		/if (${pp0.Left[2].Equal[cu]}) /call SetCursor
+
+/return
+
+
+sub SetCursor
+    /if (${Plugin[MQ2Cursor].Name.Equal[NULL]}) {
+        /echo \arThis option only works if you have MQ2Cursor setup.
+        /return
+    }
+    /varset ItemType 0
+    /varset ForceFullStack 1
+    /for Bag ${MaxInvSlots} downto 1
+        /if (${InvSlot[pack${Bag}].Item.Container}) {
+            /if (!${Window[Pack${Bag}].Open}) /itemnotify pack${Bag} rightmouseup
+            /delay 5
+            /delay 2s ${Window[Pack${Bag}].Open}
+
+            /for Slot ${InvSlot[pack${Bag}].Item.Container} downto 1
+                /call ProcessItem
+                /if (${Cursor.ID}) {
+                    /cursor 1 st
+                    /delay 1s !${Cursor.ID}
+                    /delay 5
+                }
+            /next Slot
+        }
+    /next Bag
+    
+    /echo \agFinished setting keep/destroy
+
+/return
+
+sub GiveItemsToPC
+
+    /if (!${Target.ID} || ${Target.Type.NotEqual[PC]} || ${Target.Distance} > 24) {
+        /echo \arYou must have a close player targeted.
+        /return
+    }
+    /if (!${Window[InventoryWindow].Open}) /keypress i
+    /echo \agGiving items to ${Target.CleanName}
+    /for Bag 1 to ${MaxInvSlots}
+        /if (${InvSlot[pack${Bag}].Item.Container}) {
+            /if (!${Window[Pack${Bag}].Open}) /itemnotify pack${Bag} rightmouseup
+            /delay 5
+            /delay 2s ${Window[Pack${Bag}].Open}
+
+            /for Slot 1 to ${InvSlot[pack${Bag}].Item.Container}
+                /call ProcessItem
+
+                /if (${Cursor.ID}) {                
+                    /echo \awGiving \at${Cursor.Name}
+                    /nomodkey /click left target
+                    /delay 2s !${Cursor.ID}
+                    /delay 1s
+                    /if (${Window[TradeWnd].Child[TRDW_TradeSlot7].Tooltip.Length}) {
+                        /echo \agClicking Trade
+                        /notify TradeWnd TRDW_Trade_Button LeftMouseUp
+                        :WaitWindow
+                            /delay 1s
+                        /if (${Window[TradeWnd].Open}) /goto :WaitWindow
+                        /delay 5
+                    }   
+                }
+                /if (${DryRun} && ${Pickup} && ${ItemName.NotEqual[NULL]}) {
+                    /echo \awWould have given \at${ItemName}
+                }
+            /next Slot
+        }
+    /next Bag
+
+    /if (${Window[TradeWnd].Open}) {
+        /echo \agClicking Trade
+        /notify TradeWnd TRDW_Trade_Button LeftMouseUp
+    }
+
+    /echo \agFinished giving items to ${Target.CleanName}
+        
+    
+/return
+
+sub GiveItemsToBanker
+    /if (!${Target.ID} || ${Target.Type.NotEqual[NPC]} || ${Target.Distance} > 24) {
+        /if (!${Window[BigBankWnd].Open}) {
+            /echo \arYou must have a close banker targeted.
+            /return
+        }
+    }
+    
+    /if (!${Window[BigBankWnd].Open}) {
+        /nomodkey /click right target
+        /delay 1s
+        /delay 2s ${Window[BigBankWnd].Open}
+    }
+    /if (!${Window[BigBankWnd].Open}) {
+        /echo \arBank window isn't opening. Please open it manually.
+        /return
+    }
+
+    /if (!${Window[InventoryWindow].Open}) /keypress i
+    /varset FullStack 1
+
+    /echo \agDepositing items into bank
+    /for Bag 1 to ${MaxInvSlots}
+        /if (${InvSlot[pack${Bag}].Item.Container}) {
+            /if (${Cursor.ID}) {
+                /echo \arLooks like we are out of bank space
+                /return
+            }
+            /if (!${Window[Pack${Bag}].Open}) /itemnotify pack${Bag} rightmouseup
+            /delay 5
+            /delay 2s ${Window[Pack${Bag}].Open}
+
+            /for Slot 1 to ${InvSlot[pack${Bag}].Item.Container}
+                /call ProcessItem
+                /if (${Cursor.ID}) {                
+                    /echo \awDeposting \at${Cursor.Name}
+                    /autobank
+                    /delay 2s !${Cursor.ID}
+                    /delay 1s
+                }
+                /if (${DryRun} && ${Pickup} && ${ItemName.NotEqual[NULL]}) {
+                    /echo \awWould have Deposited \at${ItemName}
+                }
+            /next Slot
+        }
+    /next Bag
+
+    /echo \agFinished depositing items into bank.
+        
+    
+/return
+
+sub ProcessItem
+    
+    
+    /varset Pickup 0
+    /varset ItemName NULL
+    /if (${ItemType} == 0 && ${InvSlot[pack${Bag}].Item.Item[${Slot}].Collectible}) {
+        
+        /if (${ForceFullStack}) {
+            /varset FullStack 1
+        } else {
+            /varset FullStack 0
+        }
+        /varset Pickup 1
+    }
+    
+    /if (${ItemType} == 1 && ${InvSlot[pack${Bag}].Item.Item[${Slot}].Tradeskills}) {
+        /varset FullStack 1
+        /varset Pickup 1
+    }
+    
+    /if (${Pickup}) {
+        /varset ItemName ${InvSlot[pack${Bag}].Item.Item[${Slot}].Name}
+        /if (${Ini[${IniFile},ExcludedItems,${ItemName}]}) {
+            /varset ItemName NULL
+        } else {
+            /if (!${DryRun}) {
+                /if (${FullStack}) {
+                    /nomodkey /shiftkey /itemnotify in pack${Bag} ${Slot} leftmouseup
+                } else {
+                    /nomodkey /ctrlkey /itemnotify in pack${Bag} ${Slot} leftmouseup
+                }
+                
+                /delay 1s ${Cursor.ID}
+            }
+        }
+    }
+/return
+
+sub ExcludeItem
+
+    /if (!${Cursor.ID}) {
+        /echo \arPut an item on your cursor first!
+        /return
+    }
+    
+    /ini ${IniFile} ExcludedItems "${Cursor.Name}" 1
+    /echo \atAdded \ag${Cursor.Name}\at as excluded tradeskill item to ${IniFile}.
+    /autoinv
+
+/return

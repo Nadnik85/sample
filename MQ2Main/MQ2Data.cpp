@@ -2097,9 +2097,15 @@ TLO(dataAlert)
 }
 TLO(dataPointMerchant)
 {
+#if defined(BETA) || defined(TEST)
+	if (pMerchantWnd)
+	{
+		Ret.Ptr = pMerchantWnd;
+#else
 	if (pPointMerchantWnd)
 	{
 		Ret.Ptr = pPointMerchantWnd;
+#endif
 		Ret.Type = pPointMerchantType;
 		return true;
 	}

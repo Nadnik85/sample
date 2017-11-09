@@ -97,7 +97,7 @@ extern CRITICAL_SECTION gPluginCS;
 //we default to LIVE though...
 #else
 //define LIVE, TEST, BETA or EMU here depending on which eqgame you are building for. -eqmule sep 27 2014
-#define LIVE
+#define BETA
 #endif
 #if defined(LIVE)
 #include "eqgame.h"
@@ -850,11 +850,6 @@ LEGACY_API BOOL Calculate(PCHAR szFormula, DOUBLE& Dest);
 //#define MAX_ITEM4xx             416
 
 //#define MAX_WEAPONS             0x000000ff
-
-#ifndef ISXEQ
-#define MQ2AUTH(z) EQLIB_API VOID z(DWORD x);
-#include "MQ2Auth0.h"
-#endif
 
 EQLIB_API VOID memchecks_tramp(PCHAR, DWORD, PVOID, DWORD, BOOL);
 EQLIB_API VOID memchecks(PCHAR, DWORD, PVOID, DWORD, BOOL);

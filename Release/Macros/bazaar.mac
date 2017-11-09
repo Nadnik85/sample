@@ -43,7 +43,8 @@
 |* BuyPriceMin=50
 |* BuyPriceMax=125
 | ************************************************************************
-
+	#turbo 50
+	#warning
 	#include bazaar.inc
 
 	#Event NotGold "#*#Your ability to sell in the bazaar has been disabled because you do not have the membership level required#*#"
@@ -66,7 +67,7 @@
 | - Set UpdateOn to 0 update prices just once then end macro
 | - Set UpdateSpam to 1 to /echo countdown every 5 min until next price update
 	/declare UpdateOn            int         outer   1
-	/declare UpdateInterval      int         outer   90
+	/declare UpdateInterval      int         outer   500
 	/declare UpdateSpam          int         outer   1
 | - Variable to set no priced items with /mac bazaar trader initprice
 	/declare InitialPrice        int         outer   5000
@@ -162,7 +163,7 @@
 		/delay 10
 		/if (${itemname.Find[,]}) {
 			/echo ${itemname} has a comma in the name, skipping, set manually ...
-			/goto :nextslot
+			/continue
 		}
 		/echo Searching bazaar for - ${itemname}
 	| Check /skip for duplicate items in inventory
@@ -170,7 +171,7 @@
 			/for dupecheck 0 to ${Math.Calc[${slot}-1]}
 				/if (${itemname.Equal[${Window[BZW_BazaarSlotsWnd].Child[BZR_BazaarSlot${dupecheck}].Tooltip}]}) {
 					/echo ... Already priced skipping.
-					/goto :nextslot
+					/continue
 				}
 			/next dupecheck
 		}
@@ -207,7 +208,7 @@
 				/varset targetstr ${Ini[bazaar.ini,"${itemname}", SellPriceMax]}
 				/goto :setPrice
 			} else {
-				/goto :nextslot
+				/continue
 			}
 		}
 		/for result 1 to ${Bazaar.Count}
@@ -225,7 +226,7 @@
 	| If ${Bazaar.Item[${result}].Price} is 160pp mq2 shows it as 160000. 160000/1000=160
 		/varcalc  minprice ${minprice}/1000
 	| if minprice =1 i.e lowest price found was 1 pp varccalc rounds down set minprice to 2
-		/if (${B}==1) /varset minprice 2
+		/if (${minprice}==1) /varset minprice 2
 	| Set minSellPrice to ini file SellPriceMin if exists and not default (1)
 		/if (${Ini[bazaar.ini,"${itemname}",SellPriceMin]}>1) {
 			/varset minSellPrice ${Ini[bazaar.ini,"${itemname}",SellPriceMin]}
@@ -245,8 +246,8 @@
 			/varset targetstr ${maxSellPrice}
 			/goto :setPrice
 		}
-	| If lowest price found is between 1 and 499999 continue
-		/if (${minprice}<500000 && ${minprice}>0) {
+	| If lowest price found is between 1 and 2 mil continue
+        /if (${minprice}<=2000000 && ${minprice}>0) {
 		| If lowest price found is below 100 pp set var to lowest price found -1
 			/if (${minprice}<100) {
 				/varset targetstr ${Math.Calc[${minprice}-1]}
@@ -294,7 +295,7 @@
 :doneupdating
 	/call TraderStatus On
 :cycleloop
-	/if (${GameState.Equal[CHARSELECT]}) /endmac
+	/if (${EverQuest.GameState.Equal[CHARSELECT]}) /keypress ENTER
 	/if (${UpdateSpam}) /echo *** ${looptimer} minutes until next price check/update. ***
 	/call CloseBazSrchWnd
 	/if (${AnnounceOn} && ${looptimer}==${UpdateInterval}) /call Announcement
@@ -515,7 +516,7 @@
 	/delay 1s
 	/if (${itemname.Find[,]}) {
 		/echo ${itemname} has a comma in the name, skipping, set manually ...
-		/goto :nextslot
+		/continue
 	}
 	/if (${curprice}==0) {
 		/echo Price not set for item (${itemname}).
@@ -546,7 +547,7 @@
 	} else {
 		/echo Price set to: (${curprice} pp), skipping price init.
 	}
-	/goto :nextslot
+	/continue
 :donewithslots
 	/call CloseBazSrchWnd
 	/return
@@ -580,14 +581,14 @@
 	/varset itemname ${Window[BazaarWnd].Child[BZR_BazaarSlot${slot}].Tooltip}
 	/if (${itemname.Find[,]}) {
 		/echo ${itemname} has a comma in the name, skipping, set manually ...
-		/goto :nextslot
+		/continue
 	}
 	/echo Creating entry for - ${itemname}
 	/ini bazaar.ini "${itemname}" "SellPriceMin" ${SellPriceMin}
 	/ini bazaar.ini "${itemname}" "SellPriceMax" ${SellPriceMax}
 	/ini bazaar.ini "${itemname}" "BuyPriceMin" ${BuyPriceMin}
 	/ini bazaar.ini "${itemname}" "BuyPriceMax" ${BuyPriceMax}
-	/goto :nextslot
+	/continue
 	/return
 |-------------------------------------------------------------|
 | Sub Announcement
