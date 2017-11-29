@@ -2472,7 +2472,7 @@ VOID Cast(PSPAWNINFO pChar, PCHAR szLine)
 						if (pInvSlotMgr) {
 							if (CInvSlot *pSlot = pInvSlotMgr->FindInvSlot(pItem->GlobalIndex.Index.Slot1))
 							{
-								CXPoint p; p.A = 0; p.B = 0;
+								CXPoint p; p.X = 0; p.Y = 0;
 								pSlot->HandleRButtonUp(&p);
 							}
 						}
@@ -4550,6 +4550,44 @@ VOID UserCameraCmd(PSPAWNINFO pChar, char *szLine)
 		GetPrivateProfileString("User Camera 1", "Zoom", ftoa_s(pUserCam1->Zoom, szTemp),szOut,2048,szIniFile);
 		pUserCam1->Zoom = (float)atof(szOut);
 		*(DWORD*)CDisplay__cameraType = EQ_USER_CAM_1;
+	}
+}
+// ***************************************************************************
+// Function:    MapZoomCmd
+// Description: '/mapzoom' command
+// Purpose:     Adds the ability to set the maps zoom from commandline.
+// Usage:		/mapzoom <float>
+// Example:		/mapzoom 750
+// Author:      EqMule
+// ***************************************************************************
+VOID MapZoomCmd(PSPAWNINFO pChar, char *szLine)
+{
+	// Added a new command: /mapzoom - feature request by Bogreaper
+	// It sets the maps zoom.
+	// Example: /mapzoom 750
+	WriteChatf("not implemented yet");
+	return;
+	if(szLine && szLine[0]=='\0') {
+		WriteChatf("Usage: /mapzoom <float>\nExample: /mapzoom 750");
+		return;
+	}
+	float fZoom = (float)atof(szLine);
+	if (fZoom <= 0)
+		fZoom = 1000;
+	typedef struct _sMapViewMap
+	{
+		FLOAT MapViewMinX;
+		FLOAT MapViewMinY;
+		FLOAT MapViewMaxX;
+		FLOAT MapViewMaxY;
+	}sMapViewMap,*PsMapViewMap;
+	if (PEQMAPWINDOW pMap = (PEQMAPWINDOW)pMapViewWnd) {
+		PsMapViewMap pMapView = (PsMapViewMap)&pMap->pMapViewMapVfTable;
+		float fTemp = fabsf(pMapView->MapViewMaxX - pMapView->MapViewMinX);
+		//todo: get the formulae right...
+		float theabs = fTemp / 360.0f / (fZoom + 1) * 10000;
+		int Range = (int)fTemp;
+		((MapViewMap*)pMapView)->SetZoom(theabs);
 	}
 }
 #endif

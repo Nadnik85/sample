@@ -438,6 +438,7 @@ enum ePetCommandType
 class CXStr
 {
 public:
+EQLIB_OBJECT operator const char*(void);
 EQLIB_OBJECT CXStr::~CXStr(void);
 EQLIB_OBJECT CXStr::CXStr(char const *);
 EQLIB_OBJECT CXStr::CXStr(char const *,int);
@@ -511,6 +512,7 @@ class CXWnd
 {
 public:
 	//CXWnd::CXWnd() {};
+EQLIB_OBJECT void CXWnd::dCXWnd(void);
 EQLIB_OBJECT CXWnd * CXWnd::SetParent(CXWnd *);
 EQLIB_OBJECT enum UIType CXWnd::GetType();
 EQLIB_OBJECT class CXMLData * CXWnd::GetXMLData();
@@ -569,7 +571,7 @@ EQLIB_OBJECT static int __cdecl CXWnd::DrawRaisedRect(class CXRect,class CXRect)
 EQLIB_OBJECT static int __cdecl CXWnd::DrawSunkenRect(class CXRect,class CXRect);
 EQLIB_OBJECT void CXWnd::Bottom(void);
 EQLIB_OBJECT void CXWnd::BringChildWndToTop(class CXWnd *);
-EQLIB_OBJECT void CXWnd::BringToTop(bool);
+EQLIB_OBJECT void CXWnd::BringToTop(bool bRecurse = true);
 EQLIB_OBJECT void CXWnd::Center(void);
 EQLIB_OBJECT void CXWnd::ClrFocus(void);
 EQLIB_OBJECT int CXWnd::Destroy(void);
@@ -655,7 +657,10 @@ EQLIB_OBJECT static class CXWndManager * & CXWnd::sm_pMgr;
 // private
 EQLIB_OBJECT static unsigned char CXWnd::sm_byCurrentAlpha;
 EQLIB_OBJECT int CXWnd::SetFont(void*);
-
+	int GetHScrollRange() const {return HScrollMax;}
+	int GetVScrollRange() const {return VScrollMax;}
+	int GetHScrollPos() const {return HScrollPos;}
+	int GetVScrollPos() const {return VScrollPos;}
 CXW;
 
 };
@@ -665,6 +670,9 @@ CXW;
 class CSidlScreenWnd
 {
 public:
+	void SetStyle(DWORD Style) {WindowStyle = Style;}
+	DWORD GetStyle() const {return WindowStyle;}
+	int GetContextMenuIndex() { return ContextMenuID; }
 EQLIB_OBJECT enum UIType CSidlScreenWnd::GetType();
 EQLIB_OBJECT class CXMLData * CSidlScreenWnd::GetXMLData();
 EQLIB_OBJECT class CXWnd * CSidlScreenWnd::GetChildItem(PCHAR Name);
@@ -672,7 +680,7 @@ EQLIB_OBJECT CSidlScreenWnd::CSidlScreenWnd() {};
 EQLIB_OBJECT CSidlScreenWnd::CSidlScreenWnd(class CXWnd *,class CXStr);
 EQLIB_OBJECT CSidlScreenWnd::CSidlScreenWnd(class CXWnd *pWnd,class CXStr *Template,int Flags,int unknown4, char *unknown5);
 EQLIB_OBJECT CSidlScreenWnd::CSidlScreenWnd(class CXWnd *,unsigned __int32,class CXRect,class CXStr);
-EQLIB_OBJECT class CScreenPieceTemplate * CSidlScreenWnd::GetSidlPiece(class CXStr*, int dummy=1)const;
+EQLIB_OBJECT CScreenPieceTemplate *CSidlScreenWnd::GetSidlPiece(class CXStr*, bool bTopLevel=true)const;
 EQLIB_OBJECT class CXRect CSidlScreenWnd::GetSidlPieceRect(class CScreenPieceTemplate *,class CXRect)const;
 EQLIB_OBJECT class CXWnd *CSidlScreenWnd::GetChildItem(CXStr const &, bool bDebug);
 EQLIB_OBJECT int CSidlScreenWnd::DrawSidlPiece(class CScreenPieceTemplate *,class CXRect,class CXRect)const;
@@ -1345,8 +1353,8 @@ EQLIB_OBJECT CChatWindow::CChatWindow(class CXWnd *);
 EQLIB_OBJECT class CEditWnd * CChatWindow::GetInputWnd(void);
 EQLIB_OBJECT class CStmlWnd * CChatWindow::GetOutputWnd(void);
 EQLIB_OBJECT class CXStr CChatWindow::GetInputText(void);
-EQLIB_OBJECT void CChatWindow::AddHistory(class CXStr);
-EQLIB_OBJECT void CChatWindow::AddOutputText(class CXStr,int);
+EQLIB_OBJECT void CChatWindow::AddHistory(CXStr *pText);
+EQLIB_OBJECT void CChatWindow::AddOutputText(PCXSTR,int);
 EQLIB_OBJECT void CChatWindow::Clear(void);
 EQLIB_OBJECT void CChatWindow::HistoryBack(void);
 EQLIB_OBJECT void CChatWindow::HistoryForward(void);
@@ -1620,12 +1628,27 @@ EQLIB_OBJECT void CContainerWnd::Init(void);
 
 
 
-class CContextMenuManager
+class CContextMenuManager : public CXWnd
 {
 public:
+	CXWnd *pParentMenuWnd;
+    CContextMenu *pCurrMenus[8];
+    int		NumVisibleMenus;
+    int		CurrMenu;
+    CContextMenu	*pMenus[0x400];
+    int		NumMenus;
+    CXWnd*	pHandlerWnd;
+    int		HandlerCmd;
+    int		DefaultMenuIndex;
+	int		DefaultHelpItem;
+    int		DefaultBGItem;
+    int		DefaultMinItem;
+    int		DefaultCloseItem;
+    int		DefaultLockItem;
+	int		DefaultEscapeItem;
 EQLIB_OBJECT CContextMenuManager::CContextMenuManager(class CXWnd *,unsigned __int32,class CXRect);
 EQLIB_OBJECT int CContextMenuManager::AddMenu(class CContextMenu *);
-EQLIB_OBJECT int CContextMenuManager::GetDefaultMenuIndex(void);
+EQLIB_OBJECT int GetDefaultMenuIndex() { return DefaultMenuIndex; }
 EQLIB_OBJECT CContextMenu *CContextMenuManager::GetMenu(int);
 EQLIB_OBJECT int CContextMenuManager::HandleWindowMenuCommands(class CXWnd *,int);
 EQLIB_OBJECT int CContextMenuManager::PopupMenu(int,class CXPoint const &,class CXWnd *);
@@ -2002,6 +2025,13 @@ EQLIB_OBJECT void CEditWnd::FillIndexArray(class CXStr)const;
 EQLIB_OBJECT void CEditWnd::FilterInputStr(class CXStr &);
 EQLIB_OBJECT void CEditWnd::ProcessText(void);
 };
+
+class UniversalChatProxy
+{
+public:
+	EQLIB_OBJECT char *UniversalChatProxy::GetChannelName(int channelNumber);
+};
+
 enum eBitmapType
 {
 	eBT_Normal,
@@ -2143,7 +2173,7 @@ EQLIB_OBJECT float CEverQuest::ReadClientINIFloat(char *,char *,float);
 EQLIB_OBJECT int CEverQuest::BeingIgnored(char *);
 EQLIB_OBJECT int CEverQuest::DoLogin(struct HWND__ *,struct HINSTANCE__ *);
 EQLIB_OBJECT int CEverQuest::GetCombatSound(class EQPlayer *,class EQPlayer *);
-EQLIB_OBJECT int CEverQuest::GetCurrentLanguage(void);
+EQLIB_OBJECT int CEverQuest::GetCurrentLanguage(void)const;
 EQLIB_OBJECT int CEverQuest::HandleItems(void *,int);
 EQLIB_OBJECT int CEverQuest::IsFriend(char const *);
 EQLIB_OBJECT int CEverQuest::IsValidName(char *);
@@ -3250,9 +3280,12 @@ EQLIB_OBJECT CKeyCXStrValueInt32::CKeyCXStrValueInt32(void);
 //size 0x200 see 8D5699 in Aug 10 2017 Live -eqmule
 //size 0x210 see 8DCE59 in Sep 11 2017 Test -eqmule
 //size 0x200 see 668D5B in Oct 17 2017 Live -eqmule
-class CLabelWnd : public CXWnd
+class CLabelWnd// : public CXWnd
 {
 public:
+EQLIB_OBJECT CLabelWnd::CLabelWnd(CXWnd *pParent, unsigned __int32 ID, const CXRect *rect);
+/*0x000*/ PCXWNDVFTABLE pvfTable;
+/*0x004*/ CXW_NO_VTABLE
 /*0x1e0*/ bool bNoWrap;
 /*0x1e1*/ bool bAlignRight;
 /*0x1e2*/ bool bAlignCenter;
@@ -3279,7 +3312,7 @@ public:
 /*0x204*/ int Unknown0x204;
 #endif
 /*0x208*/
-EQLIB_OBJECT CLabel::CLabel(class CXWnd *,unsigned __int32,class CXRect,int);
+EQLIB_OBJECT CLabel::CLabel(class CXWnd *pParent,unsigned __int32 id,CXRect *rect,int eqtype = 0);
 EQLIB_OBJECT void CLabel::SetAlignCenter(bool);
 EQLIB_OBJECT void CLabel::SetAlignRight(bool);
 EQLIB_OBJECT void CLabel::SetNoWrap(bool);
@@ -3381,11 +3414,25 @@ struct SListWndCell
 	bool bOnlyDrawTexture;
 	CXWnd *pWnd;
 };
+struct SListWndCell_RO
+{
+    CTextureAnimation *pTA;
+    struct _CXSTR *Text;
+    COLORREF Color;
+	bool bOnlyDrawTexture;
+	CXWnd *pWnd;
+};
 struct TreeData
 {
 	TreeData() : Depth(0), bIsExpandable(false) {}
 	int		Depth;
 	bool	bIsExpandable;
+};
+struct TreeData_RO
+{
+/*0x00*/ int		Depth;
+/*0x04*/ bool	bIsExpandable;
+/*0x08*/
 };
 struct SListWndLine
 {
@@ -3403,7 +3450,23 @@ struct SListWndLine
 	bool	bVisible;
 	SListWndLine() : Data(0), Height(-1), bSelected(false), bEnabled(true), bVisible(true) {
 	}
-
+};
+struct SListWndLine_RO
+{
+/*0x00*/ ArrayClass_RO<SListWndCell_RO> Cells;
+#ifdef EMU
+/*0x10*/ UINT	Data;
+#else
+/*0x10*/ unsigned __int64	Data;
+#endif
+/*0x18*/ int		Height;
+/*0x1c*/ bool	bSelected;
+/*0x1d*/ bool	bEnabled;
+/*0x20*/ TreeData_RO Treedata;
+/*0x28*/ CHAR	TooltipText[0x100];
+/*0x128*/ bool	bVisible;
+/*0x12C*/ int Filler0x12C;
+/*0x130*/
 };
 struct SListWndColumn
 {
@@ -3442,6 +3505,28 @@ struct SListWndColumn
 		TextureOffset = textureOffset;
 	}
 };
+struct SListWndColumn_RO
+{
+/*0x00*/	int	Width;
+/*0x04*/	int	MinWidth;
+/*0x08*/	SIZE	TextureSize;
+/*0x10*/	POINT	TextureOffset;
+/*0x18*/    PCXSTR	StrLabel;
+#ifdef EMU
+/*0x20*/    UINT	Data;
+#else
+/*0x20*/    unsigned __int64	Data;
+#endif
+/*0x28*/    UINT	Flags;
+/*0x2c*/	UINT	Type;
+/*0x30*/    CTextureAnimation	*pTextureAnim;
+/*0x34*/	CTextureAnimation	*pSelected;
+/*0x38*/	CTextureAnimation	*pMouseOver;
+/*0x3c*/	PCXSTR	Tooltip;
+/*0x40*/	bool	bResizeable;
+/*0x44*/	int Filler0x44;
+/*0x48*/
+};
 //Size is 0x298 in eqgame Sep 11 2017 Test (see 8D1D4C) eqmule
 class CListWnd//ok Look... this SHOULD inherit CXWnd but doing so... calls the constructor, and we dont want that... so... : public CXWnd
 {
@@ -3455,11 +3540,11 @@ public:
 //anything useful in the debugger sometimes if you cursor over it and expand it...
 //So... list->ItemsArray.m_array[0].Cells.m_array[1] might display something
 //while list->ItemsArray.m_array[0].Cells.m_array[0] might not -eqmule
-#if defined(TEST) || defined(LIVE) || defined(BETA)
+#ifndef EMU
 /*0x1f0*/ int Filler0x1f0;
 #endif
-/*0x1f4*/ ArrayClass_RO<SListWndLine> ItemsArray; //see CListWnd__GetItemData_x 0x8BD768                 add     ecx, 1F4h
-/*0x204*/ ArrayClass_RO<SListWndColumn> Columns;
+/*0x1f4*/ ArrayClass_RO<SListWndLine_RO> ItemsArray; //see CListWnd__GetItemData_x 0x8BD768                 add     ecx, 1F4h
+/*0x204*/ ArrayClass_RO<SListWndColumn_RO> Columns;
 /*0x214*/ int	CurSel;
 /*0x218*/ int	CurCol;
 /*0x21c*/ int	DownItem;
@@ -3505,20 +3590,21 @@ EQLIB_OBJECT class CXRect CListWnd::GetSeparatorRect(int)const;
 EQLIB_OBJECT class CXStr CListWnd::GetColumnLabel(int)const;
 EQLIB_OBJECT class CXStr *CListWnd::GetItemText(class CXStr *,int,int)const;
 EQLIB_OBJECT int CListWnd::AddColumn(class CXStr,class CTextureAnimation *,int,unsigned __int32,unsigned __int32,class CTextureAnimation *,class CTextureAnimation *);
-EQLIB_OBJECT int CListWnd::AddColumn(class CXStr,int,unsigned __int32,unsigned __int32);
+EQLIB_OBJECT int CListWnd::AddColumn(CXStr *Label,int Width,unsigned __int32 Flags,unsigned __int32 Type = 3/*icon type*/);
 EQLIB_OBJECT int CListWnd::AddLine(SListWndLine *);
 #ifndef EMU
-EQLIB_OBJECT int CListWnd::AddString(CXStr *str,COLORREF cref, unsigned __int32 data,class CTextureAnimation const *pta, const char * p5 = 0, bool bdebug = false);
+EQLIB_OBJECT int CListWnd::AddString(CXStr *str, COLORREF cref, unsigned __int32 data = 0, CTextureAnimation *pta = NULL, char* tooltipstr = NULL, bool bDebug = false);
 #else
 EQLIB_OBJECT int CListWnd::AddString(CXStr *,unsigned long,unsigned __int32,class CTextureAnimation const *, const char* p5 = 0);
 #endif
-EQLIB_OBJECT int CListWnd::AddString(char *,unsigned long,unsigned __int32,class CTextureAnimation const *, const char* p5 = 0);
+EQLIB_OBJECT void CListWnd::SetItemWnd(int ItemID, int SubItemID, CXWnd *pWnd);
+EQLIB_OBJECT int CListWnd::AddString(char *,unsigned long,unsigned __int32,CTextureAnimation *, const char* p5 = 0);
 EQLIB_OBJECT int CListWnd::GetColumnJustification(int)const;
 EQLIB_OBJECT int CListWnd::GetColumnMinWidth(int)const;
 EQLIB_OBJECT int CListWnd::GetColumnWidth(int)const;
 EQLIB_OBJECT int CListWnd::GetCurCol(void)const;
 EQLIB_OBJECT int CListWnd::GetCurSel(void)const;
-EQLIB_OBJECT int CListWnd::GetItemAtPoint(CXPoint *pt)const;
+EQLIB_OBJECT int CListWnd::GetItemAtPoint(POINT *pt)const;
 EQLIB_OBJECT int CListWnd::GetItemHeight(int)const;
 EQLIB_OBJECT unsigned __int32 CListWnd::GetColumnFlags(int)const;
 EQLIB_OBJECT unsigned __int32 CListWnd::GetItemData(int)const;
@@ -3547,7 +3633,7 @@ EQLIB_OBJECT void CListWnd::SetItemData(int ID,unsigned __int32 Data, BOOL bSome
 #else
 EQLIB_OBJECT void CListWnd::SetItemData(int ID, unsigned __int32 Data);
 #endif
-EQLIB_OBJECT void CListWnd::SetItemText(int,int,class CXStr *);
+EQLIB_OBJECT void CListWnd::SetItemText(int ID,int SubID,class CXStr *Text);
 EQLIB_OBJECT void CListWnd::ShiftColumnSeparator(int,int);
 EQLIB_OBJECT void CListWnd::ToggleSel(int);
 // virtual
@@ -3576,24 +3662,70 @@ EQLIB_OBJECT int CListWnd::WndNotification(class CXWnd *,unsigned __int32,void *
 //EQLIB_OBJECT void * CListWnd::`vector deleting destructor'(unsigned int);
 EQLIB_OBJECT void CListWnd::DeleteAll(void);
 EQLIB_OBJECT void CListWnd::Sort(void);
+EQLIB_OBJECT void CListWnd::SetColumnsSizable(bool bColumnsSizable);
+EQLIB_OBJECT void CListWnd::GetWndPosition(CXWnd *pWnd, int &ItemID, int &SubItemID)const;
 };
 //Size is 0x290 in eagame 2016 Nov 14 eqmule
-class CContextMenu : public CListWnd
+class CContextMenu// cant do this it calls the constructor if we create a menu so no... : public CListWnd
 {
 public:
+//we include the CListWnd class manually instead... it has a CXWnd first...
+/*0x000*/ PCCONTEXTMENUVFTABLE pvfTable;
+/*0x004*/ CXW_NO_VTABLE
+#if !defined(EMU)
+/*0x1e0*/ int Filler0x1e0;
+#endif
+/*0x1e4*/ ArrayClass_RO<SListWndLine_RO> ItemsArray; //see CListWnd__GetItemData_x 0x8BD768                 add     ecx, 1F4h
+/*0x1f4*/ ArrayClass_RO<SListWndColumn_RO> Columns;
+/*0x204*/ int	CurSel;
+/*0x208*/ int	CurCol;
+/*0x20c*/ int	DownItem;
+/*0x210*/ int	ScrollOffsetY;
+/*0x214*/ int	HeaderHeight;
+/*0x218*/ int	FirstVisibleLine;
+/*0x21c*/ int	SortCol;
+/*0x220*/ bool	bSortAsc;
+/*0x221*/ bool	bFixedHeight;
+/*0x222*/ bool	bOwnerDraw;
+/*0x223*/ bool	bCalcHeights;
+/*0x224*/ bool	bColumnSizable;
+/*0x228*/ int	LineHeight;
+/*0x22c*/ int	ColumnSepDragged;
+/*0x230*/ int	ColumnSepMouseOver;
+/*0x234*/ COLORREF	HeaderText;
+/*0x238*/ COLORREF	Highlight;
+/*0x23c*/ COLORREF	Selected;
+/*0x240*/ CUITextureInfo2	BGHeader;//size 0x18
+/*0x258*/ COLORREF	BGHeaderTint;
+/*0x25c*/ CTextureAnimation	*pRowSep;
+/*0x260*/ CTextureAnimation	*pColumnSep;
+/*0x264*/ CEditBaseWnd	*pEditCell;
+/*0x268*/ void	*pItemDataSomething;
+/*0x26c*/ bool	bHasItemTooltips;
+/*0x270*/ RECT	PrevInsideRect;
+/*0x280*/ UINT	ListWndStyle;
+/*0x284*/ LONG	LastVisibleTime;//change to a __time32_t? not really important...
+/*0x288*/
+
+
 /*0x288*/ int NumItems;
 /*0x28C*/ int Unknown0x28C;
 /*0x290*/
 EQLIB_OBJECT int CContextMenu::InsertMenuItemA(CXStr *str,unsigned int position, unsigned int ItemID, bool bChecked, COLORREF Color, bool bEnable);
-EQLIB_OBJECT CContextMenu::CContextMenu(class CXWnd *,unsigned __int32,class CXRect const &);
-EQLIB_OBJECT int CContextMenu::AddMenuItem(class CXStr const &str,unsigned int MenuID/*Set HighPart as the ID for submenus and LowPart is then the subindex*/,bool bChecked,COLORREF Color,bool bEnable);
+EQLIB_OBJECT CContextMenu::CContextMenu(CXWnd *pParent, unsigned __int32 MenuID, const CXRect& rect);
+EQLIB_OBJECT CContextMenu::CContextMenu(CXWnd *,unsigned __int32,tagRECT *);
+EQLIB_OBJECT int CContextMenu::AddMenuItem(CXStr const &str,unsigned int MenuID/*Set HighPart as the ID for submenus and LowPart is then the subindex*/,bool bChecked = false,COLORREF Color = 0xFFFFFFFF,bool bEnable = true);
 EQLIB_OBJECT int CContextMenu::AddSeparator(void);
 EQLIB_OBJECT void CContextMenu::Activate(class CXPoint,int,int);
 EQLIB_OBJECT void CContextMenu::CheckMenuItem(int ID, bool bVal = true, bool bUncheckAll = false);
-EQLIB_OBJECT void CContextMenu::EnableMenuItem(int,bool);
+EQLIB_OBJECT void CContextMenu::EnableMenuItem(int ID, bool bVal = true);
 EQLIB_OBJECT void CContextMenu::RemoveAllMenuItems(void);
+EQLIB_OBJECT void CContextMenu::SetMenuItem(int ID, const CXStr &Str, bool bChecked = false, COLORREF Color = 0xFFFFFFFF, bool bEnable = true);
 // virtual
 EQLIB_OBJECT CContextMenu::~CContextMenu(void);
+EQLIB_OBJECT CContextMenu::CContextMenu() {
+	Sleep(0);
+};
 EQLIB_OBJECT int CContextMenu::OnKillFocus(class CXWnd *);
 //EQLIB_OBJECT void * CContextMenu::`scalar deleting destructor'(unsigned int);
 //EQLIB_OBJECT void * CContextMenu::`vector deleting destructor'(unsigned int);
@@ -3763,7 +3895,7 @@ public:
 class CMerchantWnd : public CSidlScreenWnd, public WndEventHandler
 {
 public:
-#if defined(BETA) || defined(TEST)
+#ifndef EMU
 	class MerchantPageHandler : public VeBaseReferenceCount
 	{
 	public:
@@ -3938,7 +4070,7 @@ EQLIB_OBJECT void CMerchantWnd::ClearMerchantSlot(int);
 EQLIB_OBJECT void CMerchantWnd::FinishBuyingItem(struct _sell_msg *);
 EQLIB_OBJECT void CMerchantWnd::FinishSellingItem(struct _sell_msg *);
 EQLIB_OBJECT void CMerchantWnd::SelectBuySellSlot(int,class CTextureAnimation *);
-#if defined(BETA) || defined (TEST)
+#ifndef EMU
 EQLIB_OBJECT int CMerchantWnd::ActualSelect(ItemGlobalIndex *,int Unknown = -1);
 #else
 EQLIB_OBJECT int CMerchantWnd::ActualSelect(ItemGlobalIndex *);
@@ -5060,7 +5192,7 @@ EQLIB_OBJECT class CXWnd * CSidlManager::CreateXWndFromTemplate(class CXWnd *,cl
 EQLIB_OBJECT class CXWnd * CSidlManager::CreateXWndFromTemplate(class CXWnd *,class CControlTemplate *);
 #endif
 EQLIB_OBJECT CXWnd * CSidlManager::CreateXWndFromTemplate(CXWnd *,CXStr &);
-EQLIB_OBJECT class CXWndDrawTemplate * CSidlManager::FindDrawTemplate(class CXStr)const;
+EQLIB_OBJECT class CXWndDrawTemplate * CSidlManager::FindDrawTemplate(CXStr *)const;
 EQLIB_OBJECT class CXWndDrawTemplate * CSidlManager::FindDrawTemplate(unsigned __int32)const;
 EQLIB_OBJECT class CXWndDrawTemplate CSidlManager::CreateDrawTemplateFromParamWindowDrawTemplate(class CParamWindowDrawTemplate const *)const;
 //EQLIB_OBJECT enum EStaticScreenPieceClasses CSidlManager::GetScreenPieceEnum(class CScreenPieceTemplate *)const;
@@ -5576,7 +5708,7 @@ EQLIB_OBJECT CTabBoxTemplate::~CTabBoxTemplate(void);
 class CTabWnd : public CSidlScreenWnd
 {
 public:
-EQLIB_OBJECT CTabWnd::CTabWnd(class CXWnd *,unsigned __int32,class CXRect,class CTabBoxTemplate *);
+EQLIB_OBJECT CTabWnd::CTabWnd(CXWnd *pParent, UINT uId, RECT *rect, CTabBoxTemplate *pTabContents);
 EQLIB_OBJECT class CPageWnd * CTabWnd::GetCurrentPage(void)const;
 EQLIB_OBJECT class CXRect CTabWnd::GetPageClientRect(void)const;
 EQLIB_OBJECT class CXRect CTabWnd::GetPageInnerRect(void)const;
@@ -5688,6 +5820,7 @@ EQLIB_OBJECT DWORD CTaskSomething::GetTaskByIndex(DWORD arg1,DWORD arg2,DWORD ar
 class CTextEntryWnd : public CEditBaseWnd
 {
 public:
+EQLIB_OBJECT void CTextEntryWnd::Open(CXWnd *pwnd, int EditMode, char *Prompt, int MinLength, int MaxLength, const char *InitialText);
 EQLIB_OBJECT CTextEntryWnd::CTextEntryWnd(class CXWnd *);
 EQLIB_OBJECT class CXStr CTextEntryWnd::GetEntryText(void);
 EQLIB_OBJECT void CTextEntryWnd::Activate(class CXWnd *,int,char *,int,int,char *);
@@ -5766,7 +5899,7 @@ class CTextureFont
 public:
 EQLIB_OBJECT class CXStr CTextureFont::GetName(void)const;
 EQLIB_OBJECT int CTextureFont::DrawWrappedText(class CXStr,class CXRect,class CXRect,unsigned long,unsigned short,int)const;
-EQLIB_OBJECT int CTextureFont::DrawWrappedText(class CXStr *,int,int,int,class CXRect *,unsigned long,unsigned short,int)const;
+EQLIB_OBJECT int CTextureFont::DrawWrappedText(CXStr *Str, int x, int y, int Width, CXRect *BoundRect, COLORREF Color, WORD Flags = 0, int StartX = 0)const;
 EQLIB_OBJECT int CTextureFont::GetHeight(void)const;
 EQLIB_OBJECT int CTextureFont::GetKerning(unsigned short,unsigned short)const;
 #ifndef EMU
@@ -6270,22 +6403,20 @@ class CXPoint
 {
 public:
 EQLIB_OBJECT class CXPoint CXPoint::operator=(class CXPoint);
-DWORD A,B;
+DWORD X,Y;
 };
 
 class CXRect
 {
 public:
-EQLIB_OBJECT CXRect::CXRect(int nA,int nB,int nC,int nD)
+EQLIB_OBJECT CXRect::CXRect(int nLeft,int nTop,int nRight,int nBottom)
 {
-    A=nA;
-    B=nB;
-    C=nC;
-    D=nD;
+    left=nLeft;
+    top=nTop;
+    right=nRight;
+    bottom=nBottom;
 }
-EQLIB_OBJECT CXRect::CXRect(void)
-{
-}
+EQLIB_OBJECT CXRect::CXRect(void) {};
 EQLIB_OBJECT class CXPoint CXRect::CenterPoint(void)const;
 EQLIB_OBJECT class CXRect & CXRect::operator=(class CXRect const &);
 EQLIB_OBJECT class CXRect CXRect::operator&(class CXRect)const;
@@ -6293,9 +6424,8 @@ EQLIB_OBJECT class CXRect CXRect::operator|(class CXRect)const;
 EQLIB_OBJECT int CXRect::Width(void)const;
 EQLIB_OBJECT void CXRect::Move(class CXPoint);
 EQLIB_OBJECT void CXRect::Normalize(void);
-DWORD A,B,C,D;
+DWORD left,top,right,bottom;
 };
-
 
 class CXStrSingleton
 {
@@ -6379,6 +6509,7 @@ EQLIB_OBJECT CXWndManager::~CXWndManager(void);
 EQLIB_OBJECT class CTextureFont *GetFont(int FontIndex) const {
 	return (CTextureFont *)((PCXWNDMGR)this)->FontsArray[FontIndex];
 }
+EQLIB_OBJECT int CXWndManager::DestroyWnd(CXWnd *wnd);
 //EQLIB_OBJECT void * CXWndManager::`scalar deleting destructor'(unsigned int);
 //EQLIB_OBJECT void * CXWndManager::`vector deleting destructor'(unsigned int);
 };
@@ -7601,7 +7732,11 @@ public:
 	{
 		return *ProfileManager.GetCurrentProfile();
 	}
+	EQLIB_OBJECT BYTE CharacterBase::GetLanguageSkill(int)const;
 };
+EQLIB_OBJECT char * build_token_string_PARAM(char *pBuffer, int token, const char *param0=NULL, const char *param1=NULL,
+								const char *param2=NULL, const char *param3=NULL, const char *param4=NULL, const char *param5=NULL, 
+								const char *param6=NULL, const char *param7=NULL, const char *param8=NULL);
 
 class CharacterZoneClient : virtual public CharacterBase
 {
@@ -8965,7 +9100,7 @@ class StringTable
 public:
 EQLIB_OBJECT StringTable::~StringTable(void);
 EQLIB_OBJECT StringTable::StringTable(void);
-EQLIB_OBJECT char * StringTable::getString(unsigned long,bool *);
+EQLIB_OBJECT char * StringTable::getString(unsigned long ID, bool *bFound = NULL);
 EQLIB_OBJECT int StringTable::load(char const *,int);
 EQLIB_OBJECT void StringTable::addItem(class StringItem *);
 // private
