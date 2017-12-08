@@ -371,10 +371,21 @@ public:
             sprintf_s(temp, "Wears off: %s<br>", pSpell->WearOff); 
             strcat_s(out,temp); 
         } 
-
+		if (DWORD cat = GetSpellCategory(pSpell)) {
+			if (char * ptr = pCDBStr->GetString(cat, 5, NULL)) {
+				sprintf_s(temp, "Category: %s<br>", ptr);
+				strcat_s(out, temp);
+			}
+		}
+		if (DWORD cat = GetSpellSubcategory(pSpell)) {
+			if (char * ptr = pCDBStr->GetString(cat, 5, NULL)) {
+				sprintf_s(temp, "Subcategory: %s<br>", ptr);
+				strcat_s(out, temp);
+			}
+		}
         if (out[0]!=17) {
             strcat_s(out,"</c>");
-			#if defined(BETA) || defined (TEST)
+			#ifndef EMU
 				This->ItemInfo.Append(&out[0]);
 			#else
 				AppendCXStr(&This->ItemInfo, &out[0]);

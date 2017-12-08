@@ -1198,6 +1198,8 @@ public:
 		Name = 257,
 		AutoSkill = 258,
 		CursorKrono = 259,
+		BardSongPlaying = 260,
+		XTAggroCount = 261,
 	};
 	enum CharacterMethods
 	{
@@ -1457,6 +1459,8 @@ public:
 		TypeMember(Name);
 		TypeMember(AutoSkill);
 		TypeMember(CursorKrono);
+		TypeMember(BardSongPlaying);
+		TypeMember(XTAggroCount);
 
 		TypeMethod(Stand);
 		TypeMethod(Sit);
@@ -2510,7 +2514,7 @@ public:
 
 	bool ToString(MQ2VARPTR VarPtr, PCHAR Destination)
 	{
-#if defined(BETA) || defined(TEST)
+	#ifndef EMU
 		CMerchantWnd *pcm = (CMerchantWnd*)pMerchantWnd;
 		PEQMERCHWINDOW peqm = (PEQMERCHWINDOW)pMerchantWnd;
 		if (pcm)
@@ -2524,7 +2528,7 @@ public:
 			}
 		}
 		return false;
-#else
+	#else
 		if (pPointMerchantWnd && pPointMerchantWnd->NumItems)
 		{
 			if (VarPtr.Int >= 0 && VarPtr.Int < pPointMerchantWnd->NumItems) {
@@ -2533,7 +2537,7 @@ public:
 			}
 		}
 		return false;
-#endif
+	#endif
 	}
 	bool FromData(MQ2VARPTR &VarPtr, MQ2TYPEVAR &Source)
 	{
@@ -2570,7 +2574,7 @@ public:
 
 	bool ToString(MQ2VARPTR VarPtr, PCHAR Destination)
 	{
-#if defined(BETA) || defined(TEST)
+#ifndef EMU
 		if (pMerchantWnd && pMerchantWnd->dShow)
 #else
 		if (pPointMerchantWnd && pPointMerchantWnd->dShow)

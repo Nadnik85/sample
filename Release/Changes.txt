@@ -1,3 +1,113 @@
+Dec 06 2017 by eqmule
+- Updated for BETA Go build it at www.macroquest2.com/builder
+- Updated for TEST Go build it at www.macroquest2.com/builder
+- Fixed /loginchar server:charname it should once again work.
+
+Dec 05 2017 by eqmule
+- Updated for BETA Go build it at www.macroquest2.com/builder
+
+Dec 04 2017 by eqmule
+- Updated for BETA Go build it at www.macroquest2.com/builder
+
+Dec 04 2017 by rswiders
+- Added new TLO member XTAggroCount to ${Me}
+  Usage: /echo ${Me.XTAggroCount} or ${Me.XTAggroCount[100]}
+  it returns the number of AUTO-HATER mobs on the extended
+  target window where your aggro is less than the optional
+  parameter N. N must be between 1-100 inclusive or it will be
+  set to 100 (the default value).
+  So, ${Me.XTAggroCount} and ${Me.XTAggroCount[100]} are identical.
+
+Dec 03 2017 by eqmule
+- Updated for BETA Go build it at www.macroquest2.com/builder
+
+Dec 02 2017 by eqmule
+- Updated for BETA Go build it at www.macroquest2.com/builder
+
+Dec 01 2017 by eqmule
+- Added new TLO member BardSongPlaying to ${Me}
+  Usage: /echo ${Me.BardSongPlaying}
+  it returns true if a bard song is playing and false if not.
+- Fixed ${Me.SpellReady} to take bard songs playing into account properly so it returns true even if a song is playing.
+- Added Category and Subcategory to the SpellDisplay Window.
+- Updated for BETA Go build it at www.macroquest2.com/builder
+
+Nov 30 2017 by eqmule
+- Updated for BETA Go build it at www.macroquest2.com/builder
+
+Nov 29 2017 by eqmule
+- Updated for TEST Go build it at www.macroquest2.com/builder
+- Updated for BETA Go build it at www.macroquest2.com/builder
+
+Nov 28 2017 by rswiders credit plure
+- Updated all FindItem code to allow partial matches and consistently check
+  your cursor, inventory (including bags), keyrings for the item. Will now
+  allow partial and exact match checks for all.
+- Update to consistently check bank/shared bank slots/bags and to allow
+  partial and exact match checks for all.
+
+Nov 28 2017 by eqmule
+- Updated for BETA Go build it at www.macroquest2.com/builder
+
+Nov 27 2017 by eqmule
+- Updated for BETA Go build it at www.macroquest2.com/builder
+
+Nov 26 2017 by eqmule
+- Updated for BETA Go build it at www.macroquest2.com/builder
+
+Nov 25 2017 by eqmule
+- Updated for BETA Go build it at www.macroquest2.com/builder
+
+Nov 24 2017 by eqmule
+- Updated for BETA Go build it at www.macroquest2.com/builder
+
+Nov 23 2017 by eqmule HAPPY THANKSGIVING
+- Updated for BETA Go build it at www.macroquest2.com/builder
+
+Nov 22 2017 by eqmule
+- Updated for BETA Go build it at www.macroquest2.com/builder
+
+Nov 21 2017 by eqmule
+- Updated for LIVE Go build it at www.macroquest2.com/builder
+- Updated for BETA
+
+Nov 20 2017 by eqmule
+- Updated for BETA
+
+Nov 19 2017 by eqmule
+- Updated for BETA
+
+Nov 18 2017 by eqmule
+- Updated for BETA
+
+Nov 17 2017 by eqmule
+- Updated for BETA
+
+Nov 16 2017 by eqmule
+- Updated for BETA
+
+Nov 15 2017 by eqmule
+- Updated for BETA
+- Updated for LIVE
+
+Nov 14 2017 by eqmule
+- Updated for BETA
+
+Nov 13 2017 by eqmule
+- Updated for BETA
+
+Nov 12 2017 by eqmule
+- Updated for BETA
+
+Nov 11 2017 by eqmule
+- Updated for BETA
+
+Nov 10 2017 by eqmule
+- Updated for BETA
+
+Nov 09 2017 by eqmule
+- Updated for BETA
+
 Nov 08 2017 by eqmule
 - Updated for TEST
 - Updated for BETA

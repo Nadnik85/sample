@@ -1,3 +1,25 @@
+Nov 28 2017 by rswiders credit plure
+- Updated all FindItem code to allow partial matches and consistently check
+  your cursor, inventory (including bags), keyrings for the item. Will now
+  allow partial and exact match checks for all.
+- Update to consistently check bank/shared bank slots/bags and to allow
+  partial and exact match checks for all.
+
+Nov 21 2017 by redguides
+- Fixes for TLP servers, xtarget (eqmule)
+
+Nov 21 2017 by eqmule
+- Updated for LIVE
+- Updated for BETA
+
+Nov 15 2017 by redguides
+- MQ2AutoGroup (plure) Changed how we handle merc's. /autogroup handlemerc [on/off] -> Toggle suspending/summoning merc's if your in a group Default is on, 
+it will only suspend/summon merc's if you are in a group.
+
+Nov 15 2017 by eqmule
+- Updated for BETA
+- Updated for LIVE
+
 Nov 08 2017 by eqmule
 Updated for TEST
 Added a new command: /usercamera - feature request by Bogreaper

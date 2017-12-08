@@ -234,7 +234,7 @@ namespace MQ2Globals
 		ppRewardSelectionWnd = (CRewardSelectionWnd**)pinstRewardSelectionWnd;
 		ppConfirmationDialog = (CConfirmationDialog**)pinstCConfirmationDialog;
 		ppEQSuiteTextureLoader = (CEQSuiteTextureLoader*)pinstEQSuiteTextureLoader;
-		#if !defined(BETA) && !defined(TEST)
+		#ifdef EMU
 		ppPointMerchantWnd = (PointMerchantWnd**)pinstCPointMerchantWnd;
 		#endif
 		ppSidlMgr = (CSidlManager **)pinstCSidlManager;
@@ -1510,7 +1510,7 @@ namespace MQ2Globals
 	INITIALIZE_EQGAME_OFFSET(pinstCLFGuildWnd);
 	INITIALIZE_EQGAME_OFFSET(pinstCMIZoneSelectWnd);
 	INITIALIZE_EQGAME_OFFSET(pinstCConfirmationDialog);
-	#if !defined(BETA) && !defined(TEST)
+	#ifdef EMU
 	INITIALIZE_EQGAME_OFFSET(pinstCPointMerchantWnd);
 	#endif
 	INITIALIZE_EQGAME_OFFSET(pinstCPopupWndManager);
@@ -1618,7 +1618,9 @@ namespace MQ2Globals
 	INITIALIZE_EQGAME_OFFSET(CContextMenuManager__PopupMenu);
 	INITIALIZE_EQGAME_OFFSET(CContextMenu__RemoveMenuItem);
 	INITIALIZE_EQGAME_OFFSET(CContextMenu__RemoveAllMenuItems);
-	INITIALIZE_EQGAME_OFFSET(CContextMenu__CheckMenuItem);	
+	INITIALIZE_EQGAME_OFFSET(CContextMenu__CheckMenuItem);
+	INITIALIZE_EQGAME_OFFSET(CContextMenu__SetMenuItem);
+	
 	INITIALIZE_EQGAME_OFFSET(CContextMenuManager__Flush);
 	INITIALIZE_EQGAME_OFFSET(CContextMenuManager__GetMenu);
 
@@ -2025,7 +2027,8 @@ namespace MQ2Globals
 
 	INITIALIZE_EQGAME_OFFSET(MapViewMap__Clear);
 	INITIALIZE_EQGAME_OFFSET(MapViewMap__SaveEx);
-
+	INITIALIZE_EQGAME_OFFSET(MapViewMap__SetZoom);
+	
 	INITIALIZE_EQGAME_OFFSET(PlayerPointManager__GetAltCurrency);
 
 	INITIALIZE_EQGAME_OFFSET(StringTable__getString);
