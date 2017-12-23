@@ -1,3 +1,40 @@
+Dec 19 2017 by redguides
+- MQ2AFNuke (jimbob) Fixed Fury of the Gods typo
+- MQ2AutoLoot (plure) Updated so you can set permissions to "public, public if usable, and view only" 
+for items being deposited into your guild bank.
+
+Dec 19 2017 by eqmule
+- Updated for LIVE
+
+Dec 15 2017 by redguides
+- New Plugin! MQ2DamageParser. Details and guide to come soon.
+- MQ2Exchange (sifun) WinEQ alt-key lock bug fixed.
+
+Dec 12 2017 by eqmule
+- xtarget fix for TLP
+
+Dec 12 2017 by eqmule
+- Updated for LIVE 
+
+Dec 06 2017 by eqmule
+- Fixed /loginchar server:charname it should once again work.
+
+Dec 04 2017 by rswiders
+- Added new TLO member XTAggroCount to ${Me}
+  Usage: /echo ${Me.XTAggroCount} or ${Me.XTAggroCount[100]}
+  it returns the number of AUTO-HATER mobs on the extended
+  target window where your aggro is less than the optional
+  parameter N. N must be between 1-100 inclusive or it will be
+  set to 100 (the default value).
+  So, ${Me.XTAggroCount} and ${Me.XTAggroCount[100]} are identical.
+
+Dec 01 2017 by eqmule
+- Added new TLO member BardSongPlaying to ${Me}
+  Usage: /echo ${Me.BardSongPlaying}
+  it returns true if a bard song is playing and false if not.
+- Fixed ${Me.SpellReady} to take bard songs playing into account properly so it returns true even if a song is playing.
+- Added Category and Subcategory to the SpellDisplay Window.
+
 Nov 28 2017 by rswiders credit plure
 - Updated all FindItem code to allow partial matches and consistently check
   your cursor, inventory (including bags), keyrings for the item. Will now

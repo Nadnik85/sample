@@ -873,64 +873,64 @@ public:
 /*0xb8*/
 };
 
-//Actual Size: 0x160 (see 0x5A08B7 in eqgame.exe Beta dated Dec  6 2017) - eqmule
+//Actual Size: 0x148 (see 0x59F397 in eqgame.exe Beta dated Dec 11 2017) - eqmule
 typedef struct _CONTENTS {
 /*0x0000*/ void*	vtable;
 /*0x0004*/ DWORD	ItemType;           // ? 1 = normal, 2 = pack ?
 /*0x0008*/ void*	punknown;
 //start of ItemBase
-/*0x000C*/ struct _ITEMINFO *Item1;
-/*0x0010*/ __int64 MerchantSlot;
-/*0x0018*/ bool	bItemNeedsUpdate;
-/*0x001C*/ struct _CXSTR *ConvertItemName;
-/*0x0020*/ bool	bConvertable;
-/*0x0024*/ UINT	NewArmorID;
-/*0x0028*/ UINT	RespawnTime;
-/*0x002C*/ int	NoDropFlag;
-/*0x0030*/ bool	bDisableAugTexture;
-/*0x0034*/ UINT	ItemHash;
-/*0x0038*/ bool	bRealEstateItemPlaceable;
-/*0x003C*/ int	GroupID;
-/*0x0040*/ EqItemGuid ItemGUID;
-/*0x0054*/ ArrayClass_RO<UINT> RealEstateArray;
-/*0x0064*/ int	Charges;
-/*0x0068*/ bool	IsEvolvingItem;
-/*0x006C*/ ItemGlobalIndex2 GlobalIndex; /* Size is 0xa (0xc)*/
-/*0x0078*/ int	StackCount;
-/*0x0080*/ __int64	DontKnow;
-/*0x0088*/ UINT	Tint;
-/*0x008C*/ CHAR	ActorTag1[0x1e];
-/*0x00AC*/ UINT	LastCastTime;
-/*0x00B0*/ int	ArmorType;
-/*0x00B8*/ DOUBLE	EvolvingExpPct;
-/*0x00C0*/ int	ID;
-/*0x00C4*/ int	Power;
-/*0x00C8*/ LONG	LastEquipped;
-/*0x00CC*/ int	ConvertItemID;
-/*0x00D0*/ int	MerchantQuantity;
-/*0x00D4*/ CHAR	ActorTag2[0x1e];
-/*0x00F4*/ int	ItemColor;
-/*0x00F8*/ int	EvolvingCurrentLevel;
-/*0x00FC*/ bool	bRankDisabled;
-/*0x0100*/ int	Open;
-/*0x0104*/ ItemBaseContainer2 Contents; /* Size is 0x1c */
-/*0x0120*/ bool	bCollected;
-/*0x0124*/ int	RealEstateID;
-/*0x0128*/ bool	EvolvingExpOn;
-/*0x012C*/ int	AugFlag;
-/*0x0130*/ int	NoteStatus;
-/*0x0134*/ bool	bCopied;
-/*0x0138*/ int	Price;
-/*0x013C*/ struct _CXSTR *SaveString;
-/*0x0140*/ int	EvolvingMaxLevel;
-/*0x0144*/ int	OrnamentationIcon;
-/*0x0148*/ int	ScriptIndex;
+/*0x000C*/ ItemGlobalIndex2 GlobalIndex; /* Size is 0xa (0xc)*/
+/*0x0018*/ struct _CXSTR *ConvertItemName;
+/*0x001C*/ int	ConvertItemID;
+/*0x0020*/ struct _CXSTR *SaveString;
+/*0x0024*/ int	EvolvingCurrentLevel;
+/*0x0028*/ ItemBaseContainer2 Contents; /* Size is 0x1c */
+/*0x0044*/ UINT	NewArmorID;
+/*0x0048*/ int	ItemColor;
+/*0x004C*/ LONG	LastEquipped;
+/*0x0050*/ int	GroupID;
+/*0x0054*/ bool	IsEvolvingItem;
+/*0x0055*/ bool	EvolvingExpOn;
+/*0x0056*/ bool	bRankDisabled;
+/*0x0058*/ struct _ITEMINFO *Item1;
+/*0x005C*/ int	NoteStatus;
+/*0x0060*/ int	ArmorType;
+/*0x0064*/ bool	bDisableAugTexture;
+/*0x0068*/ int	MerchantQuantity;
+/*0x006C*/ int	AugFlag;
+/*0x0070*/ UINT	ItemHash;
+/*0x0074*/ bool	bConvertable;
+/*0x0075*/ bool	bCollected;
+/*0x0078*/ int	EvolvingMaxLevel;
+/*0x007C*/ int	OrnamentationIcon;
+/*0x0080*/ ArrayClass_RO<UINT> RealEstateArray;
+/*0x0090*/ int	RealEstateID;
+/*0x0094*/ CHAR	ActorTag1[0x1e];
+/*0x00B2*/ bool	bCopied;
+/*0x00B4*/ int	Charges;
+/*0x00B8*/ __int64	DontKnow;
+/*0x00C0*/ int	NoDropFlag;
+/*0x00C4*/ UINT	RespawnTime;
+/*0x00C8*/ int	StackCount;
+/*0x00CC*/ UINT	Tint;
+/*0x00D0*/ UINT	LastCastTime;
+/*0x00D8*/ __int64 MerchantSlot;
+/*0x00E0*/ EqItemGuid ItemGUID;
+/*0x00F4*/ int	ScriptIndex;
+/*0x00F8*/ DOUBLE	EvolvingExpPct;
+/*0x0100*/ int	Power;
+/*0x0104*/ CHAR	ActorTag2[0x1e];
+/*0x0124*/ int	ID;
+/*0x0128*/ int	Open;
+/*0x012C*/ bool	bItemNeedsUpdate;
+/*0x0130*/ int	Price;
+/*0x0134*/ bool	bRealEstateItemPlaceable;
 //start of ItemClient
-/*0x014C*/ BYTE Filler0x014C[0x8];
-/*0x0154*/ struct _ITEMINFO*	Item2;
-/*0x0158*/ struct _CXSTR *ClientString;
-/*0x015C*/ BYTE Filler0x015C[0x4];
-/*0x0160*/
+/*0x0135*/ BYTE Filler0x0135[0x7];
+/*0x013C*/ struct _ITEMINFO*	Item2;
+/*0x0140*/ struct _CXSTR *ClientString;
+/*0x0144*/ BYTE Filler0x0144[0x4];
+/*0x0148*/
 __declspec(dllexport)  struct _CONTENTS *GetContent(UINT index);
 } CONTENTS, *PCONTENTS;
 
@@ -2941,126 +2941,126 @@ struct SDoCollisionMovementStats
 };
 
 #define PLAYERZONECLIENT \
-/*0x018C*/ int		GuildStatus; \
-/*0x0190*/ FLOAT		GetMeleeRangeVar1; /* used by GetMeleeRange */ \
-/*0x0194*/ UINT		SitStartTime; \
-/*0x0198*/ int		Trader;	/* found in CEverQuest__RightClickedOnPlayer_x */ \
-/*0x019C*/ int		PrimaryTintIndex; \
-/*0x01A0*/ int		WarCry; \
-/*0x01A4*/ BYTE		LastAttack; \
-/*0x01A8*/ int		IsAttacking; /* need to investigate */ \
-/*0x01AC*/ int		DoSpecialMelee; \
-/*0x01B0*/ bool		bBetaBuffed; \
-/*0x01B4*/ UINT		MinuteTimer; \
-/*0x01B8*/ UINT		LastPrimaryUseTime; \
-/*0x01BC*/ UINT		EnduranceMax; \
-/*0x01C0*/ int		HPCurrent; \
-/*0x01C4*/ int		ManaMax; \
-/*0x01C8*/ UINT		CombatSkillTicks[0x2]; \
-/*0x01D0*/ bool		bStationary; \
-/*0x01D1*/ bool		LFG; \
-/*0x01D4*/ UINT		LastMealTime; /* last time we eat or drank */ \
-/*0x01D8*/ DWORD		Zone; \
-/*0x01DC*/ int		Deity; \
-/*0x01E0*/ FLOAT		BearingToTarget; \
-/*0x01E4*/ int		RealEstateItemId; \
-/*0x01E8*/ BYTE		HmmWhat; /* todo: figure out */ \
-/*0x01EC*/ UINT		MasterID; \
-/*0x01F0*/ int		DontKnowYet; \
-/*0x01F4*/ bool		Linkdead; \
-/*0x01F8*/ UINT		NextSwim; \
-/*0x01FC*/ BYTE		FishingEvent; \
-/*0x0200*/ DWORD		PotionTimer; \
-/*0x0204*/ struct _LAUNCHSPELLDATA	CastingData; /* size: 0x58 */ \
-/*0x025C*/ struct _SPAWNINFO*	pViewPlayer; \
-/*0x0260*/ bool		bAlwaysShowAura; \
-/*0x0264*/ FLOAT		CameraOffset; \
-/*0x0268*/ UINT		LastSecondaryUseTime; \
-/*0x026C*/ FLOAT		FallingStartZ; \
-/*0x0270*/ CHAR		Title[0x80]; \
-/*0x02F0*/ UINT		TimeStamp; /* updates all the time including when on a mount */ \
-/*0x02F4*/ void		*pTouchingSwitch; /* need to get that in here : struct _EQSWITCH */ \
-/*0x02F8*/ UINT		CombatSkillUsed[0x2]; \
-/*0x0300*/ CHAR		DraggingPlayer[0x40]; \
-/*0x0340*/ BYTE		GMRank; /* i think */ \
-/*0x0344*/ void		*pRaceGenderInfo; /* todo this is not a void* so... map the CRaceGenderInfo class */ \
-/*0x0348*/ DWORD		Meditating; \
-/*0x034C*/ BYTE		Type2; /* check */ \
-/*0x034D*/ CHAR		LoginRelated[0x20]; \
-/*0x0370*/ int		PetID; \
-/*0x0374*/ EqItemGuid 	realEstateItemGuid; \
-/*0x0386*/ BYTE		FD; \
-/*0x0387*/ BYTE		FindBits; \
-/*0x0388*/ UINT		SpellCooldownETA; \
-/*0x038C*/ bool		bTempPet; \
-/*0x0390*/ FLOAT		MissileRangeToTarget; \
-/*0x0394*/ UINT		LastTrapDamageTime; \
-/*0x0398*/ bool		bBuffTimersOnHold; /* no you can't control this client side so unless you want to get banned leave it alone */ \
-/*0x039C*/ UINT		CorpseDragCount; \
-/*0x03A0*/ DWORD		LoginSerial; \
-/*0x03A4*/ int		ManaCurrent; \
-/*0x03A8*/ UINT		LastTimeStoodStill; \
-/*0x03AC*/ FLOAT		MerchantGreed; \
-/*0x03B0*/ bool		Sneak; \
-/*0x03B4*/ UINT		StunTimer; \
-/*0x03B8*/ CHAR		Suffix[0x80]; \
-/*0x0438*/ BYTE		Blind; \
-/*0x043C*/ int		AFK; \
-/*0x0440*/ int		HideMode; \
-/*0x0444*/ int		RealEstateID; \
-/*0x0448*/ int		SecondaryTintIndex; \
-/*0x044C*/ BYTE		Level; \
-/*0x044D*/ bool		bOfflineMode; \
-/*0x044E*/ bool		bAttackRelated; \
-/*0x0450*/ CPhysicsInfo	LastCollision; \
-/*0x0480*/ FLOAT		RunSpeed; /*0.70 on runspeed 5... */ \
-/*0x0484*/ bool		bAnimationOnPop; \
-/*0x0488*/ UINT		FishingETA; \
-/*0x048C*/ CHAR		GM; \
-/*0x0490*/ int		SomethingElse; \
-/*0x0494*/ FLOAT		AnimationSpeedRelated; \
-/*0x0498*/ int		AARank;/* this really is the title id */ \
-/*0x049C*/ bool		PvPFlag; \
-/*0x04A0*/ UINT		LastTick; \
-/*0x04A4*/ int		EnduranceCurrent; \
-/*0x04A8*/ int		NpcTintIndex; \
-/*0x04AC*/ UINT		NextIntimidateTime; \
-/*0x04B0*/ int		HPMax; \
-/*0x04B4*/ DWORD		**ppUDP; /* UdpLibrary::UdpConnection? */ \
-/*0x04B8*/ int		AltAttack; \
-/*0x04BC*/ UINT		LastResendAddPlayerPacket; \
-/*0x04C0*/ int		LastCastNum; \
-/*0x04C4*/ FLOAT		ViewHeight; \
-/*0x04C8*/ UINT		ACounter; /* not sure what this one is for*/ \
-/*0x04CC*/ BYTE		HoldingAnimation; /* todo: create enum for this byte. Holding: Nothing=0 A RightHand Weapon=1 A Shield=2 Dual Wielding Two Weapons=3 A Spear=4 A LeftHand Weapon=5 A Two Handed Weapon=6 A bow=7 */ \
-/*0x04D0*/ int		Buyer; \
-/*0x04D4*/ CHAR		Handle[0x20]; \
-/*0x04F4*/ bool		Mercenary; \
-/*0x04F5*/ BYTE		Light; \
-/*0x04F8*/ int		berserker; \
-/*0x04FC*/ bool		bSwitchMoved; /* true when a door moves near the spawn */ \
-/*0x04FD*/ BYTE		InPvPArea; /* are we in a PvP area? */ \
-/*0x0500*/ int		SomeData[0x2]; \
-/*0x0508*/ BYTE		StandState; \
-/*0x050C*/ UINT		LastRangedUsedTime; \
-/*0x0510*/ int		Anon; /* found in EQPlayer__SetNameSpriteTint_x */ \
-/*0x0514*/ int		CurrIOState; \
-/*0x0518*/ BYTE		TitleVisible; \
-/*0x0519*/ BYTE		IntimidateCount; \
-/*0x0520*/ __int64	GuildID; \
-/*0x0528*/ UINT		LastRefresh; \
-/*0x052C*/ FLOAT		MyWalkSpeed; \
-/*0x0530*/ UINT		RespawnTimer; /* its actually TimeOfDeath...TimeStamp of when RespawnWnd will close - 0 when you're alive */ \
-/*0x0534*/ CHAR		DragNames[0x2][0x40]; \
-/*0x05B4*/ BYTE		IsPassenger; /* if u are on a boat or airship or whatever */ \
-/*0x05B8*/ int		Stuff; \
-/*0x05BC*/ bool		bShowHelm; \
-/*0x05C0*/ UINT		SpellGemETA[0xf]; /*InnateETA is now the last member in this array */ \
-/*0x05FC*/ bool		bSummoned; /* by a PC or by anyone? need to investigate */ \
-/*0x0600*/ DWORD		LastCastTime; \
-/*0x0604*/ BYTE		CharClass; /* Im pretty sure this isnt working */ \
-/*0x0608*/ struct _EQC_INFO*	spawneqc_info; \
-/*0x060C*/
+/*0x018C*/ int		ManaCurrent; \
+/*0x0190*/ UINT		RespawnTimer; /* its actually TimeOfDeath...TimeStamp of when RespawnWnd will close - 0 when you're alive */ \
+/*0x0194*/ struct _SPAWNINFO*	pViewPlayer; \
+/*0x0198*/ BYTE		HmmWhat; /* todo: figure out */ \
+/*0x019C*/ UINT		ACounter; /* not sure what this one is for*/ \
+/*0x01A0*/ void		*pTouchingSwitch; /* need to get that in here : struct _EQSWITCH */ \
+/*0x01A4*/ BYTE		FishingEvent; \
+/*0x01A8*/ int		DontKnowYet; \
+/*0x01AC*/ UINT		CombatSkillTicks[0x2]; \
+/*0x01B4*/ UINT		LastSecondaryUseTime; \
+/*0x01B8*/ bool		bStationary; \
+/*0x01BC*/ UINT		CorpseDragCount; \
+/*0x01C0*/ int		SomethingElse; \
+/*0x01C4*/ UINT		NextIntimidateTime; \
+/*0x01C8*/ bool		Linkdead; \
+/*0x01CC*/ int		RealEstateItemId; \
+/*0x01D0*/ int		HPMax; \
+/*0x01D4*/ bool		bBuffTimersOnHold; /* no you can't control this client side so unless you want to get banned leave it alone */ \
+/*0x01D5*/ CHAR		LoginRelated[0x20]; \
+/*0x01F8*/ UINT		LastMealTime; /* last time we eat or drank */ \
+/*0x01FC*/ CHAR		Suffix[0x80]; \
+/*0x027C*/ int		ManaMax; \
+/*0x0280*/ FLOAT		AnimationSpeedRelated; \
+/*0x0284*/ int		berserker; \
+/*0x0288*/ bool		LFG; \
+/*0x028C*/ int		PrimaryTintIndex; \
+/*0x0290*/ bool		bAttackRelated; \
+/*0x0294*/ int		LastCastNum; \
+/*0x0298*/ FLOAT		MyWalkSpeed; \
+/*0x029C*/ UINT		LastRefresh; \
+/*0x02A0*/ CHAR		DraggingPlayer[0x40]; \
+/*0x02E0*/ FLOAT		CameraOffset; \
+/*0x02E4*/ FLOAT		ViewHeight; \
+/*0x02E8*/ bool		Mercenary; \
+/*0x02E9*/ bool		bOfflineMode; \
+/*0x02EA*/ BYTE		CharClass; /* Im pretty sure this isnt working */ \
+/*0x02EC*/ UINT		LastTick; \
+/*0x02F0*/ UINT		LastPrimaryUseTime; \
+/*0x02F4*/ int		Trader;	/* found in CEverQuest__RightClickedOnPlayer_x */ \
+/*0x02F8*/ BYTE		IsPassenger; /* if u are on a boat or airship or whatever */ \
+/*0x02FC*/ UINT		LastTrapDamageTime; \
+/*0x0300*/ BYTE		StandState; \
+/*0x0301*/ bool		bAnimationOnPop; \
+/*0x0304*/ UINT		LastTimeStoodStill; \
+/*0x0308*/ int		AFK; \
+/*0x030C*/ FLOAT		MissileRangeToTarget; \
+/*0x0310*/ UINT		SitStartTime; \
+/*0x0314*/ UINT		MasterID; \
+/*0x0318*/ int		SecondaryTintIndex; \
+/*0x031C*/ bool		bSwitchMoved; /* true when a door moves near the spawn */ \
+/*0x0320*/ DWORD		LastCastTime; \
+/*0x0324*/ BYTE		FD; \
+/*0x0328*/ UINT		LastRangedUsedTime; \
+/*0x032C*/ bool		bTempPet; \
+/*0x032D*/ bool		PvPFlag; \
+/*0x0330*/ int		GuildStatus; \
+/*0x0334*/ int		WarCry; \
+/*0x0338*/ BYTE		InPvPArea; /* are we in a PvP area? */ \
+/*0x033C*/ FLOAT		BearingToTarget; \
+/*0x0340*/ UINT		SpellCooldownETA; \
+/*0x0344*/ bool		Sneak; \
+/*0x0348*/ int		EnduranceCurrent; \
+/*0x034C*/ int		AARank;/* this really is the title id */ \
+/*0x0350*/ UINT		SpellGemETA[0xf]; /*InnateETA is now the last member in this array */ \
+/*0x038C*/ CPhysicsInfo	LastCollision; \
+/*0x03BC*/ int		AltAttack; \
+/*0x03C0*/ DWORD		Zone; \
+/*0x03C4*/ CHAR		Handle[0x20]; \
+/*0x03E4*/ struct _LAUNCHSPELLDATA	CastingData; /* size: 0x58 */ \
+/*0x043C*/ int		Deity; \
+/*0x0440*/ BYTE		LastAttack; \
+/*0x0444*/ FLOAT		MerchantGreed; \
+/*0x0448*/ DWORD		**ppUDP; /* UdpLibrary::UdpConnection? */ \
+/*0x044C*/ DWORD		LoginSerial; \
+/*0x0450*/ bool		bAlwaysShowAura; \
+/*0x0451*/ BYTE		Light; \
+/*0x0452*/ BYTE		TitleVisible; \
+/*0x0453*/ CHAR		Title[0x80]; \
+/*0x04D3*/ BYTE		IntimidateCount; \
+/*0x04D4*/ int		Anon; /* found in EQPlayer__SetNameSpriteTint_x */ \
+/*0x04D8*/ FLOAT		FallingStartZ; \
+/*0x04DC*/ UINT		LastResendAddPlayerPacket; \
+/*0x04E0*/ CHAR		DragNames[0x2][0x40]; \
+/*0x0560*/ int		HPCurrent; \
+/*0x0564*/ int		SomeData[0x2]; \
+/*0x056C*/ BYTE		FindBits; \
+/*0x056D*/ bool		bShowHelm; \
+/*0x056E*/ bool		bSummoned; /* by a PC or by anyone? need to investigate */ \
+/*0x056F*/ BYTE		Blind; \
+/*0x0570*/ UINT		StunTimer; \
+/*0x0574*/ DWORD		PotionTimer; \
+/*0x0578*/ bool		bBetaBuffed; \
+/*0x057C*/ int		PetID; \
+/*0x0580*/ DWORD		Meditating; \
+/*0x0584*/ int		Buyer; \
+/*0x0588*/ int		CurrIOState; \
+/*0x058C*/ UINT		EnduranceMax; \
+/*0x0590*/ BYTE		Type2; /* check */ \
+/*0x0594*/ int		Stuff; \
+/*0x0598*/ UINT		FishingETA; \
+/*0x059C*/ EqItemGuid 	realEstateItemGuid; \
+/*0x05B0*/ UINT		MinuteTimer; \
+/*0x05B4*/ CHAR		GM; \
+/*0x05B8*/ FLOAT		RunSpeed; /*0.70 on runspeed 5... */ \
+/*0x05BC*/ void		*pRaceGenderInfo; /* todo this is not a void* so... map the CRaceGenderInfo class */ \
+/*0x05C0*/ UINT		NextSwim; \
+/*0x05C4*/ struct _EQC_INFO*	spawneqc_info; \
+/*0x05C8*/ int		HideMode; \
+/*0x05CC*/ BYTE		HoldingAnimation; /* todo: create enum for this byte. Holding: Nothing=0 A RightHand Weapon=1 A Shield=2 Dual Wielding Two Weapons=3 A Spear=4 A LeftHand Weapon=5 A Two Handed Weapon=6 A bow=7 */ \
+/*0x05CD*/ BYTE		GMRank; /* i think */ \
+/*0x05D0*/ int		DoSpecialMelee; \
+/*0x05D4*/ BYTE		Level; \
+/*0x05D8*/ FLOAT		GetMeleeRangeVar1; /* used by GetMeleeRange */ \
+/*0x05DC*/ UINT		CombatSkillUsed[0x2]; \
+/*0x05E4*/ int		IsAttacking; /* need to investigate */ \
+/*0x05E8*/ int		NpcTintIndex; \
+/*0x05F0*/ __int64	GuildID; \
+/*0x05F8*/ int		RealEstateID; \
+/*0x05FC*/ UINT		TimeStamp; /* updates all the time including when on a mount */ \
+/*0x0600*/
 
 
 //END PLAYERZONECLIENT
@@ -3306,37 +3306,38 @@ typedef struct _SPAWNINFO {
 /* ******************** PlayerZoneClient Starts Here ***************** */
 /*0x0188*/ UINT		LastIntimidateUse;
 /*0x018c*/ PLAYERZONECLIENT
-/*0x060c*/ //I wont finetune these comments every single patch cause they change since PLAYERZONECLIENT size change...
-/*0x060c*/ TCircularBuffer<SDoCollisionMovementStats, 0x14>MovementStats; /* size (0x74 * 0x14) +8 = 0x918 */
-/*0x0f24*/ struct _SPAWNINFO*   WhoFollowing; // NULL if autofollow off
-/*0x0f28*/ DWORD	GroupAssistNPC[0x1];
-/*0x0f2c*/ DWORD	RaidAssistNPC[0x3];
-/*0x0f38*/ DWORD	GroupMarkNPC[0x3];
-/*0x0f44*/ DWORD	RaidMarkNPC[0x3];
-/*0x0f50*/ DWORD	TargetOfTarget;
-/*0x0f54*/ BYTE		PhysStuff[0x20];
-/*0x0f74*/ UINT		ParticleCastStartTime;
-/*0x0f78*/ UINT		ParticleCastDuration;
-/*0x0f7c*/ int		ParticleVisualSpellNum;
-/*0x0f80*/ ActorClient	mActorClient;          // start of ActorClient struct  size 0x1BC?
-/*0x113c*/ PlayerAnimationBase *pAnimation;
-/*0x1140*/ FLOAT	MeleeRadius;      // used by GetMeleeRange
-/*0x1144*/ UINT		CollisionCounter;
-/*0x1148*/ FLOAT	CachedFloorLocationY;
-/*0x114c*/ FLOAT	CachedFloorLocationX;
-/*0x1150*/ FLOAT	CachedFloorLocationZ;
-/*0x1154*/ FLOAT	CachedFloorHeight;
-/*0x1158*/ FLOAT	CachedCeilingLocationY;
-/*0x115c*/ FLOAT	CachedCeilingLocationX;
-/*0x1160*/ FLOAT	CachedCeilingLocationZ;
-/*0x1164*/ FLOAT	CachedCeilingHeight;
-/*0x1168*/ CCapsule	StaticCollision;//size 0x1c
-/*0x1184*/ ArrayClass_RO<PhysicsEffect> mPhysicsEffects;//size is 0x10
-/*0x1194*/ ArrayClass_RO<bool> PhysicsEffectsUpdated;//size is 0x10
+/*0x0600*/ //I wont finetune these comments every single patch cause they change since PLAYERZONECLIENT size change...
+/*0x0600*/ TCircularBuffer<SDoCollisionMovementStats, 0x14>MovementStats; /* size (0x74 * 0x14) +8 = 0x918 */
+/*0x0f18*/ struct _SPAWNINFO*   WhoFollowing; // NULL if autofollow off
+/*0x0f1c*/ DWORD	GroupAssistNPC[0x1];
+/*0x0f20*/ DWORD	RaidAssistNPC[0x3];
+/*0x0f2c*/ DWORD	GroupMarkNPC[0x3];
+/*0x0f38*/ DWORD	RaidMarkNPC[0x3];
+/*0x0f44*/ DWORD	TargetOfTarget;
+/*0x0f48*/ BYTE		PhysStuff[0x20];
+/*0x0f68*/ UINT		ParticleCastStartTime;
+/*0x0f6c*/ UINT		ParticleCastDuration;
+/*0x0f70*/ int		ParticleVisualSpellNum;
+/*0x0f74*/ BYTE		Filler0x0f74[0x4];
+/*0x0f78*/ ActorClient	mActorClient;          // start of ActorClient struct  size 0x1BC?
+/*0x1134*/ PlayerAnimationBase *pAnimation;
+/*0x1138*/ FLOAT	MeleeRadius;      // used by GetMeleeRange
+/*0x113c*/ UINT		CollisionCounter;
+/*0x1140*/ FLOAT	CachedFloorLocationY;
+/*0x1144*/ FLOAT	CachedFloorLocationX;
+/*0x1148*/ FLOAT	CachedFloorLocationZ;
+/*0x114c*/ FLOAT	CachedFloorHeight;
+/*0x1150*/ FLOAT	CachedCeilingLocationY;
+/*0x1154*/ FLOAT	CachedCeilingLocationX;
+/*0x1158*/ FLOAT	CachedCeilingLocationZ;
+/*0x115c*/ FLOAT	CachedCeilingHeight;
+/*0x1160*/ CCapsule	StaticCollision;//size 0x1c
+/*0x117c*/ ArrayClass_RO<PhysicsEffect> mPhysicsEffects;//size is 0x10
+/*0x118c*/ ArrayClass_RO<bool> PhysicsEffectsUpdated;//size is 0x10
 /* ********************* PlayerZoneClient Ends Here ******************* */
 /* ********************** PlayerClient Starts Here ******************** */
-/*0x11a4*/ BYTE		Filler0x11a4[0x4];
-/*0x11a8*/ int		Animation; /* Current Animation Playing. */
+/*0x119c*/ BYTE		Filler0x119c[0x4];
+/*0x11a0*/ int		Animation; /* Current Animation Playing. */
 /*0x11xx*/ int		NextAnim;
 /*0x11xx*/ int		CurrLowerBodyAnim;
 /*0x1194*/ int		NextLowerBodyAnim;
@@ -4660,10 +4661,10 @@ typedef struct _GROUPAGGRO {
 /*0x08*/ DWORD  GroupMemberAggro[6];//player is ALWAYS the 6th member...
 } GROUPAGGRO, *PGROUPAGGRO;
 
-#define EQ_ASSIST_COMPLETE              0x0038   // aMsg_time_stamp
-#define EQ_BEGIN_ZONE                   0x43CE   // CEverQuest__SavePCForce
-#define EQ_END_ZONE                     0x3226   // CEverQuest__DoMainLoop+B2F
-#define EQ_ASSIST                       0x1DBD   // do_assist(PlayerClient *,char const *)+399 20160212 live (see 52C319)
+#define EQ_ASSIST_COMPLETE              0x76B1   // aMsg_time_stamp
+#define EQ_BEGIN_ZONE                   0x2491   // CEverQuest__SavePCForce
+#define EQ_END_ZONE                     0x5019   // CEverQuest__DoMainLoop+B2F
+#define EQ_ASSIST                       0x04C5   // do_assist(PlayerClient *,char const *)+399 20160212 live (see 52C319)
 #define EQ_LoadingS__ArraySize          0x5a     // EQ_LoadingS__SetProgressBar_x+76 	(4C7396 yes it says 5b there, but we dont want to overwrite the NULL term...	2016 Apr 21
 };
 using namespace EQData;
