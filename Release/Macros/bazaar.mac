@@ -1,6 +1,7 @@
 | ************************************************************************
-|* bazaar.mac version 3.1
-|* Updated by Maskoi 05/03/2015
+|* bazaar.mac version 3.3
+|* - Updated by ChatWithThisName 01/02/2018
+
 |* Auto-Update Bazaar Prices
 |*
 |* Special thanks to:
@@ -14,6 +15,8 @@
 |* - Maskoi updated for HoT 01/19/2011
 |* - Maskoi updated for Rof 12/04/2012
 |* - Maskoi Fixed & Updated Barter 08/11/2014
+|* - Tone Fixed & Updated for Eqmuleagedon 09/21/2017
+|* - Updated by Maskoi 05/03/2015
 | ************************************************************************
 |* Summary:
 |*
@@ -53,7 +56,18 @@
 | --------------------------------------------------------------------------------------------
 | SUB: Main
 | --------------------------------------------------------------------------------------------
-	Sub Main
+Sub Main
+|-------------------------------------------------------------|
+| Required plugin check and load ~Chat
+|-------------------------------------------------------------|
+	/if (!${Bool[${Plugin[MQ2bzsrch].Name.Equal[MQ2bzsrch]}]}) {
+		/echo"\ar[\agBazaar.mac\ar]\arMQ2bzsrch wasn't loaded, \agloading MQ2bzsrch!"
+		/squelch /plugin MQ2bzsrch
+	}
+|-------------------------------------------------------------|
+| Added color to all /echo commands by making them /bazecho with this alias
+|-------------------------------------------------------------|
+	/alias /bazecho /echo \ar[\agBazaar.mac\ar]\aw >>> \ao
 |-------------------------------------------------------------|
 | Edit your variables
 |-------------------------------------------------------------|
@@ -65,7 +79,7 @@
 	/declare AnnounceMessage    string      outer   New trader up!
 | - Set UpdateOn to 1 to update prices every UpdateInterval (default 90 min)
 | - Set UpdateOn to 0 update prices just once then end macro
-| - Set UpdateSpam to 1 to /echo countdown every 5 min until next price update
+| - Set UpdateSpam to 1 to /bazecho countdown every 5 min until next price update
 	/declare UpdateOn            int         outer   1
 	/declare UpdateInterval      int         outer   500
 	/declare UpdateSpam          int         outer   1
@@ -101,48 +115,48 @@
 | - INITPRICE SETUP
 	/if (${Defined[Param1]}) {
 		/if (${Param1.Equal[initprice]}) {
-			/echo Initiating prices on new items.
+			/bazecho Initiating prices on new items.
 			/call TraderSetup
 		}
 	}
 | - If /mac bazaar makeini create/update ini file
 	/if (${Defined[Param0]}) {
 		/if (${Param0.Equal[makeini]}) {
-			/echo Initiating ini file check
+			/bazecho Initiating ini file check
 			/call MakeIni
-			/echo Done checking/updating ini file
+			/bazecho Done checking/updating ini file
 			/end
 		}
 	| - If /mac bazaar trader initate trader mode
 		/if (${Param0.Equal[trader]}) {
 			/varset merchType 1
-			/echo Auto-Updating Trader Prices.
+			/bazecho Auto-Updating Trader Prices.
 		| - If /mac bazaar buyer initate buyer mode
 		} else /if (${Param0.Equal[buyer]}) {
 			/varset merchType 2
-			/echo Auto-Updating Buyer Prices.
+			/bazecho Auto-Updating Buyer Prices.
 		}
 	}
 | - Error control for no commands line option after /mac bazaar
 	/if (${merchType}==0) {
-		/echo Invalid Usage: /mac bazaar trader | /mac bazaar buyer.
+		/bazecho Invalid Usage: /mac bazaar trader | /mac bazaar buyer.
 		/endmac
 	}
 	/if (${Me.Subscription.NotEqual[gold]}) /call Event_NotGold
 :mainloop
 	/varset looptimer ${UpdateInterval}
-	/echo Starting Auto-update...!
+	/bazecho Starting Auto-update...!
 | - Begin trader routine if merchType=1
 	/if (${merchType}==1) {
 		/call TraderStatus Off
 	:OpenBazaarAgain
 		/bazaar
 		/doevents
-		/echo Opening Bazaar Window.
+		/bazecho Opening Bazaar Window.
 		/delay 4s ${Window[BazaarSearchWnd].Open}
 		/if (!${Window[BazaarSearchWnd].Open}) /goto :OpenBazaarAgain
 		/notify BazaarSearchWnd BZR_UpdatePlayerButton leftmouseup
-		/echo Updating Current Traders...
+		/bazecho Updating Current Traders...
 		/delay 2s
 	| Begin barter routine merchType=2
 	} else {
@@ -162,15 +176,15 @@
 		/varset itemprice ${Int[${Window[BazaarWnd].Child[BZW_Money0].Text}]}
 		/delay 10
 		/if (${itemname.Find[,]}) {
-			/echo ${itemname} has a comma in the name, skipping, set manually ...
+			/bazecho ${itemname} has a comma in the name, skipping, set manually ...
 			/continue
 		}
-		/echo Searching bazaar for - ${itemname}
+		/bazecho Searching bazaar for - ${itemname}
 	| Check /skip for duplicate items in inventory
 		/if (${slot}) {
 			/for dupecheck 0 to ${Math.Calc[${slot}-1]}
 				/if (${itemname.Equal[${Window[BZW_BazaarSlotsWnd].Child[BZR_BazaarSlot${dupecheck}].Tooltip}]}) {
-					/echo ... Already priced skipping.
+					/bazecho ... Already priced skipping.
 					/continue
 				}
 			/next dupecheck
@@ -213,7 +227,7 @@
 		}
 		/for result 1 to ${Bazaar.Count}
 		| Echo Ignore trader if name is found in exclude list
-			/if (${Excludelist.Find[${Spawn[${Bazaar.Item[${result}].Trader}].Name}]}>=1) /echo ... Exclude List - ${Spawn[${Bazaar.Item[${result}].Trader}].Name} ignoring their price.
+			/if (${Excludelist.Find[${Spawn[${Bazaar.Item[${result}].Trader}].Name}]}>=1) /bazecho ... Exclude List - ${Spawn[${Bazaar.Item[${result}].Trader}].Name} ignoring their price.
 		| Check if item is for sale and Seller is not me or someone on my exclude list
 			/if (${Bazaar.Item[${result}].Name.Equal[${itemname}]} && ${Spawn[${Bazaar.Item[${result}].Trader}].Name.NotEqual[${Me}]} && !${Excludelist.Find[${Spawn[${Bazaar.Item[${result}].Trader}].Name}]}>=1) {
 			| Set itemsfound var - how many items are for sale
@@ -238,7 +252,7 @@
 	| If lowest price found is less that ini file SellPriceMin skip changing price
 		/if (${minprice}*0.99<${minSellPrice}) {
 			/varset targetstr ${minSellPrice}
-			/echo ... Selling price ${minprice}, but your minimum is ${minSellPrice}.
+			/bazecho ... Selling price ${minprice}, but your minimum is ${minSellPrice}.
 			/goto :setPrice
 		}
 	| If lowest price found is greater than ini maxSellPrice set var to maxSellPrice
@@ -247,7 +261,7 @@
 			/goto :setPrice
 		}
 	| If lowest price found is between 1 and 2 mil continue
-        /if (${minprice}<=2000000 && ${minprice}>0) {
+		/if (${minprice}<=2000000 && ${minprice}>0) {
 		| If lowest price found is below 100 pp set var to lowest price found -1
 			/if (${minprice}<100) {
 				/varset targetstr ${Math.Calc[${minprice}-1]}
@@ -255,13 +269,20 @@
 			| If lowest price found > 100 pp set var to round down price to neareast 25pp increment
 				/varcalc targetstr ${Int[${Math.Calc[ ${minprice}*0.99/25 ]}]}*25
 			| Set min price to ini file setting if within 25p of adjusted min price
-				/if (${Float[${targetstr}].Int}<${minSellPrice} && ${minSellPrice}-${Float[${targetstr}].Int}<25) /varset targetstr ${minSellPrice}
+				/if (${Float[${targetstr}].Int}<${minSellPrice} && ${minSellPrice}-${Float[${targetstr}].Int}<25) {
+					/varset targetstr ${minSellPrice}
+				| If minSellPrice is less than item's vendor value, set targetstr to Vendor value in copper. ~ChatWithThisName 01/02/2018
+					/if (${minSellPrice} < ${FindItem[${itemname}].Value}) {
+						/bazecho \agChanging minimum sell price from ${Int[${Math.Calc[${minSellPrice}/1000]}]}pp to ${Int[${Math.Calc[${FindItem[${itemname}].Value}/1000]}]}pp!
+						/varset targetstr ${Math.Calc[${FindItem[${itemname}].Value}/1000]}
+					}
+				}
 			}
 			/varset targetstr ${Int[${targetstr}]}
 		:setPrice
 		| If item pp price doesn't match ${targetstr} var reprice item
 			/if (!${targetstr.Equal[${Window[BazaarWnd].Child[BZW_Money0].Text}]}) {
-				/echo ... Repricing ${itemname} from (${Window[BazaarWnd].Child[BZW_Money0].Text}) to (${targetstr}).
+				/bazecho ... Repricing ${itemname} from (${Window[BazaarWnd].Child[BZW_Money0].Text}) to (${targetstr}).
 			:openqtywndagain
 			| Click on item pp price window
 				/notify BazaarWnd BZW_Money0 leftmouseup
@@ -296,20 +317,20 @@
 	/call TraderStatus On
 :cycleloop
 	/if (${EverQuest.GameState.Equal[CHARSELECT]}) /keypress ENTER
-	/if (${UpdateSpam}) /echo *** ${looptimer} minutes until next price check/update. ***
+	/if (${UpdateSpam}) /bazecho *** ${looptimer} minutes until next price check/update. ***
 	/call CloseBazSrchWnd
 	/if (${AnnounceOn} && ${looptimer}==${UpdateInterval}) /call Announcement
 	/if (${UpdateOn} && ${looptimer}<=0) /goto :mainloop
 	/varset looptimer ${Math.Calc[${looptimer}-5]}
 	/delay 5m
 	/if (${UpdateOn}) /goto :cycleloop
-	/echo ending macro
+	/bazecho ending macro
 	/call EndMacro
-	/return
+/return
 |-------------------------------------------------------------|
 | Sub Barter Main
 |-------------------------------------------------------------|
-	Sub BarterMain
+Sub BarterMain
 	/declare merchType int local 0
 	/declare minBuyPrice int local
 	/declare maxBuyPrice int local
@@ -317,17 +338,17 @@
 	/declare CheckIniEntry int local 0
 	/declare ItemName string local 0
 :OpenBuyerAgain
-	/echo Opening Buy Window.
+	/bazecho Opening Buy Window.
 	/buy
 	/delay 1s ${Window[BarterWnd].Open}
 	/if (!${Window[BarterWnd].Open}) /goto :OpenBuyerAgain
 :OpenBarterAgain
 	/barter
-	/echo Opening Barter Window.
+	/bazecho Opening Barter Window.
 	/delay 2s ${Window[BarterSearchWnd].Open}
 	/if (!${Window[BarterSearchWnd].Open}) /goto :OpenBarterAgain
 | Check if entry has an ini file entry. Create on if missing.
-	/echo Checking all items in list for Bazaar.ini entries
+	/bazecho Checking all items in list for Bazaar.ini entries
 	/delay 10
 	/for CheckIniEntry 1 to 100
 		/if (${Window[BarterWnd].Child[BTR_BuyLineList].List[${CheckIniEntry}].Length}>0) {
@@ -335,7 +356,7 @@
 			/if (!${Ini[bazaar.ini,${ItemName}].Length}) {
 				/ini bazaar.ini "${ItemName}" "BuyPriceMin" ${BuyPriceMin}
 				/ini bazaar.ini "${ItemName}" "BuyPriceMax" ${BuyPriceMax}
-				/echo Creating bazaaar.ini entry for ${ItemName}.
+				/bazecho Creating bazaaar.ini entry for ${ItemName}.
 				/delay 2
 			}
 		}
@@ -351,17 +372,17 @@
 				/varset minBuyPrice ${BuyPriceMin}
 				/varset maxBuyPrice ${BuyPriceMax}
 			}
-		| /echo ${ItemName}" ${minBuyPrice} ${maxBuyPrice}
+		| /bazecho ${ItemName}" ${minBuyPrice} ${maxBuyPrice}
 			/call UpdateBuyer "${ItemName}" ${minBuyPrice} ${maxBuyPrice}
 		}
 	/next BuyItemSlot
 	/call BuyerStatus On
 	/call EndMacro
-	/return
+/return
 |-------------------------------------------------------------|
 | Sub UpdateBuyer
 |-------------------------------------------------------------|
-	Sub UpdateBuyer(String name, int min, int max)
+Sub UpdateBuyer(String name, int min, int max)
 	/declare loopVar int local 0
 	/declare loopVarMax int local 0
 	/declare maxFoundPrice int local ${min}
@@ -410,18 +431,18 @@
 		}
 	}
 	/if (${maxFoundPrice}>${max}) {
-		/echo Want to set ${name} to ${maxFoundPrice}, but your maximum is ${max}.
+		/bazecho Want to set ${name} to ${maxFoundPrice}, but your maximum is ${max}.
 		/varset maxFoundPrice ${max}
 	}
 	/varset inSlot ${Window[BarterWnd].Child[BTR_BuyLineList].List[=${name},3]}
 	/if (${maxFoundPrice} != ${Int[${Window[BarterWnd].Child[BTR_BuyLineList].List[${inSlot},5]}]} ) {
 		/call SetPrice ${maxFoundPrice} "${name}"
 	}
-	/return
+/return
 |-------------------------------------------------------------|
 | Sub BuyerStatus
 |-------------------------------------------------------------|
-	Sub BuyerStatus(string OnOff)
+Sub BuyerStatus(string OnOff)
 	/if (!${Me.Trader}) {
 		/delay 1s
 	:OpenBuyerWnd
@@ -432,21 +453,21 @@
 		/if (${OnOff.Equal[On]}) {
 			/notify BarterWnd BTR_StartStopButton LeftMouseUp
 			/delay 1s
-			/echo Buyermode ON.
+			/bazecho Buyermode ON.
 		}
 	}
 	/if (${OnOff.Equal[Off]}) {
 		/notify BarterWnd BZW_End_Button LeftMouseUp
 		/delay 1s
-		/echo Buyermode OFF.
+		/bazecho Buyermode OFF.
 	}
 	/delay 1s
-	/return
+/return
 |-------------------------------------------------------------|
 | Sub SetPrice
 |-------------------------------------------------------------|
-	Sub SetPrice(string price, string name)
-	/echo Setting price of ${name} to ${price}.
+Sub SetPrice(string price, string name)
+	/bazecho Setting price of ${name} to ${price}.
 	/declare listID int ${Window[BarterWnd].Child[BTR_BuyLineList].List[=${name},3]}
 	/declare PlatVal int 0
 	/notify BarterWnd BTR_BuyLineList listselect ${listID}
@@ -465,11 +486,11 @@
 	/notify QuantityWnd QTYW_Accept_Button leftmouseup
 	/delay 1
 	/notify BarterWnd BTR_BuyLineModifyButton leftmouseup
-	/return
+/return
 |-------------------------------------------------------------|
 | Sub TraderStatus
 |-------------------------------------------------------------|
-	Sub TraderStatus(string OnOff)
+Sub TraderStatus(string OnOff)
 	/if (!${Me.Trader}) {
 		/delay 1s
 	:OpenBazaarWnd
@@ -480,29 +501,29 @@
 		/if (${OnOff.Equal[On]}) {
 			/notify BazaarWnd BZW_Start_Button LeftMouseUp
 			/delay 1s
-			/echo Tradermode ON.
+			/bazecho Tradermode ON.
 		}
 	}
 	/if (${OnOff.Equal[Off]}) {
 		/notify BazaarWnd BZW_End_Button LeftMouseUp
 		/delay 1s
-		/echo Tradermode OFF.
+		/bazecho Tradermode OFF.
 	}
 	/delay 1s
-	/return
+/return
 |-------------------------------------------------------------|
 | Sub TraderSetup - Sets unpriced items to defind ${InitialPrice} amount of plat
 |-------------------------------------------------------------|
-	Sub TraderSetup
+Sub TraderSetup
 	/declare slot int local
 	/declare itemname string local
 	/declare PlatVal int local
 	/declare targetstr string local ${InitialPrice}
 	/declare curprice string local
-	/echo Setting unpriced items to default price of (${targetstr}) pp.
+	/bazecho Setting unpriced items to default price of (${targetstr}) pp.
 :OpenTraderAgain
-	/echo Opening Trade Window.
-	/trader
+	/bazecho Opening Trade Window.
+	/if (!${Window[BazaarWnd].Open}) /trader
 	/delay 1s ${Window[BazaarWnd].Open}
 	/if (!${Window[BazaarWnd].Open}) /goto :OpenTraderAgain
 	/varset slot -1
@@ -510,18 +531,20 @@
 	/varcalc slot ${slot}+1
 	/if (${slot}>99) /goto :donewithslots
 	/notify BazaarWnd BZR_BazaarSlot${slot} leftmouseup
+	/delay 5
 	/varset curprice ${Window[BazaarWnd].Child[BZW_Money0].Text}
 	/if (!${Window[BazaarWnd].Child[BZR_BazaarSlot${slot}].Tooltip.Length}) /goto :donewithslots
 	/varset itemname ${Window[BazaarWnd].Child[BZR_BazaarSlot${slot}].Tooltip}
 	/delay 1s
 	/if (${itemname.Find[,]}) {
-		/echo ${itemname} has a comma in the name, skipping, set manually ...
-		/continue
+		/bazecho ${itemname} has a comma in the name, skipping, set manually ...
+
+		/goto :nextslot
 	}
 	/if (${curprice}==0) {
-		/echo Price not set for item (${itemname}).
+		/bazecho Price not set for item (${itemname}).
 	:setPrice
-		/echo ... Repricing ${itemname} from ${Window[BazaarWnd].Child[BZW_Money0].Text} to ${targetstr}.
+		/bazecho ... Repricing ${itemname} from ${Window[BazaarWnd].Child[BZW_Money0].Text} to ${targetstr}.
 	:openqtywndagain
 		/notify BazaarWnd BZW_Money0 leftmouseup
 		/delay 2s
@@ -544,26 +567,28 @@
 		/delay 1
 		/notify BazaarWnd BZW_SetPrice_Button leftmouseup
 		/delay 1
+		/goto :nextslot
 	} else {
-		/echo Price set to: (${curprice} pp), skipping price init.
+		/bazecho Price set to: (${curprice} pp), skipping this item.
+		/goto :nextslot
 	}
-	/continue
+
 :donewithslots
 	/call CloseBazSrchWnd
-	/return
+/return
 |-------------------------------------------------------------|
 | Sub CloseBazSrchWnd
 |-------------------------------------------------------------|
-	Sub CloseBazSrchWnd
+Sub CloseBazSrchWnd
 :CloseBazaarSearchWnd
 	/if (${Window[BazaarSearchWnd].Open}) /keypress TOGGLE_BAZAARSEARCHWIN
 	/delay 2s (!${Window[BazaarSearchWnd].Open})
 	/if (${Window[BazaarSearchWnd].Open}) /goto :CloseBazaarSearchWnd
-	/return
+/return
 |-------------------------------------------------------------|
 | Sub MakeIni
 |-------------------------------------------------------------|
-	Sub MakeIni
+Sub MakeIni
 	/declare slot           int         local   -1
 	/declare SellValue      string      local
 	/declare itemname       string      local
@@ -576,40 +601,40 @@
 	/varcalc slot ${slot}+1
 	/if (${slot}>199) /return
 	/notify BazaarWnd BZR_BazaarSlot${slot} leftmouseup
-	/echo ${Window[BazaarWnd].Child[BZR_BazaarSlot${slot}].Tooltip.Length}
+	/bazecho ${Window[BazaarWnd].Child[BZR_BazaarSlot${slot}].Tooltip.Length}
 	/if (!${Window[BazaarWnd].Child[BZR_BazaarSlot${slot}].Tooltip.Length}) /return
 	/varset itemname ${Window[BazaarWnd].Child[BZR_BazaarSlot${slot}].Tooltip}
 	/if (${itemname.Find[,]}) {
-		/echo ${itemname} has a comma in the name, skipping, set manually ...
+		/bazecho ${itemname} has a comma in the name, skipping, set manually ...
 		/continue
 	}
-	/echo Creating entry for - ${itemname}
+	/bazecho Creating entry for - ${itemname}
 	/ini bazaar.ini "${itemname}" "SellPriceMin" ${SellPriceMin}
 	/ini bazaar.ini "${itemname}" "SellPriceMax" ${SellPriceMax}
 	/ini bazaar.ini "${itemname}" "BuyPriceMin" ${BuyPriceMin}
 	/ini bazaar.ini "${itemname}" "BuyPriceMax" ${BuyPriceMax}
 	/continue
-	/return
+/return
 |-------------------------------------------------------------|
 | Sub Announcement
 |-------------------------------------------------------------|
-	Sub Announcement
+Sub Announcement
 	/if (${AnnounceOn}) /${AnnounceWhere} ${AnnounceMessage}
-	/return
+/return
 |-------------------------------------------------------------|
 | Sub  EndMacro
 |-------------------------------------------------------------|
-	Sub EndMacro
+Sub EndMacro
 	/call CloseBazSrchWnd
 	/if (${AnnounceOn}) /call Announcement
-	/echo ending macro really
+	/bazecho ending macro really
 	/endmac
-	/return
+/return
 |-------------------------------------------------------------|
 | Sub Event Not gold
 |-------------------------------------------------------------|
-	Sub Event_NotGold
-	/echo You don't have a gold membership and can't sell
+Sub Event_NotGold
+	/bazecho You don't have a gold membership and can't sell
 	/endmacro
-	/return
-|  [+++  Formatted by MQ2fusing tabs for indents +++]
+/return
+|  [+++  Formatted by MQ2f using tabs for indents +++]
