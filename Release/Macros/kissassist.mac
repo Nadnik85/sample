@@ -1,4 +1,4 @@
-| - kissassist.mac v10.1.4 by Maskoi 12/23/2017.
+| - kissassist.mac v10.2.2 by Maskoi 12/27/2017.
 | - Contributions by anonymoushero, crystane, eqmule, thenomadman, william12.
 | - ChainPull, Debuffs and combat rewrites by ctaylor22.
 | - PetTank, PullerPetTank & HunterPetTank roles developed by TreeHuginDruid
@@ -176,7 +176,7 @@ Sub Main
         /varset ZoneName ${Zone.ShortName}${If[${Me.InInstance},_I,]}
     }
     /declare MacroName              string      outer       KissAssist
-    /declare MacroVer               string      outer       10.1.4
+    /declare MacroVer               string      outer       10.2.2
     /declare IniFileName            string      outer         
     /declare InfoFileName           string      outer       ${MacroName}_Info.ini
     /declare ConditionsFileName     string      outer       
@@ -2242,7 +2242,6 @@ Sub Main
                     /return
                 }  
             }
-            |:NextAggro
         /next i
         /if (${DebugCombat}) /echo \atDEBUGCOMBAT AggroCheck Leave \agLine#: ${Macro.CurLine}
     /return
@@ -2260,18 +2259,18 @@ Sub Main
                 /if (${ReadyToCast}==2 && ${Me.ItemReady[=${castWhat}]}) /call CastItem "${castWhat}" ${WhatID}
                 /if (${ReadyToCast}==3 && ${Me.CombatAbilityReady[${castWhat}]}) /call CastDisc "${castWhat}" ${WhatID}
                 /if (${ReadyToCast}==4 && ${Me.AbilityReady[${castWhat}]}) /call CastSkill "${castWhat}" ${WhatID}
-                /if (${ReadyToCast}==5 && ${Me.SpellReady[${castWhat}]}) /call CastSpell "${castWhat}" ${WhatID} ${sentFrom}
+                /if (${ReadyToCast}==5 && ${Me.SpellReady[${castWhat}]} && ${Me.Book[${castWhat}]}) /call CastSpell "${castWhat}" ${WhatID} ${sentFrom}
             } else {
                 /if (${Me.Book[${castWhat}]} && !${Me.Gem[${castWhat}]} && ${ReadyToCast}==0) {
                     /call CastMem "${castWhat}" ${sentFrom}
-                    /varset ReadyToCast 5
+                    /varset ReadyToCast 6
                     /call CastSpell "${castWhat}" ${WhatID} ${sentFrom}
                 }
             }
         }    
         /if (${Macro.Return.Equal[CAST_SUCCESS]}) /doevents
         |Remem spell originally in Miscgem slot except if combat or just rezd
-        /if (${MiscGemRemem} && ${ReadyToCast}==5) /call CastReMem
+        /if (${MiscGemRemem} && ${ReadyToCast}==6) /call CastReMem
         /if (${Debug}) /echo CastWhat Leave Line#: ${Macro.CurLine}
     /return ${CastResult}
 |--------------------------------------------------------------------------------------------------------------|
@@ -2280,7 +2279,7 @@ Sub Main
         /if (${Select[${WhatAA},Banestrike,15073]} && !${Banestrike.Find[|${Target.Race}|]} && ${Spawn[${MyTargetID}].Distance3D}>70 && ${CombatStart}) /return
         /if (${Target.ID}!=${WhatID} && ${Spawn[id ${WhatID}].ID}) /call CastTarget ${WhatID}
         /alt act ${Me.AltAbility[${WhatAA}].ID}
-        /if (!${IAmABard}) /call CastWait "${WhatAA}"
+        /call CastWait "${WhatAA}"
         /delay 5
         /if (${Me.AltAbilityReady[${WhatAA}]}) {
             /varset CastResult CAST_RECOVER
@@ -2303,7 +2302,7 @@ Sub Main
         }
         /if (${IAmABard}) {
             /if (${Debug})  /echo I am a bard CastItem ${WhatItem}
-            /call CastBard "${WhatItem}" ${WhatID} CastItem
+            /call CastBard "${WhatItem}" ${WhatID} CastItem 
             /if (${Debug}) /echo ${Macro.Return} 
             /varset CastResult  ${Macro.Return}  
         } else {
@@ -2352,6 +2351,7 @@ Sub Main
            /return
         }
         /if (${Target.ID}!=${WhatID} && ${Spell[${WhatSpell}].TargetType.NotEqual[Self]} && ${Spawn[id ${WhatID}].ID}) /call CastTarget ${WhatID}
+        /if (${Me.Gem[${WhatSpell}]}) {
         /if (${Me.GemTimer[${WhatSpell}]}==0) {
             /casting "${WhatSpell}" -maxtries|${MaxTryNum}
             /while (${Cast.Status.Equal[C]} && ${CastResult.NotEqual[CAST_CANCELLED]}) {
@@ -2372,6 +2372,10 @@ Sub Main
             | So checking for CastResult NotEqual CAST_CANCELLED fixes the issue, and fixes the casting on corpse messages even though the spell was canceled. 
             /if (${CastResult.NotEqual[CAST_CANCELLED]}) /varset CastResult ${Cast.Result}
         }
+        } else {
+            /echo Skip Casting ${WhatSpell}. Sell Not Memed.
+            /varset CastResult CAST_CANCELLED
+        }
         /if (${Debug}) /echo CastSpell Leave ${Me.GemTimer[${WhatSpell}]} ${CastResult} ${Cast.Result} Line#: ${Macro.CurLine}
     /return  ${CastResult}  
 |--------------------------------------------------------------------------------------------------------------|
@@ -2383,25 +2387,27 @@ Sub Main
         }
     /return
 |--------------------------------------------------------------------------------------------------------------|    
-    Sub CastBard(string WhatSpell,int WhatID,string sentFrom)
-        /if (${Debug}) /echo CastBard Enter Line#: ${WhatSpell} ${WhatID} ${sentFrom}
+    Sub CastBard(string BardSpell,int WhatID,string sentFrom)
+        | Bard song with long refresh is not ready so return and do not interupt twisting.
+        /if (${Me.GemTimer[${BardSpell}]}>=1 && ${Me.Book[${BardSpell}]}) /return
+        /if (${Debug}) /echo CastBard Enter Line#: ${BardSpell} ${WhatID} ${sentFrom}
         /if (${Twist}) {
             /varset WasTwisting ${Twist}
             /squelch /twist off
             /delay 30 !${Twist}
         }
         /if (${Target.ID}!=${WhatID} && ${Spawn[id ${WhatID}].ID}) /call CastTarget ${WhatID}
-        /if (${FindItem[=${WhatSpell}].ID}) {
-            /if (${Debug}) /echo I am a bard CastBard ${WhatSpell}
-            /delay 10
-            /casting "${WhatSpell}|item" -targetid|${WhatID}
-            /delay 300 !${Me.Casting.ID}
+        /if (${FindItem[=${BardSpell}].ID}) {
+            /if (${Debug}) /echo I am a bard CastBard ${BardSpell}
+            /casting "${BardSpell}|item" -targetid|${WhatID}
+            /while (${Me.Casting.ID} || ${Cast.Status.Equal[c]}) {
+                /delay 5
+            }
             /varset CastResult ${Cast.Result}
         } 
-        /if (${Me.GemTimer[${WhatSpell}]}==0) {
+        /if (${Me.GemTimer[${BardSpell}]}==0 && ${Me.Book[${BardSpell}]}) {
             /delay 2 
-            /if (${Me.GemTimer[${WhatSpell}]}!=0) /return
-            /squelch /twist once ${Me.Gem[${WhatSpell}]}
+            /squelch /twist once ${Me.Gem[${BardSpell}]}
             /delay 30
             /varset CastResult CAST_SUCCESS
         }
@@ -2425,10 +2431,13 @@ Sub Main
         | Prevent tanks and heals trying to mem spells during combat.
         /if ((${Attacking} && ${MainAssist.Equal[${Me}]}) || (${HealsOn} && ${AggroTargetID} && ${sentFrom.NotEqual[Heal]})) /return
         /if (${Cursor.ID}) /call CheckCursor CastMem
-        /if (${WasTwisting}) {
+		/if (${IAmABard}) {
+		    /varset WasTwisting ${Twist}
+        	/if (${WasTwisting}) {
             /squelch /twist off
             /delay 30 !${Twist}
         }
+		}
         /if (${MiscGemRemem} && ${MiscGemLW} && ${Spell[${WhatMemSpell}].RecastTime.TotalSeconds}>30 && ${ReMemWaitLong.Equal[null]}) {
            /varset ReMemWaitLong ${WhatMemSpell}
            /call CastMemSpell "${WhatMemSpell}" ${MiscGemLW} 0 CastMem
@@ -2437,10 +2446,12 @@ Sub Main
         /varset ReMemWaitShort ${WhatMemSpell}
         /call CastMemSpell "${WhatMemSpell}" ${MiscGem} 0 CastMem
         /delay 350 ${Me.SpellReady[${WhatMemSpell}]} && ${Me.GemTimer[${WhatMemSpell}]}==0
+		/if (${IAmABard}) {
          /if (${WasTwisting} && !${Twist}) {
             /squelch /twist
             /varset WasTwisting FALSE
         }
+		}
         /if (${Debug}) /echo CastMem Leave Line#: ${Macro.CurLine}
    /return
 |--------------------------------------------------------------------------------------------------------------|
@@ -2832,7 +2843,7 @@ Sub Main
         /if (${Select[${Me.Class.ShortName},BST,BRD,CLR,DRU,ENC,MAG,NEC,PAL,RNG,SHM,SHD,WIZ]}) /varset MedStat Mana
         /if (${Select[${Me.Class.ShortName},BER,MNK,ROG,WAR]}) /varset MedStat Endurance
         /if (!${Me.Moving}) {
-            /if (${Select[${Me.Class.ShortName},BST,PAL,RNG,SHD]} && ${Me.Pct${MedStat2}}<${MedStart} && ${Me.Pct${MedStat}}>${MedStart})  {
+            /if (${Select[${Me.Class.ShortName},BRD,BST,PAL,RNG,SHD]} && ${Me.Pct${MedStat2}}<${MedStart} && ${Me.Pct${MedStat}}>${MedStart})  {
                 /varset MedStat1 ${MedStat}
                 /varset MedStat ${MedStat2}
                 /varset Med2On 1
@@ -6561,7 +6572,7 @@ Sub Main
             }
 |------------------------------------------------------------------------Pull with End-------------------------------------------------------------------------------------------|                      
             |- Toggle puller mode off if option enabled.
-            /if (${Select[${Role},pullerpettank]} && ${PullRoleToggle} && ${Group.Puller.ID}==${Me.ID}) /call TogglePullMode TurnOff            
+            /if (${Select[${Role},pullerpettank]} && ${PullRoleToggle} && ${Group.Puller.ID}==${Me.ID}) /call PullModeToggle TurnOff            
         } else /if (${PullAggroTargetID}) {
             | The else /if fixes when puller stalls because puller grabs aggro with out getting to pull.
             /varset Pulled 1

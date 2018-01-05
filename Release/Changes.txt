@@ -1,3 +1,15 @@
+Jan 04 2018 by eqmule
+- Updated for TEST Go build it at www.macroquest2.com/builder
+
+Jan 01 2018 by eqmule
+- Updated for LIVE Go build it at www.macroquest2.com/builder
+- /tar npc now correctly targets the closest npc using distance3d.
+
+Dec 28 2017 by eqmule
+- Updated for LIVE Go build it at www.macroquest2.com/builder
+- ${Group.Cleric} will now return the cleric as a spawntype if a cleric is in the group (not a mercenary but a REAL cleric)
+- ${Group.Injured[90]} will return the numbers of people in the group that has a hp percent lower than 90
+
 Dec 19 2017 by eqmule
 - Updated for LIVE Go build it at www.macroquest2.com/builder
 
