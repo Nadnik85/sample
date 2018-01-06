@@ -1,4 +1,4 @@
-| Ninjadvloot.inc v6.08 9/23/2017 Redguides.com 
+| Ninjadvloot.inc v6.09 9/23/2017 Redguides.com 
 | Author A_Druid_00 12/19/2005
 | Based on original looting code of toomanynames
 | The following updates were all individually posted and consolidated by Maskoi into the current version.
@@ -23,7 +23,8 @@
 | Updated: hoosierbilly added fishing item handling 5/7/17
 |
 | Updated 01 Sep 2017 by Eqmule fixed a /next i that was in the wrong place.
-|| Updated 23 Sep 2017 by Maskoi/Eqmule fixed #warning errors
+| Updated 23 Sep 2017 by Maskoi/Eqmule fixed #warning errors
+| Updated 31 Dec 2017 by ChatWithThisName fixed multiple /next in /for statements in various locations. 
 | Selling Contributions by
 |   drkrain - TLInv item check
 |   dewey2461 - Add sold items to ini file Event
@@ -68,7 +69,7 @@
 Sub SetupAdvLootVars(string ChangeIniFile)
 
     /declare CantLootID							int                 outer 
-    /declare NinjadVersion                      string              outer   6.06
+    /declare NinjadVersion                      string              outer   6.09
     /declare InventoryFull                      int                 outer   0
     /declare NinjaIniFile                       string              outer   Loot.ini
     /declare MasterCorpseList                   string              outer   
@@ -405,7 +406,7 @@ Sub DoLootStuff(LootAction)
     | Loop through top level inventory slots for containers
     /for i 1 to 10
         | Check if top level inv slot has a bag
-        /if (${InvSlot[pack${i}].Item.Container}==0) /next i
+        /if (${InvSlot[pack${i}].Item.Container}==0) /continue
         | Set j 1 to number of bag slots and loop through slots looking for items marked sell
         /for j 1 to ${InvSlot[pack${i}].Item.Container}
             /if (${InvSlot[pack${i}].Item.Item[${j}].ID}) {
@@ -751,27 +752,28 @@ Sub UseAdvLoot
 			/if (${LootCountTrack}>5 && !${MLSwitchTimer}) {
 				/varcalc GMLCounter ${Group.MasterLooter.Index}-1
 				/for i ${Group.Members} downto 0
-				/if (${Ini[KissAssist_${Group.Member[${i}].Name}.ini,General,LootOn].Length}) {
-					/varset ICanLoot ${Ini[KissAssist_${Group.Member[${i}].Name}.ini,General,LootOn]}
-				} else /if (${Ini[KissAssist_${EverQuest.Server}_${Group.Member[${i}].Name}.ini,General,LootOn].Length}) {
-					/varset ICanLoot ${Ini[KissAssist_${EverQuest.Server}_${Group.Member[${i}].Name}.ini,General,LootOn]}
-				} else {
-					/varset ICanLoot 1
-				}
-				/if (${Group.Member[${GMLCounter}].Type.Equal[mercenary]} || ${ICanLoot}==0) {
-					/if (${Debugloot}) /echo DEBUGLOOT: ${Group.Member[${GMLCounter}].Name} is a mercenary or flagged LootOn=0, try the next group member, line# ${Macro.CurLine}
-					/varcalc GMLCounter ${GMLCounter}-1
-					/next i
-				}
-				/if (${GMLCounter}>=0) {
-					/echo NINJADVLOOT: ${Group.Member[${GMLCounter}].Name} has been assigned the Master Looter Role
-					/grouproles set ${Group.Member[${GMLCounter}].Name} 5
-					/delay 2s ${Group.MasterLooter.ID}
-					/varset LootCountTrack 0
-				} else {
-					/varset GMLCounter ${Group.Members}
-					/next i
-				}
+					/if (${Ini[KissAssist_${Group.Member[${i}].Name}.ini,General,LootOn].Length}) {
+						/varset ICanLoot ${Ini[KissAssist_${Group.Member[${i}].Name}.ini,General,LootOn]}
+					} else /if (${Ini[KissAssist_${EverQuest.Server}_${Group.Member[${i}].Name}.ini,General,LootOn].Length}) {
+						/varset ICanLoot ${Ini[KissAssist_${EverQuest.Server}_${Group.Member[${i}].Name}.ini,General,LootOn]}
+					} else {
+						/varset ICanLoot 1
+					}
+					/if (${Group.Member[${GMLCounter}].Type.Equal[mercenary]} || ${ICanLoot}==0) {
+						/if (${Debugloot}) /echo DEBUGLOOT: ${Group.Member[${GMLCounter}].Name} is a mercenary or flagged LootOn=0, try the next group member, line# ${Macro.CurLine}
+						/varcalc GMLCounter ${GMLCounter}-1
+						/continue
+					}
+					/if (${GMLCounter}>=0) {
+						/echo NINJADVLOOT: ${Group.Member[${GMLCounter}].Name} has been assigned the Master Looter Role
+						/grouproles set ${Group.Member[${GMLCounter}].Name} 5
+						/delay 2s ${Group.MasterLooter.ID}
+						/varset LootCountTrack 0
+					} else {
+						/varset GMLCounter ${Group.Members}
+						/continue
+					}
+				/next i
 				/if (${LootCountTrack}) /echo NINJADVLOOT: Unable to find a valid looter, Time to go sell or assign more group members LootOn=1.
 				/varset MLSwitchTimer 35s
 			}
@@ -780,9 +782,9 @@ Sub UseAdvLoot
 		/if (${Debugloot}) /echo DEBUGLOOT: Bag space check, line# ${Macro.CurLine}
 		/varset FreeBagSpace 0
 		/for k 1 to 10
-		/if (${InvSlot[Pack${k}].Item.Container} && ${InvSlot[Pack${k}].Item.Name.NotEqual[${ExcludeBag1}]} && ${InvSlot[Pack${k}].Item.Name.NotEqual[${ExcludeBag2}]}) {
-			/varcal FreeBagSpace ${FreeBagSpace}+(${InvSlot[Pack${k}].Item.Container}-${InvSlot[Pack${k}].Item.Items})
-		}
+			/if (${InvSlot[Pack${k}].Item.Container} && ${InvSlot[Pack${k}].Item.Name.NotEqual[${ExcludeBag1}]} && ${InvSlot[Pack${k}].Item.Name.NotEqual[${ExcludeBag2}]}) {
+				/varcal FreeBagSpace ${FreeBagSpace}+(${InvSlot[Pack${k}].Item.Container}-${InvSlot[Pack${k}].Item.Items})
+			}
 		/next k
 
 		| Everyone select need/no for quest items in shared loot
@@ -883,12 +885,13 @@ Sub UseAdvLoot
 			| skip item if its lore and everyone in group has one
 			/if (${AdvLoot.SList[${i}].ID} && !${AdvLoot.SList[${i}].NoDrop} && (${FindItem[=${AdvLoot.SList[${i}].Name}].Lore}||${FindItemBank[=${AdvLoot.SList[${i}].Name}].Lore}||(${FindItemCount[=${AdvLoot.SList[${i}].Name}]} && !${FindItem[=${AdvLoot.SList[${i}].Name}].ID}))) {
 				/for g 0 to ${Group.Members}
-				/if (${Debugloot}||${SpamLootInfo}) /echo NINJADVLOOT: SharedList: ${AdvLoot.SList[${i}].Name} is Lore and I have one. Giving to ${Group.Member[${g}].Name}
-				/delay 3s !${AdvLoot.LootInProgress}
-				/if (${AdvLoot.SList[${i}].ID} && ${AdvLoot.SList[${i}].Name.Equal[${ITPName}]}) /advloot shared ${i} giveto ${Group.Member[${g}].Name}
-				/delay 3s !${AdvLoot.LootInProgress}
-				/delay 5
-				/if (${AdvLoot.SList[${i}].ID} && ${AdvLoot.SList[${i}].Name.Equal[${ITPName}]}) /next g
+					/if (${Debugloot}||${SpamLootInfo}) /echo NINJADVLOOT: SharedList: ${AdvLoot.SList[${i}].Name} is Lore and I have one. Giving to ${Group.Member[${g}].Name}
+					/delay 3s !${AdvLoot.LootInProgress}
+					/if (${AdvLoot.SList[${i}].ID} && ${AdvLoot.SList[${i}].Name.Equal[${ITPName}]}) /advloot shared ${i} giveto ${Group.Member[${g}].Name}
+					/delay 3s !${AdvLoot.LootInProgress}
+					/delay 5
+					/if (${AdvLoot.SList[${i}].ID} && ${AdvLoot.SList[${i}].Name.Equal[${ITPName}]}) /continue
+				/next g
 				/if (${Debugloot}||${SpamLootInfo}) /echo NINJADVLOOT: SharedList: ${AdvLoot.SList[${i}].Name} is Lore and all group members have one. Skipping item.
 				/delay 3s !${AdvLoot.LootInProgress}
 				/if (${AdvLoot.SList[${i}].ID} && ${AdvLoot.SList[${i}].Name.Equal[${ITPName}]}) /advloot shared ${i} leave
@@ -941,118 +944,117 @@ Sub UseAdvLoot
 			/varset ITSCount ${AdvLoot.PCount}
 			/if (${ITLootCount}==0) /varset ITLootCount ${AdvLoot.PCount}
 			/for k ${ITSCount} downto 1
-			/if (!${Me.FreeInventory}) /return
-			/varset ITPName ${AdvLoot.PList[${k}].Name}
-			/varset IniEntry ${Ini[${NinjaIniFile},"${ITPName.Left[1]}","${ITPName}"].Arg[1,|]}
-			/varset ITStackSize ${AdvLoot.PList[${k}].StackSize}
-			/if (${Debugloot}) /echo DEBUGLOOT: PList: item# ${k}, Name=${ITPName}, IniFile=${NinjaIniFile}, IniEntry=${IniEntry}, StackSize=${ITStackSize}, line# ${Macro.CurLine}
+				/if (!${Me.FreeInventory}) /return
+				/varset ITPName ${AdvLoot.PList[${k}].Name}
+				/varset IniEntry ${Ini[${NinjaIniFile},"${ITPName.Left[1]}","${ITPName}"].Arg[1,|]}
+				/varset ITStackSize ${AdvLoot.PList[${k}].StackSize}
+				/if (${Debugloot}) /echo DEBUGLOOT: PList: item# ${k}, Name=${ITPName}, IniFile=${NinjaIniFile}, IniEntry=${IniEntry}, StackSize=${ITStackSize}, line# ${Macro.CurLine}
 
-			| skip item if its lore and i have one
-			/if (${FindItem[=${AdvLoot.PList[${k}].Name}].Lore}||${FindItemBank[=${AdvLoot.PList[${k}].Name}].Lore}||(${FindItemCount[=${AdvLoot.PList[${k}].Name}]} && !${FindItem[=${AdvLoot.PList[${k}].Name}].ID})) {
-				/if (${Debugloot}||${SpamLootInfo}) /echo NINJADVLOOT: PList: ${ITPName} is Lore and I have one. Leaving item.
-				/delay 3s !${AdvLoot.LootInProgress}
-				/advloot personal ${k} leave
-				/delay 3s !${AdvLoot.LootInProgress}
-				/if (${LootLagDelay}) /delay ${LootLagDelay}
-				/goto :NextPItem
-			}
-			| Add item to ini if it not in there
-			/if (${AdvLoot.PList[${k}].NoDrop} && !${Select[${IniEntry},Ignore,Keep,Destroy,Sell,Quest]}) {
-				/if (${NoDropDefault.Arg[1,|].Equal[Quest]}) {
-					/ini "${NinjaIniFile}" "${ITPName.Left[1]}" "${ITPName}" Quest|1
-					/varset IniEntry Quest
-					/echo NINJADVLOOT: Adding NoDrop item ${ITPName}=Quest|1 to ${NinjaIniFile} file.
-				} else /if (${NoDropDefault.Arg[1,|].Equal[Keep]}) {
-					/ini "${NinjaIniFile}" "${ITPName.Left[1]}" "${ITPName}" Keep
-					/varset IniEntry Keep
-					/echo NINJADVLOOT: Adding NoDrop item ${ITPName}=Keep to ${NinjaIniFile} file.
-				} else {
-					/ini "${NinjaIniFile}" "${ITPName.Left[1]}" "${ITPName}" Ignore
-					/varset IniEntry Ignore
-					/echo NINJADVLOOT: Adding NoDrop item ${ITPName}=Ignore to ${NinjaIniFile} file.
-				}
-				/delay ${Math.Calc[${LootLagDelay}+5]}
-			}
-			/if (${AdvLoot.PList[${k}].ID} && !${Select[${IniEntry},Ignore,Keep,Destroy,Sell,Quest]}) {
-				| Loot item, check its value and add to ini file.
-				/if (!${FindItem[=${ITPName}].ID}) {
-					/delay 3s !${AdvLoot.LootInProgress}
-					/advloot personal ${k} loot
-					/delay 3s !${AdvLoot.LootInProgress}
-					/delay ${Math.Calc[${LootLagDelay}+5]}
-					/if (${Window[ConfirmationDialogBox].Open}) {
-						/nomodkey /notify ConfirmationDialogBox Yes_Button leftmouseup
-						/delay ${Math.Calc[${LootLagDelay}+10]}
-					}
-				}
-				/varset ITStack ${FindItem[=${ITPName}].StackSize}
-				/if (${ITStack}>20) /varset ITStack 20
-				/if (${Math.Calc[${ITStack}*(${FindItem[=${ITPName}].Value}/1000)]} < ${StackPlatValue} && !${FindItem[=${ITPName}].WornSlots}) {
-					/ini "${NinjaIniFile}" "${ITPName.Left[1]}" "${ITPName}" Ignore
-					/echo NINJADVLOOT: Adding worthless ${ITPName}=Ignore to the ${NinjaIniFile} file.
-					/varset IniEntry Ignore
-				} else {
-					/ini "${NinjaIniFile}" "${ITPName.Left[1]}" "${ITPName}" Keep
-					/echo NINJADVLOOT: Adding valuable ${ITPName}=Keep to the ${NinjaIniFile} file.
-					/varset IniEntry Keep
-				}
-			}
-			| Leave items marked ignore on corpse
-			/if  (${Select[${IniEntry},Ignore]}||${AdvLoot.PList[${k}].Never}==true) {
-				/if (${Debugloot}||${SpamLootInfo}) /echo NINJADVLOOT: PList: ${ITPName} is marked ${IniEntry}. Leaving item.
-				/delay 3s !${AdvLoot.LootInProgress}
-				/advloot personal ${k} leave
-				/delay 3s !${AdvLoot.LootInProgress}
-				/if (${LootLagDelay}) /delay ${LootLagDelay}
-				/goto :NextPItem
-			}
-			| Check quantity of Quest items and loot or leave
-			/if (${Select[${IniEntry},Quest]}) {
-				/varset KeepAmount ${Ini[${NinjaIniFile},"${ITPName.Left[${i}]}","${ITPName}"].Arg[2,|]}
-				/if (${KeepAmount}==0) /varset KeepAmount ${QuestKeep}
-				/if (${FindItemCount[=${ITPName}]} < ${KeepAmount}) {
-					/if (${Debugloot}||${SpamLootInfo}) /echo NINJADVLOOT: PList: I need ${Math.Calc[${KeepAmount}-${FindItemCount[=${ITPName}]}]} more ${ITPName}(s) loot it
-					/delay 3s !${AdvLoot.LootInProgress}
-					/advloot personal ${k} loot
-					/delay ${Math.Calc[${LootLagDelay}+5]}
-					/if (${Window[ConfirmationDialogBox].Open}) {
-						/nomodkey /notify ConfirmationDialogBox Yes_Button leftmouseup
-						/delay ${Math.Calc[${LootLagDelay}+10]}
-					}
-				} else {
-					/if (${Debugloot}||${SpamLootInfo}) /echo NINJADVLOOT: PList: I already have ${FindItemCount[=${ITPName}]} of ${KeepAmount} ${ITPName}(s) leave it
+				| skip item if its lore and i have one
+				/if (${FindItem[=${AdvLoot.PList[${k}].Name}].Lore}||${FindItemBank[=${AdvLoot.PList[${k}].Name}].Lore}||(${FindItemCount[=${AdvLoot.PList[${k}].Name}]} && !${FindItem[=${AdvLoot.PList[${k}].Name}].ID})) {
+					/if (${Debugloot}||${SpamLootInfo}) /echo NINJADVLOOT: PList: ${ITPName} is Lore and I have one. Leaving item.
 					/delay 3s !${AdvLoot.LootInProgress}
 					/advloot personal ${k} leave
+					/delay 3s !${AdvLoot.LootInProgress}
 					/if (${LootLagDelay}) /delay ${LootLagDelay}
+					/continue
 				}
-				/goto :NextPItem
-			}
-			| Loot remaining items keep/sell/destroy
-			/if (${Select[${IniEntry},Keep,Destroy,Sell]}) {
-				/if (${Debugloot}||${SpamLootInfo}) /echo NINJADVLOOT: PList: Looting Item# ${k}, ${ITPName}=${IniEntry}
-				/delay 3s !${AdvLoot.LootInProgress}
-				/advloot personal ${k} loot
-				/delay 3s !${AdvLoot.LootInProgress}
-				/delay ${Math.Calc[${LootLagDelay}+5]}
-				/if (${Window[ConfirmationDialogBox].Open}) {
-					/nomodkey /notify ConfirmationDialogBox Yes_Button leftmouseup
-					/delay ${Math.Calc[${LootLagDelay}+10]}
+				| Add item to ini if it not in there
+				/if (${AdvLoot.PList[${k}].NoDrop} && !${Select[${IniEntry},Ignore,Keep,Destroy,Sell,Quest]}) {
+					/if (${NoDropDefault.Arg[1,|].Equal[Quest]}) {
+						/ini "${NinjaIniFile}" "${ITPName.Left[1]}" "${ITPName}" Quest|1
+						/varset IniEntry Quest
+						/echo NINJADVLOOT: Adding NoDrop item ${ITPName}=Quest|1 to ${NinjaIniFile} file.
+					} else /if (${NoDropDefault.Arg[1,|].Equal[Keep]}) {
+						/ini "${NinjaIniFile}" "${ITPName.Left[1]}" "${ITPName}" Keep
+						/varset IniEntry Keep
+						/echo NINJADVLOOT: Adding NoDrop item ${ITPName}=Keep to ${NinjaIniFile} file.
+					} else {
+						/ini "${NinjaIniFile}" "${ITPName.Left[1]}" "${ITPName}" Ignore
+						/varset IniEntry Ignore
+						/echo NINJADVLOOT: Adding NoDrop item ${ITPName}=Ignore to ${NinjaIniFile} file.
+					}
+					/delay ${Math.Calc[${LootLagDelay}+5]}
 				}
-				/if (${Select[${IniEntry},Destroy]}) {
+				/if (${AdvLoot.PList[${k}].ID} && !${Select[${IniEntry},Ignore,Keep,Destroy,Sell,Quest]}) {
+					| Loot item, check its value and add to ini file.
+					/if (!${FindItem[=${ITPName}].ID}) {
+						/delay 3s !${AdvLoot.LootInProgress}
+						/advloot personal ${k} loot
+						/delay 3s !${AdvLoot.LootInProgress}
+						/delay ${Math.Calc[${LootLagDelay}+5]}
+						/if (${Window[ConfirmationDialogBox].Open}) {
+							/nomodkey /notify ConfirmationDialogBox Yes_Button leftmouseup
+							/delay ${Math.Calc[${LootLagDelay}+10]}
+						}
+					}
+					/varset ITStack ${FindItem[=${ITPName}].StackSize}
+					/if (${ITStack}>20) /varset ITStack 20
+					/if (${Math.Calc[${ITStack}*(${FindItem[=${ITPName}].Value}/1000)]} < ${StackPlatValue} && !${FindItem[=${ITPName}].WornSlots}) {
+						/ini "${NinjaIniFile}" "${ITPName.Left[1]}" "${ITPName}" Ignore
+						/echo NINJADVLOOT: Adding worthless ${ITPName}=Ignore to the ${NinjaIniFile} file.
+						/varset IniEntry Ignore
+					} else {
+						/ini "${NinjaIniFile}" "${ITPName.Left[1]}" "${ITPName}" Keep
+						/echo NINJADVLOOT: Adding valuable ${ITPName}=Keep to the ${NinjaIniFile} file.
+						/varset IniEntry Keep
+					}
+				}
+				| Leave items marked ignore on corpse
+				/if  (${Select[${IniEntry},Ignore]}||${AdvLoot.PList[${k}].Never}==true) {
+					/if (${Debugloot}||${SpamLootInfo}) /echo NINJADVLOOT: PList: ${ITPName} is marked ${IniEntry}. Leaving item.
+					/delay 3s !${AdvLoot.LootInProgress}
+					/advloot personal ${k} leave
+					/delay 3s !${AdvLoot.LootInProgress}
 					/if (${LootLagDelay}) /delay ${LootLagDelay}
-					/call HandleItem "${ITPName}" Destroy "${ITStackSize}"
+					/continue
 				}
-			}
-			:NextPItem
+				| Check quantity of Quest items and loot or leave
+				/if (${Select[${IniEntry},Quest]}) {
+					/varset KeepAmount ${Ini[${NinjaIniFile},"${ITPName.Left[${i}]}","${ITPName}"].Arg[2,|]}
+					/if (${KeepAmount}==0) /varset KeepAmount ${QuestKeep}
+					/if (${FindItemCount[=${ITPName}]} < ${KeepAmount}) {
+						/if (${Debugloot}||${SpamLootInfo}) /echo NINJADVLOOT: PList: I need ${Math.Calc[${KeepAmount}-${FindItemCount[=${ITPName}]}]} more ${ITPName}(s) loot it
+						/delay 3s !${AdvLoot.LootInProgress}
+						/advloot personal ${k} loot
+						/delay ${Math.Calc[${LootLagDelay}+5]}
+						/if (${Window[ConfirmationDialogBox].Open}) {
+							/nomodkey /notify ConfirmationDialogBox Yes_Button leftmouseup
+							/delay ${Math.Calc[${LootLagDelay}+10]}
+						}
+					} else {
+						/if (${Debugloot}||${SpamLootInfo}) /echo NINJADVLOOT: PList: I already have ${FindItemCount[=${ITPName}]} of ${KeepAmount} ${ITPName}(s) leave it
+						/delay 3s !${AdvLoot.LootInProgress}
+						/advloot personal ${k} leave
+						/if (${LootLagDelay}) /delay ${LootLagDelay}
+					}
+					/continue
+				}
+				| Loot remaining items keep/sell/destroy
+				/if (${Select[${IniEntry},Keep,Destroy,Sell]}) {
+					/if (${Debugloot}||${SpamLootInfo}) /echo NINJADVLOOT: PList: Looting Item# ${k}, ${ITPName}=${IniEntry}
+					/delay 3s !${AdvLoot.LootInProgress}
+					/advloot personal ${k} loot
+					/delay 3s !${AdvLoot.LootInProgress}
+					/delay ${Math.Calc[${LootLagDelay}+5]}
+					/if (${Window[ConfirmationDialogBox].Open}) {
+						/nomodkey /notify ConfirmationDialogBox Yes_Button leftmouseup
+						/delay ${Math.Calc[${LootLagDelay}+10]}
+					}
+					/if (${Select[${IniEntry},Destroy]}) {
+						/if (${LootLagDelay}) /delay ${LootLagDelay}
+						/call HandleItem "${ITPName}" Destroy "${ITStackSize}"
+					}
+				}
 			/next k
 			| Report Bag Space
 			/if (${SpamLootInfo}) {
 				/if (${Debugloot}) /echo DEBUGLOOT Report available bag space, line# ${Macro.CurLine}
 				/varset FreeBagSpace 0
 				/for k 1 to 10
-				/if (${InvSlot[Pack${k}].Item.Container} && ${InvSlot[Pack${k}].Item.Name.NotEqual[${ExcludeBag1}]} && ${InvSlot[Pack${k}].Item.Name.NotEqual[${ExcludeBag2}]}) {
-					/varcal FreeBagSpace ${FreeBagSpace}+(${InvSlot[Pack${k}].Item.Container}-${InvSlot[Pack${k}].Item.Items})
-				}
+					/if (${InvSlot[Pack${k}].Item.Container} && ${InvSlot[Pack${k}].Item.Name.NotEqual[${ExcludeBag1}]} && ${InvSlot[Pack${k}].Item.Name.NotEqual[${ExcludeBag2}]}) {
+						/varcal FreeBagSpace ${FreeBagSpace}+(${InvSlot[Pack${k}].Item.Container}-${InvSlot[Pack${k}].Item.Items})
+					}
 				/next k
 				/echo NINJADVLOOT: free bag space = ${FreeBagSpace}, looting stops if <= ${SaveBagSlots} 
 			}
@@ -1069,23 +1071,23 @@ Sub HandleItem(ItemName, DoWhat, HowMany)
 	/declare dc int local
 	/declare Bag int local
 	/for dc 1 to ${HowMany}
-    /declare HandleTimer timer local 5s
-    /if (${DoWhat.Equal[Destroy]} && ${FindItem[=${ItemName}].ID}) {
-        :GetItem
-            /nomodkey /ctrl /itemnotify "${ItemName}" leftmouseup
-            /delay 1s ${Cursor.ID}
-        /if (!${Cursor.ID} && ${HandleTimer}) /goto :GetItem
-        /if (${Cursor.ID}==${FindItem[=${ItemName}].ID}) {
-            /if (${Debugloot}||${SpamLootInfo}) /echo NINJADVLOOT: Destroying ${dc} of ${HowMany} ${Cursor.Name}   
-            /destroy 
-            /delay ${Math.Calc[${LootLagDelay}+5]}
-            /if (${Window[ConfirmationDialogBox].Open}) {
-                /nomodkey /notify ConfirmationDialogBox Yes_Button leftmouseup
-				/delay ${Math.Calc[${LootLagDelay}+10]}
-            }
-            /delay 1s !${Cursor.ID}
-        }
-    }
+		/declare HandleTimer timer local 5s
+		/if (${DoWhat.Equal[Destroy]} && ${FindItem[=${ItemName}].ID}) {
+			:GetItem
+				/nomodkey /ctrl /itemnotify "${ItemName}" leftmouseup
+				/delay 1s ${Cursor.ID}
+			/if (!${Cursor.ID} && ${HandleTimer}) /goto :GetItem
+			/if (${Cursor.ID}==${FindItem[=${ItemName}].ID}) {
+				/if (${Debugloot}||${SpamLootInfo}) /echo NINJADVLOOT: Destroying ${dc} of ${HowMany} ${Cursor.Name}   
+				/destroy 
+				/delay ${Math.Calc[${LootLagDelay}+5]}
+				/if (${Window[ConfirmationDialogBox].Open}) {
+					/nomodkey /notify ConfirmationDialogBox Yes_Button leftmouseup
+					/delay ${Math.Calc[${LootLagDelay}+10]}
+				}
+				/delay 1s !${Cursor.ID}
+			}
+		}
 	/next dc
 	|Close any packs left open
 	/for Bag 1 to 10
