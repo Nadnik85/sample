@@ -2579,11 +2579,11 @@ Sub AggroCheck
 /return
 
 Sub WaitCast(string sentFrom)
+	/varset GemStuckTimer 20s
+:rewaitcast
 	/if (${Me.BardSongPlaying}) {
 		/return
 	}
-	/varset GemStuckTimer 20s
-:rewaitcast
 	/if (${Me.Hovering}) /return
 	/if (${sentFrom.Equal[SingleHeal]} && ${CastingInterruptOn}) {
 		/call KACheckHP
@@ -2598,6 +2598,7 @@ Sub WaitCast(string sentFrom)
 		/if (${GemStuckTimer}==0) {
 			/beep
 			/echo OUR GEMS ARE STUCK!
+			/delay 1s
 			/if (${GemStuckAbility.NotEqual[NULL]}) {
 				/if (${Me.AltAbilityReady[${GemStuckAbility}]}) {
 					/alt act ${Me.AltAbility[${GemStuckAbility}].ID}

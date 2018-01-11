@@ -1,3 +1,41 @@
+Jan 10 2018 by redguides
+- Bazaar.mac (ChatWithThisName) Updated to 3.3, will no longer sell items for less than vendor value, polished the text, various fixes.
+- Ninjadvloot.inc (ChatWithThisName) multiple /next in a single /for statement in various locations corrected. /next changed to /continue where appropriate.
+- NEW MACRO! Skills.mac (ChatWithThisName) modified to add in mediating for classes that can cast. Classes that can't cast skip both the meditation and casting routine. 
+- MQ2Autoloot (plure) Fixed TLO ${AutoLoot.DepositActive}.  Cleaned up the depositing items to your guild banker.  Removed some redundant code now that FindItemByID and FindBankItemByID can now find augs on items.
+
+Jan 10 2018 by eqmule
+- Updated for TEST Go build it at www.macroquest2.com/builder
+
+Jan 07 2018 by SwiftyMUSE
+- Corrected ${Me.Rooted}, credit Plure.
+- Updated spell SPA displays with new SPA's.
+- Added ${Me.MercAAPoints}, ${Me.MercAAPointsSpent}
+- Corrected ${Me.CursorKrono}
+
+Jan 07 2018 by brainiac
+- Updated solution and project files to use latest Visual Studio 2017.
+  If you're not using VS2017 yet, go download community edition for free: 
+  https://www.visualstudio.com/downloads/
+  
+Jan 05 2018 by eqmule
+- Updated for LIVE
+
+Jan 4 2018 by redguides
+- MQ2Melee (eqmule) updated
+- MQ2AutoLoot (plure) Fixed issue with not being able to loot no drop items.
+
+Jan 04 2018 by eqmule
+Updated for TEST 
+
+Dec 31 2017 by redguides
+- KissAssist (ctaylor22, maskoi) updated to 10.2.2: Return of Dawn of the Bard
+- MQNuke, MQ2Heals (jimbob) updated for RoS, as well as various fixes
+
+Dec 23 2017 by redguides
+- KissAssist (maskoi, ctaylor22) updated to 10.1.4. Bug fixes & new features found in release thread
+in the KissAssist forum.
+
 Dec 19 2017 by redguides
 - MQ2AFNuke (jimbob) Fixed Fury of the Gods typo
 - MQ2AutoLoot (plure) Updated so you can set permissions to "public, public if usable, and view only" 

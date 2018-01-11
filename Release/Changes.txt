@@ -1,3 +1,20 @@
+Jan 10 2018 by eqmule
+- Updated for TEST Go build it at www.macroquest2.com/builder
+
+Jan 07 2018 by SwiftyMUSE
+- Corrected ${Me.Rooted}, credit Plure.
+- Updated spell SPA displays with new SPA's.
+- Added ${Me.MercAAPoints}, ${Me.MercAAPointsSpent}
+- Corrected ${Me.CursorKrono}
+
+Jan 07 2018 by brainiac
+- Updated solution and project files to use latest Visual Studio 2017.
+  If you're not using VS2017 yet, go download community edition for free: 
+  https://www.visualstudio.com/downloads/
+
+Jan 05 2018 by eqmule
+- Updated for LIVE Go build it at www.macroquest2.com/builder
+
 Jan 04 2018 by eqmule
 - Updated for TEST Go build it at www.macroquest2.com/builder
 
@@ -47,7 +64,7 @@ Dec 05 2017 by eqmule
 Dec 04 2017 by eqmule
 - Updated for BETA Go build it at www.macroquest2.com/builder
 
-Dec 04 2017 by rswiders
+Dec 04 2017 by SwiftyMUSE
 - Added new TLO member XTAggroCount to ${Me}
   Usage: /echo ${Me.XTAggroCount} or ${Me.XTAggroCount[100]}
   it returns the number of AUTO-HATER mobs on the extended
@@ -77,7 +94,7 @@ Nov 29 2017 by eqmule
 - Updated for TEST Go build it at www.macroquest2.com/builder
 - Updated for BETA Go build it at www.macroquest2.com/builder
 
-Nov 28 2017 by rswiders credit plure
+Nov 28 2017 by SwiftyMUSE credit plure
 - Updated all FindItem code to allow partial matches and consistently check
   your cursor, inventory (including bags), keyrings for the item. Will now
   allow partial and exact match checks for all.
@@ -297,7 +314,7 @@ Sep 25 2017 by eqmule
 - and this: http://www.macroquest2.com/phpBB3/viewtopic.php?f=28&t=20393
   has also been implemented, thanks silverj
 
-Sep 24 2017 by rswiders
+Sep 24 2017 by SwiftyMUSE
 - Updated FindItemCount to include items on the cursor in the count.
 
 Sep 23 2017 by eqmule
@@ -327,7 +344,7 @@ wanna step in and update it? lol go for it, it must be "easy" if eqmule can do i
 
 /eqmule (yeah I'm bitter)
 
-19 Sep 2017 by rswiders
+19 Sep 2017 by SwiftyMUSE
 - Modified Math.Clamp to use the parameter list of (N, Min, Max). ie, will clamp the value N between Min and Max.
 - Added ${Group.AvgHPs} guess what it returns? - eqmule
 
@@ -364,7 +381,7 @@ wanna step in and update it? lol go for it, it must be "easy" if eqmule can do i
   returns the Price for index 1 or whatever index Ebon Hammer is in if you do it by name.
   etc.
 
-15 Sep 2017 starring rswiders as "the captain", eqmule as "crew member number 6" and special guest star: eqholic
+15 Sep 2017 starring SwiftyMUSE as "the captain", eqmule as "crew member number 6" and special guest star: eqholic
 - Updated to handle the new SPA's
 - Fixed a bug in /next not taking its argument into account for nested for loops.
 - Fix for labels
@@ -545,7 +562,7 @@ Sub Main
 - Improved AddAlias, RemoveAlias and the rest of the alias stuff.
   macros that use /addalias should notice a significant increase in performance.
 
-03 Aug 2017 by rswiders
+03 Aug 2017 by SwiftyMUSE
 - Updated /cast to cast the memorized rank of the spell when the rank is not given in the name.
 - Fixed random crashes with /click when zoning.
 
@@ -614,7 +631,7 @@ Sub Main
   Example: ${Math.Rand[10]}
   in which case it behaves as before. (in this example, rand between 1 and 10) 
 
-17 Jul 2017 by rswiders
+17 Jul 2017 by SwiftyMUSE
 - Added ${Me.Beneficial}, ${Me.BASExxx} back into the source code.
 - Added ${Me.CursorKrono}
 
@@ -623,14 +640,14 @@ Sub Main
 - All instances of "Malod" has been renamed to "Maloed"
 - Darkened Malosenia is now correctly returned when doing a ${Target.Maloed}
 
-10 Jul 2017 by rswiders
+10 Jul 2017 by SwiftyMUSE
 - added optional <z> parameter to /face loc
 
 21 Jun 2017 by eqmule
 - Updated for TEST
 - Updated for LIVE
 
-21 Jun 2017 by rswiders
+21 Jun 2017 by SwiftyMUSE
 - Updated ground spawn names
 - Update MQ2Hud for occasional crash - cred demonstar55
 
@@ -655,7 +672,7 @@ Sub Main
 02 Jun 2017 by eqmule
 - Updated for TEST
 
-18 May 2017 by rswiders
+18 May 2017 by SwiftyMUSE
 - Updated faction names
 
 17 May 2017 by The Undertaker
@@ -974,7 +991,7 @@ Sub Main
 - stuff in progress, nothing to see here yet...
 - Fixed a buffer overflow in the UPCNotificationFlush_Detour -Thanks Maskoi
 
-19 Jan 2017 by rswiders
+19 Jan 2017 by SwiftyMUSE
 - Fixed BuffStackTest to correctly test spells with triggering spas.
 
 18 Jan 2017 by eqmule
@@ -982,12 +999,12 @@ Sub Main
 - Bunch of other stuff, thanks Brainiac for the arrayclass mod
 - Exp has been changed to a __int64, because, well it is, and has been for a few years...
 
-14 Jan 2017 by rswiders
+14 Jan 2017 by SwiftyMUSE
 - Corrected potential crashes in the following routines: GetAdjustedSkill, GetBaseSkill, GetModCap, 
   GetAACastingTimeModifier, GetFocusCastingTimeModifier, GetFocusRangeModifier, HasSkill, MakeMeVisible.
 - Corrected a bug in BuffStackTest when checking triggering spas.
 
-13 Jan 2017 by rswiders
+13 Jan 2017 by SwiftyMUSE
 - Added SkillBase to character. This will give you the static base maximum for your skills.
 - Updated Skill and SkillCap to handle the new TS aas allowing for above the cap values.
 
@@ -1082,7 +1099,7 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
 - Updated for TEST
 - ZonePoint in the DOORS struct has been renamed to SpellID
 
-06 Jan 2017 by rswiders
+06 Jan 2017 by SwiftyMUSE
 - Updated spell effects display
 - Updated buff stacking testing
 
@@ -1174,7 +1191,7 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
   list->Items becomes list->ItemsArray.Count
   CListWnd*pListWnd = (CListWnd*)pCombo->Items becomes CListWnd*pListWnd = pCombo->pListWnd (it was kinda confusing before, but less so after this change)
 
-13 Dec 2016 by rswiders
+13 Dec 2016 by SwiftyMUSE
 - Updated GetClassesFromMask to display "ALL" or "ALL EXCEPT:" when appropriate based on the class
   mask.
 
@@ -1200,7 +1217,7 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
 -	pInvSlot->Contents.ContainedItems.pItems->Item[ucPack] OR SIMPLY JUST
 -	pInvSlot->GetContent(ucPack) BOTH return the exact same thing.
 
-06 Dec 2016 by rswiders
+06 Dec 2016 by SwiftyMUSE
 - Fixed up the new SPA descriptions in spell display
 
 28 Nov 2016 by eqmule
@@ -1211,10 +1228,10 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
   Use GetEnduranceRegen(), GetHPRegen() and GetManaRegen() instead.
   This change should make Pulse() a bit faster since we dont check that stuff constantly.
 
-20 Nov 2016 by rswiders
+20 Nov 2016 by SwiftyMUSE
 - Fixed bug waiting for familiars keyring to load
 
-19 Nov 2016 by rswiders/eqmule
+19 Nov 2016 by SwiftyMUSE/eqmule
 - Updated for TEST
 - Added GuildID and ExpansionFlags to MQ2CharacterType
 - Added support for familiars keyring in /cast and /useitem
@@ -1263,7 +1280,7 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
 12 Nov 2016 by eqmule
 - Updated for TEST
 
-12 Nov 2016 by rswiders
+12 Nov 2016 by SwiftyMUSE
 - Updated spell effects display
 
 11 Nov 2016 by eqmule
@@ -1294,7 +1311,7 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
 	MQ2Spawns.cpp
 - They are located in this post: http://www.macroquest2.com/phpBB3/viewtopic.php?f=29&t=11451&p=172713#p172713
 
-10 Nov 2016 by rswiders
+10 Nov 2016 by SwiftyMUSE
 - Updated RankName to find an exact match for name. The results from Spell.ID and Spell.RankName will now be
   from the same spell (if it exists in the spellbook).
 
@@ -1322,7 +1339,7 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
 
 30 Oct 2016
 - Updated for BETA -eqmule
-- ChatWindow will again allow itself to be hidden behind other windows when ingame. -rswiders
+- ChatWindow will again allow itself to be hidden behind other windows when ingame. -SwiftyMUSE
 
 29 Oct 2016 by eqmule
 - Updated for BETA
@@ -1404,7 +1421,7 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
   Example: /loginchar tunare:eqmule
   will search all mq2 profile sets for the tunare server and the char eqmule
   if it finds it, it will launch eq and log in that character.
-- The ~ key should now be able to cycle full screen windows and in order - rswiders
+- The ~ key should now be able to cycle full screen windows and in order - SwiftyMUSE
 
 21 Sep 2016 by eqmule
 - Updated for LIVE
@@ -1447,7 +1464,7 @@ Sunday is funday... so here is some fluff:
   prior to this update sessions that u did /unload in game for had their profile name set
   as character (Loaded) and if you clicked such a profile, it would not reinject.
 - Fixed a bug in GetItemContentsByName
-- Fixed a bug in GetItemLink -cred demonstar55 and rswiders
+- Fixed a bug in GetItemLink -cred demonstar55 and SwiftyMUSE
 - Added a new parameter to FindItemBySlot so we can specify which locations to search.
 - NEW FEATIRE: The EverQuest TLO has a new member .LastMouseOver
   it returns a windowtype of the last window the mouse was hovering.
@@ -1506,7 +1523,7 @@ Sunday is funday... so here is some fluff:
 - Updated for LIVE
 - TRUEBOX nerfed.
 
-15 Aug 2016 by rswiders
+15 Aug 2016 by SwiftyMUSE
 - Updated to include CreateHtmlWnd in base code. You can now load MQ2Web and MQ2NoNag in the same session.
 
 12 Aug 2016 by eqmule
@@ -1738,7 +1755,7 @@ Sunday is funday... so here is some fluff:
 
   See yesterdays changes for an example of usage using .RecastTime
 
-09 Jun 2016 by rswiders
+09 Jun 2016 by SwiftyMUSE
 - Additional updates for spell effects
 
 08 Jun 2016
@@ -1812,7 +1829,7 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
 	I will know more before this stuff gets pushed to the LIVE client next week...
 - Updated for LIVE
 
-12 May 2016 by rswiders
+12 May 2016 by SwiftyMUSE
 - Finally... move the NetStatus indicator on the screen. You are no longer limited to the upper left corner.
   Using NetStatusXPos and NetStatusYPos these will be added the to default (0,0) coordinates to allow placement
   at other areas on the screen.
@@ -1836,7 +1853,7 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
 - Fixed a crash in mq2map. Thanks to everyone that sent in crash dumps.
 - Fixed a /unload crash.
 
-04 May 2016 by rswiders
+04 May 2016 by SwiftyMUSE
 - Added to Zone TLO
   ZoneType, NoBind, Indoor, Outdoor, Dungeon
 - Added to Spawn TLO
@@ -1908,7 +1925,7 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
 - Fixed /face to use pCharSpawn instead of pLocalPlayer
   this should make moving work while mounted again... sorry about that...
 
-07 Apr 2016 by rswiders
+07 Apr 2016 by SwiftyMUSE
 - Updated Charmed, Brells to correctly identify buffs on yourself.
 
 07 Apr 2016
@@ -2173,7 +2190,7 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
 -
 - Trampoline following - cred: brainiac
 
-18 Feb 2016 by rswiders
+18 Feb 2016 by SwiftyMUSE
 - Updated to make GetNumSpellEffects inline.
 - Updated MQ2Map to use layer 2 again.
 - Updated more groundspawn names.
@@ -2292,7 +2309,7 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
   Make changes to your plugins if you use them.
 - switches got some love - thanks brainiac.
 
-14 Dec 2015 by rswiders
+14 Dec 2015 by SwiftyMUSE
 - Added Slowed, Rooted, Mezzed, Crippled, Maloed, Tashed, Snared, Hasted, Aego,
 	Skin, Focus, Regen, Symbol, Clarity, Pred, Strength, Brells, SV, SE,
 	HybridHP, Growth, Shining, Beneficial, DSed, RevDSed, Charmed to ${Target}
@@ -2590,7 +2607,7 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
 24 Sep 2015 by EqMule
 - Please don't use MQ2 for unattended gameplay (afk botting)
 - Updated for TEST
-- Corrected the wwsCrashReportCheckForUploader_x offset and detour. :cred rswiders
+- Corrected the wwsCrashReportCheckForUploader_x offset and detour. :cred SwiftyMUSE
 
 23 Sep 2015 by EqMule
 - Please don't use MQ2 for unattended gameplay (afk botting)
@@ -2601,7 +2618,7 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
 - Updated for TEST
 - fixed a compile error in CustomPopup when building isxeq. 
 
-19 Sep 2015 by rswiders
+19 Sep 2015 by SwiftyMUSE
 - Updated autorun to allow for all toons instead of having to specify them individually.
   I did not change the /autorun command which is used to set the autorun value for the current
   toon.
@@ -2740,7 +2757,7 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
   The fix is basically calling pCombatSkillsSelectWnd->ShouldDisplayThisSkill
    in every place NUM_COMBAT_ABILITIES is used...
 
-06 Jul 2015 by rswiders
+06 Jul 2015 by SwiftyMUSE
 - Updated to include new currencies (Fists of Bayle, Arx Energy Crystals, Pieces of Eight)
 - Fixed ${Me.AltCurrency} to be able to use Medals of Heroism not Marks of Heroism
 
@@ -2802,12 +2819,12 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
 16 May 2015 by EqMule
 - Updated TEST and BETA builds.
 - Fixed an issue with the TEST build which prevented it from building correctly.
-- Fixed a ctd in ${DisplayItem} if used after a /unload and reinject but no item displayed. reporter: rswiders
+- Fixed a ctd in ${DisplayItem} if used after a /unload and reinject but no item displayed. reporter: SwiftyMUSE
 - Added ItemLink to the Item TLO it just prints the actual hexlink for an item (not clickable)
   this is useful for when creating hotbuttons with links in them manually...
   Usage: /echo ${Cursor.ItemLink}
 
-15 May 2015 by rswiders
+15 May 2015 by SwiftyMUSE
 - Updated GetItemLink to return a clickable or non-clickable link based on a parameter.
 
 13 May 2015 by EqMule
@@ -2816,7 +2833,7 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
 - Added .UseAdvancedLooting to the character TLO it returns TRUE if advanced looting is turned on otherwise FALSE -cred maskoi
   Usage: /echo ${Me.UseAdvancedLooting}
 
-12 May 2015 by rswiders
+12 May 2015 by SwiftyMUSE
 - Corrected GetSpellByID to return NULL when the spell is not found. (necessary to fix mq2cast, where it tries to cast
   an item that is not a clicky item and causes a CTD).
 
@@ -2842,23 +2859,23 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
   Examples:
   Lets say there is a stack of 4 spiderling silks in the first list item of the shared lootwindow
   /advloot shared 1 giveto eqmule 1
-  /advloot shared 1 giveto rswiders
+  /advloot shared 1 giveto SwiftyMUSE
   Will give 1 spiderling silks to eqmule
-  Will give the remaining 3 spiderling silk to rswiders (we didnt specify qty, so it just gave the rest)
+  Will give the remaining 3 spiderling silk to SwiftyMUSE (we didnt specify qty, so it just gave the rest)
   /advloot shared "spiderling silk" leave
   Will just leave the first "spiderling silk" it finds in the shared list on the corpse...
   or /advloot shared 1 leave
   Will just leave whatever is in list index 1 in the shared list on the corpse... (in our example spiderling silk)
 
-05 May 2015 by rswiders
+05 May 2015 by SwiftyMUSE
 - Fixed bug with Me.AltAbility where it would not identify alt abilities that were granted but have
   no cost associated.
 - Updated ItemDB.txt with new summoned items.
 
-02 May 2015 by rswiders
+02 May 2015 by SwiftyMUSE
 - Added .TankMercCount, .HealerMercCount, .MeleeMercCount, CasterMercCount to the Group TLO
 
-30 Apr 2015 by rswiders
+30 Apr 2015 by SwiftyMUSE
 - Fixed crash in MQ2Map when zoning with a custom filter
 
 29 Apr 2015 by eqmule
@@ -2877,23 +2894,23 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
   in any of the need and greed boxes.
   Usage Example: /echo /if (${AdvLoot.SCount} && ${AdvLoot.SWantCount}) /advloot shared set ${Me.Name}
 
-24 Apr 2015 by rswiders
+24 Apr 2015 by SwiftyMUSE
 - Allow any case of NULL, TRUE, FALSE to be accurately calculated by our evaluation used in math.calc (and therefore
   in any IF condition.
 
-23 Apr 2015 by rswiders
+23 Apr 2015 by SwiftyMUSE
 - Fixed missing ground spawn names on the map
 
 23 Apr 2015 by eqmule
 - Updated for the LIVE client dated Apr 22 2015 15:38:04
 
-22 Apr 2015 by rswiders
+22 Apr 2015 by SwiftyMUSE
 - Added .MercenaryCount to the Group TLO
 
 22 Apr 2015 by eqmule
 - Updated for the latest LIVE client
 
-21 Apr 2015 by rswiders
+21 Apr 2015 by SwiftyMUSE
 - Removed unnecessary CleanName useage, as DisplayedName already has the cleaned up name
 - Added LocYXZ to spawntype TLO
 
@@ -2963,13 +2980,13 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
 - Added MarkNpc and MasterLooter to the groupmember TLO
 - Fixed a potential crash in case FreeInventory: - cred htw
 
-25 Mar 2015 by rswiders
+25 Mar 2015 by SwiftyMUSE
 - Fix to /multiline command that would potentially cause incorrect parsing of the commands.
 
 24 Mar 2015 by eqmule
 - Fixed NewVardata cred: ctaylor22 
 - Added a catch section to GetSpellByName to not try so hard to crash your eqgame(s)
-- rswiders added a fix from the future.
+- SwiftyMUSE added a fix from the future.
 
 22 Mar 2015 by eqmule
 - Updated for the latest TEST Client patch
@@ -2983,7 +3000,7 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
 - Misc Fixes
 - HAPPY 16th EQ!
 
-12 Mar 2015 by rswiders
+12 Mar 2015 by SwiftyMUSE
 - Updated ${If[]} to allow one of two user-defined delimiters. The default delimiters are ',' and '~'.
   In the MacroQuest.ini file, you can change the delimiters using IfDelimiter and IfAltDelimiter values.
 
@@ -2996,7 +3013,7 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
 - Updated for the latest TEST Client patch
 - the Alias TLO has been updated to be compatible with ISXEQ
 
-04 Mar 2015 by eqmule & rswiders
+04 Mar 2015 by eqmule & SwiftyMUSE
 - made a few changes to how GetSpellByName works
   from now on I placed all of the spelldb in a map.
   the main reason for this is so we can pick spells that best matches our class
@@ -3094,7 +3111,7 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
   Usage: /if (${Pet.Equipment[primary]}==12507) /echo my pet is holding a Frightforged Ragesword in his primary hand
   Usage: /if (${Group.Member[mymagesname].Pet.Equipment[primary]}==12507) /echo my mages pet is holding a Frightforged Ragesword in his primary hand
 
-24 Jan 2015 by rswiders
+24 Jan 2015 by SwiftyMUSE
 - Modified .RankName to handle spells and potions with the same name
 
 23 Jan 2015 by eqmule
@@ -3124,10 +3141,10 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
 - Added CCustomMenu so we can create custom menus...
   This is still a work in progress and Ill have more
   to say about it in a later release.
-- Stackchecks have been slightly modified to try to take higher level version override into account. -rswiders
+- Stackchecks have been slightly modified to try to take higher level version override into account. -SwiftyMUSE
   Report any issues with this on the forum.
 
-15 Jan 2015 by rswiders
+15 Jan 2015 by SwiftyMUSE
 - added /break and /continue for /for loops.
 
 14 Jan 2015 by eqmule
@@ -3171,7 +3188,7 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
   Also alerts are now in a std::list, let me know if there are any problems with this.
   I really hope this wont break any macros, cause code seems to execute a bit faster...
 
-31 Dec 2014 by rswiders
+31 Dec 2014 by SwiftyMUSE
 - Updated spell stacking (stacks, stackspet, stackswith, willstack)
   Allow stacking of spells that have a greater effect over a lesser one. Used with damage absorption, spell haste, aggro multiplier.
   The change should not break anything existing as I have just put the triggered effects override in the stackswith/willstack code.
@@ -3201,7 +3218,7 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
 - /windows open now only returns actual open and visible windows.
   I dont know if we need to make an adjustment to this, lets see what people who use that command think.
 
-27 Dec 2014 by rswiders
+27 Dec 2014 by SwiftyMUSE
 - Fix for /sellitem, the offset was wrong.
 
 24 Dec 2014 Christmas Edition by Santa
@@ -3574,11 +3591,11 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
   Usage: /echo The task leader is ${Task.Leader}
   Outputs: The task leader is eqmule
 
-23 Jun 2014 by rswiders
+23 Jun 2014 by SwiftyMUSE
 - Corrected several CTD bugs when a character did not have anything in
   their bank and/or shared bank.
 
-21 Jun 2014 by rswiders
+21 Jun 2014 by SwiftyMUSE
 - Fixed a bug with pMacroQuestType where pEverQuestType members wouldn't
   inherit correctly. All old ${MacroQuest.} members should work correctly
   now again.
@@ -3729,7 +3746,7 @@ Friday the 13th!! (of June 2014 by eqmule)
   it will return TRUE if there is at least 1 player within 300 radius of you thats NOT in your group.
 - Added case Range: to ItemType
 
-08 May 2014 by rswiders
+08 May 2014 by SwiftyMUSE
 - Update of SpellSlotInfo for SPA's 157 to format as a ranged value
 - Added MaxBuffSlots, changed FreeBuffSlots to use the new function that gets the max buff slots
 
@@ -3739,7 +3756,7 @@ Friday the 13th!! (of June 2014 by eqmule)
 26 Apr 2014 by eqmule
 - If using an old ItemDB.txt you will now see a message asking you to update it.
 
-24 Apr 2014 by rswiders
+24 Apr 2014 by SwiftyMUSE
 - Fix for reuse timer in spell slot information
 - Fix for random CTD on some spell display
 - Fix for CTD when item missing in ItemDB
@@ -3764,26 +3781,26 @@ Friday the 13th!! (of June 2014 by eqmule)
   I did this because I'm preparing the loader for being able to unload/load
   plugins directly from its iconmenu.
 
-13 Apr 2014 by rswiders
+13 Apr 2014 by SwiftyMUSE
 - Added GemIcon, HateGenerated, PvPCalc, Unknown182, Unknown222, Unknown223 to the SPELL struct
 - Added HateGenerated to MQ2ItemDisplay output
 
-11 Apr 2014 by rswiders
+11 Apr 2014 by SwiftyMUSE
 - Merged the MQ2GearScore logic into the base code for MQ2ItemDisplay. This means that MQ2GearScore
   is no longer necessary and MQ2Bzsrch will work correctly for those that want scores.
   In order to use the new functionality, rename your old ini file to MQ2ItemDisplay.ini to get all
   the same values. You can stop using MQ2GearScore and go back to use the base code MQ2ItemDisplay
 
-10 Apr 2014 by rswiders
+10 Apr 2014 by SwiftyMUSE
 - Update of SpellSlotInfo for SPA's 124/125/132 to format as a ranged percent and specify that SPA 132
   is a # of tick(s)
 
-08 Apr 2014 by rswiders
+08 Apr 2014 by SwiftyMUSE
 - Rewrite of SpellSlotInfo, uses new function ParseSpellEffect. Pass a pSpell structure, slot number,
   character buffer and it will return a character buffer with the spell effect information
 - Fixed issue with MQ2ItemDisplay that would sometimes display the wrong usable classes
 
-08 Apr 2014 by rswiders, eqmule
+08 Apr 2014 by SwiftyMUSE, eqmule
 - Corrected datatype refactor to allow for correct type inheritence in MQ2 parser
 
 08 Apr 2014 by eqmule
@@ -3792,7 +3809,7 @@ Friday the 13th!! (of June 2014 by eqmule)
 - Added SpellGroup to the SPELL struct
   This is used to display the spell family for the "Limit: SpellGroup"
 
-06 Apr 2014 by rswiders
+06 Apr 2014 by SwiftyMUSE
 - Fixed issues with GetSpellNameByID and GetSpellbyID that would cause undefined results or CTD
 
 05 Apr 2014 by eqmule
@@ -3802,18 +3819,18 @@ Friday the 13th!! (of June 2014 by eqmule)
 04 Apr 2014 by eqmule
 - Update for patch
 
-02 Apr 2014 by rswiders
+02 Apr 2014 by SwiftyMUSE
 - TEMPORARY fix for C2065 compiler issue on vs2008
 
 02 Apr 2014 by eqmule
 - Update for patch
 - MacroQuest.ini is now created (from the _default template) if it doesnt exist.
 - The item and spelldisplay plugin should display more correct info now
-  rswiders did most of that grunt work, big props to him for taking it on.
+  SwiftyMUSE did most of that grunt work, big props to him for taking it on.
   We will carefully monitor this code and add more fixes as we go to make stacking
   and spell/iteminfo 100% perfect.
 
-30 Mar 2014 by rswiders
+30 Mar 2014 by SwiftyMUSE
 - Added CreateMQ2NewsWindow for Macroquest.ini file to turn on/off the creation of
   the news window
 - Updated stacking checking to ignore bard songs and song window illusions
@@ -3859,14 +3876,14 @@ Friday the 13th!! (of June 2014 by eqmule)
  Usage: /echo ${Me.Inviter} just invited me to join their group
  Output: [MQ2] uberplayer00 just invited me to join their group
 
-23 Mar 2014 by rswiders
+23 Mar 2014 by SwiftyMUSE
 - Corrected itemdisplay to show useable classes for the spell when over level 70
 - Corrected to make sure cfg files are executed during refresh injections
 - Additional checks for spell stacking.
   (Buffs/Songs will stack (both land) if they are benefical spells and it's some type
   of stat change that was currently causing it to fail)
 
-22 Mar 2014 by rswiders
+22 Mar 2014 by SwiftyMUSE
 - Corrected useable class name in itemdisplay extension.
 - Additional updates for spell effects
 - Updates for spell stacking. Added .StacksWith as an alias
@@ -3894,7 +3911,7 @@ Friday the 13th!! (of June 2014 by eqmule)
  If one is loaded already it will move on to the next eqgame.exe it finds and try there
  until it has made sure all running eqgame.exe has mq loaded...
 
-18 Mar 2014 by rswiders
+18 Mar 2014 by SwiftyMUSE
 - Added CountSongs
 - Changed .Stacks and .StacksPet to allow the comparison of the songs too
 - Added MercType to the list of PlayerClasses
@@ -3978,7 +3995,7 @@ Friday the 13th!! (of June 2014 by eqmule)
  no argument will just toggle, just like before this change.
  This is also saved to macroquest.ini from now on.
 
-21 Feb 2014 by rswiders, eqmule
+21 Feb 2014 by SwiftyMUSE, eqmule
 - Updated for patch
 
 20 Feb 2014 by eqmule
@@ -3988,7 +4005,7 @@ Friday the 13th!! (of June 2014 by eqmule)
 19 Feb 2014 by eqmule
 -Updated for patch
 -Added LoreGroup and LinkDBValue to CONTENTS struct
- It is used in the linkdb plugin. Cred: rswiders
+ It is used in the linkdb plugin. Cred: SwiftyMUSE
 
 -Added a new TLO Member for Song/Buff, HitCount which will return a pIntType of how many hits a song/buff has left before it fades.
  Usage /echo ${Me.Song[Lich Sting Recourse].HitCount}
@@ -4183,7 +4200,7 @@ your're welcome...
 05 Dec 2013 by eqmule
 -Updated for patch
 
-27 Nov 2013 by rswiders
+27 Nov 2013 by SwiftyMUSE
 -Added AAPointsAssigned to Me TLO
 
 16 Nov 2013 by EqMule
@@ -4205,7 +4222,7 @@ your're welcome...
 
  Note: that this is pretty much untested right now, let me know of any issues.
 
-10 Nov 2013 by rswiders
+10 Nov 2013 by SwiftyMUSE
 - added MaxLevel to Spell TLO
   the purpose was to allow autobot to get the max mezz level automatically
   and avoid hardcoding it in the macro itself.
@@ -4746,16 +4763,16 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 24 December 2009 by ieatacid
 - Added Me.XTarget.  See wiki for details: http://www.macroquest2.com/wiki/index.php/DataType:xtarget
 
-18 December 2009 by rswiders
+18 December 2009 by SwiftyMUSE
 - Updated for today's patch
 
-15 December 2009 by rswiders
+15 December 2009 by SwiftyMUSE
 - Updated for today's patch
 
 14 December 2009 by dkaa
 - Fix for AltAblity and Underfoot
 
-8 December 2009 by ieatacid, rswiders
+8 December 2009 by ieatacid, SwiftyMUSE
 - Updated for today's patch
 
 19 November 2009 by ieatacid
@@ -4773,7 +4790,7 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 13 November 2009 by dkaa
 - Fix for inventory problems (corrected InvSlotWnd)
 
-12 November 2009 by ieatacid, dkaa, rswiders
+12 November 2009 by ieatacid, dkaa, SwiftyMUSE
 - Updated for November 11th patch
 
 21 October 2009 by ieatacid
@@ -4785,7 +4802,7 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 21 September 2009 by ieatacid
 - FindItemCount TLO now searches for augs on items
 
-15 September 2009 by rswiders
+15 September 2009 by SwiftyMUSE
 - Updated for today's patch
 
 6 September 2009 by dkaa
@@ -4814,10 +4831,10 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 14 August 2009 by brainiac, dkaa
 - Updated for the 08/12 patch
 
-15 July 2009 by rswiders
+15 July 2009 by SwiftyMUSE
 - Updated for today's patch
 
-14 July 2009 by rswiders
+14 July 2009 by SwiftyMUSE
 - Changed NUM_SPELL_GEMS to reflect the additional 2 added by the devs.
 
 3 July 2009 by ieatacid
@@ -4831,27 +4848,27 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 - Reverted changes to CleanUI detour to fix MQ2ChatWnd crash when reloading the UI
 - Changed tooltip handling in MQItemdisplay to work more efficiently and fix a bug with the left ear slot
 
-24 June 2009 by rswiders
+24 June 2009 by SwiftyMUSE
 - Updated for today's patch
 
 21 June 2009 by ieatacid
 - Fixed suffix display bug in captions (the error was in _SPAWNINFO)
 
-20 June 2009 by rswiders
+20 June 2009 by SwiftyMUSE
 - Backed out bug fix for MQ captions.
 - Generate correct gGameState when camping (server/desktop).  This should fix random crashes in plugins when they think they are still "INGAME" but are really at server select screen.
 
-18 June 2009 by rswiders, ieatacid
+18 June 2009 by SwiftyMUSE, ieatacid
 - Updated for today's patch
 - Added NUM_BUFF_SLOTS to handle the everchanging number of buffs in the target and pet windows.
 
-17 June 2009 by rswiders
+17 June 2009 by SwiftyMUSE
 - Added the command history functionality to MQ2ChatWnd (thanks PMS)
 
 15 June 2009 by dkaa
 - Fixed bug NoDrop on items on FV and other special servers
 
-15 June 2009 by rswiders
+15 June 2009 by SwiftyMUSE
 - Fixed bug with flashing MQ captions.
 - Fixed bug with tooltips.  If you had a clicky item equipped in the left ear, the target window (and possibly others) would show tooltips baseed on "item name(ready)" instead of "buff name (time remaining)".
 - Added filtering of macro ended messages.
@@ -4861,19 +4878,19 @@ Im pretty sure these 2 can use some more work, but should work in most situation
    NoCharSelect - off by default/normal behavior 
    SaveByChar - on by default/normal behavior 
 
-12 June 2009 by rswiders
+12 June 2009 by SwiftyMUSE
 - Updated for today's patch
 
 11 June 2009 by ieatacid
 - Fixed /unload crash on Windows 7 (and Vista?)
 
-11 June 2009 by rswiders, dkaa
+11 June 2009 by SwiftyMUSE, dkaa
 - Fixed target.buff
 
-10 June 2009 by ieatacid, rswiders
+10 June 2009 by ieatacid, SwiftyMUSE
 - Updated for today's patch
 
-21 May 2009 by rswiders
+21 May 2009 by SwiftyMUSE
 - Updated for today's patch
 
 15 May 2009 by ieatacid, dkaa
@@ -4881,7 +4898,7 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 - Fixed pet window struct
 - Removed MAX_GUILDS as it is no longer used
 
-14 May 2009 by rswiders
+14 May 2009 by SwiftyMUSE
 - Updated for today's patch
 
 6 May 2009 by ieatacid
@@ -4893,7 +4910,7 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 08 April 2009 by ieatacid
 - TOTAL_SPELL_COUNT fix
 
-07 April 2009 by rswiders, dkaa, ieatacid
+07 April 2009 by SwiftyMUSE, dkaa, ieatacid
 - Updated for today's patch
 
 29 March 2009 by ieatacid
@@ -4902,29 +4919,29 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 21 March 2009 by ieatacid
 - Me.CombatAbilityTimer and Me.CombatAbilityReady should now function correctly
 
-19 March 2009 by rswiders
+19 March 2009 by SwiftyMUSE
 - Updated for today's patch
 
 15 March 2009 by ieatacid
 - Fix for active leadership abilities
 - Fix for GetCombatAbilityTimer crash (dkaa)
 
-12 March 2009 by ieatacid, rswiders
+12 March 2009 by ieatacid, SwiftyMUSE
 - Updated for today's patch
 
-09 March 2009 by rswiders
+09 March 2009 by SwiftyMUSE
 - Fixed aura (by name).  You can determine if an aura is active with Me.Aura[#aura name effect].ID
 - Fix for buff stacking issue
 - Cleaned up merc names for Group.Member[#]
 
-12 February 2009 by dkaa, ieatacid, rswiders
+12 February 2009 by dkaa, ieatacid, SwiftyMUSE
 - Fixed pet buff window information/stackspet
 - Fixed NPCCorpse mapfilter toggle
 
-12 February 2009 by ieatacid, rswiders
+12 February 2009 by ieatacid, SwiftyMUSE
 - Updated for the patch on the 11th
 
-9 February 2009 by rswiders
+9 February 2009 by SwiftyMUSE
 - Added exact match option to spawn searchs (use a "=" immediately preceeding the name being searched for)
 - Updated named mob identification.  Named mobs will not exist in non-combat zones and warders, familiars, etc. have been demoted from their named status.
 - Added /mapfilter option for named spawns (will toggle between named/normal npcs when npc filtering is active)
@@ -4945,7 +4962,7 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 - Fixed "/setautorun".  It was saving incorrectly so AutoRun ini entries would never be processed (thanks pms)
 - The "/dosocial" command should now work properly
 
-11 January 2009 by ieatacid, rswiders
+11 January 2009 by ieatacid, SwiftyMUSE
 - Events will once again trigger on "You have entered <zone name>."
 - Completed formatting corrections for using spaces vs. tabs
 - Corrected bug with spawnsearch.  Spawn[id 0] WILL NO LONGER return the same values as ${Me}.  You have been warned.
@@ -4958,10 +4975,10 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 - fixed a bug in the pet window with BuffFadeETA
 - turned of macro error logging by default because it causes crashes if the log file is unwriteable
 
-11 December 2008 by rswiders
+11 December 2008 by SwiftyMUSE
 - updated for today's patch
 
-10 December 2008 by rswiders, ieatacid, dkaa
+10 December 2008 by SwiftyMUSE, ieatacid, dkaa
 - updated for today's patch
 
 10 December 2008 by dkaa
@@ -4978,7 +4995,7 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 03 November 2008 by dkaa
 - added Triple Attack to skills.h
 
-29 October 2008 by rswiders
+29 October 2008 by SwiftyMUSE
 - Updated for today's patch
 
 27 October 2008 by ieatacid
@@ -4989,14 +5006,14 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 - Added bool mercenary to groupmember type
 - Me.Aura now can now receive an index to access more than one aura (no index defaults to the first aura)
 
-21 October 2008 by rswiders
+21 October 2008 by SwiftyMUSE
 - Updated for October 21st patch
 
 19 October 2008 by dkaa
 - fixed the problem with the first line of macro not being run if /macro 
     was invoke within a macro.
 
-17 October 2008 by rswiders
+17 October 2008 by SwiftyMUSE
 - Added Spawn.Loc and .LocYX.  Loc is a float formatted string, LocYX is an int formatted string.
 - Display permanent buff timers as "Perm" not "-0:18"
 - Misc source cleanup
@@ -5006,7 +5023,7 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 - Added to Group TLO: string MainTank, string MainAssist, string Puller
 - Added to groupmember type: bool MainTank, bool MainAssist, bool Puller
 
-11 October 2008 by rswiders
+11 October 2008 by SwiftyMUSE
 - Update mappable commands with all correct values, looks like it was not done in initial patch
 - Update for Me.State.  If you are on a mount it will return "MOUNT" instead of continuing on and returning "STAND"
 
@@ -5023,27 +5040,27 @@ Im pretty sure these 2 can use some more work, but should work in most situation
    BuffCount: returns the number of buffs on the target
    BuffUpdate: since there's a delay between when you target a spawn and when you get their buff data, this lets you know if the buff data is available
       
-09 October 2008 by ieatacid, dkaa, rswiders
+09 October 2008 by ieatacid, dkaa, SwiftyMUSE
 - Updated for October 7th patch
 - Added spawn type members: CurrentMana, MaxMana, Current Endurance, MaxEndurance -- these behave like CurrentHPs (only updated when you target a spawn)
 
 08 September 2008 by ieatacid
 - Added Level to groupmember type
 
-07 September 2008 by rswiders, ieatacid
+07 September 2008 by SwiftyMUSE, ieatacid
 - Fixed Group.Member[x].Name and .Leader 
 
-06 September 2008 by rswiders
+06 September 2008 by SwiftyMUSE
 - Fixed Group.Member[x].Name
 
-05 September 2008 by rswiders
+05 September 2008 by SwiftyMUSE
 - Fixes for group CTD issues
 - Added Group.GroupSize back in... it's in the html manual but wasn't in the source
 
-05 September 2008 by rswiders, dkaa
+05 September 2008 by SwiftyMUSE, dkaa
 - Fix for v6 compiles
 
-05 September 2008 by ieatacid, rswiders, dkaa
+05 September 2008 by ieatacid, SwiftyMUSE, dkaa
 - Updated for today's patch
 
 21 August 2008 by dkaa
@@ -5055,7 +5072,7 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 11 August 2008 by ieatacid
 - Updated for today's patch
 
-17 July 2008 by ieatacid, rswiders
+17 July 2008 by ieatacid, SwiftyMUSE
 - Updated for today's patch
 - Added a bunch of stat bonus stuff to the character type (differentiation).  See this thread for more info: http://macroquest2.com/phpBB2/viewtopic.php?t=15646
 
@@ -5065,7 +5082,7 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 14 July 2008 by dkaa
 - Fixed the pet info wnd struct
 
-9 July 2008 by ieatacid, rswiders
+9 July 2008 by ieatacid, SwiftyMUSE
 - Updated for today's patch
 
 19 June 2008 by dkaa
@@ -5079,29 +5096,29 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 - Added function EQPlayer *GetSpawnByName(char *spawnName)
 - Changed some stuff that used map::SpawnByName to use GetSpawnByName (should fix other stuff)
 
-29 May 2008 by ieatacid, dkaa, rswiders
+29 May 2008 by ieatacid, dkaa, SwiftyMUSE
 - Updated for today's patch
 
-23 May 2008 by rswiders
+23 May 2008 by SwiftyMUSE
 - Updated class descriptions (DoN Merchants / Fellowship Registrar)
 
-22 May 2008 by rswiders, ieatacid
+22 May 2008 by SwiftyMUSE, ieatacid
 - Updated for today's patch
 
-22 May 2008 by rswiders
+22 May 2008 by SwiftyMUSE
 - Added dead, stunned, hovering to Spawn TLO
 - Fixes to getspellduration
 
 12 May 2008 by dkaa
 - Added Friends TLO
 
-7 May 2008 by rswiders, ieatacid
+7 May 2008 by SwiftyMUSE, ieatacid
 - Updated for today's patch
 
-24 April 2008 by rswiders, ieatacid
+24 April 2008 by SwiftyMUSE, ieatacid
 - Updated for today's patch
 
-17 April 2008 by rswiders, ieatacid, dkaa
+17 April 2008 by SwiftyMUSE, ieatacid, dkaa
 - Updated for today's patch
 
 1 April 2008 by ieatacid, dkaa
@@ -5116,13 +5133,13 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 7 March 2008 by ieatacid
 - "some dev please do a new zip and be sure it contains the new ISXEQ.NET folder, thx (Lax)"
 
-28 February 2008 by rswiders, ieatacid
+28 February 2008 by SwiftyMUSE, ieatacid
 - Updated for today's patch
 
 7 February 2008 by ieatacid
 - Fixed /buyitem and /sellitem to work with stacks of up to 100 -- includes a sanity check so you don't request a stack size from the server that's greater than what's allowed for that item (so, theoretically, you can do "/buyitem 100" on everything to always buy the max stack size of the selected item)
 
-6 February 2008 by ieatacid, rswiders
+6 February 2008 by ieatacid, SwiftyMUSE
 - Updated for today's patch
 
 26 January 2008 by ieatacid
@@ -5133,13 +5150,13 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 21 January 2008 by dkaa
 - Added a list of actor defs for ground items.
 
-19 January 2008 by rswiders
+19 January 2008 by SwiftyMUSE
 - Fixed /lootall command
 
-18 January 2008 by rswiders
+18 January 2008 by SwiftyMUSE
 - Added Macro.Paused, Spawn.StandState
 
-17 January 2008 by ieatacid, rswiders, dkaa
+17 January 2008 by ieatacid, SwiftyMUSE, dkaa
 - Updated for latest patch
 
 2 January 2008 by ieatacid
@@ -5162,7 +5179,7 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 12 December 2007 by ieatacid, dkaa
 - Updated for today's patch
 
-7 December 2007 by rswiders
+7 December 2007 by SwiftyMUSE
 - added new /lootall command
 - removed rk. II/III spell handling... use exact spell names
 - fixed /zonehud command and hud zone processing
@@ -5174,7 +5191,7 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 25 November 2007 by ieatacid
 - "/shift /click right target" will now loot all items on a corpse
 
-20 November 2007 by rswiders, ieatacid
+20 November 2007 by SwiftyMUSE, ieatacid
 - Updated for today's patch
 
 17 November 2007 by dkaa
@@ -5182,13 +5199,13 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 - fixed the crappy Rk. II/III handling
 - fixed a crash on zoning
 
-14 November 2007 by ieatacid, rswiders, dkaa
+14 November 2007 by ieatacid, SwiftyMUSE, dkaa
 - Updated for November 13th patch
 
-8 November 2007 by rswiders, ieatacid
+8 November 2007 by SwiftyMUSE, ieatacid
 - Updated for today's patch
 
-30 October 2007 by ieatacid, rswiders
+30 October 2007 by ieatacid, SwiftyMUSE
 - Updated for today's patch
 
 08 October 2007 by dkaa
@@ -5225,13 +5242,13 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 6 September 2007 by ieatacid
 - Updated for patch
 
-15 August 2007 by ieatacid, rswiders, dkaa
+15 August 2007 by ieatacid, SwiftyMUSE, dkaa
 - Updated for patch(es)
 
 25 July 2007 by ieatacid, dkaa
 - Updated for today's patch
 
-23 July 2007 by rswiders
+23 July 2007 by SwiftyMUSE
 - Added Campfires to spawn searchs and mapfilters
 
 16 July 2007 by dkaa
@@ -5242,7 +5259,7 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 - Wrote our own version of EQ's get_melee_range function (thanks Purple for the help with fcomp flags!).
 - Added more stuff to item TLO
 
-6 July 2007 by ieatacid, rswiders
+6 July 2007 by ieatacid, SwiftyMUSE
 - Updated for July 5th patch
 - Some of the text coloring was removed from MQ2ItemDisplay since EQ now colors the item name green or red if you can or can't use the item (EQ also handles this text differently now).
 
@@ -5264,7 +5281,7 @@ Im pretty sure these 2 can use some more work, but should work in most situation
     NPC, or PC (using '/click left center|<x> <y>') will set this to TRUE
 - Removed the /mouseto command since it no longer did anything
 
-10 June 2007 by rswiders, dkaa
+10 June 2007 by SwiftyMUSE, dkaa
 - Added clicking links with /notify.  Use /notify ChatWindow CW_ChatOutput link <link structure>
   The link structure consists of 44 characters of the link starting with the 2nd character of the item id (ie, drop the leading 0).
 
@@ -5304,7 +5321,7 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 - Updated for today's patch
 - Updated MQ2EQBugFix to stop a crash that occurs when going from character select to server select (thanks cronic).  This may only be WinEQ2-related, but it's there should you want to use it.
 
-6 April 2007 by rswiders
+6 April 2007 by SwiftyMUSE
 - Added Banners to spawn searchs and mapfilters
 - Spell stacking changes are back...
 .. Stacking of spells with themselves will occur again.  For .Stacks and .StacksPet they take
@@ -5322,7 +5339,7 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 21 February 2007 by ieatacid
 - Updated for today's patch
 
-19 February 2007 by rswiders
+19 February 2007 by SwiftyMUSE
 - Fix for campfire objects
 - Fix for short buffs
 - Fix for label of last target on map
@@ -5345,7 +5362,7 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 17 January 2007 by ieatacid
 - Updated for today's patch
 
-14 January 2007 by rswiders
+14 January 2007 by SwiftyMUSE
 - Fix for zone translocate spell information crash displaying items
 - Changes to spell stacking (spells will say they stack with themselves)
 
@@ -5354,7 +5371,7 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 - dkaa told me about an AuraMgr struct and how it relates to AuraInfo -.-
 - Added charinfo svChromatic, svPrismatic (Charisa)
 
-2 January 2007 by rswiders
+2 January 2007 by SwiftyMUSE
 - Fix for npcs and objects
 
 30 December 2006 by ieatacid
@@ -5371,7 +5388,7 @@ Im pretty sure these 2 can use some more work, but should work in most situation
    is, it's in the exe), Link Dead
 .. to string - same as Name
 
-23 December 2006 by rswiders
+23 December 2006 by SwiftyMUSE
 - Updates for GetSpellEffectName, ShowSpellSlotInfo (differentiation, pinkfloydx33)
 - Updates for Counters in datatypes (pinkfloydx33)
 
@@ -5390,7 +5407,7 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 31 October 2006 by ieatacid
 - Fix for Halloween crash
 
-25 October 2006 by ieatacid, rswiders
+25 October 2006 by ieatacid, SwiftyMUSE
 - Updated for today's patch
 
 23 October 2006 by ieatacid
@@ -5400,7 +5417,7 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 - Added "HOVER" for use with Me.State
 - Added bool InHoverState() to MQ2Utilities.cpp
 
-4 October 2006 by rswiders
+4 October 2006 by SwiftyMUSE
 - Updated for today's patch
 
 2 October 2006 by ieatacid
@@ -5515,31 +5532,31 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 - added int MacroQuest.ChatChannels (returns number of channels currently joined)
 - added MacroQuest.ChatChannel (ex. ${MacroQuest.ChatChannel[MQChat]} returns true if the channel "MQChat" is joined (bool); ${MacroQuest.ChatChannel[1]} returns the name of chat channel 1 (string))
 
-28 June 2006 by rswiders, ieatacid
+28 June 2006 by SwiftyMUSE, ieatacid
 - fix for 6/28 patch
 - fix for gbInZone on initial load
 
 27 June 2006 by ieatacid
 - added bool Me.AutoFire
 
-16 June 2006 by rswiders, dkaa, ieatacid, and others...
+16 June 2006 by SwiftyMUSE, dkaa, ieatacid, and others...
 - fix for 6/16 patch
 
-10 June 2006 by rswiders
+10 June 2006 by SwiftyMUSE
 - added Aura to spawn searches and mapfilter
 - added spellradius to map for a second radius circle on the map
 
 1 May 2006 by dkaa
 - fix the previous fix
 
-30 Apr 2006 by rswiders
+30 Apr 2006 by SwiftyMUSE
 - added Me.TributeTimer, Me.RadiantCrystals, Me.EbonCrystals
 - added Me.Shrouded, UseSkill, LoH/HT Ready (ieatacid)
 
-20 Apr 2006 by rswiders
+20 Apr 2006 by SwiftyMUSE
 - fix for isxeq compile issue
 
-19 Apr 2006 by dkaa, rswiders
+19 Apr 2006 by dkaa, SwiftyMUSE
 - updated for 4/19 patch
 - added spawn.IsNamed
 - added personal tribute and radiant/ebon crystals to CHARINFO
@@ -5568,7 +5585,7 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 24 Mar 2006 by dkaa
 - Fix the container manager struct
 
-23 Mar 2006 by rswiders
+23 Mar 2006 by SwiftyMUSE
 - Various cleanup from PoR patch
 - Access to the 8 new bank slots
 
@@ -5594,26 +5611,26 @@ Im pretty sure these 2 can use some more work, but should work in most situation
 late Feb 2006 by lots of people
 - stuff to get up and running after expansion
     
-29 Jan 2006 by rswiders
+29 Jan 2006 by SwiftyMUSE
 - Fix to spawninfo struct from merge
 
-29 Jan 2006 by rswiders
+29 Jan 2006 by SwiftyMUSE
 - Fix to re-add class based cfg file loading upon entering game
 - Added global bool for telling if you are zoning or not (gbInZone)
 - Added .GroupSize
 - Fix to allow non-stackable items to return counts in .Stacks, .StackCount, .FreeStack
 - Added LoS parameter to spawn searches
 
-18 Jan 2006 by rswiders
+18 Jan 2006 by SwiftyMUSE
 - Updated for 01/18 patch
 
 05 Jan 2006 by dkaa
 - Fixed the crash on re-entering the game
 
-20 December 2005 by rswiders
+20 December 2005 by SwiftyMUSE
 - Fixed to compile in VC++ 6.0
 
-19 December 2005 by rswiders
+19 December 2005 by SwiftyMUSE
 - Corrected offset comments in several structures
 - Fixed Item.Timer issue for insta-click/instant refresh items
 - Added item timers to potion belt window tooltips
@@ -5623,29 +5640,29 @@ late Feb 2006 by lots of people
 16 December 2005 by dkaa
 - Fix for Merchant.BuyPrice
 
-15 December 2005 by rswiders
+15 December 2005 by SwiftyMUSE
 - Fix for MaxMana, MaxEndurance
 
-15 December 2005 by rswiders, dkaa
+15 December 2005 by SwiftyMUSE, dkaa
 - Fix for MaxHPs
 - Fix for Item.timer
 
-15 December 2005 by rswiders
+15 December 2005 by SwiftyMUSE
 - Updated for 12/15 patch
 - Fixes Item.Timer returning 0 too early
 - Added Merchant.Full (thanks cronic)
 
-13 December 2005 by rswiders
+13 December 2005 by SwiftyMUSE
 - Fixed SWho display of primary/offhand for spawns
 - Fixed blocking issue in .Stacks for heal conversion type spells
 - Located more missing fields from 12/07 patch
 - Added MQ2LoadingMsg to macroquest2.ini to allow you to configure 
   the MQ2 evolution in action message to be displayed or not.
 
-12 December 2005 by rswiders
+12 December 2005 by SwiftyMUSE
 - Fixed Me.Levitating
 
-11 December 2005 by rswiders
+11 December 2005 by SwiftyMUSE
 - Corrected offset comments in several structures
 - Added /classhud and /zonehud commands. Automatically load [class] or [zonename] huds.
 - Added SpeedMultiplier into spawninfo
@@ -5653,18 +5670,18 @@ late Feb 2006 by lots of people
 - Fixed /doors command (_DOORS and _EQSWITCH structures changed). Other switches may have
   been effected and fixed with this also.
 
-10 December 2005 by rswiders, dkaa
+10 December 2005 by SwiftyMUSE, dkaa
 - Updated for 12/07 patch
 - PACTORINFO was removed, _ACTORINFO fields were merged into _SPAWNINFO
 - Changed item.timer to a ticks type
 
-5 December 2005 by rswiders
+5 December 2005 by SwiftyMUSE
 - More cleanup of several class function declarations
 - Another fix to .Stacks/.WillStack to not fail if the same slot is a blocking slot
 - Added endurancecost to SPELL (thanks s0rCieR)
 - Added item timer to tooltips (thanks ieatacid)
 
-30 November 2005 by rswiders
+30 November 2005 by SwiftyMUSE
 - Clean up of several class function declarations
 - Cleanup of CombatAbilility, CombatAbilityReady and CombatAbilityTimer. They are now using
   the EQ functions. Cleanup of several functions to use EQ function GetAltAbilityIndex
@@ -5687,12 +5704,12 @@ late Feb 2006 by lots of people
   not cause any lose of functionality for you. Please post any CTD
   crash dumps to assist with locating this bug.
 
-22 November 2005 by rswiders
+22 November 2005 by SwiftyMUSE
 - Added Item.ItemDelay
 - Config files can contain comment lines. Use ";" as the first character on the line to make it a comment.
 - Updated resistadj location in _SPELL struct
 
-18 November 2005 by rswiders
+18 November 2005 by SwiftyMUSE
 - Fixed resists bug
 
 18 November 2005 by dkaa
@@ -5705,7 +5722,7 @@ late Feb 2006 by lots of people
 17 November 2005 by dkaa
 - Added Cr4zyb4rd's hud extensions
 
-16 November 2005 by rswiders
+16 November 2005 by SwiftyMUSE
 - updated offset for 11/16 patch
 - updated changes to charinfo struct for 11/16 patch
 
@@ -5750,7 +5767,7 @@ late Feb 2006 by lots of people
 
 04 Jul 2005 by dkaa
 - prototypes for CListWnd::AddString changed (fixes mq2tracking)
-- rswiders change to XMLRead
+- SwiftyMUSE change to XMLRead
 
 03 Jul 2005 by dkaa
 - prototypes for CSidlManager::FindScreenPieceTemplate and CComboWnd::InsertChoice changed

@@ -1,7 +1,7 @@
-18 May 2015 by rswiders
+18 May 2015 by SwiftyMUSE
 - Updates to fix compile issues including using macroquest.ini for configuration (thanks iluvseq)
 
-17 July 2014 by rswiders
+17 July 2014 by SwiftyMUSE
 - Merged ISXEQ folder into source to allow proper build (thanks CyberTech)
 
 27 March 2014 by CyberTech
@@ -25,7 +25,7 @@
 - Add missing MQ2MercenaryType to ISXEQ datatype definitions
 - Add missing MQ2TargetBuffType (added in MQ2-20140326) to ISXEQ datatype definitions
 
-20 March 2014 by rswiders
+20 March 2014 by SwiftyMUSE
 - Brought source into compliance with current ISXDX (thanks CyberTech)
 
 5 November 2012 by ieatacid
