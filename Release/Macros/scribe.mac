@@ -151,14 +151,8 @@ Sub ScribeSpells
 	/declare Bag int local
 	/declare Slot int local
 	/if (${Cursor.ID}) /autoinv
-	|** Opening your inventory for access bag slots **|
-	/if (!${Window[InventoryWindow].Open}) {
-		/windowstate InventoryWindow open
-	}
-	|** Open all bags **|
 	/keypress OPEN_INV_BAGS
-	
-	|** Check Top Level Inventory Slot for bag/no bag **|
+
 	/for Bag 1 to ${MaxInvSlots}
 		|** If it's a bag do this **|
 		/if (${InvSlot[pack${Bag}].Item.Container}) {
