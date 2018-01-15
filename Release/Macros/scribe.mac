@@ -154,6 +154,7 @@ Sub ScribeSpells
 	/keypress OPEN_INV_BAGS
 
 	/for Bag 1 to ${MaxInvSlots}
+		|** If it's a bag do this **|
 		/if (${InvSlot[pack${Bag}].Item.Container}) {
 			/if (!${Window[Pack${Bag}].Open}) /itemnotify pack${Bag} rightmouseup
 			/delay 1s ${Window[Pack${Bag}].Open}
@@ -166,11 +167,14 @@ Sub ScribeSpells
 					/if (${Cursor.ID}) /call doScribe
 				}
 			/next Slot
-
+			|** Close the bag I just checked **|
 			/if (${Window[Pack${Bag}].Open}) /itemnotify pack${Bag} rightmouseup
 		} else {
+			|** If it's not a bag, do this **|
+			| Debug message /echo TopLevel Inv Slot ~ IsAScroll: ${InvSlot[pack${Bag}].Item.Type.Equal[Scroll]} && Item Spell level: ${InvSlot[pack${Bag}].Item.Spell.Level} <= My Level: ${Me.Level} && Scribed Already: !${Me.Book[${InvSlot[pack${Bag}].Item.Spell.Name}]}
 			/if (${InvSlot[pack${Bag}].Item.Type.Equal[Scroll]} && ${InvSlot[pack${Bag}].Item.Spell.Level} <= ${Me.Level} && !${Me.Book[${InvSlot[pack${Bag}].Item.Spell.Name}]}) {
-				/nomodkey /ctrlkey /itemnotify ${InvSlot[pack${Bag}]} rightmouseup
+				/echo Scribing: ${InvSlot[Pack${Bag}].Item.Name}
+				/nomodkey /ctrlkey /itemnotify pack${Bag} rightmouseup
 				/delay 1s ${Cursor.ID}
 				/if (${Cursor.ID}) /call doScribe
 			}
