@@ -1,4 +1,42 @@
+Jan 15 2018 by redguides
+- scribe.mac (ChatWithThisName) corrected not memorizing spells in top level inventory slot
+- while.mac (ChatWithThisName) I believed the intent was to show usage of a while loop. Produced for loop standalone, while loop standalone, while loop nested in a for loop test cases. 
+- scribe.mac (ChatWithThisName) Missing snipping to open the inventory window added. (required for /itemnotify pack${Bag} rightmouseup to scribe TopLevel slot spells
+- kissassist1004e15.mac (eqmule) eqmule's kissassist fork updated.
+
+Jan 15 2018 by eqmule
+- Added /AddLootFilter syntax:  /AddLootFilter <itemID> <ItemIconID> \"Item Name\"
+  Example: /AddLootFilter ${Cursor.ID} ${Cursor.IconID} "${Cursor.Name}"
+  will add whateveris on your cursor to the advloot filters as always greed and roll.
+- Added a AddLootFilter method to the DisplayItem TLO.
+- Usage: /invoke ${DisplayItem.AddLootFilter} or ${DisplayItem[x].AddLootFilter} where x is 1 to 6
+- this will add whatever item is in the DisplayItem to advloot filters as AG and Roll
+-
+- Added a new TLO MQ2ItemSpellType as pItemSpellType:
+- Added some new pItemType members:
+	Clicky,Proc,Worn,Focus,Scroll,Focus2,Mount,Illusion and Familiar
+	they all return the new pItemSpellType
+	which has the following members:
+	SpellID,RequiredLevel,EffectType,EffectiveCasterLevel,
+	MaxCharges,CastTime,TimerID,RecastType,
+	ProcRate,OtherName,OtherID and Spell (Spell returns a spelltype)
+- Added the .CanUse member to the itemtype.
+  Usage: /echo ${Cursor.CanUse} or ${FindItem[whatever].CanUse} or ${DsiplayItem.CanUse}
+  returns true or false if u can use the item on your cursor.
+  NOTE: if your item does NOT have a class set, i.e. None/None it will return FALSE.
+  I am just calling the original eq function so dont blame me for anomolies.
+  
 Jan 10 2018 by redguides
+- kissassist (ctaylor22) 10.2.3 Added more Bard Fixes and a few other little mods. Fixed the issue in Bind_BackOff and uploaded. Fixed the EQBC Spam when EQBC not loaded.
+- MQ2Nav (brainiac) 1.2.1 
+**Improvements - MQ2Nav**
+Updated source to latest version of MQ2 core
+Destination zone name on switches (for example, pok stones) is now available to debug tools and will eventually be introduced into other features.
+D3DX9_43.dll is now included in the build to avoid requiring DX9 runtime installer.
+**Bug Fixes**
+Zones.ini: Add new zones for Ring of Scale expansion
+Fixed a crash when trying to load a mesh that had been created with an incorrect zone name.
+Fixed a typo in log message complaining about not finding a starting point.
 - Bazaar.mac (ChatWithThisName) Updated to 3.3, will no longer sell items for less than vendor value, polished the text, various fixes.
 - Ninjadvloot.inc (ChatWithThisName) multiple /next in a single /for statement in various locations corrected. /next changed to /continue where appropriate.
 - NEW MACRO! Skills.mac (ChatWithThisName) modified to add in mediating for classes that can cast. Classes that can't cast skip both the meditation and casting routine. 

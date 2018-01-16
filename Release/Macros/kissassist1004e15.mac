@@ -2207,7 +2207,7 @@ Sub DoBandolier
 				/echo OhShitTargetID = ${OhShitTargetID}
 				/echo my HP = ${Me.PctHPs}
 				/echo target HP = ${Target.PctHPs}
-				/beep
+				|/beep
 				/varset thespell ${OhShit[${i}].Arg[1,|]}
 				/varset thetargetid ${OhShit[${i}].Arg[2,|]}
 				/echo ohshit triggered for ${OhShit[${i}].Replace[$,#]} = ${OhShit[${i}]}
@@ -2582,7 +2582,12 @@ Sub WaitCast(string sentFrom)
 	/varset GemStuckTimer 20s
 :rewaitcast
 	/if (${Me.BardSongPlaying}) {
-		/return
+		/delay 1
+		/if (${Window[CastingWindow].Open}==FALSE) {
+			|/echo returning from waitcast because im a bard and im not technically casting right now, just playing songs.
+			/delay 1
+			/return
+		}
 	}
 	/if (${Me.Hovering}) /return
 	/if (${sentFrom.Equal[SingleHeal]} && ${CastingInterruptOn}) {
@@ -2747,11 +2752,13 @@ Sub WaitCast(string sentFrom)
                 /if (${Cursor.ID}) /call CheckCursor
                 /if (${MiscGemRemem} && ${MiscGemLW} && ${Spell[${castWhat}].RecastTime.TotalSeconds}>30 && ${ReMemWaitLong.Equal[null]}) {
                    /varset ReMemWaitLong ${castWhat}
+		   /echo calling MemSpell in CastWhat 1 for ${castWhat}
                    /call MemSpell "${castWhat}" ${MiscGemLW} 0
                    /return ${CastResult}
                 }
                 |/memorize "${castWhat}" gem${MiscGem}
                 /varset ReMemWaitShort ${castWhat}
+		/echo calling MemSpell in CastWhat 2 for ${castWhat}
                 /call MemSpell "${castWhat}" ${MiscGem} 0
 		/echo [${Time}] Pre Memspell for ${castWhat}
                 /delay 350 ${Me.SpellReady[${castWhat}]} && ${Me.GemTimer[${castWhat}]}==0
@@ -2809,6 +2816,7 @@ Sub WaitCast(string sentFrom)
                         /if (!${Me.Gem[${ReMemMiscGem}]} && ${ReMemCast} && !${CombatStart} && !${Me.Buff[Resurrection Sickness].ID} && !${sentFrom.Find[-nomem]}) {
                             /if (${Cursor.ID}) /call CheckCursor
                             |/memorize "${ReMemMiscGem}" gem${MiscGem}
+			    /echo calling MemSpell in CastWhat 3 for ${ReMemMiscGem}
                             /call MemSpell "${ReMemMiscGem}" ${MiscGem} 0
                             /varset ReMemCast 0
                             /varset ReMemWaitShort null
@@ -2818,7 +2826,8 @@ Sub WaitCast(string sentFrom)
                     /if ((${MiscGemRemem}==1 || ${MiscGemRemem}==3) && ${MiscGemLW} && ${ReMemWaitLong.NotEqual[null]}) {
                         /if (${ReMemCastLW} && !${Me.Buff[Resurrection Sickness].ID}) {
                             /if (${Cursor.ID}) /call CheckCursor
-                            /call MemSpell "${ReMemMiscGemLW}" ${MiscGemLW} ${Int[${Me.Gem[${ReMemMiscGemLW}]}]}
+                            /echo calling MemSpell in CastWhat 4 for ${ReMemMiscGemLW}
+			    /call MemSpell "${ReMemMiscGemLW}" ${MiscGemLW} ${Int[${Me.Gem[${ReMemMiscGemLW}]}]}
                             /varset ReMemCastLW 0
                             /varset ReMemWaitLong null
                         }
@@ -3192,7 +3201,7 @@ Sub WaitCast(string sentFrom)
         /if (${Select[${Me.Class.ShortName},BST,BRD,CLR,DRU,ENC,MAG,NEC,PAL,RNG,SHM,SHD,WIZ]}) /varset MedStat Mana
         /if (${Select[${Me.Class.ShortName},BER,MNK,ROG,WAR]}) /varset MedStat Endurance
         /if (!${Me.Moving}) {
-            /if (${Select[${Me.Class.ShortName},BST,PAL,RNG,SHD]} && ${Me.Pct${MedStat2}}<${MedStart} && ${Me.Pct${MedStat}}>${MedStart})  {
+            /if (${Select[${Me.Class.ShortName},BRD,BST,PAL,RNG,SHD]} && ${Me.Pct${MedStat2}} < ${MedStart} && ${Me.Pct${MedStat}}>${MedStart})  {
                 /varset MedStat1 ${MedStat}
                 /varset MedStat ${MedStat2}
                 /varset Med2On 1
@@ -3206,15 +3215,18 @@ Sub WaitCast(string sentFrom)
             } else {
                 /varset MASitTime 0
             }
-            /if (${Me.Pct${MedStat}}<${MedStart} || (${ChainPullHold}==2 && ${Me.Pct${MedStat}}<100) || (${MedForceOn} && ${Me.Pct${MedStat}}<90 && !${Role.Find[puller]} && !${MedCombat})) {
+            /if (${Me.Pct${MedStat}} < ${MedStart} || (${ChainPullHold}==2 && ${Me.Pct${MedStat}} < 100) || (${MedForceOn} && ${Me.Pct${MedStat}}<90 && !${Role.Find[puller]} && !${MedCombat})) {
                 /squelch /tar clear
                 /varset Medding 1
                 /if (${Attacking}) /call CombatReset
                 /if (${Select[${Role},puller,pullertank,pullerpettank,hunter,hunterpettank]}) /call BroadCast ${IRCOn} ${EQBCOn} t "PULLER-> My ${MedStat} is ${MedStart}% time to med. ${MedStat} ${Me.Pct${MedStat}} ${ChainPullHold}"
                 | bards twisting while others fighting negate fast med 
                 /if (${IAmABard} && ${AggroTargetID}) {
-                    /if (${Twist}) /squelch /twist off
-                    /delay 10
+                    /if (${Twist}) {
+			/squelch /twist off
+			/stopcast
+                    	/delay 10 ${Me.BardSongPlaying}==FALSE
+		    }
                     /squelch /twist ${TwistMed}
                 }
                 /if (${Medding}) /echo Medding until ${MedStat} 100%
@@ -3225,10 +3237,12 @@ Sub WaitCast(string sentFrom)
                         /call DoWeMove "DoWeMed 1"
                     }
                     /if (!${Me.Mount.ID} && ${Me.Standing}) {
-			/echo going to sit 1
+			/echo going to sit in DoWeMed
 			/sit
 		    }                  
-                    /if (${Debug}) /echo \atDEBUG ${MedStat} ${MedStat1} ${MedStat2} \agLine#: ${Macro.CurLine}
+                    /if (${Debug}) {
+			/echo \atDEBUG ${MedStat} ${MedStat1} ${MedStat2} \agLine#: ${Macro.CurLine}
+		    }
                     /delay 10
                     /call CheckCasting 50
                     /delay 10
@@ -3246,12 +3260,15 @@ Sub WaitCast(string sentFrom)
                 /if (${Med2On}) /varset MedStat ${MedStat1}
                 /varset Medding 0
                 /if (${Me.Sitting}) {
-					/echo going to stand 4
-					/stand
-				}
+			/echo going to stand in DoWeMed
+			/stand
+		}
                 /if (${IAmABard}) {
-					/if (${TwistMed}) /stopsong
-				}
+			/if (${TwistMed}) {
+				/echo stopping singing in DoWeMed
+				/stopsong
+			}
+		}
             }
             /if (${Select[${Role},pullerpettank,puller,hunter,hunterpettank]} && ${Me.PctHPs}<=50) {
                 /echo Medding to 100% health
@@ -3288,15 +3305,15 @@ Sub WaitCast(string sentFrom)
             /if (${Select[${Role},pullerpettank,hunterpettank]} && !${Me.Invis} && (${Me.Pet.PctHPs}<=50 || ${PetForceHealOnMed})) {
                 | Check pet is at full health before pulling.  
                 /echo Waiting on pet to full health before next pull        
-                    /if (${Me.Pet.ID} && ${Me.Pet.PctHPs}<100) {                
+                    /if (${Me.Pet.ID} && ${Me.Pet.PctHPs} < 100) {                
                         :WaitingOnPetHealth
                     /for j ${SingleHeal.Size} downto 1
                         /if (${SingleHeal[${j}].Arg[3,|].NotEqual[pet]} || !${SingleHeal[${j}].Length} || ${SingleHeal[${j}].Arg[2,|]}==0) /goto :NextPetHeal
                         /if (${Me.Pet.ID} && ${Me.Pet.Distance}<${Spell[${SingleHeal[${j}].Arg[1,|]}].Range}) {
                             /if (${Debug}) {
-								/echo \amDEBUG DoPetMedStuff (${SingleHeal[${j}].Arg[3,|].Find[PET]} && ${Me.Pet.PctHPs}<=${HealPct} && ${Me.Pet.ID} && ${Me.Pet.Distance}<${Spell[${SingleHeal[${j}].Arg[1,|]}].Range}) \agLine#: ${Macro.CurLine}
+				/echo \amDEBUG DoPetMedStuff (${SingleHeal[${j}].Arg[3,|].Find[PET]} && ${Me.Pet.PctHPs}<=${HealPct} && ${Me.Pet.ID} && ${Me.Pet.Distance}<${Spell[${SingleHeal[${j}].Arg[1,|]}].Range}) \agLine#: ${Macro.CurLine}
                             }
-							/call CastWhat "${SingleHeal[${j}].Arg[1,|]}" ${Me.Pet.ID} Med
+			    /call CastWhat "${SingleHeal[${j}].Arg[1,|]}" ${Me.Pet.ID} Med
                             /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
                                 /call BroadCast ${IRCOn} ${EQBCOn} o "${Heals[${j}].Arg[1,|]} on  >> ${Me.Pet.CleanName} <<"
                                 /varcalc PetHealTimer${j} (${Spell[${SingleHeal[${j}].Arg[1,|]}].Duration.TotalSeconds}*${DurationMod})*10
@@ -3306,7 +3323,7 @@ Sub WaitCast(string sentFrom)
                         :NextPetHeal
                     /next j
                     /if (${Me.Pet.ID} && ${Me.Pet.PctHPs}<100 && !${AggroTargetID}) {
-                        /delay 6s
+                        /delay 1s
                         /goto :WaitingOnPetHealth
                     }
                 }  
@@ -3634,7 +3651,10 @@ Sub WaitCast(string sentFrom)
         /if (!${ReadBuffsTimer} && !${AggroTargetID}) /varset ReadBuffsTimer ${CheckBuffsTimer}s
         /if (${Macro.RunTime}>120 && !${IniNextTimer}) /varset IniNextTimer 30s
         |/if (${Me.Gem[${MiscGem}].Name.NotEqual[${ReMemMiscGem}]}) /memorize "${ReMemMiscGem}" gem${MiscGem}
-        /if (${Me.Gem[${MiscGem}].Name.NotEqual[${ReMemMiscGem}]} && ${MiscGemRemem}) /call MemSpell "${ReMemMiscGem}" ${MiscGem}
+        /if (${Me.Gem[${MiscGem}].Name.NotEqual[${ReMemMiscGem}]} && ${MiscGemRemem}) {
+		/echo calling MemSpell in CheckBuffs for ${ReMemMiscGem}
+		/call MemSpell "${ReMemMiscGem}" ${MiscGem}
+	}
         /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs Leave \agLine#: ${Macro.CurLine}
     /return
 | -------------------------------------------------------------------------------------
@@ -3700,12 +3720,22 @@ Sub WaitCast(string sentFrom)
                     /if (!${Me.Gem[${AuraSpell}]} && ${Me.Book[${AuraSpell}]}) {
                         /if (${Cursor.ID}) /call CheckCursor
                         |/memorize "${AuraSpell}" gem${MiscGem}
-                        /call MemSpell "${AuraSpell}" ${MiscGem}
+                        /echo calling MemSpell in CheckAura for ${AuraSpell}
+			/call MemSpell "${AuraSpell}" ${MiscGem}
                         /delay 15s ${Me.Gem[${MiscGem}].Name.Equal[${AuraSpell}]}
+			/echo ok ${AuraSpell} is memed in CheckAura
                     }
                     /if (${Me.Book[${AuraSpell}]}) {
-                        /squelch /twist once ${Me.Gem[${AuraSpell}]}
-                        /delay 50
+			/echo Going to cast ${AuraSpell} in CheckAura Gem: ${Me.Gem[${AuraSpell}]}
+			/stopcast
+			/stoptwist
+			/delay 5s ${Me.BardSongPlaying}==FALSE
+                        |/call CastWhat "${AuraSpell}" ${Me.ID} CheckAura
+			/casting "${AuraSpell}"
+			/call WaitCast
+                        |/squelch /twist once ${Me.Gem[${AuraSpell}]}
+                        |/delay 5s
+			/echo casted ${AuraSpell} in CheckAura
                         /varset AuraResult TRUE
                         /return ${AuraResult}
                     }
@@ -9847,7 +9877,7 @@ Sub FindGroupHeals
                         /delay 20 ${Int[${Me.Gem[${pGem}]}]}==0
                     }
                     /if (!${Int[${Me.Gem[${i}].Name.Length}]} || ${Me.Gem[${i}].Name.NotEqual[${pGem}]}) {
-                        /echo Meming ${pGem} in slot ${i}
+                        /echo Meming ${pGem} in slot ${i} in Bind_MemMySpells
                         /memspell ${i} "${pGem}"
                         /delay 90 ${Me.Gem[${i}].Name.Equal[${pGem}]}
                     }
@@ -9876,7 +9906,7 @@ Sub FindGroupHeals
                 /delay 20 ${Int[${Me.Gem[${i}].ID}]}==0
             }
             /if (!${Int[${Me.Gem[${i}].Name.Length}]} || ${Me.Gem[${i}].Name.NotEqual[${pGem}]}) {
-                /echo Meming ${pGem} in slot ${i}
+                /echo Meming ${pGem} in slot ${i} in MemSpell
                 /memspell ${i} "${pGem}"
                 /delay 90 ${Me.Gem[${i}].Name.Equal[${pGem}]}
             }

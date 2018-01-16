@@ -1,4 +1,4 @@
-| - kissassist.mac v10.2.2 by Maskoi 12/27/2017.
+| - kissassist.mac v10.2.3 by Maskoi 01/01/2018.
 | - Contributions by anonymoushero, crystane, eqmule, thenomadman, william12.
 | - ChainPull, Debuffs and combat rewrites by ctaylor22.
 | - PetTank, PullerPetTank & HunterPetTank roles developed by TreeHuginDruid
@@ -176,7 +176,7 @@ Sub Main
         /varset ZoneName ${Zone.ShortName}${If[${Me.InInstance},_I,]}
     }
     /declare MacroName              string      outer       KissAssist
-    /declare MacroVer               string      outer       10.2.2
+    /declare MacroVer               string      outer       10.2.3
     /declare IniFileName            string      outer         
     /declare InfoFileName           string      outer       ${MacroName}_Info.ini
     /declare ConditionsFileName     string      outer       
@@ -1375,7 +1375,7 @@ Sub Main
                             /varset MyTargetID ${Target.ID}
                             /varset MyTargetName ${Target.CleanName}
                         } else {
-                            /squelch /alert 3 add id ${Target.ID}
+                            /if (${Target.ID}) /squelch /alert 3 add id ${Target.ID}
                         }
                         /return
                     }
@@ -1395,7 +1395,7 @@ Sub Main
         | If target is not valid return
         /if (${DebugCombat}) /echo \atDEBUGCOMBAT Assist Target:${Target.CleanName} ValidTarget:${ValidTarget} Marco Return:${Macro.Return} \agLine#: ${Macro.CurLine}
         /if (${ValidTarget}==0) {
-            /squelch /alert add 2 id ${Spawn[${Target.CleanName}].ID}
+            /if (${Target.ID}) /squelch /alert add 2 id ${Target.ID}
             /varset MyTargetID 0
             /varset MyTargetName
             /return
@@ -2259,14 +2259,16 @@ Sub Main
                 /if (${ReadyToCast}==2 && ${Me.ItemReady[=${castWhat}]}) /call CastItem "${castWhat}" ${WhatID}
                 /if (${ReadyToCast}==3 && ${Me.CombatAbilityReady[${castWhat}]}) /call CastDisc "${castWhat}" ${WhatID}
                 /if (${ReadyToCast}==4 && ${Me.AbilityReady[${castWhat}]}) /call CastSkill "${castWhat}" ${WhatID}
-                /if (${ReadyToCast}==5 && ${Me.SpellReady[${castWhat}]} && ${Me.Book[${castWhat}]}) /call CastSpell "${castWhat}" ${WhatID} ${sentFrom}
+                /if (${ReadyToCast}==5 && ${Me.SpellReady[${castWhat}]} && ${Me.Book[${castWhat}]} && ${Spell[${castWhat}].Mana}<${Me.CurrentMana}) /call CastSpell "${castWhat}" ${WhatID} ${sentFrom}
             } else {
                 /if (${Me.Book[${castWhat}]} && !${Me.Gem[${castWhat}]} && ${ReadyToCast}==0) {
                     /call CastMem "${castWhat}" ${sentFrom}
-                    /varset ReadyToCast 6
-                    /call CastSpell "${castWhat}" ${WhatID} ${sentFrom}
+					/if (${Macro.Return.NotEqual[notmemed]} && ${Me.Gem[${castWhat}]}!=0) { 
+                        /varset ReadyToCast 6
+                        /call CastSpell "${castWhat}" ${WhatID} ${sentFrom}
+                    }
                 }
-            }
+            }    
         }    
         /if (${Macro.Return.Equal[CAST_SUCCESS]}) /doevents
         |Remem spell originally in Miscgem slot except if combat or just rezd
@@ -2373,8 +2375,8 @@ Sub Main
             /if (${CastResult.NotEqual[CAST_CANCELLED]}) /varset CastResult ${Cast.Result}
         }
         } else {
-            /echo Skip Casting ${WhatSpell}. Sell Not Memed.
-            /varset CastResult CAST_CANCELLED
+            /echo Skip Casting ${WhatSpell}. Spell Not Memed.
+            /varset CastResult CAST_NO_RESULT
         }
         /if (${Debug}) /echo CastSpell Leave ${Me.GemTimer[${WhatSpell}]} ${CastResult} ${Cast.Result} Line#: ${Macro.CurLine}
     /return  ${CastResult}  
@@ -2429,7 +2431,10 @@ Sub Main
     Sub CastMem(string WhatMemSpell,string sentFrom)
         /if (${Debug}) /echo CastMem Enter Line#: ${Macro.CurLine}
         | Prevent tanks and heals trying to mem spells during combat.
-        /if ((${Attacking} && ${MainAssist.Equal[${Me}]}) || (${HealsOn} && ${AggroTargetID} && ${sentFrom.NotEqual[Heal]})) /return
+        /if ((${Attacking} && ${MainAssist.Equal[${Me}]}) || (${HealsOn} && ${AggroTargetID} && ${sentFrom.NotEqual[Heal]} && !${Me.Mount.ID})) {
+            /echo Cannot mem a spell durring combat or while you have aggro.
+		    /return notmemed
+        }
         /if (${Cursor.ID}) /call CheckCursor CastMem
 		/if (${IAmABard}) {
 		    /varset WasTwisting ${Twist}
@@ -2441,7 +2446,7 @@ Sub Main
         /if (${MiscGemRemem} && ${MiscGemLW} && ${Spell[${WhatMemSpell}].RecastTime.TotalSeconds}>30 && ${ReMemWaitLong.Equal[null]}) {
            /varset ReMemWaitLong ${WhatMemSpell}
            /call CastMemSpell "${WhatMemSpell}" ${MiscGemLW} 0 CastMem
-           /return 
+           /return 0
         }
         /varset ReMemWaitShort ${WhatMemSpell}
         /call CastMemSpell "${WhatMemSpell}" ${MiscGem} 0 CastMem
@@ -2453,7 +2458,7 @@ Sub Main
         }
 		}
         /if (${Debug}) /echo CastMem Leave Line#: ${Macro.CurLine}
-   /return
+   /return 0
 |--------------------------------------------------------------------------------------------------------------|
     Sub CastReMem(string WhatMemSpell,string sentFrom)
         /if (${Debug}) /echo CastTarget Enter Line#: ${Macro.CurLine}
@@ -2864,9 +2869,12 @@ Sub Main
                 /if (${Select[${Role},puller,pullertank,pullerpettank,hunter,hunterpettank]}) /call BroadCast ${IRCOn} ${EQBCOn} t "PULLER-> My ${MedStat} is ${MedStart}% time to med. ${MedStat} ${Me.Pct${MedStat}} ${ChainPullHold}"
                 | bards twisting while others fighting negate fast med 
                 /if (${IAmABard} && ${AggroTargetID}) {
-                    /if (${Twist}) /squelch /twist off
-                    /delay 10
-                    /squelch /twist ${TwistMed}
+                    /if (${Twist}) {
+                        squelch /twist off
+                        /stopsong
+                        /delay 20 !${Twist}
+                    }
+                    /if (${TwistMed}) /squelch /twist ${TwistMed}
                 }
                 /if (${Medding}) /echo Medding until ${MedStat} 100%
                 /if (${Me.Pct${MedStat}}<${MedStart}) /call BroadCast ${IRCOn} ${EQBCOn} t "My ${MedStat} is ${MedStart}% time to med."
@@ -3517,7 +3525,7 @@ Sub Main
             | If bard rallying call aa skip tank or he won't attack
             /if (${RGName.Find[Rallying Call]} && ${Group.Member[${i}].ID}==${Spawn[${MainAssist} ${MainAssistType}].ID}) /continue 
             | Bard Dichotomic uses endurance not mana
-            /if  (${RGName.Find[Dichotomic Psalm]} && ${Me.CurrentEndurance}<6700) /continue
+            /if  (${RGName.Find[Dichotomic Psalm]} && ${Me.CurrentEndurance}<15000) /continue
             | Dichotomic Psalm & Quiet Miracle do not work on bards
             /if (${Group.Member[${i}].Class.Name.Equal[bard]} && (${RGName.Equal[Dichotomic Psalm]} || ${RGName.Equal[Quiet Miracle]})) /continue
             /if (${Select[${Group.Member[${i}].Class.ShortName},${RegonOnClasses}]} && !${AggroTargetID} && ${Group.Member[${i}].Current${Stat}}<=${StatPct} && ${Group.Member[${i}].Current${Stat}}>=1 && ${Group.Member[${i}].ID}) {            
@@ -6078,23 +6086,25 @@ Sub Main
                         /varset PathDistance[${p}] 100000
                     }
                 /next p
-                /for m 1 to ${PullCount}
-                    /varset PathCount ${m}
-                    /varset m2 ${Math.Calc[${m} + 1]}
-                    /for n ${m2} to ${PullCount}
-                        /if (${PathDistance[${n}]} < ${PathDistance[${PathCount}]}) /varset PathCount ${n}
-                    /next n
-                    /varset SortIDTemp ${PathArray[${m}]}
-                    /varset SortDistTemp ${PathDistance[${m}]}
-                    /varset PathArray[${m}] ${PathArray[${PathCount}]}
-                    /varset PathArray[${PathCount}] ${SortIDTemp}
-                    /varset PathDistance[${m}] ${PathDistance[${PathCount}]}
-                    /varset PathDistance[${PathCount}] ${SortDistTemp}
-                    /if (${m2}==${PullCount}) /break
-                    /if (${DebugPull}) /echo \atDEBUGPULL /echo \atDEBUGPULL FindMobToPull: PathNum: ${PathDistance[${m}]} PathDistance:${PathDistance[${PathCount}]} \agLine#: ${Macro.CurLine}
-                /next m
+				/if (${PullCount}>1) {
+                    /for m 1 to ${PullCount}
+                        /varset PathCount ${m}
+                        /varset m2 ${Math.Calc[${m} + 1]}
+                        /for n ${m2} to ${PullCount}
+                            /if (${PathDistance[${n}]} < ${PathDistance[${PathCount}]}) /varset PathCount ${n}
+                        /next n
+                        /varset SortIDTemp ${PathArray[${m}]}
+                        /varset SortDistTemp ${PathDistance[${m}]}
+                        /varset PathArray[${m}] ${PathArray[${PathCount}]}
+                        /varset PathArray[${PathCount}] ${SortIDTemp}
+                        /varset PathDistance[${m}] ${PathDistance[${PathCount}]}
+                        /varset PathDistance[${PathCount}] ${SortDistTemp}
+                        /if (${m2}==${PullCount}) /break
+                        /if (${DebugPull}) /echo \atDEBUGPULL /echo \atDEBUGPULL FindMobToPull: PathNum: ${PathDistance[${m}]} PathDistance:${PathDistance[${PathCount}]} \agLine#: ${Macro.CurLine}
+                    /next m
+				}
             }
-            /for i 1 to ${PullCount}
+            /for i ${f1} to ${PullCount}
                 /if (${DebugPull}) /echo \atDEBUGPULL FindMobToPull 1.0:  PullFlag: ${PullFlag} Pullcount: ${PullCount} \agLine#: ${Macro.CurLine}
                 /if (${PullMoveUse.Equal[nav]}) {
                     /varset PullMob ${PathArray[${i}]}
@@ -6162,7 +6172,7 @@ Sub Main
                 /delay 20 ${Target.ID}==${PullMob}
                 | Is mob really in range. check for spawn lag
                 /if (${Math.Distance[${Spawn[id ${PullMob}].Y},${Spawn[id ${PullMob}].X}:${AdvpathPointY},${AdvpathPointX}]}>${PullRange}) {
-                    /alert add 1 id ${PullMob}
+                    /if (${PullMob}) /alert add 1 id ${PullMob}
                     /echo Mob is OOR after targeting. Trying Again. ${Math.Distance[${Spawn[id ${PullMob}].Y},${Spawn[id ${PullMob}].X}:${AdvpathPointY},${AdvpathPointX}]} ${PullRange}
                     /squelch /target clear
                     /varset Pulling 0
@@ -6176,7 +6186,7 @@ Sub Main
             }
             /if (${DebugPull}) /echo \atDEBUGPULL PullCheck: Target: ${Spawn[${PullMob}].CleanName} Valid: ${ValidTarget} MacReturn ${Macro.Return} \agLine#: ${Macro.CurLine}
             /if (${ValidTarget}==0 || (${Target.ID} && ${Select[${PullMoveUse},los,nav]}>=1 && ${Math.Distance[${Target.Y},${Target.X}:${CampYLoc},${CampXLoc}]}>${MaxRadius})) {
-                /squelch /alert add 1 id ${PullMob}
+                /if (${PullMob}) /squelch /alert add 1 id ${PullMob}
                 /squelch /target clear
                 /varset Pulling 0
                 /return 0
@@ -6383,7 +6393,7 @@ Sub Main
             | Exit pull and reset if timed out or wandered too far from camp
             /if (${DebugPull}) /echo Pulling 1.2 PullTimer: ${PullTimer} Distance: ${Math.Distance[${CampYLoc},${CampXLoc}]} Distance3D: ${Math.Distance[${CampYLoc},${CampXLoc},${CampZLoc}]} MaxRadius: ${Math.Calc[${MaxRadius}*.90]} PullAttempts: ${PullAttempts} MyTargetID: ${Spawn[${MyTargetID}].ID}  Target LOS: ${Spawn[${MyTargetID}].LineOfSight} \agLine#: ${Macro.CurLine}
             /if (${PullTimer}==0 || (${Math.Distance[${CampYLoc},${CampXLoc},${CampZLoc}]} >= ${Math.Calc[${MaxRadius}*.90]}) || (${PullAttempts}>=7 && !${Spawn[${MyTargetID}].LineOfSight} && !${Select[${Role},hunter,hunterpettank]}) || !${Spawn[${MyTargetID}].ID} || ${PullAttempts}>=100) {
-                /squelch /alert add 1 id ${MyTargetID}
+                /if (${MyTargetID}) /squelch /alert add 1 id ${MyTargetID}
                 /if (${DebugPull}) /echo \atDEBUGPULL Pull: /echo Adding ${Spawn[${MyTargetID}].CleanName} ID: ${MyTargetID} to temp ignore list \agLine#: ${Macro.CurLine}
                 /if (${DebugPull}) /echo \atDEBUGPULL Pull: Done Pulling-Timer expired, Mob unreachable or exceeded max pull radius. \agLine#: ${Macro.CurLine}
                 /call BackToCampReset
@@ -6437,7 +6447,7 @@ Sub Main
                     /if (${X2}!=0) { 
                         /if (${Math.Distance[${Me.Y},${Me.X}:${Y2},${X2}]}>200) {
                             /echo Mob is no Longer in LOS. Returning to Camp.
-                            /squelch /alert add 1 id ${MyTargetID}
+                            /if (${MyTargetID}) /squelch /alert add 1 id ${MyTargetID}
                             /if (${MoveTo.Moving}) /moveto off
                             /call BackToCampReset
                             /if (${Macro.Return}) /return
@@ -6508,7 +6518,7 @@ Sub Main
             }
             /if (${StuckCount}>=7 && !${PullAggroTargetID}) {
                 /echo I am stuck aborting pull
-                /squelch /alert add 1 id ${MyTargetID}
+                /if (${MyTargetID}) /squelch /alert add 1 id ${MyTargetID}
                 /call StopMoving
                 /call BackToCampReset
                 /if (${Macro.Return}) /return            
@@ -6540,7 +6550,7 @@ Sub Main
             | Validate target one more time before pulling
             /call ValidateTarget
             /if (${ValidTarget}==0) {
-                /squelch /alert add 1 id ${Target.ID}
+                /if (${Target.ID}) /squelch /alert add 1 id ${Target.ID}
                 /squelch /target clear
                 /echo Aborting Pull! Target invalid now! Reason:${Macro.Return}
                 /call StopMoving
@@ -6947,7 +6957,7 @@ Sub Main
                 | if target lost somehow add to ignore list and continue pulls
                 /if ((!${AggroTargetID} && !${ChainPull}) || ${WaitTimer}==0) {
                     /if (${DebugPull}) /echo \atDEBUGPULL WaitForMob /return no AggroTargetID \agLine#: ${Macro.CurLine}
-                    /squelch /alert add 1 id ${Target.ID}
+                    /if (${Target.ID}) /squelch /alert add 1 id ${Target.ID}
                     /call PullReset 
                     /return
                 }
@@ -7503,6 +7513,11 @@ Sub Main
         /varset IAmDead 1
         /call CombatReset ImDead
         /doevents flush ImDead
+        /if (${IAmABard}) {
+            /squelch /twist off
+            /stop song
+            /delay 10
+        }
     /return
 | ----------------------------------------------------------------------------
 | SUB: Event GoM On
@@ -8465,10 +8480,10 @@ Sub Main
             /if (${EQBC.Connected}) {
                 /if (${doeqbc}) /${EQBCSay} [+${eqbcolor}+] [${Time}] ${message} [+x+]
             } else {
-                /echo You are NOT connected to an EQBC Server. Please check your connection.
+                /if (${doeqbc}) /echo You are NOT connected to an EQBC Server. Please check your connection.
             }
 		} else {
-            /echo EQBC is Required, but the plugin is NOT Loaded.
+            /if (${doeqbc}) /echo EQBC is Required, but the plugin is NOT Loaded.
         }
         /if (${Bool[${Plugin[MQ2IRC]}]} && ${doirc}) /i say ${message}
         /echo ${message}
@@ -8797,10 +8812,8 @@ Sub Main
             /varset DPSPaused 1  
             /varset CombatStart 0  
             /if (${UseMQ2Melee}) /squelch /melee off
-            /if (${Melee.Combat}) {  
-                /squelch /attack off  
-                /if (${Stick.Active})  /stick off 
-            }  
+            /squelch /attack off  
+            /if (${Stick.Active})  /stick off 
             /call CombatReset  
             /varset DPSPaused 2 
             /echo Backing off - All Combat has been reset.
@@ -8872,7 +8885,7 @@ Sub Main
             /varset k 1
             /while (${IDvarList.Arg[${k},|].Length} && ${IDvarList.Arg[${k},|].NotEqual[null]} && ${Int[${IDvarList.Arg[${k},|]}]}>0) {
                 /if (${Debug}) /echo \atDEBUG ADD ${IDvarList.Arg[${k},|]} to ${MvarList}
-                /squelch /alert add ${whatlist} id ${IDvarList.Arg[${k},|]}
+                /if (${Int[${IDvarList.Arg[${k},|]}]}>0) /squelch /alert add ${whatlist} id ${IDvarList.Arg[${k},|]}
                 /if (${Debug}) /echo \atDEBUG AlertAddToList Add ${IDvarList.Arg[${k},|]} to Alert List ${whatlist} \agLine#: ${Macro.CurLine}
                 /varcalc k ${k}+1
             }
