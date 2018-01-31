@@ -1,6 +1,6 @@
 | ************************************************************************
-|* bazaar.mac version 4.1
-|* Updated by ChatWithThisName 01/02/2018
+|* bazaar.mac version 4.2
+|* Updated by ChatWithThisName 01/19/2018
 |* Auto-Update Bazaar Prices
 |*
 |* Special thanks to:
@@ -80,7 +80,7 @@ Sub Main
 | - Set UpdateSpam to 1 to /myecho countdown every 5 min until next price update
 	/declare UpdateOn            int         outer   1
 	/declare UpdateInterval      int         outer   30
-	/declare UpdateSpam          int         outer   1
+	/declare UpdateSpam          int         outer   0
 | - Variable to set no priced items with /mac bazaar trader initprice
 	/declare InitialPrice        int         outer   5000
 | - Default values for creation of ini file /mac bazaar makeini
@@ -90,7 +90,7 @@ Sub Main
 	/declare BuyPriceMin         int         outer   1
 	/declare BuyPriceMax         int         outer   1000
 | - Added if you want it to spam you with what it is searching for. 
-	/declare ReportSearching	 bool		 outer 	 TRUE
+	/declare ReportSearching	 bool		 outer 	 FALSE
 |-------------------------------------------------------------|
 | Things you dont Need to worry about
 |-------------------------------------------------------------|
@@ -289,7 +289,7 @@ Sub Main
 		:setPrice
 		| If item pp price doesn't match ${targetstr} var reprice item
 			/if (!${targetstr.Equal[${Window[BazaarWnd].Child[BZW_Money0].Text}]}) {
-				/myecho ... Repricing ${itemname} from (${Window[BazaarWnd].Child[BZW_Money0].Text}) to (${targetstr}).
+				/myecho \arRepricing: \ag${itemname} \awfrom \ay${Window[BazaarWnd].Child[BZW_Money0].Text}pp \awto \ar${targetstr}pp.
 				| Click on item pp price window
 				/notify BazaarWnd BZW_Money0 leftmouseup
 				|** Wait till Quantity Window opens **|
