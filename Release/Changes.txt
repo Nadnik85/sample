@@ -1,3 +1,94 @@
+Mar 16 2018 by eqmule
+- Updated for LIVE and TEST Fixed the ITEMINFO struct so things like StackSize works again.
+
+Mar 14 2018 by eqmule
+- Updated for LIVE
+
+Mar 11 2018 by SwiftyMUSE
+- Updated hotkey processing. You are now able to use any/all of the allowed modifiers win/alt/ctrl/shift keys.
+  hotkey processing will allow characters `/~, 0-9, A-Z, NUMPAD0-9 as the keycode. For example, you might want
+  win+ctrl+~ to be a valid hotkey.
+  F12 is RESERVED for the debugger and can not be used as a hotkey. You can use F12 with a modifier.
+- Updated XTAggroCount to return a value when only 1 mob is on xtarget.
+- Added XTHaterCount as the number of mob on xtarget with AUTO-HATER.
+
+Mar 11 2018 by eqmule
+-Fixed another crash on TEST -brainiac
+
+Mar 10 2018 by eqmule
+- Updated the TEST build. If you crash use REBUILD on mq2main then build the rest again.
+- mapcrash fixed - brainiac
+
+Mar 09 2018 by eqmule
+- Updated for TEST
+
+Feb 27 2018 by eqmule
+- Updated for TEST
+
+Feb 22 2018 by swiftymuse
+- Updated for LIVE
+- Updated for TEST
+- Fixed a crash that would occur in plugins that use the __msgTokenTextParam_x offset which was wrong. -eqmule
+  If you unloaded a plugin and that stopped the crashing, you can now safely load it again.
+
+Feb 21 2018 by eqmule and swiftymuse
+- Updated the TEST build.
+- Updated the LIVE build.
+  Look, we don't know for sure which plugins work and which don't after todays patch
+  there was just too many things that changed but i can say that I know mq2cast needed an update here:
+  from:
+  [code]
+  if (Cast->CastOnYou[0]) {
+	sprintf_s(Temps, "%s#*#", Cast->CastOnYou);
+  [/code]
+  changed to
+  [code]
+		/*CastByMe,CastByOther,CastOnYou,CastOnAnother,WearOff*/
+		if (char*str = GetSpellString(Cast->ID,2)) { 
+			sprintf_s(Temps, "%s#*#", str);
+  [/code]
+  So from now on if you need the strings from spell use GetSpellString
+- Updated mq2moveutils in the builder with new patterns
+
+Feb 13 2018 by eqmule
+- Added MQ2TargetInfo plugin to core
+  It adds 3 features to the target window:
+  1. Distance to target
+  2. Can See
+  3. PH - if the mob you target is a place holder for a named, it will show info on the named when clicked.
+
+Jan 31 2018 by eqmule
+- Added a toggle to the item display window to add/remove loot filter
+- Moved the button so its always paralell to the modified label
+- Fixed a crash when typing % in chat - cred: jimbob
+
+Jan 24 2018 by eqmule
+- Attempted to fix the empty char select list bug that pops up a window and says "Loading Characters" by going back to serverselect.
+  I cant tell if the fix works or not since the bug is so rare.
+- The itemdisplay window has a new button for looking up the item on lucy.
+- New command: /itemdisplay
+- Usage: /itemdisplay LootButton off/on if not specified its a toggle
+- Usage: /itemdisplay LucytButton off/on if not specified its a toggle
+-
+- The following APIs where incorrectly named and has been changed to their correct names:
+- CHtmlWnd__OpenUrl_x is now  CWebManager__CreateHtmlWnd_x
+- CHtmlComponent__CheckUrl_x has is now CHtmlComponentWnd__ValidateUri_x
+- pWebBrowser is now pCWebManager
+- pinstCHtmlWnd_x is now pinstCWebManager_x
+- All instances of CCharacterSelect are now CCharacterListWnd
+
+Jan 23 2018 by eqmule
+- Updated for TEST
+
+Jan 17 2018 by eqmule
+- Updated for LIVE Go build it at www.macroquest2.com/builder
+- Added a "Add to loot filters" button on the itemdisplay window.
+  Usage: click it and it will add the item as always greed and roll.
+  This feature is only present if you have the mq2itemdisplay plugin loaded.
+
+Jan 17 2018 by SwiftyMUSE
+- Fix for tunare deity
+
 Jan 15 2018 by eqmule
 - Added /AddLootFilter syntax:  /AddLootFilter <itemID> <ItemIconID> \"Item Name\"
   Example: /AddLootFilter ${Cursor.ID} ${Cursor.IconID} "${Cursor.Name}"

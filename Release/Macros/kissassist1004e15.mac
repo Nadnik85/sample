@@ -163,6 +163,7 @@
 #bind DoHalfCircle   /halfmoon
 #Bind SheepMove	     /sheepmove
 #Bind AssignMainAssist /changema
+#Bind GoBackToCamp   /goback
 
 Sub CheckAllPlugins
 	/call CheckPlugin MQ2DamageParser
@@ -1838,8 +1839,8 @@ Sub DoBandolier
 	/declare bandi           int      local 0
 	/for bandi 1 to ${Bandolier.Size}
 		/if (${BandolierCond[${bandi}].NotEqual[NULL]}) {
-	    		/if (${BandolierCond[${bandi}]}) {
-				/echo The BandolierCond${bandi} (${BandolierCond[${bandi}]}==TRUE) for ${Bandolier[${bandi}]} returned TRUE so we move on!
+			/if (${If[${BandolierCond[${bandi}]},1,0]}) {
+				|/echo The BandolierCond${bandi} (${BandolierCond[${bandi}]}==TRUE) for ${Bandolier[${bandi}]} returned TRUE so we move on!
 				/varset tempbandid ${Me.Inventory[13].ID}
 				/echo player want us to activate bandolier: ${Bandolier[${bandi}]}
 	    			/bandolier activate ${Bandolier[${bandi}]}
@@ -1938,7 +1939,7 @@ Sub DoBandolier
 						|}
 						/goto :skipcast
 					} else {
-						/echo The DPSCond${i} (${DPSCond[${i}]}==TRUE) for ${DPS[${i}]} returned TRUE so we move on!
+						|/echo The DPSCond${i} (${DPSCond[${i}]}==TRUE) for ${DPS[${i}]} returned TRUE so we move on!
 					}
 				}
 			}
@@ -2252,6 +2253,12 @@ Sub DoBandolier
 | SUB: Mash Buttons
 | -------------------------------------------------------------------------------------    
     Sub MashButtons(TarID)
+	/if (${BandolierOn}) {
+		/call DoBandolier
+	}
+	/if (${OhShitOn}) {
+		/call OhShitStuff
+	}
         /declare i int local
         /declare MashThis string local
         /for i 1 to ${MashArray.Size}
@@ -2649,13 +2656,15 @@ Sub WaitCast(string sentFrom)
         |***********************************| COMBAT ABILITIES| ***************************************|
         | - Check & cast if Combat ability/disc
         /if (${Me.CombatAbility[${castWhat}]} && !${Me.CombatAbilityTimer[${castWhat}]} && ${Me.CombatAbilityReady[${castWhat}]} && ${Spell[${castWhat}].EnduranceCost}<${Me.Endurance}) {
-          /if (${Debug}) /echo \atDEBUG CastWhat: \ayCombat ability/disc/discipline: CombatAbility:${Me.CombatAbility[${castWhat}]} CombatAbilityTimer:!${Me.CombatAbilityTimer[${castWhat}]} CombatAbilityReady:${Me.CombatAbilityReady[${castWhat}]} \agLine#: ${Macro.CurLine}
-            /if (${WasTwisting}) {
+          /if (${Debug}) {
+		/echo \atDEBUG CastWhat: ${castWhat} \ayCombat ability/disc/discipline: CombatAbility:${Me.CombatAbility[${castWhat}]} CombatAbilityTimer:!${Me.CombatAbilityTimer[${castWhat}]} CombatAbilityReady:${Me.CombatAbilityReady[${castWhat}]} \agLine#: ${Macro.CurLine}
+          }
+	  /if (${WasTwisting}) {
                 /squelch /twist off
                 /delay 20 !${Twist}
             }
-            /if (${Debug}) /echo \atDEBUG CastWhat: \ayCombat ability/disc/discipline: ${castWhat} spell duration: ${Spell[${castWhat}].Duration.TotalSeconds} - discid: ${Me.ActiveDisc.ID} \agLine#: ${Macro.CurLine}
-            /if (!${Spell[${castWhat}].Duration.TotalSeconds} || (${Spell[${castWhat}].Duration.TotalSeconds} && !${Me.ActiveDisc.ID})) {
+          /if (${Debug}) /echo \atDEBUG CastWhat: \ayCombat ability/disc/discipline: ${castWhat} spell duration: ${Spell[${castWhat}].Duration.TotalSeconds} - discid: ${Me.ActiveDisc.ID} \agLine#: ${Macro.CurLine}
+          /if (!${Spell[${castWhat}].Duration} || (${Spell[${castWhat}].Duration} && ${Spell[${castWhat}].TargetType.Equal[Self]} && !${Me.ActiveDisc.ID}) || ${Spell[${castWhat}].TargetType.NotEqual[Self]}) {
                 | /if (${Spell[${castWhat}].EnduranceCost}>${Me.Endurance}) /return CAST_OUTOFENDURANCE
                 /if (${Target.ID}!=${castTargetID} && ${Spawn[id ${castTargetID}].ID}) {
                     /echo Targeting a mob 11: ${Spawn[${castTargetID}]}
@@ -3193,8 +3202,10 @@ Sub WaitCast(string sentFrom)
         /if (!${MedOn}) /return
         /if (!${MedCombat} && ${AggroTargetID}) /return
         /if (${MedCombat} && !${Medding} && ${AggroTargetID}!=0 && ${AggroTargetID}==${MyTargetID}) /return
-        /if (${Debug}) /echo \atDEBUG DoWeMed Enter \agLine#: ${Macro.CurLine}
-        /declare Med2On int local 0
+        /if (${Debug}) {
+		/echo \atDEBUG DoWeMed Enter \agLine#: ${Macro.CurLine}
+        }
+	/declare Med2On int local 0
         /declare MedForceOn int local 0
         /declare MedStat1 string local ${MedStat}
         /declare j int local 0
@@ -4473,6 +4484,7 @@ Sub LoadIni(string sectionName, string varName, string varType, string varValue,
     /if (${Debug}) {
         /echo \atDEBUG Sub Loadini S:${sectionName} varName:${varName} varType:${varType} varValue:${varValue} varArray:${varArray} varArray2:${varArray2} FileName:${FileName} FileName1:${FileName2} \agLine#: ${Macro.CurLine}
     }
+	|/if (${varName.Equal[MedStart]}) /mqp on
 	|/setchattitle Loading Ini ${sectionName}:${varName}
     /declare rkTemp                 string      local 
     /declare IsConditionVar         int         local        0 
@@ -4606,6 +4618,7 @@ Sub LoadIni(string sectionName, string varName, string varType, string varValue,
 		}
         /varset rkTemp 
     }
+	|/if (${varName.Equal[MedStart]}) /mqp on
     /if (${Debug}) {
 		/echo \atDEBUG Sub LoadIni: Leave \agLine#: ${Macro.CurLine}
 	}
@@ -4663,16 +4676,22 @@ Sub LoadIni(string sectionName, string varName, string varType, string varValue,
         /if (!${BardStartTwist} && !${Me.Invis}) {
             /squelch /twist off
             /delay 10
-            /if (${TwistWhat.Length} && ${TwistWhat.Find[order]}==0) /squelch /twist ${TwistWhat}
+            /if (${TwistWhat.Length} && ${TwistWhat.Find[order]}==0) {
+		/squelch /twist ${TwistWhat}
+	    }
             /varset BardStartTwist 1
+	    /echo returning from DoBardStuff because BardStartTwist is 0
             /return
         }
         /if (${Me.Invis} && ${Twist} || (${Medding} && ${MedCombat} && ${AggroTargetID})) {
             /twist off
             /stop song
+	    /echo returning from DoBardStuff because 1
             /return
         }
-        /if (${Debug}) /echo \atDEBUG DoBardStuff: Enter \agLine#: ${Macro.CurLine}
+        /if (${Debug}) {
+		/echo \atDEBUG DoBardStuff: Enter \agLine#: ${Macro.CurLine}
+	}
         /if (${MeleeTwistOn} && ${CombatStart} && !${DPSTwisting}) {
             /varset DPSTwisting 1
             /varset Twisting 0
@@ -4697,9 +4716,13 @@ Sub LoadIni(string sectionName, string varName, string varType, string varValue,
                 /echo == Starting normal twist
             }
         }
-        /if (!${TwistOn} && !${CombatStart} && ${Twist}) /squelch /twist off
-        /delay 1
-        /if (${Debug}) /echo \atDEBUG DoBardStuff: Leave \agLine#: ${Macro.CurLine}
+        /if (!${TwistOn} && !${CombatStart} && ${Twist}) {
+		/echo turning off twist in DoBardStuff
+		/squelch /twist off
+	}
+        /if (${Debug}) {
+		/echo \atDEBUG DoBardStuff: Leave \agLine#: ${Macro.CurLine}
+	}
     /return
 | ----------------------------------------------------------------------------
 | SUB: GroupEscape
@@ -5181,7 +5204,7 @@ Sub DoGroupHealStuff(int GroupHealth)
 			|/echo [Condition: ${j}] well the condition for ${HealSpell}|${HealPct} -> ${GHCond[${j}].Replace[$,#]} <-> ${SpellGH${j}} <-> ${GHCond[${j}]} returned FALSE... so we should NOT moveon...
 			/continue
 		} else {
-			/echo [Condition: ${j}] well the condition for ${HealSpell}|${HealPct} -> ${GHCond[${j}].Replace[$,#]} <-> ${SpellGH${j}} <-> ${GHCond[${j}]} returned TRUE... so we SHOULD moveon...
+			|/echo [Condition: ${j}] well the condition for ${HealSpell}|${HealPct} -> ${GHCond[${j}].Replace[$,#]} <-> ${SpellGH${j}} <-> ${GHCond[${j}]} returned TRUE... so we SHOULD moveon...
 		}
 	}
             /if (${GroupHealth}<=${HealPct} && ${SpellGH${j}}==0 && ${Group}) {
@@ -5950,7 +5973,7 @@ Sub MezMobsAE(int AEMezID)
 						|}
 						/goto :SkipCast
 					} else {
-						/echo The DPSCond${i} (${DPSCond[${i}]}==TRUE) for ${DPS[${i}]} returned TRUE so we move on!
+						|/echo The DPSCond${i} (${DPSCond[${i}]}==TRUE) for ${DPS[${i}]} returned TRUE so we move on!
 					}
 				}
 		   }
@@ -8451,6 +8474,20 @@ Sub DoThePullDance
         /varset CampfireOn 0
         /echo Setting CampfireOn to 0. You are on a hill.
     /return
+
+
+| ----------------------------------------------------------------------------
+| SUB: GoBackToCamp Section - Goes back to camp
+| ----------------------------------------------------------------------------
+Sub Bind_GoBackToCamp
+	/if (!${Navigation.Active}) {
+		/echo Going back to camp...
+               	/nav locxyz ${CampXLoc} ${CampYLoc} ${CampZLoc}
+	} else {
+		/echo well... it looks like Navigation.Active is ${Navigation.Active} so we shouldnt start another
+	}
+/return
+
 | ----------------------------------------------------------------------------
 | SUB: Campfire Section -  OriginalCode from toomanynames, wizbomb
 | ----------------------------------------------------------------------------
@@ -9847,8 +9884,12 @@ Sub FindGroupHeals
         }
         /if (${Ini[${MacroName}_${EverQuest.Server}_${temppCharName}.ini,General,KissAssistVer].Length}) {
             /varset tempIniFileName ${MacroName}_${EverQuest.Server}_${temppCharName}.ini
-            /echo Server Name ini file detected using ${tempIniFileName}
+            /echo 1 Server Name ini file detected using ${tempIniFileName}
+        } else /if (${Ini[Kissassist_${EverQuest.Server}_${Me}_${Me.Level}.ini,General,KissAssistVer].Length}) {
+            /varset tempIniFileName Kissassist_${EverQuest.Server}_${Me}_${Me.Level}.ini
+            /echo 2 Server Name ini file detected using ${tempIniFileName}
         } else {
+	    /echo 3 Server Name ini file detected using ${tempIniFileName}
             /varset tempIniFileName ${MacroName}_${temppCharName}.ini
         }
         /varset pKV ${Ini[${tempIniFileName},General,KissAssistVer]}

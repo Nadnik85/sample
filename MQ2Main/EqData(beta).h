@@ -289,6 +289,7 @@ typedef struct _BodyInfo
 #define DEITY_TheTribunal               214
 #define DEITY_Tunare                    215
 #define DEITY_Veeshan                   216
+#define NUM_DEITIES                     16
 
 #define ITEMTYPE_NORMAL                 0
 #define ITEMTYPE_PACK                   1
@@ -357,14 +358,24 @@ typedef struct _BodyInfo
 #define CWS_TILEBOX                     0x10
 #define CWS_MINIMIZE                    0x20
 #define CWS_BORDER                      0x40
-//#define CWS_UNKNOWN                     0x80
-//#define CWS_UNKNOWN                     0x100
+#define CWS_RELATIVERECT                0x80
+#define CWS_AUTOSTRETCHV                0x100
 #define CWS_RESIZEALL                   0x200
 #define CWS_TRANSPARENT                 0x400
-//#define CWS_UNKNOWN                     0x800
-#define CWS_NOMOVE                      0x8000
+#define CWS_USEMYALPHA                  0x800
+#define CWS_DOCKING                     0x1000
+#define CWS_TOOLTIP_NODELAY             0x2000
+#define CWS_FRAMEWND                    0x4000
+#define CWS_NOHITTEST                   0x8000
 #define CWS_QMARK                       0x10000
+#define CWS_NOMOVABLE                   0x20000
 #define CWS_MAXIMIZE                    0x40000
+#define CWS_AUTOVSCROLL                 0x80000
+#define CWS_AUTOHSCROLL                 0x100000
+#define CWS_CLIENTMOVABLE               0x200000
+#define CWS_AUTOSTRETCH                 0x400000
+#define CWS_TRANSPARENTCONTROL          0x800000
+#define CWS_RESIZEBORDER          CWS_BORDER | CWS_RESIZEALL
 #define ToggleBit(field,bit)            field^=bit;
 #define BitOn(field,bit)                field|=bit;
 #define BitOff(field,bit)               field&=~bit;
@@ -421,6 +432,7 @@ enum MOUSE_DATA_TYPES {
 #define NUM_BUFF_SLOTS					0x61
 #define NUM_LONG_BUFFS                  0x2a
 #define NUM_SHORT_BUFFS                 0x37
+#define NUM_RACES                       17
 
 #define EQ_EXPANSION(x)                 (1 << (x - 1))
 #define EXPANSION_RoK                   EQ_EXPANSION(1)
@@ -561,16 +573,15 @@ typedef struct _CXSTR {
 typedef struct _ITEMSPELLS { 
 /*0x00*/ DWORD SpellID; 
 /*0x04*/ BYTE  RequiredLevel; 
-/*0x05*/ BYTE  EffectType; 
-/*0x06*/ BYTE  Unknown[0x2]; 
-/*0x08*/ DWORD Unknown0x08;
+/*0x05*/ BYTE  EffectType; //bIsActivated
+/*0x08*/ DWORD EffectiveCasterLevel;
 /*0x0c*/ DWORD MaxCharges;
 /*0x10*/ DWORD CastTime;
-/*0x14*/ DWORD TimerID;
+/*0x14*/ DWORD TimerID;//RecastTime
 /*0x18*/ DWORD RecastType;
-/*0x1c*/ DWORD ProcRate;
+/*0x1c*/ DWORD ProcRate;//chance to proc
 /*0x20*/ CHAR  OtherName[0x40];//some kind of override
-/*0x60*/ DWORD OtherID;
+/*0x60*/ DWORD OtherID;//Description ID
 /*0x64*/ 
 } ITEMSPELLS, *PITEMSPELLS;
 
@@ -1946,8 +1957,8 @@ struct ALCHEMYBONUSSKILLDATA
 	int BonusPoints;
 };
 
-//aStartingLoad_
-// actual size: 0x2B10 in Jun 12 2017 test (see 57D517) - eqmule
+//aStartingLoad
+#define CHARINFO_Size 0x2B10 //in Jun 12 2017 test (see 57D517) - eqmule
 /*0x1c4c*/ //ItemIndex	StatKeyRingItemIndex[3];//0xe46 confirmed
 //this thing here is an abomination, todo: fix it once and for all.
 // its like a frankenstruct mixing in PcBase etc. 
@@ -2610,7 +2621,7 @@ union {
 } INVENTORYARRAY, *PINVENTORYARRAY;
 
 //aSdeityD CharInfo2__CharInfo2
-// actual size: 0x9CB8 Nov 10 2017 Beta (see 857983) - eqmule
+#define CHARINFO2_Size 0x9CB8 // Nov 10 2017 Beta (see 857983) - eqmule
 typedef struct _CHARINFO2 {
 /*0x0000*/ BYTE         Unknown0x0000[0x10];
 /*0x0010*/ DWORD        BaseProfile;

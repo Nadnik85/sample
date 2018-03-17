@@ -385,13 +385,14 @@ void Success(PSPELL Cast)
 	if (Cast) {
 		char Temps[MAX_STRING];
 		bool Added = false;
-		if (Cast->CastOnYou[0]) {
-			sprintf_s(Temps, "%s#*#", Cast->CastOnYou);
+		/*CastByMe,CastByOther,CastOnYou,CastOnAnother,WearOff*/
+		if (char*str = GetSpellString(Cast->ID,2)) { 
+			sprintf_s(Temps, "%s#*#", str);
 			aCastEvent(SUCCESS, CAST_SUCCESS, Temps);
 			Added = true;
 		}
-		if (Cast->CastOnAnother[0]) {
-			sprintf_s(Temps, "#*#%s#*#", Cast->CastOnAnother);
+		if (char*str = GetSpellString(Cast->ID,3)) { 
+			sprintf_s(Temps, "#*#%s#*#", str);
 			aCastEvent(SUCCESS, CAST_SUCCESS, Temps);
 			Added = true;
 		}

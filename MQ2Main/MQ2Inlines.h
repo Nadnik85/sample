@@ -97,6 +97,8 @@ static inline PCHAR GetClassDesc(DWORD ClassID)
 			return "Real Estate Merchant";
 		case 73:
 			return "Loyalty Merchant";
+		case 74:
+			return "Tribute Master";
 		case 0xFF:
 			return "Aura";
 		case 0xFE:
@@ -765,12 +767,14 @@ static inline DWORD GetGroupMainAssistTargetID()
 {
 	if (PCHARINFO pChar = (PCHARINFO)GetCharInfo()) {
 		bool bMainAssist = false;
-		if (pChar->pGroupInfo && pChar->pGroupInfo->pMember) {
-			for (int i = 0; i < 6; i++) {
-				if (pChar->pGroupInfo->pMember[i]) {
-					if (pChar->pGroupInfo->pMember[i]->MainAssist) {
-						bMainAssist = true;
-						break;
+		if (PGROUPINFO pGroup = pChar->pGroupInfo) {
+			if (PGROUPMEMBER pMember = pGroup->pMember[0]) {
+				for (int i = 0; i < 6; i++) {
+					if (pGroup->pMember[i]) {
+						if (pGroup->pMember[i]->MainAssist) {
+							bMainAssist = true;
+							break;
+						}
 					}
 				}
 			}
@@ -869,4 +873,44 @@ static inline std::string rtrim_copy(std::string s) {
 static inline std::string trim_copy(std::string s) {
     trim(s);
     return s;
+}
+static inline char* GetSpellString(int ID, int SpellIndex)
+{
+#ifndef EMU
+	if (pEQSpellStrings) {
+		if(char*str = pEQSpellStrings->GetString(ID, SpellIndex)) {
+			if (str[0])
+				return str;
+		}
+	}
+#else
+	if (PSPELL pSpell = GetSpellByID(ID)) {
+		switch (SpellIndex)
+		{
+			case 0:
+				if (pSpell->CastByMe[0])
+					return pSpell->CastByMe;
+				break;
+			case 1:
+				if (pSpell->CastByOther[0])
+					return pSpell->CastByOther;
+				break;
+			case 2:
+				if (pSpell->CastOnYou[0])
+					return pSpell->CastOnYou;
+				break;
+			case 3:
+				if (pSpell->CastOnAnother[0])
+					return pSpell->CastOnAnother;
+				break;
+			case 4:
+				if (pSpell->WearOff[0])
+					return pSpell->WearOff;
+				break;
+			default:
+				break;
+		};
+	}
+#endif
+	return NULL;
 }

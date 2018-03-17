@@ -229,16 +229,11 @@ char* szFailedLoad[] = {
 };
 unsigned long addrTurnRight     = NULL;
 bool bOffsetOverride            = false;
-PBYTE patternTurnRight          = (PBYTE)"\xA3\x00\x00\x00\x00\x89\x1D\x00\x00\x00\x00\x89\x1D\x00\x00\x00"
-   "\x00\x3B\x00\x0F\x84\x00\x00\x00\x00\xF6\x05\x00\x00\x00\x00\x00\x74\x00"
-   "\x89\x1D\x00\x00\x00\x00\x89\x1D";
-char maskTurnRight[]            = "x????xx????xx????x?xx????xx?????x?xx????xx";
-// A3 ? ? ? ? 89 1D ? ? ? ? 89 1D ? ? ? ? 3B ? 0F 84 ? ? ? ? F6 05 ? ? ? ? ? 74 ? 89 1D ? ? ? ? 89 1D
+PBYTE patternTurnRight = (PBYTE)"\xA3\x00\x00\x00\x00\xC7\x05\x00\x00\x00\x00\x00\x00\x00\x00\xC7\x05\x00\x00\x00\x00\x00\x00\x00\x00\x85\xC0\x0F\x84";
+char maskTurnRight[] = "x????xx????????xx????????xxxx";
 unsigned long addrMoveForward   = NULL;
-PBYTE patternMoveForward        = (PBYTE)"\xA3\x00\x00\x00\x00\x3B\x00\x0F\x84\x00\x00\x00\x00\xF6\x05\x00\x00\x00"
-   "\x00\x00\x74\x00\x89\x1D";
-char maskMoveForward[]          = "x????x?xx????xx?????x?xx";
-// A3 ? ? ? ? 3B ? 0F 84 ? ? ? ? F6 05 ? ? ? ? ? 74 ? 89 1D
+PBYTE patternMoveForward = (PBYTE)"\xA3\x00\x00\x00\x00\x85\xC0\x0F\x84\x00\x00\x00\x00\xA0\x00\x00\x00\x00\x24\x03\xC7\x05\x00\x00\x00\x00\x00\x00\x00\x00\x0F\xBE\xC0\xF7\xD8\xC7\x05";
+char maskMoveForward[] = "x????xxxx????x????xxxx????????xxxxxxx";
 
 // ----------------------------------------
 // function prototypes
@@ -8001,17 +7996,31 @@ unsigned long GetDWordAt(unsigned long ulAddress, unsigned long ulNumBytes)
 // ---------------------------------------------------------------------------
 inline unsigned char FindPointers()
 {
-   if ((addrTurnRight   = FindPattern(FixOffset(0x420000), 0x200000, patternTurnRight, maskTurnRight)) == 0)     return 1;
-   if ((pulTurnRight    = (unsigned long*)GetDWordAt(addrTurnRight, 1)) == 0)                         return 2;
-   if ((pulStrafeLeft   = (unsigned long*)GetDWordAt(addrTurnRight, 7)) == 0)                         return 3;
-   if ((pulStrafeRight  = (unsigned long*)GetDWordAt(addrTurnRight, 13)) == 0)                        return 4;
-   if ((pulAutoRun      = (unsigned long*)GetDWordAt(addrTurnRight, 27)) == 0)                        return 5;
-   if ((pulTurnLeft     = (unsigned long*)GetDWordAt(addrTurnRight, 42)) == 0)                        return 6;
-   if ((addrMoveForward = FindPattern(FixOffset(0x420000), 0x200000, patternMoveForward, maskMoveForward)) == 0) return 7;
-   if ((pulForward      = (unsigned long*)GetDWordAt(addrMoveForward, 1)) == 0)                       return 8;
-   if (pulAutoRun      != (unsigned long*)GetDWordAt(addrMoveForward, 15))                            return 9;
-   if ((pulBackward     = (unsigned long*)GetDWordAt(addrMoveForward, 30)) == 0)                      return 10;
-   return 0;
+#ifdef EMU
+	if ((addrTurnRight = FindPattern(FixOffset(0x420000), 0x200000, patternTurnRight, maskTurnRight)) == 0)     return 1;
+	if ((pulTurnRight = (unsigned long*)GetDWordAt(addrTurnRight, 1)) == 0)                         return 2;
+	if ((pulStrafeLeft = (unsigned long*)GetDWordAt(addrTurnRight, 7)) == 0)                         return 3;
+	if ((pulStrafeRight = (unsigned long*)GetDWordAt(addrTurnRight, 13)) == 0)                        return 4;
+	if ((pulAutoRun = (unsigned long*)GetDWordAt(addrTurnRight, 27)) == 0)                        return 5;
+	if ((pulTurnLeft = (unsigned long*)GetDWordAt(addrTurnRight, 42)) == 0)                        return 6;
+	if ((addrMoveForward = FindPattern(FixOffset(0x420000), 0x200000, patternMoveForward, maskMoveForward)) == 0) return 7;
+	if ((pulForward = (unsigned long*)GetDWordAt(addrMoveForward, 1)) == 0)                       return 8;
+	if (pulAutoRun != (unsigned long*)GetDWordAt(addrMoveForward, 15))                            return 9;
+	if ((pulBackward = (unsigned long*)GetDWordAt(addrMoveForward, 30)) == 0)                      return 10;
+	return 0;
+#else
+	if ((addrTurnRight = FindPattern(FixOffset(0x620000), 0x200000, patternTurnRight, maskTurnRight)) == 0)     return 1;
+	if ((pulTurnRight = (unsigned long*)GetDWordAt(addrTurnRight, 1)) == 0)                         return 2;
+	if ((pulStrafeLeft = (unsigned long*)GetDWordAt(addrTurnRight, 7)) == 0)                         return 3;
+	if ((pulStrafeRight = (unsigned long*)GetDWordAt(addrTurnRight, 17)) == 0)                        return 4;
+	if ((pulAutoRun = (unsigned long*)GetDWordAt(addrTurnRight, 34)) == 0)                        return 5;
+	if ((pulTurnLeft = (unsigned long*)GetDWordAt(addrTurnRight, 42)) == 0)                        return 6;
+	if ((addrMoveForward = FindPattern(FixOffset(0x620000), 0x200000, patternMoveForward, maskMoveForward)) == 0) return 7;
+	if ((pulForward = (unsigned long*)GetDWordAt(addrMoveForward, 1)) == 0)                       return 8;
+	if (pulAutoRun != (unsigned long*)GetDWordAt(addrMoveForward, 51))                            return 9;
+	if ((pulBackward = (unsigned long*)GetDWordAt(addrMoveForward, 22)) == 0)                      return 10;
+	return 0;
+#endif
 }
 
 PMQPLUGIN FindPlugin(char* PluginName)

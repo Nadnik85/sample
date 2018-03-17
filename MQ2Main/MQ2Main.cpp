@@ -42,7 +42,8 @@ BOOL APIENTRY DllMain( HANDLE hModule,
     PCHAR szProcessName;
     ghModule = (HMODULE)hModule;
     ghInstance = (HINSTANCE)hModule;
-
+	ghInjectorWnd = FindWindow(__MacroQuestWinClassName, __MacroQuestWinName);
+	
     GetModuleFileName(ghModule,szFilename,MAX_STRING);
     szProcessName = strrchr(szFilename,'\\');
     szProcessName[0] = '\0';
@@ -346,6 +347,9 @@ bool __cdecl MQ2Initialize()
 		//do an extra second for good measure...
 		Sleep(1000);
 	}
+	
+	if (!ghVariableLock)
+		ghVariableLock = CreateMutex(NULL, FALSE, NULL);
     if(!InitOffsets())
     {
         DebugSpewAlways("InitOffsets returned false - thread aborted.");
@@ -503,6 +507,11 @@ void __cdecl MQ2Shutdown()
 		ReleaseMutex(ghLockDelayCommand);
 		CloseHandle(ghLockDelayCommand);
 		ghLockDelayCommand = 0;
+	}
+	if (ghVariableLock) {
+		ReleaseMutex(ghVariableLock);
+		CloseHandle(ghVariableLock);
+		ghVariableLock = 0;
 	}
 }
 
@@ -848,5 +857,8 @@ FUNCTION_AT_ADDRESS(CXStr *__cdecl STMLToText(CXStr *Out, CXStr const &In, bool 
 #endif
 #ifdef __GetAnimationCache_x
 FUNCTION_AT_ADDRESS(class IconCache *__cdecl GetAnimationCache(int index), __GetAnimationCache);
+#endif
+#ifdef __SaveColors_x
+FUNCTION_AT_ADDRESS(void SaveColors(int,int,int,int),__SaveColors);
 #endif
 

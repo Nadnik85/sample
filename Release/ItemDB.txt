@@ -754,3 +754,4 @@
 135401	1	Compendiums on Regal Weapon Creation Pt. III
 135402	1	Compendiums on Regal Weapon Creation Pt. IV
 135403	1	Compendiums on Regal Weapon Creation Pt. V
+151923	1	Transiting Worker Sledgemallet
