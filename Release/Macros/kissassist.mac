@@ -1,4 +1,4 @@
-| - kissassist.mac v10.2.3 by Maskoi 01/01/2018.
+| - kissassist.mac v10.2.5 by Maskoi 02/25/2018.
 | - Contributions by anonymoushero, crystane, eqmule, thenomadman, william12.
 | - ChainPull, Debuffs and combat rewrites by ctaylor22.
 | - PetTank, PullerPetTank & HunterPetTank roles developed by TreeHuginDruid
@@ -8,6 +8,9 @@
 | or target Main Tank and /mac kissassist assist
 | This macro was written exclusively for subscribers of Redguides.com
 | -------------------------------------------------------------------------------------
+| Special Thanks to: 
+|                    
+|
 #warning
 #turbo 120
 #include ninjadvloot.inc
@@ -141,6 +144,7 @@
 #bind Switch         /switchnow
 #bind SwitchMA       /switchma
 #bind ToggleVariable /togglevariable
+#bind TrackMeDown    /trackmedown
 #bind WriteMySpells  /writespells
 #bind ZoneInfo       /zoneinfo
 | -------------------------------------------------------------------------------------
@@ -163,7 +167,7 @@ Sub Main
     /declare CampYLoc               int         outer       ${Me.Y}
     /declare CampZLoc               int         outer       ${Me.Z}
     /declare LookForward            int         outer       ${Me.Heading.DegreesCCW}
-    /delay 5s
+    |/delay 5s
     | Need to check for plugin MQ2Bucles and unload it. Do this ASAP so can use /while commands from the start
     /if (${Bool[${Plugin[MQ2Bucles]}]}) {
         /squelch /plugin MQ2Bucles unload noauto
@@ -176,7 +180,7 @@ Sub Main
         /varset ZoneName ${Zone.ShortName}${If[${Me.InInstance},_I,]}
     }
     /declare MacroName              string      outer       KissAssist
-    /declare MacroVer               string      outer       10.2.3
+    /declare MacroVer               string      outer       10.2.5
     /declare IniFileName            string      outer         
     /declare InfoFileName           string      outer       ${MacroName}_Info.ini
     /declare ConditionsFileName     string      outer       
@@ -268,12 +272,14 @@ Sub Main
         /squelch /alias /scatteron      /togglevariable ScatterOn
         /squelch /alias /setae          /iniwrite AE
         /squelch /alias /setaggro       /iniwrite Aggro
+        /squelch /alias /setbackoff     /backoff
         /squelch /alias /setbuffs       /iniwrite Buffs
         /squelch /alias /setburn        /iniwrite Burn
         /squelch /alias /setcure        /iniwrite Cure
         /squelch /alias /setdps         /iniwrite DPS
         /squelch /alias /setheals       /iniwrite Heals
         |/squelch /alias /switchma       /switchma
+        /squelch /alias /trackme        /trackmedown
         /ini "${IniFileName}" "General" "KissAssistVer" "${MacroVer}"
     }
     /if (${Debug}) /echo \atDEBUG Aliases processed  \agLine#: ${Macro.CurLine}
@@ -588,8 +594,9 @@ Sub Main
     /declare BagNum                 int         outer       0
     /declare Banestrike             string      outer
     /declare BardStartTwist         int         outer       0
+    /declare BindActive             int         outer       0
     /declare BurnActive             int         outer       0 
-    /declare BlockedBuffsCount        int         outer       0
+    /declare BlockedBuffsCount      int         outer       0
     /declare CampOnDeathTimer       timer       outer       0
     /declare CampZone               int         outer       ${Zone.ID}
     /declare CampfireClickTimer     timer       outer       0
@@ -607,6 +614,7 @@ Sub Main
     /declare CursorIDCount          int         outer       0
     /declare CursorIDTimer          timer       outer       0
     /declare DMZ                    int         outer       ${Select[${Zone.ID},345,344,202,203,279,151,33506]}
+    /declare DontMoveMe             int         outer       0
     /declare DPSCounter             int         outer       0
     /declare DPSLastTime            int         outer       0
     /declare DPSPaused              int         outer       0
@@ -617,7 +625,8 @@ Sub Main
     /declare DPSTwisting            int         outer       0
     /declare DPSWriteOn             int         outer       0
     /declare DebuffCount            int         outer       0
-    /declare DragCorpse             int         outer       0   
+    /declare DragCorpse             int         outer       0
+    /declare DraggedCorpses         string      outer       0
     /declare DurationMod            float       outer       1
     /declare FailCounter            int         outer       0
     /declare FailMax                int         outer       3
@@ -625,6 +634,7 @@ Sub Main
     /declare GMailEvents            string      outer         
     /declare GSent                  int         outer       0
     /declare GoMActive              int         outer       0
+    /declare GoMByPass              int         outer       0
     /declare GotHitToggle           int         outer       0
     /declare GlobalIndex            int         outer       0
     /declare GroupHeal[10]          string      outer
@@ -719,6 +729,7 @@ Sub Main
     /declare SingleHealPointMA      int         outer       0    
     /declare SingleHeal[15]         string      outer
     /declare SpamTimer              timer       outer       0
+    /declare SpellReadyL            int         outer       0
     /declare StickDist              int         outer       13
     /declare StickDistUW            int         outer       10
     /declare TWbufflist             string      outer
@@ -1043,26 +1054,30 @@ Sub Main
 | -------------------------------------------------------------------------------------
 | Main Loop
 | -------------------------------------------------------------------------------------
-        :MainLoop
         /while (1) {
             /doevents
             /if (${ChainPull}!=2) {
                 /call CampfireBack
                 /if (${AFKToolsOn}) /call AFKTools
-                /if (${DPSOn} || ${MeleeOn}) /call CheckForCombat 1 MainLoop
+                /if (${DPSOn} || ${MeleeOn}) /call CheckForCombat 0 MainLoop1
                 /if (${AEOn}) /call AECheck
-                /if (${MezOn}) /call DoMezStuff
+                /if (${MezOn}) {
+                    /varset GoMByPass 1
+                    /call DoMezStuff MainLoop
+                    /varset GoMByPass 0
+                }
                 /call WriteDebuffs
                 /if (${HealsOn}) /call CheckHealth
                 /if (${CuresOn}) /call CheckCures
-                /if (${Me.CombatState.NotEqual[COMBAT]}) /call DoWeMove
+                /if (${Me.CombatState.NotEqual[COMBAT]}) /call DoWeMove 0 mainloop
+                /if (${Me.CombatState.NotEqual[COMBAT]}) /call DoWeChase
                 /if (${AutoRezOn}) /call RezCheck
                 /if (${CampfireOn} && ${Me.CombatState.NotEqual[COMBAT]}) /call Campfire
                 /if (${Select[${Me},${Group.Leader}]}==1 && !${LooterAssigned}) /call AssignLooter
                 /call DoMiscStuff
                 /call CanIDoStuff
                 /if (${MercOn}) /call MercsDoWhat
-                /call CastMana
+                /call CastMana MainLoop
                 /if (${PetOn}) /call DoPetStuff
                 /if (${PetOn}) /call CheckPetBuffs
                 /if (${Me.CombatState.NotEqual[COMBAT]}) {
@@ -1079,19 +1094,18 @@ Sub Main
             }
             /if (${Select[${Role},puller,pullertank,pullerpettank,hunter,hunterpettank]}) {
                 /if (!${PullMob}) /call FindMobToPull 1
-                /if (${PullMob}) /call PullCheck 
+                /call PullCheck 
                 /varset PullMob 0
             }
             /if (${DPSOn} || ${MeleeOn}) {
-                /call CheckForCombat 0 MainLoop
+                /call CheckForCombat 0 MainLoop2
             } else {
-                /call CheckForCombat 2 MainLoop
+                /call CheckForCombat 1 MainLoop3
             }
             /if (${LootOn}) /call LootStuff
             /if (${DebugHeal}) /delay 5 
             /delay 1
         }
-        /goto :MainLoop
     /return
 | -------------------------------------------------------------------------------------
 | SUB: PParse Parse passed command line parameters
@@ -1207,29 +1221,33 @@ Sub Main
         |/if (${SkipCombat}) /goto :SkipMelee
         :CombatTop
         /while (1) {
-            /if (${SkipCombat}<2) {
+            /if (${SkipCombat}==0) {
                 /if (${IAmDead} && ${CampZone}==${Zone.ID} && (${Me.Buff[Resurrection Sickness].ID} || ${SpawnCount[pccorpse ${Me}]}==0) ) /varset IAmDead 0
                 /call MobRadar ${MeleeDistance} CheckForCombat
                 /if (${Debug}) /delay 10
                 /if ((${DMZ} && ${Me.InInstance}==FALSE) || ${Me.Hovering} || (${IAmDead} && !${AggroTargetID}) || (!${MobCount} && !${AggroTargetID}) || (!${DPSOn} && !${MeleeOn})) /return
-                /if (${Debug} || ${DebugCombat}) /echo \atDEBUG CheckForCombat: Assist/Combat Begin ${If[!${SkipCombat},Normal,CheckForAdds]}  \agLine#: ${Macro.CurLine}
+                /if (${Debug} || ${DebugCombat}) /echo \atDEBUG CheckForCombat: Assist/Combat Begin ${FromWhere}  \agLine#: ${Macro.CurLine}
                 /call Assist
                 /call Combat 
-                /if (${Debug} || ${DebugCombat}) /echo \atDEBUG  CheckForCombat: Assist/Combat End ${If[!${SkipCombat},Normal,CheckForAdds]}  \agLine#: ${Macro.CurLine}
+                /if (${Debug} || ${DebugCombat}) /echo \atDEBUG  CheckForCombat: Assist/Combat End ${FromWhere}  \agLine#: ${Macro.CurLine}
                 /if (${ChainPull}==2) /return
             }
             |:SkipMelee
             /if (${MezOn}) {
                 /varset MezBroke 0
                 /doevents MezBroke
-                /if (!${MezBroke}) /call DoMezStuff
+                /if (!${MezBroke}) {
+                    /varset GoMByPass 1
+                    /call DoMezStuff CheckForCombat
+                    /varset GoMByPass 0
+                }
             }
-            /while (${SkipCombat}==2 || (${DPSOn} && ${HealsOn} && !${Spawn[${MyTargetID}].LineOfSight}) && ${MyTargetID}) {
+            /while (${SkipCombat}==1 || (${DPSOn} && ${HealsOn} && !${Spawn[${MyTargetID}].LineOfSight}) && ${MyTargetID}) {
                 /if (${AggroTargetID}) {
                     /if (${HealsOn}) /call CheckHealth
                     /if (${CuresOn}) /call CheckCures
                     /if (${AutoRezOn}) /call RezCheck
-                    /call CastMana
+                    /call CastMana CheckForCombat
                     /call WriteDebuffs
                     |/goto :SkipMelee
                 } else {
@@ -1239,8 +1257,8 @@ Sub Main
             /call CheckForAdds CheckForCombat
             /if (${Role.Equal[tank]} || ${Role.Equal[pullertank]}) {
                 | If tank is assisting puller and in chase mode
-                /if (${MainAssist.NotEqual[${Me}]} && ${ChaseAssist}) /call DoWeMove
-                /if (${ReturnToCamp} && ((!${MobCount} && ${Math.Distance[${CampYLoc},${CampXLoc}]}>15) || (${MobCount}==1 && ${AggroTargetID} && ${Math.Distance[${CampYLoc},${CampXLoc}]}>75))) /call DoWeMove 1
+                /if (${MainAssist.NotEqual[${Me}]} && ${ChaseAssist}) /call DoWeChase
+                /if (${ReturnToCamp} && ((!${MobCount} && ${Math.Distance[${CampYLoc},${CampXLoc}]}>15) || (${MobCount}==1 && ${AggroTargetID} && ${Math.Distance[${CampYLoc},${CampXLoc}]}>75))) /call DoWeMove 1 checkforcombat
                 /if (${MobCount} && ${AggroTargetID}) /continue
                 /if (${BuffsOn}) {
                     /for GlobalIndex 1 to ${BuffsSize}
@@ -1257,7 +1275,7 @@ Sub Main
         /if (${MobCount}==1 && ${ChainPull} && ${MyTargetID} && ${Spawn[${MyTargetID}].PctHPs}<=${ChainPullHP}) /return
         /if (${ReturnToCamp} && ${Math.Distance[${CampYLoc},${CampXLoc}]} > 15) {
             /if (${MainAssist.NotEqual[${Me}]}) /delay ${Math.Calc[${Math.Rand[1]}+1]}s
-            /if (${MobCount}<=0) /call DoWeMove
+            /if (${MobCount}<=0) /call DoWeMove 0 checkforcombat
         }
         /if (${Debug} || ${DebugCombat}) /echo \atDEBUG CheckForCombat leave. \agLine#: ${Macro.CurLine}
     /return
@@ -1375,7 +1393,7 @@ Sub Main
                             /varset MyTargetID ${Target.ID}
                             /varset MyTargetName ${Target.CleanName}
                         } else {
-                            /if (${Target.ID}) /squelch /alert 3 add id ${Target.ID}
+                            /if (${Target.ID}) /squelch /alert add 3 id ${Target.ID}
                         }
                         /return
                     }
@@ -1519,21 +1537,25 @@ Sub Main
         }
         /if (${DebugCombat}) /echo \atDEBUGCOMBAT Combat Enter \agLine#: ${Macro.CurLine}
         /if (${HealsOn}) /call CheckHealth
-        /if (${ChaseAssist}) /call DoWeMove
+        /if (${ChaseAssist}) /call DoWeChase
         /declare CombatRadius int local ${If[${Spawn[id ${MyTargetID}].MaxRangeTo}>${MeleeDistance},${Math.Calc[${Spawn[id ${MyTargetID}].MaxRangeTo}+5]},${MeleeDistance}]}
         /declare SpamTankWait int local 1
         /varcalc ZDist ${Math.Distance[${Target.Z}:${Me.Z}]}-(${Target.Height}-${Me.Height})
         /if (${MezOn}) {
             /varset MezBroke 0
             /doevents MezBroke
-            /if (!${MezBroke}) /call DoMezStuff
+            /if (!${MezBroke}) {
+                /varset GoMByPass 1
+                /call DoMezStuff Combat1
+                /varset GoMByPass 0
+            }
         }
         | Check Target Hps and type NPC or NPC Pet
         /if (${DebugCombat}) /echo \atDEBUGCOMBAT Combat ${Spawn[${MyTargetID}].Name} PctHPs = ${Spawn[${MyTargetID}].PctHPs} AssistAt=${AssistAt} Distance = ${Spawn[${MyTargetID}].Distance} CombatRadius = ${CombatRadius} \agLine#: ${Macro.CurLine}
         | PullerPetTank and PetTank send in pet if mob in range
         /if (${Select[${Role},pettank,pullerpettank,hunterpettank]} && ${Spawn[${MyTargetID}].Distance}<${PetAttackRange}) /call CombatPet
         /if (${AggroOn} && ${MainAssist.NotEqual[${Me}]} && ${Select[${Role},Tank]} && ${Spawn[${MyTargetID}].Distance}>${CombatRadius}) /call AggroCheck
-        /if (${Spawn[${MyTargetID}].PctHPs}<=${AssistAt} && (${Spawn[${MyTargetID}].Distance}<${CombatRadius} || ${Math.Distance[${Target.Y},${Target.X}:${Spawn[=${MainAssist}].Y},${Spawn[=${MainAssist}].X}]}<=${CampRadius})) {
+        /if (${Spawn[${MyTargetID}].Type.NotEqual[Corpse]} && ${Spawn[${MyTargetID}].PctHPs}<=${AssistAt} && (${Spawn[${MyTargetID}].Distance}<${CombatRadius} || ${Math.Distance[${Target.Y},${Target.X}:${Spawn[=${MainAssist}].Y},${Spawn[=${MainAssist}].X}]}<=${CampRadius})) {
             /if (!${CombatStart}) {
                 /if (${DebugCombat}) /echo \atDEBUGCOMBAT Combat Setting CombatStart to 1  \agLine#: ${Macro.CurLine}
                 /if (${Cursor.ID}) /call CheckCursor Combat
@@ -1561,7 +1583,7 @@ Sub Main
                     | Speed up tanks attacking inc mobs MQ2Melee /killthis can cause a delay
                     /if (${Select[${Role},tank,pullertank,hunter]}) {
                         /if (${Me.Ability[Taunt]} && ${Me.AbilityReady[Taunt]})  /doability Taunt
-                        /if (!${Me.Combat}) /attack on
+                        /if (!${Me.Combat} && ${Target.ID}) /attack on
                         /if (${Me.FeetWet}) {
                             /stick uw ${StickHow} ${StickDistUW} id ${MyTargetID}
                         } else {
@@ -1569,26 +1591,29 @@ Sub Main
                         }
                     }
                     | Use zerker kick in the teeth line before melee
-                    /if (${Defined[BeforeCombat]} && !${BeforeCombat.Find[disc]} && ${Me.CombatAbilityReady[${Spell[${BeforeCombat}].RankName}]}) {
+                    /if (${Defined[BeforeCombat]} && !${BeforeCombat.Find[disc]} && ${Me.CombatAbilityReady[${Spell[${BeforeCombat}].RankName}]} && !${Me.Combat}) {
                         /call CastWhat "${BeforeCombat}" ${MyTargetID} Combat
                         /delay 2
                         /if (${Macro.Return.Equal[CAST_SUCCESS]}) /echo ** ${BeforeCombat} on >> ${Spawn[${MyTargetID}].CleanName}
                     }
-                    /if (!${UseMQ2Melee} && ${MeleeOn}) {
-                        /if (${Spawn[${MyTargetID}].Distance}>13) /moveto id ${MyTargetID}
+                    /if (${StickHow.NotEqual[0]} && ${StickHow.NotEqual[null]}) {
                         /if (${Me.FeetWet}) {
                             /stick ${StickDistUW} uw ${StickHow} id ${MyTargetID}
                         } else {
                             /stick ${StickDist} ${StickHow} id ${MyTargetID}
                         }
-                        /attack on
-                    } else /killthis
-                    /if (${StickHow.NotEqual[0]}) {
+                    } else /if (${Spawn[${MyTargetID}].Distance}>13) {
                         /if (${Me.FeetWet}) {
-                            /stick uw ${StickHow} ${StickDistUW} id ${MyTargetID}
+                            /moveto id ${MyTargetID} uw mdist 13
                         } else {
-                            /stick ${StickHow} ${StickDist} id ${MyTargetID}
+                            /moveto id ${MyTargetID} 
                         }
+                    }
+                    /if (!${UseMQ2Melee} && ${MeleeOn}) {
+                        |/if (${Spawn[${MyTargetID}].Distance}>13) /moveto id ${MyTargetID}
+                        /if (${Target.ID}) /attack on
+                    } else {
+                        /killthis
                     }
                     | Move closer if Z distance more than 4 due to levitation
                     /call ZAxisCheck ${ZDist} 4.1
@@ -1606,7 +1631,11 @@ Sub Main
                 /if (${MezOn}) {
                     /varset MezBroke 0
                     /doevents MezBroke
-                    /if (!${MezBroke}) /call DoMezStuff
+                    /if (!${MezBroke}) {
+                        /varset GoMByPass 1
+                        /call DoMezStuff Combat2
+                        /varset GoMByPass 0
+                    }
                 }
                 /if (${AEOn}) /call AECheck
                 /if (${AggroOn}) /call AggroCheck
@@ -1620,12 +1649,12 @@ Sub Main
                    /call DoDebuffStuff ${MyTargetID}
                    |When returning the mob you were started on could be dead, so don't keep trying to kill a corpse.
                    /if (${Spawn[${MyTargetID}].Type.Equal[Corpse]} || !${Spawn[${MyTargetID}].ID} || ${DPSPaused}) {
-                       /call CombatReset
+                       /call CombatReset 0 combat
                        /return
                    }
                 }
                 /if (${DPSOn} && (!${Role.Equal[puller]} || !${ChainPull})) /call CombatCast
-                /call CastMana
+                /call CastMana Combat
                 /call WriteDebuffs
                 /if (${IAmABard}) /call DoBardStuff
                 /if (${DPSOn} || ${MeleeOn} || ${PetOn}) /call CombatTargetCheck
@@ -1638,12 +1667,13 @@ Sub Main
                             } else {
                                 /stick ${StickDist} ${StickHow} id ${MyTargetID}
                             }
-                            /attack on
+                            /if (${Target.ID}) /attack on
                         } else {
                             /killthis
                         }
-                    } 
-                    /if (${StickHow.NotEqual[0]} && !${Stick.Active} && ${Target.Distance}>15) {
+                    }
+                    |/if (${StickHow.NotEqual[0]} && !${Stick.Active} && ${Target.Distance}>15) {
+                    /if (${StickHow.NotEqual[0]} && ${StickHow.NotEqual[null]} && !${Stick.Active}) {
                         /if (${Me.FeetWet}) {
                             /stick uw ${StickHow} id ${MyTargetID}
                         } else {
@@ -1655,13 +1685,13 @@ Sub Main
                         /beep
                         /echo \atDEBUGCOMBAT im in the :Attack loop but attack is not on Attacking=${Attacking} MeleeOn=${MeleeOn} Target.PctHPs=${Target.PctHPs} Math.Calc[AssistAt-5]=${Math.Calc[${AssistAt}-5]} Target.Distance=${Target.Distance} CombatRadius=${CombatRadius} AutoFireOn=${AutoFireOn} \agLine#: ${Macro.CurLine}
                     }
-                    /attack on
+                    /if (${Target.ID}) /attack on
                 }
                 /if (${CombatStart} && ${AutoFireOn}) {
                     /if (${Target.ID}==${MyTargetID} && !${Bool[${Target.Mezzed.ID}]}) /range
                 }
                 /if (${Spawn[${MyTargetID}].Type.Equal[Corpse]} || !${Spawn[${MyTargetID}].ID} || ${DPSPaused}) {
-                    /call CombatReset
+                    /call CombatReset 0 combat
                     /return
                 }
                 /if (${Role.Equal[puller]} && ${ChainPull}) {
@@ -1692,7 +1722,18 @@ Sub Main
                 /if (${Role.Equal[puller]} && ${ChainPull} && ${DPSOn}) /call CombatCast     
                 /if (${Spawn[${MyTargetID}].Type.NotEqual[Corpse]} || ${Spawn[${MyTargetID}].ID} || !${Me.Feigning}) /goto :Attack
         } else /if (${Spawn[${MyTargetID}].PctHPs}<=${PetAssistAt} && (${Spawn[${MyTargetID}].Distance}<${CombatRadius} || ${Math.Distance[${Target.Y},${Target.X}:${Spawn[=${MainAssist}].Y},${Spawn[=${MainAssist}].X}]}<=${CampRadius})) {
-            /if (${PetOn} && ${PetCombatOn}) /call CombatPet
+            /if (${PetOn} && ${PetCombatOn} && !${PetAttack} && !${DPSPaused}) /call CombatPet
+        } else {
+            /if (${MezOn}) {
+                /varset MezBroke 0
+                /doevents MezBroke
+                /if (!${MezBroke}) {
+                    /varset GoMByPass 1
+                    /call DoMezStuff Combat3
+                    /varset GoMByPass 0
+                }
+            }
+            /if (${DebuffAllOn}==2 && ${MyTargetID} && ${Math.Distance[${Target.Y},${Target.X}:${Spawn[=${MainAssist}].Y},${Spawn[=${MainAssist}].X}]}<=${CampRadius} && ${AggroTargetID}) /call DoDebuffStuff ${MyTargetID}
         }
         /if (${DebugCombat}) /echo \atDEBUGCOMBAT Combat Leave \agLine#: ${Macro.CurLine}
     /return
@@ -1749,7 +1790,11 @@ Sub Main
             /if (${MezOn}) {
                 /varset MezBroke 0
                 /doevents MezBroke
-                /if (!${MezBroke}) /call DoMezStuff
+                /if (!${MezBroke}) {
+                    /varset GoMByPass 1
+                    /call DoMezStuff CombatCast
+                    /varset GoMByPass 0
+                }
             }
             /if (${HealsOn}) /call CheckHealth
             /if (${CuresOn}) /call CheckCures
@@ -1925,7 +1970,7 @@ Sub Main
                 /varset DPSAt ${AssistAt}
                 /varset DPSTargetID ${MyTargetID}
             }
-            /if (${WeaveArray.Size}>=1 && ${Me.SpellInCooldown} && !${WeaveCheck}) {
+            /if (${WeaveArray.Size}>=1 && (${Me.SpellInCooldown} || !${WeaveCheck})) {
                 /call WeaveStuff ${DPSTargetID}
             }
             /if (${MashArray.Size}>=1) /call MashButtons
@@ -1973,16 +2018,13 @@ Sub Main
                 /if (${FindItem[=${MashThis}].ID} && ${Me.ItemReady[${MashThis}]}) {
                     /useitem "${MashThis}"
                     /echo ## Mashing >> ${MashThis} <<
-                }
-                /if (${Me.AltAbility[${MashThis}]} && ${Me.AltAbilityReady[${MashThis}]} && ${Me.AltAbility[${MashThis}].Type}!=5 && ${MashThis.NotEqual[twincast]})  { 
+                } else /if (${Me.AltAbility[${MashThis}]} && ${Me.AltAbilityReady[${MashThis}]} && ${Me.AltAbility[${MashThis}].Type}!=5 && ${MashThis.NotEqual[twincast]})  { 
                     /alt act ${Me.AltAbility[${MashThis}].ID}
                     /echo ## Mashing >> ${MashThis} <<
-                }
-                /if (${Me.CombatAbility[${MashThis}]} && !${Me.CombatAbilityTimer[${MashThis}]} && ${Me.CombatAbilityReady[${MashThis}]} && ${Spell[${MashThis}].EnduranceCost}<${Me.Endurance}) {
+                } else /if (${Me.CombatAbility[${MashThis}]} && !${Me.CombatAbilityTimer[${MashThis}]} && ${Me.CombatAbilityReady[${MashThis}]} && ${Spell[${MashThis}].EnduranceCost}<${Me.Endurance}) {
                     /disc ${Me.CombatAbility[${Me.CombatAbility[${MashThis}]}].ID}
                     /echo ## Mashing >> ${MashThis} <<
-                }
-                /if (${Me.Ability[${MashThis}]} && ${Me.AbilityReady[${MashThis}]}) {
+                } else /if (${Me.Ability[${MashThis}]} && ${Me.AbilityReady[${MashThis}]}) {
                     /doability "${MashThis}"
                     /echo ## Mashing >> ${MashThis} <<
                 }
@@ -2037,7 +2079,7 @@ Sub Main
 | -------------------------------------------------------------------------------------
 | SUB: CombatReset
 | -------------------------------------------------------------------------------------
-    Sub CombatReset
+    Sub CombatReset(int SFlag, string CalledFrom)
         /if (${DPSMeter}) /doevents YouHit
         /declare DPSCalc string local
         /declare DPSTCalc string local
@@ -2048,8 +2090,8 @@ Sub Main
         /declare DPSMeAndPetDam string local
         /declare DPSMPCalc string local
         /declare DPSMPTCalc string local
-        /if (${DebugCombat}) /echo \atDEBUGCOMBAT CombatReset: Enter \agLine#: ${Macro.CurLine}
-        /if (${MyTargetID} && ${CombatStart} && ${DPSMeter}) {
+        /if (${DebugCombat}) /echo \atDEBUGCOMBAT CombatReset: Enter ${SFlag} ${CalledFrom} \agLine#: ${Macro.CurLine}
+        /if (${MyTargetID} && ${CombatStart} && ${DPSMeter} && !${SFlag}) {
             /echo SLAIN >> ${MyTargetName} << 
             /echo EXP: ${If[${Me.PctExp}<${MyExp},${Math.Calc[100-${MyExp}+${Me.PctExp}]},${Math.Calc[${Me.PctExp}-${MyExp}]}]}% AAEXP: ${If[${Me.PctAAExp}<${MyAAExp},${Math.Calc[100-${MyAAExp}+${Me.PctAAExp}]},${Math.Calc[${Me.PctAAExp}-${MyAAExp}]}]}%
             /popup SLAIN >> ${MyTargetName} << EXP: ${If[${Me.PctExp}<${MyExp},${Math.Calc[100-${MyExp}+${Me.PctExp}]},${Math.Calc[${Me.PctExp}-${MyExp}]}]}% AAEXP: ${If[${Me.PctAAExp}<${MyAAExp},${Math.Calc[100-${MyAAExp}+${Me.PctAAExp}]},${Math.Calc[${Me.PctAAExp}-${MyAAExp}]}]}%
@@ -2138,6 +2180,18 @@ Sub Main
             /pet back off
             /if (${PetHoldOn}) /pet ${PetHold} on
         }
+        /if (${DebuffAllOn} && ${DebuffCount}) {
+            /varset j 0
+            /for i 1 to ${XSlotTotal}
+                /if (${Me.XTarget[${i}].ID} && ${Me.XTarget[${i}].TargetType.Equal[Auto Hater]} && ${Me.XTarget[${i}].Type.NotEqual[Corpse]} && ${Me.XTarget[${i}].Distance}<=${MeleeDistance}) /varcalc j ${j}+1
+            /next i
+            /if (${j}==0) {
+                /for i 1 to ${DebuffCount}
+                    /varset DBOTimer${i} 0
+                    /varset DBOList${i}
+                /next i
+            }
+        }
         /if (${Defined[DPSTimeStart${MyTargetID}]}) /deletevar DPSTimeStart${MyTargetID}
         /varset DPSLastTime 0
         /varset DPSTotal 0
@@ -2156,7 +2210,7 @@ Sub Main
             }
         }
         /if (${IAmABard}) /call DoBardStuff
-        /call AlertClearList 2 CheckCombat
+        /call AlertClearList 2 CombatReset
         /varset TankTimer 30s
         /squelch /target clear
         /if (${DebugCombat}) /echo \atDEBUGCOMBAT CombatReset: Leave \agLine#: ${Macro.CurLine}
@@ -2246,6 +2300,27 @@ Sub Main
         /if (${DebugCombat}) /echo \atDEBUGCOMBAT AggroCheck Leave \agLine#: ${Macro.CurLine}
     /return
 | -------------------------------------------------------------------------------------
+| SUB: CastReady
+|*****************************************************************************************************************************************|
+    Sub CastReady(string castWhat,string sentFrom)
+        /if (!${Bool[${castWhat}]}) /return 0
+        /if (${sentFrom.Equal[rezwithready]}) {
+            /if (${Select[TRUE,${Me.AltAbilityReady[${castWhat}]},${Me.ItemReady[=${castWhat}]},${Me.CombatAbilityReady[${castWhat}]},${Me.AbilityReady[${castWhat}]}]}==0) {
+                /if (${Me.Book[${castWhat}]}) {
+                    /if (!${Me.Gem[${castWhat}]}) {
+                        /return 5
+                    }
+                }
+            }
+        } else /if (${sentFrom.Equal[singleheal]}) {
+            /if (${Me.Gem[${castWhat}]}) {
+                /while (${Me.SpellInCooldown}) {
+                    /delay 2
+                }
+            }
+        }
+    /return ${Select[TRUE,${Me.AltAbilityReady[${castWhat}]},${Me.ItemReady[=${castWhat}]},${Me.CombatAbilityReady[${castWhat}]},${Me.AbilityReady[${castWhat}]},${Me.SpellReady[${castWhat}]}]}
+| -------------------------------------------------------------------------------------
 | SUB: CastWhat
 |*****************************************************************************************************************************************|
     Sub CastWhat(string castWhat,int WhatID,string sentFrom)
@@ -2263,7 +2338,7 @@ Sub Main
             } else {
                 /if (${Me.Book[${castWhat}]} && !${Me.Gem[${castWhat}]} && ${ReadyToCast}==0) {
                     /call CastMem "${castWhat}" ${sentFrom}
-					/if (${Macro.Return.NotEqual[notmemed]} && ${Me.Gem[${castWhat}]}!=0) { 
+					/if (${Macro.Return.NotEqual[notready]} && ${Me.Gem[${castWhat}]}!=0) { 
                         /varset ReadyToCast 6
                         /call CastSpell "${castWhat}" ${WhatID} ${sentFrom}
                     }
@@ -2319,12 +2394,17 @@ Sub Main
     /return ${CastResult}
 |--------------------------------------------------------------------------------------------------------------|
     Sub CastDisc(string WhatDisc,int WhatID)
+        /declare WaitTimerCD timer local 
         /if (${Debug}) /echo CastDisc Enter Line#: ${Macro.CurLine}
         /if (!${Spell[${WhatDisc}].Duration.TotalSeconds} || (${Spell[${WhatDisc}].Duration.TotalSeconds} && !${Me.ActiveDisc.ID})) {
             | /if (${Spell[${WhatDisc}].EnduranceCost}>${Me.Endurance}) /return CAST_OUTOFENDURANCE
             /if (${Target.ID}!=${WhatID} && ${Spawn[id ${WhatID}].ID}) /call CastTarget ${WhatID}
-            /disc ${Me.CombatAbility[${Me.CombatAbility[${WhatDisc}]}].ID}
-            /call CastWait "${WhatDisc}"
+            /varset WaitTimerCD 30
+            /while (${Me.CombatAbilityReady[${WhatDisc}]} && ${WaitTimerCD}) {
+                /disc ${Me.CombatAbility[${Me.CombatAbility[${WhatDisc}]}].ID}
+                /call CastWait "${WhatDisc}"
+                /delay 5
+            }
             /varset CastResult CAST_SUCCESS
         }
         /if (${Debug}) /echo CastDisc Leave Line#: ${Macro.CurLine}
@@ -2354,26 +2434,26 @@ Sub Main
         }
         /if (${Target.ID}!=${WhatID} && ${Spell[${WhatSpell}].TargetType.NotEqual[Self]} && ${Spawn[id ${WhatID}].ID}) /call CastTarget ${WhatID}
         /if (${Me.Gem[${WhatSpell}]}) {
-        /if (${Me.GemTimer[${WhatSpell}]}==0) {
-            /casting "${WhatSpell}" -maxtries|${MaxTryNum}
-            /while (${Cast.Status.Equal[C]} && ${CastResult.NotEqual[CAST_CANCELLED]}) {
-                /if (${CastingInterruptOn}) {
-                    /if (${sentFrom.Equal[SingleHeal]}) {
-                       /call CastInteruptHeals "${WhatSpell}"
-                    } else /if (${Select[${sentFrom},dps,gom,burn]}>0) {
-                       /call CastInteruptDPS "${WhatSpell}"
-                    } else /if (${Select[${sentFrom},buffs,buffs-nomem]}>0) {
-                       /call CastInteruptBuffs "${WhatSpell}"
+            /if (${Me.GemTimer[${WhatSpell}]}==0) {
+                /casting "${WhatSpell}" -maxtries|${MaxTryNum}
+                /while (${Cast.Status.Equal[C]} && ${CastResult.NotEqual[CAST_CANCELLED]}) {
+                    /if (${CastingInterruptOn}) {
+                        /if (${sentFrom.Equal[SingleHeal]}) {
+                           /call CastInteruptHeals "${WhatSpell}"
+                        } else /if (${Select[${sentFrom},dps,gom,burn]}>0) {
+                           /call CastInteruptDPS "${WhatSpell}"
+                        } else /if (${Select[${sentFrom},buffs,buffs-nomem]}>0) {
+                           /call CastInteruptBuffs "${WhatSpell}"
+                        }
                     }
+                    /delay 5
                 }
-                /delay 5
+                /call CastWait "${WhatSpell}"
+                /if (${sentFrom.Equal[Pull]} && ${PullAggroTargetID}) /varset CastResult CAST_SUCCESS
+                | READ THIS. For some reason Cast.Result is still equal to CAST_SUCCESS after /interrupt, maybe macro to fast for plugin to update.
+                | So checking for CastResult NotEqual CAST_CANCELLED fixes the issue, and fixes the casting on corpse messages even though the spell was canceled. 
+                /if (${CastResult.NotEqual[CAST_CANCELLED]}) /varset CastResult ${Cast.Result}
             }
-            /call CastWait "${WhatSpell}"
-            /if (${sentFrom.Equal[Pull]} && ${PullAggroTargetID}) /varset CastResult CAST_SUCCESS
-            | READ THIS. For some reason Cast.Result is still equal to CAST_SUCCESS after /interrupt, maybe macro to fast for plugin to update.
-            | So checking for CastResult NotEqual CAST_CANCELLED fixes the issue, and fixes the casting on corpse messages even though the spell was canceled. 
-            /if (${CastResult.NotEqual[CAST_CANCELLED]}) /varset CastResult ${Cast.Result}
-        }
         } else {
             /echo Skip Casting ${WhatSpell}. Spell Not Memed.
             /varset CastResult CAST_NO_RESULT
@@ -2393,10 +2473,11 @@ Sub Main
         | Bard song with long refresh is not ready so return and do not interupt twisting.
         /if (${Me.GemTimer[${BardSpell}]}>=1 && ${Me.Book[${BardSpell}]}) /return
         /if (${Debug}) /echo CastBard Enter Line#: ${BardSpell} ${WhatID} ${sentFrom}
-        /if (${Twist}) {
-            /varset WasTwisting ${Twist}
-            /squelch /twist off
-            /delay 30 !${Twist}
+        /varset WasTwisting ${Twist}
+        /while (${Me.BardSongPlaying}) {
+            /if (${Twist}) /squelch /twist off
+            /stopsong
+            /delay 10
         }
         /if (${Target.ID}!=${WhatID} && ${Spawn[id ${WhatID}].ID}) /call CastTarget ${WhatID}
         /if (${FindItem[=${BardSpell}].ID}) {
@@ -2415,7 +2496,6 @@ Sub Main
         }
         /if (${WasTwisting} && !${Twist}) {
             /squelch /twist
-            /varset WasTwisting FALSE
         }
     /return ${CastResult}     
 |--------------------------------------------------------------------------------------------------------------|
@@ -2429,34 +2509,44 @@ Sub Main
     /return  
 |--------------------------------------------------------------------------------------------------------------|
     Sub CastMem(string WhatMemSpell,string sentFrom)
+        /declare WaitTimerCM timer local 0
         /if (${Debug}) /echo CastMem Enter Line#: ${Macro.CurLine}
         | Prevent tanks and heals trying to mem spells during combat.
         /if ((${Attacking} && ${MainAssist.Equal[${Me}]}) || (${HealsOn} && ${AggroTargetID} && ${sentFrom.NotEqual[Heal]} && !${Me.Mount.ID})) {
             /echo Cannot mem a spell durring combat or while you have aggro.
-		    /return notmemed
+		    /return notready
         }
         /if (${Cursor.ID}) /call CheckCursor CastMem
 		/if (${IAmABard}) {
 		    /varset WasTwisting ${Twist}
-        	/if (${WasTwisting}) {
-            /squelch /twist off
-            /delay 30 !${Twist}
-        }
+            /while (${Me.BardSongPlaying}) {
+        	    /if (${Twist}) /squelch /twist off
+                /stopsong
+                /delay 10
+            }
 		}
         /if (${MiscGemRemem} && ${MiscGemLW} && ${Spell[${WhatMemSpell}].RecastTime.TotalSeconds}>30 && ${ReMemWaitLong.Equal[null]}) {
            /varset ReMemWaitLong ${WhatMemSpell}
+           /varset DontMoveMe 1
            /call CastMemSpell "${WhatMemSpell}" ${MiscGemLW} 0 CastMem
-           /return 0
+           /varset DontMoveMe 0
+           /return notready
         }
         /varset ReMemWaitShort ${WhatMemSpell}
+        /varset DontMoveMe 1
         /call CastMemSpell "${WhatMemSpell}" ${MiscGem} 0 CastMem
-        /delay 350 ${Me.SpellReady[${WhatMemSpell}]} && ${Me.GemTimer[${WhatMemSpell}]}==0
-		/if (${IAmABard}) {
-         /if (${WasTwisting} && !${Twist}) {
-            /squelch /twist
-            /varset WasTwisting FALSE
+        /varset DontMoveMe 0
+        /if (${Me.Gem[${WhatMemSpell}]}) {
+            /varset WaitTimerCM 350
+            /while (!${Me.SpellReady[${WhatMemSpell}]} && ${WaitTimerCM}) {
+                /delay 5
+            }
+            /delay 10
         }
+		/if (${IAmABard}) {
+            /if (${WasTwisting} && !${Twist}) /squelch /twist
 		}
+        /if (!${Me.Gem[${WhatMemSpell}]}) /return notready
         /if (${Debug}) /echo CastMem Leave Line#: ${Macro.CurLine}
    /return 0
 |--------------------------------------------------------------------------------------------------------------|
@@ -2477,7 +2567,9 @@ Sub Main
             /if (!${Me.Gem[${ReMemMiscSpell}]} && ${ReMemCast} && !${CombatStart} && !${Me.Buff[Resurrection Sickness].ID} && !${sentFrom.Find[-nomem]}) {
                 /if (${Cursor.ID}) /call CheckCursor CastReMem
                 |/memorize "${ReMemMiscSpell}" gem${MiscGem}
+                /varset DontMoveMe 1
                 /call CastMemSpell "${ReMemMiscSpell}" ${MiscGem} 0 CastReMem
+                /varset DontMoveMe 0
                 /varset ReMemCast 0
                 /varset ReMemWaitShort null
             }
@@ -2486,7 +2578,9 @@ Sub Main
         /if ((${MiscGemRemem}==1 || ${MiscGemRemem}==3) && ${MiscGemLW} && ${ReMemWaitLong.NotEqual[null]}) {
             /if (${ReMemCastLW} && !${Me.Buff[Resurrection Sickness].ID}) {
                 /if (${Cursor.ID}) /call CheckCursor CastReMem2
+                /varset DontMoveMe 1
                 /call CastMemSpell "${ReMemMiscSpellLW}" ${MiscGemLW} ${Int[${Me.Gem[${ReMemMiscSpellLW}]}]} CastReMem
+                /varset DontMoveMe 0
                 /varset ReMemCastLW 0
                 /varset ReMemWaitLong null
             }
@@ -2512,9 +2606,19 @@ Sub Main
                 /delay 20 ${Int[${Me.Gem[${i}].ID}]}==0
             }
             /if (!${Int[${Me.Gem[${i}].Name.Length}]} || ${Me.Gem[${i}].Name.NotEqual[${SpellToMem}]}) {
+                /while (${Me.Moving}) {
+                    /delay 5
+                }
                 /echo Meming ${SpellToMem} in slot ${i}
-                /MemSpell ${i} "${SpellToMem}"
-                /delay 90 ${Me.Gem[${i}].Name.Equal[${SpellToMem}]} 
+                /if (${Stick.Active}) {
+                    /stick pause 
+                    /MemSpell ${i} "${SpellToMem}"
+                    /delay 90 ${Me.Gem[${i}].Name.Equal[${SpellToMem}]} 
+                    /stick unpause
+                } else {
+                    /MemSpell ${i} "${SpellToMem}"
+                    /delay 90 ${Me.Gem[${i}].Name.Equal[${SpellToMem}]} 
+                }
             }
         } else {
             /echo Could Not find the spell ${SpellToMem} in your spell book.
@@ -2532,11 +2636,11 @@ Sub Main
             /echo ${CIHSpell} interrupted. Target is an NPC
             /if (${Debug}) /echo CheckHP1: ${Target.Type}
         }
-       /if ( ${Target.PctHPs}>${SHealPct}) {
+       /if ( ${Target.PctHPs}>${SHealPct} && ${SHealPct}>65) {
             |/stopcast
             /Interrupt
             /varset CastResult CAST_CANCELLED
-            /echo ${CIHSpell} interrupted. Target is above required ${SHealPct}% health.
+            /echo ${CIHSpell} interrupted. Target is above required ${SHealPct}% health. ${Target}
             /if (${Debug}) /echo CheckHP2: ${Target.PctHPs} ${SHealPct}
        }
     /return    
@@ -2588,25 +2692,13 @@ Sub Main
 | SUB: Do We Move
 | -------------------------------------------------------------------------------------
     Sub DoWeMove(int ForceToCamp, SentFrom)
-        /if (!${ReturnToCamp} && !${ChaseAssist}) /return
+        /if (!${ReturnToCamp} && !${ForceToCamp}) /return
         /declare StuckCount int local 0 
         /declare X1 int local
         /declare Y1 int local
         /declare scatterDistance int local
         /declare CampYRandom int local
         /declare CampXRandom int local
-        | Stop sticking if mobs are on xtarget
-        /if (${SpawnCount[npc xtarhater]} && !${Role.Find[pull]} && ${MainAssist.NotEqual[${Me}]}) {
-            /if (${Stick.Active}) {
-                /if (${DebugMove}) /echo \atDEBUG Not gonna be an idiot and move during fight cause I dont have to.
-                /stick off
-                /moveto off
-                /if (${PullMoveUse.Equal[nav]}) {
-                    /if (${Navigation.Active}) /nav stop
-                }
-            }
-            /return
-        }
         /doevents
         /call EndMacroIf
         /declare DWMWPCurrent int local 0
@@ -2617,7 +2709,6 @@ Sub Main
         /declare circleDirection string local
         /if (${Debug}) /echo \atDEBUG DoWeMove: Enter \agLine#: ${Macro.CurLine}
         | - Shuts off ReturnToCamp if a toon moves a big distance defined by CampRadiusExceed ie CoH !${Pulled} || ${Pulling}
-        /if (${ReturnToCamp}) {
             /if (${DebugMove}) /echo \atDEBUG DoWeMove:(ReturnToCamp) My distance from camp is: (${Math.Distance[${CampYLoc},${CampXLoc}]}). \agLine#: ${Macro.CurLine}
             /if (${Math.Distance[${CampYLoc},${CampXLoc}]} > ${CampRadiusExceed} && !${Role.Find[hunter]} && ${ReturnToCamp}==1) {
                 /if (${DebugMove}) /echo \atDEBUG DoWeMove:(ReturnToCamp) CampRadiusExceed turning off ReturnToCamp. \agLine#: ${Macro.CurLine}
@@ -2698,7 +2789,7 @@ Sub Main
                 /if (${DebugMove}) /echo \atDEBUG DoWeMove: Distance to camp ${Math.Distance[${CampYLoc},${CampXLoc}]} > 15, MQ2MoveUtils return to camp. \agLine#: ${Macro.CurLine}
                 /doevents
                 /if (!${Me.FeetWet}) /look 0
-                /moveto mdist 10     
+                /moveto mdist 5
                 /if (${ScatterOn}) {
                     | Randomize camp x,y by +- so toons don't always retun to exact same spot and help to look less botted.
                     /varcalc scatterDistance ${Math.Rand[7]}+5
@@ -2722,14 +2813,14 @@ Sub Main
                         /moveto off
                         /return
                     }
-                    /if (!${Me.Mount.ID} && ${Me.Sitting}) /stand
+                    /if (!${Me.Mount.ID} && ${Me.Sitting} && ${Math.Distance[${CampYLoc},${CampXLoc}]} >= 16) /stand
                     /if (!${Me.Moving} || !${MoveTo.Moving}) {
                         /if (${Me.FeetWet}) {
                             /moveto set useback off
                             /moveto loc ${CampYRandom} ${CampXRandom} ${CampZLoc} uw mdist 15
                         } else {
                             /moveto set useback on
-                            /moveto loc ${CampYRandom} ${CampXRandom} ${CampZLoc} 
+                            /moveto loc ${CampYRandom} ${CampXRandom}
                         }
                     }
                     /if (${Select[${Role},pullerpettank]} && ${Pulled}) {
@@ -2743,13 +2834,13 @@ Sub Main
                     /if ((${MoveTo.Moving} || ${Me.Moving}) && ${DWMTimer}>=1) /goto :StillMoving
                 /if (${DebugMove}) /echo \atDEBUG DoWeMove: MoveTo My distance from Camp is: ${Math.Distance[${CampYRandom},${CampXRandom},${CampZLoc}]} ${Me.FeetWet}. \agLine#: ${Macro.CurLine}
                 /if (${MoveTo.Moving}) {
-                    /if (${Me.FeetWet} && ${Math.Distance[${CampYRandom},${CampXRandom},${CampZLoc}]} > 15) {
+                    /if (${Me.FeetWet} && ${Math.Distance[${CampYRandom},${CampXRandom},${CampZLoc}]} >= 15) {
                         /goto :StillMoving
-                    } else /if (${Math.Distance[${CampYRandom},${CampXRandom}]} > 15) {
+                    } else /if (${Math.Distance[${CampYRandom},${CampXRandom}]} >= 15) {
                         /goto :StillMoving
                     }
                 }
-                /if (${Me.FeetWet} && ${Math.Distance[${CampYRandom},${CampXRandom},${CampZLoc}]} > 15) {
+                /if (${Me.FeetWet} && ${Math.Distance[${CampYRandom},${CampXRandom},${CampZLoc}]} >= 15) {
                     /varset DWMTimer 20
                     /moveto loc ${CampYRandom} ${CampXRandom} ${CampZLoc} uw mdist 15
                     /while (${Math.Distance[${CampYRandom},${CampXRandom},${CampZLoc}]} > 15 && ${DWMTimer}) {
@@ -2764,7 +2855,7 @@ Sub Main
                 /if (!${Me.FeetWet}) /look 0
                 /if (${Select[${Role},hunter,hunterpettank]}) /varset ReturnToCamp 0
             }
-            /if (${Me.FeetWet} && ${Math.Distance[${CampYLoc},${CampXLoc},${CampZLoc}]} > 15) {
+            /if (${Me.FeetWet} && ${Math.Distance[${CampYLoc},${CampXLoc},${CampZLoc}]} >= 15) {
                 /moveto loc ${CampYLoc} ${CampXLoc} ${CampZLoc} uw mdist 15
                 /varset DWMTimer 30
                 /while (${Math.Distance[${CampYLoc},${CampXLoc},${CampZLoc}]} > 15 && ${DWMTimer}) {
@@ -2772,10 +2863,38 @@ Sub Main
                 }
                 /if (${MoveTo.Moving}) /moveto off
             }
+        /if (${Debug}) /echo \atDEBUG DoWeMove: Leave \agLine#: ${Macro.CurLine}
+    /return
+|*****************************************************************************************************************************************|    
+| -------------------------------------------------------------------------------------
+| SUB: Do We Chase
+| -------------------------------------------------------------------------------------
+    Sub DoWeChase(string SentFrom)
+        /if (!${ChaseAssist}) /return
+        /if (${Me.Hovering} || ${IAmDead}) /return
+        /declare StuckCount int local 0 
+        /declare X1 int local
+        /declare Y1 int local
+        | Stop sticking if mobs are on xtarget
+        /if (${ChaseAssist}==1) {
+            /if (${SpawnCount[npc xtarhater]} && !${Role.Find[pull]} && ${MainAssist.NotEqual[${Me}]}) {
+                /if (${Stick.Active}) {
+                    /if (${DebugMove}) /echo \atDEBUG Not gonna be an idiot and move during fight cause I dont have to.
+                    /stick off
+                    /moveto off
+                    /if (${PullMoveUse.Equal[nav]}) {
+                        /if (${Navigation.Active}) /nav stop
+                    }
+                }
+                /return
+            }
         }
-        /if (${ChaseAssist}) {
-            /if (${Debug}) /echo \atDEBUG ChaseAssist \agLine#: ${Macro.CurLine}
-            /if (${DebugMove}) /echo \atDEBUG DoWeMove:(ChaseAssist) My distance from (${WhoToChase}) is: (${Spawn[=${WhoToChase}].Distance}). \agLine#: ${Macro.CurLine}
+        /doevents
+        /call EndMacroIf
+        /declare DWMWPCurrent int local 0
+        /declare DWMTimer timer local 0
+        /if (${Debug}) /echo \atDEBUG DoWeChase: Enter ${SentFrom} \agLine#: ${Macro.CurLine}
+            /if (${DebugMove}) /echo \atDEBUG DoWeChase:(ChaseAssist) My distance from (${WhoToChase}) is: (${Spawn[=${WhoToChase}].Distance}). \agLine#: ${Macro.CurLine}
             /if (${JustZoned}==0 && (${Spawn[=${WhoToChase}].Distance} > ${CampRadiusExceed}) || (${Math.Calc[${Spawn[=${WhoToChase}].Z}-${Me.Z}]}>100 && ${Math.Calc[${Spawn[=${WhoToChase}].Z}-${Me.Z}]}<100)) {
                 /if (${Debug} || ${DebugMove}) /echo \atDEBUG ChaseAssist exceed camp check \agLine#: ${Macro.CurLine}
                 /varset ChaseAssist 0
@@ -2784,6 +2903,28 @@ Sub Main
             }
             /if (${Spawn[=${WhoToChase}].Distance} > ${ChaseDistance} && ${Spawn[=${WhoToChase}].Distance} < ${CampRadiusExceed}) {
                 /if (${Debug} || ${DebugMove}) /echo \atDEBUG ChaseAssist MA distance check \agLine#: ${Macro.CurLine}
+                /if (${PullMoveUse.Equal[nav]}) {
+                    /if (${Navigation.PathExists[id ${Spawn[=${WhoToChase}].ID}]}) {
+                        /nav id ${Spawn[=${WhoToChase}].ID}
+                    } else /if (${Spawn[=${WhoToChase}].LineOfSight}) {
+                        /moveto id ${Spawn[=${WhoToChase}].ID} uw mdist ${ChaseDistance}
+                    } else {
+                        /echo Chase Failed due to ${WhoToChase} is not in Line of sight and Navigation couldn't find a path. Will try /Sticking.
+                    }
+                } else /if (${Spawn[=${WhoToChase}].LineOfSight}) {
+                    /moveto id ${Spawn[=${WhoToChase}].ID} uw mdist ${ChaseDistance}
+                }
+                /delay 10 ${Me.Moving}
+                /while (${Me.Moving}) {
+                    /if (${Spawn[=${WhoToChase}].Distance3D}<=${ChaseDistance}) {
+                        /if (${PullMoveUse.Equal[nav]}) {
+                            /if (${Navigation.Active}) /nav stop
+                        }
+                    }
+                    /delay 5
+                }
+            }
+            /if (!${Stick.Active}) {            
                 /if (${Spawn[=${WhoToChase}].Type.Equal[Pet]}) {
                     /target ${Spawn[=${WhoToChase}].Master}
                     /delay 10
@@ -2807,12 +2948,15 @@ Sub Main
                        /stick ${ChaseDistance} id ${Spawn[=${WhoToChase}].ID} loose
                     }
                 }
-                :AreWeThere
+                /delay 10
+                /while (${Me.Moving}) {
                     /delay 10
-                 /if (${Me.Moving}) /goto :AreWeThere
+                }
             }
-        }
-        /if (${Debug}) /echo \atDEBUG DoWeMove: Leave \agLine#: ${Macro.CurLine}
+            /while (${ChaseAssist}==3) {
+                /delay 10
+            }
+        /if (${Debug}) /echo \atDEBUG DoWeChase: Leave \agLine#: ${Macro.CurLine}
     /return
 |-------------------------------------------------------------------------------------
 | SUB: Stuck
@@ -2845,6 +2989,7 @@ Sub Main
         /declare MedForceOn int local 0
         /declare MedStat1 string local ${MedStat}
         /declare j int local 0
+        /declare MedFlag int local 0
         /if (${Select[${Me.Class.ShortName},BST,BRD,CLR,DRU,ENC,MAG,NEC,PAL,RNG,SHM,SHD,WIZ]}) /varset MedStat Mana
         /if (${Select[${Me.Class.ShortName},BER,MNK,ROG,WAR]}) /varset MedStat Endurance
         /if (!${Me.Moving}) {
@@ -2862,26 +3007,51 @@ Sub Main
             } else {
                 /varset MASitTime 0
             }
-            /if (${Me.Pct${MedStat}}<${MedStart} || (${ChainPullHold}==2 && ${Me.Pct${MedStat}}<100) || (${MedForceOn} && ${Me.Pct${MedStat}}<90 && !${Role.Find[puller]} && !${MedCombat})) {
+            /if (${Me.Pct${MedStat}}<${MedStart}) {
+                /varset MedFlag 1
+            } else /if (${ChainPullHold}==2 && ${Me.Pct${MedStat}}<100) {
+                /varset MedFlag 1
+            } else /if (${MedForceOn} && ${Me.Pct${MedStat}}<90 && !${Role.Find[puller]} && !${MedCombat}) {
+                /varset MedFlag 1
+            } else /if (${MedForceOn} && ${IAmABard} && ${TwistMed}) {
+                /varset MedFlag 1
+            }
+            |/if (${Me.Pct${MedStat}}<${MedStart} || (${ChainPullHold}==2 && ${Me.Pct${MedStat}}<100) || (${MedForceOn} && ${Me.Pct${MedStat}}<90 && !${Role.Find[puller]} && !${MedCombat})) {
+            /if (${MedFlag}) {
                 /squelch /tar clear
                 /varset Medding 1
-                /if (${Attacking}) /call CombatReset
+                /if (${Attacking}) /call CombatReset 0 dowemed
                 /if (${Select[${Role},puller,pullertank,pullerpettank,hunter,hunterpettank]}) /call BroadCast ${IRCOn} ${EQBCOn} t "PULLER-> My ${MedStat} is ${MedStart}% time to med. ${MedStat} ${Me.Pct${MedStat}} ${ChainPullHold}"
                 | bards twisting while others fighting negate fast med 
-                /if (${IAmABard} && ${AggroTargetID}) {
-                    /if (${Twist}) {
-                        squelch /twist off
-                        /stopsong
-                        /delay 20 !${Twist}
+                /if (${IAmABard}) {
+                    /if (${AggroTargetID} || ${MedCombat}) {
+                        /while (${Me.BardSongPlaying}) {
+                            /if (${Twist}) /squelch /twist off
+                            /stopsong
+                            /delay 10
+                        }
+                    } else /if (${TwistMed}) {
+                        /while (${Me.BardSongPlaying}) {
+                            /if (${Twist}) /squelch /twist off
+                            /stopsong
+                            /delay 10
+                        }
+                        /squelch /twist ${TwistMed}
+                        /delay 10
+                        /while (${Window[CastingWindow].Open}) {
+                            /delay 5
+                        }
+                    } else {
+                        /squelch /twist ${TwistWhat}
+                        /delay 10
                     }
-                    /if (${TwistMed}) /squelch /twist ${TwistMed}
                 }
                 /if (${Medding}) /echo Medding until ${MedStat} 100%
                 /if (${Me.Pct${MedStat}}<${MedStart}) /call BroadCast ${IRCOn} ${EQBCOn} t "My ${MedStat} is ${MedStart}% time to med."
             :wait_for_resume
                     /doevents
                     /if (${ReturnToCamp} && ${Math.Distance[${CampYLoc},${CampXLoc}]} > 15) {
-                        /call DoWeMove
+                        /call DoWeMove 0 dowemed
                     }
                     /if (!${Me.Mount.ID} && ${Me.Standing}) /sit                    
                     /if (${Debug}) /echo \atDEBUG ${MedStat} ${MedStat1} ${MedStat2} \agLine#: ${Macro.CurLine}
@@ -2890,19 +3060,33 @@ Sub Main
                     /delay 10
                     /if (!${MedCombat}) {
                         /call WaitSubs
-                        /call CheckForCombat 1 DoWeMed
                         /if (${AggroTargetID}) {
+                            /call CheckForCombat 0 DoWeMed
                             /if (${Med2On}) /varset MedStat ${MedStat1}
                             /varset Medding 0
+                            /if (${IAmABard}) {
+                                /while (${Me.BardSongPlaying}) {
+                                    /if (${Twist}) /squelch /twist off
+                                    /stopsong
+                                    /delay 10
+                                }
+                            }
                             /return
                         }
                     }
-                /if (${Me.Pct${MedStat}}<100) /goto :wait_for_resume
+                /if (${MedForceOn} && (!${Group.MainAssist.ID} || !${Group.MainAssist.Sitting})) /varset MedForceOn 0
+                /if (${Me.Pct${MedStat}}<100 || ${MedForceOn}) /goto :wait_for_resume
                 :done_medding
                 /if (${Med2On}) /varset MedStat ${MedStat1}
                 /varset Medding 0
                 /if (${Me.Sitting}) /stand
-                /if (${IAmABard} && ${TwistMed}) /stopsong
+                /if (${IAmABard} && ${TwistMed}) {
+                    /while (${Me.BardSongPlaying}) {
+                        /if (${Twist}) /squelch /twist off
+                        /stopsong
+                        /delay 10
+                    }
+                }
             }
             /if (${Select[${Role},pullerpettank,puller,hunter,hunterpettank]} && ${Me.PctHPs}<=50) {
                 /echo Medding to 100% health
@@ -2911,15 +3095,15 @@ Sub Main
                     /doevents
                     /if (${ReturnToCamp} && ${Math.Distance[${CampYLoc},${CampXLoc}]} > 15) {
                         /if (!${Me.Mount.ID} && ${Me.Sitting}) /stand
-                        /call DoWeMove
+                        /call DoWeMove 0 dowemed
                     }
                     |/delay 10
                     |/call CheckCasting 50
                     /delay 5
                     /if (!${MedCombat}) {
                         /call WaitSubs
-                        /call CheckForCombat 1 DoWeMed
                         /if (${AggroTargetID}) {
+                            /call CheckForCombat 0 DoWeMed
                             /varset Medding 0
                             /return
                         }
@@ -2935,7 +3119,7 @@ Sub Main
                     /for j ${SingleHeal.Size} downto 1
                         /if (${SingleHeal[${j}].Arg[3,|].NotEqual[pet]} || !${SingleHeal[${j}].Length} || ${SingleHeal[${j}].Arg[2,|]}==0) /continue
                         /if (${Me.Pet.ID} && ${Me.Pet.Distance}<${Spell[${SingleHeal[${j}].Arg[1,|]}].Range}) {
-                            /if (${Debug}) /echo \amDEBUG DoPetMedStuff (${SingleHeal[${j}].Arg[3,|].Find[PET]} && ${Me.Pet.PctHPs}<=${HealPct} && ${Me.Pet.ID} && ${Me.Pet.Distance}<${Spell[${SingleHeal[${j}].Arg[1,|]}].Range}) \agLine#: ${Macro.CurLine}
+                            /if (${Debug}) /echo \amDEBUG DoPetMedStuff (${SingleHeal[${j}].Arg[3,|].Find[PET]} && ${Me.Pet.PctHPs} && ${Me.Pet.ID} && ${Me.Pet.Distance}<${Spell[${SingleHeal[${j}].Arg[1,|]}].Range}) \agLine#: ${Macro.CurLine}
                             /call CastWhat "${SingleHeal[${j}].Arg[1,|]}" ${Me.Pet.ID} Med
                             /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
                                 /call BroadCast ${IRCOn} ${EQBCOn} o "${Heals[${j}].Arg[1,|]} on  >> ${Me.Pet.CleanName} <<"
@@ -2989,7 +3173,7 @@ Sub Main
         /for i 1 to ${Buffs.Size}
            /doevents
             /if (${Buffs[${i}].Find[|0]}) /goto :SkipBuff
-            /if (${ChaseAssist} && !${CombatStart}) /call DoWeMove
+            /if (${ChaseAssist} && !${CombatStart}) /call DoWeChase
             /if (${HealsOn}) /call CheckHealth
             /if (${AutoRezOn}) /call RezCheck
             | If Buffs=NULL skip to next buff
@@ -3004,15 +3188,24 @@ Sub Main
                 /varset 3rdPart ${Buffs[${i}].Arg[3,|]}
                 /varset 4thPart ${Buffs[${i}].Arg[4,|]}
                 /varset 5thPart ${Buffs[${i}].Arg[5,|]}
-                /if (${2ndPart.Equal[Dual]} && ${4thPart.Equal[MA]}) /varset 2ndPart DualMA
+                /if (${2ndPart.Equal[Dual]}) {
+                    /if (${4thPart.Equal[MA]}) {
+                        /varset 2ndPart DualMA
+                    } else /if (${4thPart.Equal[melee]}) {
+                        /varset 2ndPart DualMelee
+                    } else /if (${4thPart.Equal[caster]}) {
+                        /varset 2ndPart DualCaster
+                    }
+                }
             } else {
+                /varset FullText ${Buffs[${i}]}
                 /varset 1stPart ${Buffs[${i}]}
                 /varset 2ndPart 
                 /varset 3rdPart 
                 /varset 4thPart 
             }
             /varset SpellRange ${Spell[${1stPart}].Range}
-            /if (${Me.Subscription.NotEqual[gold]} && ${Select[${2ndPart},Dual,DualMA]}==0) {
+            /if (${Me.Subscription.NotEqual[gold]} && ${Select[${2ndPart},Dual,DualMA,DualMelee,DualCaster]}==0) {
                 /if (${1stPart.Find[ Rk.]}) {
                     /varset BuffSub ${1stPart.Left[${Math.Calc[${1stPart.Find[ Rk.]}-1]}]} 
                 } else {
@@ -3030,13 +3223,19 @@ Sub Main
             | Added Conditions Check
             /if (${ConditionsOn} && ${BuffsCOn} && ${If[${BuffsCond[${i}]},0,1]}) /goto :SkipCheckIni
             | Check for Mana/End AA Regen on others
-            /if (${Group} && ${Select[${2ndPart},Endgroup,Managroup]}>0) {
+            /if (${Group} && ${Select[${2ndPart},Endgroup,Managroup]}>0 && !${Buff${i}GM0}) {
                 /if (${2ndPart.Equal[Endgroup]}) /call RegenOther "${1stPart}" Endurance ${3rdPart} 0    
                 /if (${2ndPart.Equal[Managroup]}) /call RegenOther "${1stPart}" Mana ${3rdPart} 0
-                /if (${Macro.Return.Equal[TRUE]}) /goto :SkipBuff
-            } else /if (${2ndPart.Equal[mana]}) {
+                /if (${Macro.Return.Equal[TRUE]}) {
+                    /varcalc Buff${i}GM0 (${Spell[${1stPart}].RecastTime.TotalSeconds})*10
+                    /goto :SkipBuff
+                }
+            } else /if (${2ndPart.Equal[mana]} && !${Buff${i}GM0}) {
                 /call CastWhat "${Buffs[${i}]}" ${Me.ID} Buffs
-                /if (${Macro.Return.Equal[CAST_SUCCESS]}) /goto :SkipBuff
+                /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
+                    /varcalc Buff${i}GM0 (${Spell[${1stPart}].RecastTime.TotalSeconds})*10
+                    /goto :SkipBuff
+                }
             }
             | Combat check to skip all buffs but mana regen
             /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs Skip if Combat:${CombatStart}  Aggro:${AggroTargetID} IDied: ${IAmDead} ReadBTimer: ${ReadBuffsTimer} 
@@ -3047,11 +3246,11 @@ Sub Main
             /if (${ReadBuffsTimer}) /goto :SkipBuff
             | Remove buff from |Remove tag
             /if (${2ndPart.Equal[Remove]} && ${Me.Buff[${1stPart}].ID}) {
-                /removebuff ${1stPart} 
+                /removebuff "${1stPart}" 
                 /goto :SkipBuff
             }            
             | If buff cost more mana than I have skip it
-            /if ((${Spell[${1stPart}].Mana} || ${Spell[${Buffs[${i}]}].Mana})>${Me.PctMana}) /goto :SkipBuff
+            /if ((${Spell[${1stPart}].Mana} || ${Spell[${1stPart}].Mana})>${Me.CurrentMana}) /goto :SkipBuff
             | Check if aura is up
             /if (${2ndPart.Equal[Aura]}) {
                 /call CheckAura "${1stPart}"
@@ -3061,8 +3260,8 @@ Sub Main
             /if (${2ndPart.Equal[Once]}) {
                 /call BuffOnce "${1stPart}" 
                 /if (${Macro.Return.Equal[TRUE]}) {
-                    /varset Buffs[${i}] ${Buffs[${i}]}|0
-                    /echo Buffing Once with ${Buffs[${i}]}.
+                    /varset Buffs[${i}] ${1stPart}|0
+                    /echo Buffing Once with ${1stPart}.
                     /return
                 }
             }
@@ -3078,15 +3277,15 @@ Sub Main
             }
             /if (${Select[${2ndPart},Aura,End,Mount,Mana,Summon]}) /goto :SkipBuff
             | Check for spells with 2 parts such as Exigent Focusing Rk. II,Talisman of Soul's Unity Rk. II - Set Buffs to buff part of spell
-            /if (${Select[${2ndPart},Dual,DualMA]}) /varset Buffs[${i}] ${3rdPart}
-            /if (${Select[${2ndPart},Me,MA,!MA,Caster,Melee]}) /varset Buffs[${i}] ${BuffSub}
+            /if (${Select[${2ndPart},Dual,DualMA,DualMelee,DualCaster]}) /varset 1stPart ${3rdPart}
+            /if (${Select[${2ndPart},Me,MA,!MA,Caster,Melee]}) /varset 1stPart ${BuffSub}
             | Cast buffs on MA && ${Spell[${Buffs[${i}]}].TargetType.Find[self]}
             /if ((${2ndPart.Equal[MA]} || ${2ndPart.Equal[DualMA]}) && ${Spawn[=${MainAssist}].Distance}<=${SpellRange} && ${Spawn[=${MainAssist}].ID} && ${Buff${i}GM7}==0) {
                 /if (${DebugBuffs}) /echo \atDEBUGBUFFS Cast buffs with MA tag ${Buffs[${i}]} \agLine#: ${Macro.CurLine}
                 | Check buffs in file to see if MA has buff or its blocked
-                /if (${Ini["KissAssist_Buffs.ini",${Spawn[${MainAssistType} ${MainAssist}].ID},"Blockedbuffs"].Find[${Buffs[${i}]}]}) /goto :SkipBuff
-                /if (${Ini["KissAssist_Buffs.ini",${Spawn[${MainAssistType} ${MainAssist}].ID},"Buffs"].Find[${Buffs[${i}]}]}) /goto :SkipBuff
-                /varset Buffs[${i}] ${1stPart}
+                /if (${Ini["KissAssist_Buffs.ini",${Spawn[${MainAssistType} ${MainAssist}].ID},"Blockedbuffs"].Find[${1stPart}]}) /goto :SkipBuff
+                /if (${Ini["KissAssist_Buffs.ini",${Spawn[${MainAssistType} ${MainAssist}].ID},"Buffs"].Find[${1stPart}]}) /goto :SkipBuff
+                |/varset Buffs[${i}] ${1stPart}
                 | If its a group spell cast on mercs - owner
                 /if (${Spawn[=${MainAssist}].Type.Equal[mercenary]} && ${Spell[${Buffs[${i}]}].TargetType.Find[group v]}) { 
                     /varset MATargetID ${Spawn[=${MainAssist}].Owner.ID}
@@ -3096,22 +3295,22 @@ Sub Main
                     /varset MATargetID ${Spawn[=${MainAssist}].ID}
                 }
                 /if (${Cursor.ID}) /call CheckCursor CheckBuffs1
-                /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs: MA Buff /call CastWhat "${Buffs[${i}]}" ${MATargetID} Buffs \agLine#: ${Macro.CurLine}
-                /call CastWhat "${Buffs[${i}]}" ${MATargetID} Buffs-nomem
+                /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs: MA Buff /call CastWhat "${1stPart}" ${MATargetID} Buffs \agLine#: ${Macro.CurLine}
+                /call CastWhat "${1stPart}" ${MATargetID} Buffs-nomem
                 /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs: MA Buff MacroReturn: ${Macro.Return} \agLine#: ${Macro.CurLine}
                 /delay 60 !${Me.Casting.ID}
                 /if (${Macro.Return.Equal[CAST_SUCCESS]} || (!${Spawn[${MainAssistType} ${MainAssist} group].ID} && ${Macro.Return.Equal[CAST_TAKEHOLD]} )) {
-                    /echo Buffing MA >> ${Spawn[=${MainAssist}].CleanName} << with ${Buffs[${i}]}.
+                    /echo Buffing MA >> ${Spawn[=${MainAssist}].CleanName} << with ${1stPart}.
                     | For dual tag need to asssign spell duration of the 3rd part 
-                    /if (${Select[${2ndPart},Dual,DualMA]}) /varset Buffs[${i}] ${3rdPart}
-                    /varcalc Buff${i}GM7 (${Spell[${Buffs[${i}]}].Duration.TotalSeconds}*${DurationMod})*10
+                    /if (${Select[${2ndPart},Dual,DualMA]}) /varset 1stPart ${3rdPart}
+                    /varcalc Buff${i}GM7 (${Spell[${1stPart}].Duration.TotalSeconds}*${DurationMod})*10
                     /if (${DebugBuffs}) /echo DEBUGBUFFS CheckBuffs MA Buff Timer ${Buff${i}GM7} Line#: ${Macro.CurLine}
                     /varset WriteBuffsTimer 0
                     /call WriteBuffs
                     /goto :SkipCheckIni
                 }
                 /if (${Macro.Return.Equal[CAST_COMPONENTS]}) {
-                    /echo You are missing components. Turning off ${Buffs[${i}]}.
+                    /echo You are missing components. Turning off ${1stPart}.
                     /varset Buffs[${i}] NULL
                     /varset FullText NULL
                     /goto :SkipBuff
@@ -3121,16 +3320,16 @@ Sub Main
             /if (${Select[${2ndPart},MA,DualMA]}) /goto :SkipBuff
             | Check if buff is up and if it stacks with existing buffs
             /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs BuffSlot: !${Int[${Me.Buff[${Buffs[${i}]}].ID}]} SongSlot: ${Int[${Me.Song[${Buffs[${i}]}].ID}]} Stacks: ${Spell[${Buffs[${i}]}].Stacks[0]} 2nd Part: ${Select[${2ndPart},Aura,Mount,Mana,End,Summon]}<1 Tar Type: ${Spell[${Buffs[${i}]}].TargetType} \agLine#: ${Macro.CurLine}
-            /if ((!${Int[${Me.Buff[${BuffSub}].ID}]} && !${Int[${Me.Song[${BuffSub}].ID}]}) && ${Spell[${Buffs[${i}]}].Stacks[0]}) {
+            /if ((!${Int[${Me.Buff[${BuffSub}].ID}]} && !${Int[${Me.Song[${BuffSub}].ID}]}) && ${Spell[${1stPart}].Stacks[0]}) {
                 | Check for spells with 2 parts such as Exigent Focusing Rk. II,Talisman of Soul's Unity Rk. II - Set Buffs to actual spell
-                /if (${2ndPart.Equal[Dual]})  /varset Buffs[${i}] ${1stPart}
-                /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs -- 2nd asssigned: ${Buffs[${i}]} TargetType: ${Spell[${Buffs[${i}]}].TargetType} \agLine#: ${Macro.CurLine}
+                /if (${Select[${2ndPart},Dual,DualMelee,DualCaster]}) /varset 1stPart ${Buffs[${i}].Arg[1,|]}
+                /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs -- 2nd asssigned: ${1stPart} TargetType: ${Spell[${1stPart}].TargetType} \agLine#: ${Macro.CurLine}
                 | If Target.Type=Group then buff self with group buff
-                /if ((${BookSpellTT.Find[0]} && ${Spell[${Buffs[${i}]}].TargetType.Find[group v]}) || ${BookSpellTT.Find[group v]} ) {
+                /if ((${BookSpellTT.Find[0]} && ${Spell[${1stPart}].TargetType.Find[group v]}) || ${BookSpellTT.Find[group v]} ) {
                     /if (${Cursor.ID}) /call CheckCursor CheckBuffs2
-                    /call CastWhat "${Buffs[${i}]}" ${Me.ID} Buffs-nomem
+                    /call CastWhat "${1stPart}" ${Me.ID} Buffs-nomem
                     /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
-                        /echo Buffing >> ${Buffs[${i}]} <<
+                        /echo Buffing >> ${1stPart} <<
                         /doevents flush Worn_off
                         /varset WriteBuffsTimer 0
                         /call WriteBuffs
@@ -3138,11 +3337,11 @@ Sub Main
                     }
                 }
                 | If Target.Type=Single then buff each party member with single buff
-                /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs Find 0: ${BookSpellTT.Find[0]} Spell TT: ${Spell[${Buffs[${i}]}].TargetType.Find[single]} BookTT: ${BookSpellTT.Find[single]} Medding: ${Medding} MedCombat: ${MedCombat} \agLine#: ${Macro.CurLine}
-                /if ((${BookSpellTT.Find[0]} && ${Spell[${Buffs[${i}]}].TargetType.Find[single]}) || ${BookSpellTT.Find[single]}) {
+                /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs Find 0: ${BookSpellTT.Find[0]} Spell TT: ${Spell[${1stPart}].TargetType.Find[single]} BookTT: ${BookSpellTT.Find[single]} Medding: ${Medding} MedCombat: ${MedCombat} \agLine#: ${Macro.CurLine}
+                /if ((${BookSpellTT.Find[0]} && ${Spell[${1stPart}].TargetType.Find[single]}) || ${BookSpellTT.Find[single]}) {
                     /if (${Buff${i}GM0}) /varset Buff${i}GM0 0
-                    /if (${2ndPart.Equal[Dual]})  /varset Buffs[${i}] ${1stPart}
-                    /if (${Group} && ${Me.CurrentMana}>(${Spell[${Buffs[${i}]}].Mana}*${Group})) {
+                    /if (${Select[${2ndPart},Dual,DualMelee,DualCaster]})  /varset 1stPart ${Buffs[${i}].Arg[1,|]}
+                    /if (${Group} && ${Me.CurrentMana}>(${Spell[${1stPart}].Mana}*${Group})) {
                         /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs Single Type Group Buff \agLine#: ${Macro.CurLine}
                         /for j 0 to ${Group}
                             /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs !${Group.Member[${j}].ID} || ${Spawn[${Group.Member[${j}]}].Distance}>=${SpellRange} || ${2ndPart.Equal[Me]} && ${j}>=1 || ${2ndPart.Equal[MA]} && ${Group.Member[${j}].ID}!=${Spawn[${MainAssistType} ${MainAssist}].ID} || ${Buff${i}GM${j}} \agLine#: ${Macro.CurLine}
@@ -3150,74 +3349,74 @@ Sub Main
                             /if (!${Group.Member[${j}].ID} || ${Spawn[${Group.Member[${j}]}].Distance}>=${SpellRange} || ${Buff${i}GM${j}}) /continue
                             /if (${2ndPart.Equal[Me]} && ${j}>=1) /continue
                             /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs 3 ${2ndPart.Equal[caster]}  ${Select[${Group.Member[${j}].Class.ShortName},CLR,DRU,SHM,BST,ENC,MAG,NEC,PAL,SHD,RNG,WIZ]} ${2ndPart.Equal[Melee]} ${Select[${Group.Member[${j}].Class.ShortName},BRD,BER,BST,MNK,PAL,ROG,RNG,SHD,WAR]} \agLine#: ${Macro.CurLine}
-                            /if ((${2ndPart.Equal[caster]} && ${Select[${Group.Member[${j}].Class.ShortName},CLR,DRU,SHM,BST,ENC,MAG,NEC,PAL,SHD,RNG,WIZ]}==0) || (${2ndPart.Equal[Melee]} && ${Select[${Group.Member[${j}].Class.ShortName},BRD,BER,BST,MNK,PAL,ROG,RNG,SHD,WAR]}==0)) /continue
-                            /if (${Me.CurrentMana}<${Spell[${Buffs[${i}]}].Mana}) /continue
+                            /if ((${Select[${2ndPart},caster,DualCaster]}>0 && ${Select[${Group.Member[${j}].Class.ShortName},CLR,DRU,SHM,BST,ENC,MAG,NEC,PAL,SHD,RNG,WIZ]}==0) || (${Select[${2ndPart},Melee,DualMelee]}>0 && ${Select[${Group.Member[${j}].Class.ShortName},BRD,BER,BST,MNK,PAL,ROG,RNG,SHD,WAR]}==0)) /continue
+                            /if (${Me.CurrentMana}<${Spell[${1stPart}].Mana}) /continue
                             /if (${2ndPart.Equal[!MA]} && ${Group.Member[${j}].ID}==${Spawn[${MainAssistType} ${MainAssist}].ID}) /continue
                             /if (${Cursor.ID}) /call CheckCursor CheckBuffs3
                             /if (${AggroTargetID}) /return
-                            /delay 7s ${Cast.Ready[${Buffs[${i}]}]}
-                            /call CastWhat "${Buffs[${i}]}" ${Group.Member[${j}].ID} Buffs-nomem
+                            /delay 7s ${Cast.Ready[${1stPart}]}
+                            /call CastWhat "${1stPart}" ${Group.Member[${j}].ID} Buffs-nomem
                             /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
-                                /echo Buffing ${Buffs[${i}]} on ${Group.Member[${j}].CleanName}
+                                /echo Buffing ${1stPart} on ${Group.Member[${j}].CleanName}
                                 | assisgn buff 3rd part of dual tag for actual duration
-                                /if (${2ndPart.Equal[Dual]}) /varset Buffs[${i}] ${3rdPart}
-                                /varcalc Buff${i}GM${j} (${Spell[${Buffs[${i}]}].Duration.TotalSeconds}*${DurationMod})*10
+                                /if (${Select[${2ndPart},Dual,DualMelee,DualCaster]}) /varset 1stPart ${3rdPart}
+                                /varcalc Buff${i}GM${j} (${Spell[${1stPart}].Duration.TotalSeconds}*${DurationMod})*10
                                 /doevents flush Worn_off
                                 /varset WriteBuffsTimer 0
                                 /call WriteBuffs
                             }
                         /next j
                         /goto :SkipCheckIni
-                    } else /if (${Select[${2ndPart},MA,Melee,Caster]}==0) {
+                    } else /if (${Select[${2ndPart},MA,Melee,Caster,DualMA,DualMelee,DualCaster]}==0) {
                         /if (${Cursor.ID}) /call CheckCursor CheckBuffs4
-                        /call CastWhat "${Buffs[${i}]}" ${Me.ID} Buffs-nomem
+                        /call CastWhat "${1stPart}" ${Me.ID} Buffs-nomem
                     }
                 }
                 | If Target.Type=self then buff self
-                /if (!${FindItem[=${Buffs[${i}]}].ID} && ${BookSpellTT.Find[0]} && ${Spell[${Buffs[${i}]}].TargetType.Find[self]} || ${BookSpellTT.Find[self]}) {
+                /if (!${FindItem[=${1stPart}].ID} && ${BookSpellTT.Find[0]} && ${Spell[${1stPart}].TargetType.Find[self]} || ${BookSpellTT.Find[self]}) {
                     /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs Self Buff \agLine#: ${Macro.CurLine}
-                        /call CastWhat "${Buffs[${i}]}" ${Me.ID} Buffs-nomem 
+                        /call CastWhat "${1stPart}" ${Me.ID} Buffs-nomem 
                     /if (${Macro.Return.Equal[CAST_COMPONENTS]}) {
-                        /echo You are missing components. Turning off ${Buffs[${i}]}.
+                        /echo You are missing components. Turning off ${1stPart}.
                         /varset Buffs[${i}] NULL
                         /varset FullText NULL
                         /delay 10
                         /goto :SkipBuff
                     }
                     /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
-                        /echo Casting ${Buffs[${i}]} on me.
-                        /delay 20
+                        /echo Casting ${1stPart} on me.
+                        /delay 10
                     }
                 }
                 | Check if buff needs pet as target ie Mage's Symbiosis line of mana buffs
-                /if (${Me.Pet.ID} && (${BookSpellTT.Find[0]} && ${Spell[${Buffs[${i}]}].TargetType.Find[pet]}  || ${Select[${Spell[${Spell[${Buffs[${i}]}].ID}].Name.Arg[2,]},Symbiosis,Siphon,Simulacrum]})) {
+                /if (${Me.Pet.ID} && (${BookSpellTT.Find[0]} && ${Spell[${1stPart}].TargetType.Find[pet]}  || ${Select[${Spell[${Spell[${1stPart}].ID}].Name.Arg[2,]},Symbiosis,Siphon,Simulacrum]})) {
                     /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs Self Buff that targets pet ie mage mana buff line \agLine#: ${Macro.CurLine}
-                    /call CastWhat "${Buffs[${i}]}" ${Me.Pet} Buffs
+                    /call CastWhat "${1stPart}" ${Me.Pet} Buffs
                 }
             }
             | If buff is an item click it
-            /if (${FindItem[=${Buffs[${i}]}].Spell.Stacks[0]} && !${Int[${Me.Buff[${FindItem[=${Buffs[${i}]}].Spell}].ID}]} && ${FindItem[=${Buffs[${i}]}].Timer}==0 && ${Select[${2ndPart},Aura,Mount,Mana]}<1)  {
+            /if (${FindItem[=${1stPart}].Spell.Stacks[0]} && !${Int[${Me.Buff[${FindItem[=${1stPart}].Spell}].ID}]} && ${FindItem[=${1stPart}].Timer}==0 && ${Select[${2ndPart},Aura,Mount,Mana]}<1) {
                 /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs Items \agLine#: ${Macro.CurLine}
                 | Call of the wild ear fix
-                /if (${Buffs[${i}].Equal[Call of the Wild]}) {
+                /if (${1stPart.Equal[Call of the Wild]}) {
                     /casting 133851 item 
                     /delay 15
                 } else {
-                    /call CastWhat "${Buffs[${i}]}" ${Me.ID} Buffs
+                    /call CastWhat "${1stPart}" ${Me.ID} Buffs
                 }
-                /if (${Macro.Return.Equal[CAST_SUCCESS]}) /echo Clicking > ${Buffs[${i}]} <
+                /if (${Macro.Return.Equal[CAST_SUCCESS]}) /echo Clicking > ${1stPart} <
             }
             | If Buff is a Mana,Aura,Mount,Me,Summon,End, an item, self buff or Spawn ID is me skip ini check because none of these are cast on others
-            /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs  IniBuffCheck 1: Mana,Aura,Mount,Me,Summon,End:${Select[${2ndPart},Mana,Aura,Mount,Me,Summon,End,0]} Item:${FindItemCount[=${Buffs[${i}]}]}>=1 Self:${Spell[${Buffs[${i}]}].TargetType.Find[self]} \agLine#: ${Macro.CurLine}
+            /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs  IniBuffCheck 1: Mana,Aura,Mount,Me,Summon,End:${Select[${2ndPart},Mana,Aura,Mount,Me,Summon,End,0]} Item:${FindItemCount[=${1stPart}]}>=1 Self:${Spell[${1stPart}].TargetType.Find[self]} \agLine#: ${Macro.CurLine}
          :SkipBuff
-            /if (${Select[${2ndPart},Mana,Aura,Mount,Me,Summon,End,0]} || (${FindItemCount[=${Buffs[${i}]}]}>=1 && ${Select[${Spell[${Buffs[${i}]}].TargetType},self]}) || (${FindItemCount[${1stPart}]}>=1 && ${Select[${Spell[${3rdPart}].TargetType},self]}) || (${BookSpellTT.Find[0]} && ${Spell[${Buffs[${i}]}].TargetType.Find[self]}) || ${BookSpellTT.Find[self]} || ${BookSpellTT.Find[pet]}) /goto :SkipCheckIni
-            /if (${Redguides} && !${IniNextTimer} && !${CombatStart}) /call CheckiniBuffs "${Buffs[${i}]}" ${i} ${SpellRange} "${1stPart}" "${2ndPart}" "${3rdPart}" "${4thPart}" "${BookSpellTT}"
+            /if (${Select[${2ndPart},Mana,Aura,Mount,Me,Summon,End,0]} || (${FindItemCount[=${1stPart}]}>=1 && ${Select[${Spell[${1stPart}].TargetType},self]}) || (${FindItemCount[${1stPart}]}>=1 && ${Select[${Spell[${3rdPart}].TargetType},self]}) || (${BookSpellTT.Find[0]} && ${Spell[${1stPart}].TargetType.Find[self]}) || ${BookSpellTT.Find[self]} || ${BookSpellTT.Find[pet]}) /goto :SkipCheckIni
+            /if (${Redguides} && !${IniNextTimer} && !${CombatStart}) /call CheckiniBuffs "${1stPart}" ${i} ${SpellRange} "${1stPart}" "${2ndPart}" "${3rdPart}" "${4thPart}" "${BookSpellTT}"
          :SkipCheckIni
           | Reset spell vars
-            /if (${2ndPart.Length}) {
-                /varset Buffs[${i}] ${FullText}
-                /varset FullText 0
-            }
+            |/if (${2ndPart.Length}) {
+            |    /varset Buffs[${i}] ${FullText}
+            |    /varset FullText 0
+            |}
             /varset BookSpellTT 0
             /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs reset var ${i} ${Buffs[${i}]} \agLine#: ${Macro.CurLine}
         /next i
@@ -3228,7 +3427,11 @@ Sub Main
         }
         /if (!${ReadBuffsTimer} && !${AggroTargetID}) /varset ReadBuffsTimer ${CheckBuffsTimer}s
         /if (${Macro.RunTime}>120 && !${IniNextTimer}) /varset IniNextTimer 30s
-        /if (${Me.Gem[${MiscGem}].Name.NotEqual[${ReMemMiscSpell}]} && ${MiscGemRemem}) /call CastMemSpell "${ReMemMiscSpell}" ${MiscGem} 0 CheckBuffs
+        /if (${Me.Gem[${MiscGem}].Name.NotEqual[${ReMemMiscSpell}]} && ${MiscGemRemem}) {
+            /varset DontMoveMe 1
+            /call CastMemSpell "${ReMemMiscSpell}" ${MiscGem} 0 CheckBuffs
+            /varset DontMoveMe 0
+        }
         /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs Leave \agLine#: ${Macro.CurLine}
     /return
 | -------------------------------------------------------------------------------------
@@ -3293,9 +3496,17 @@ Sub Main
         /if (${Me.Class.ShortName.Equal[BRD]}) {
             /if (!${Me.Gem[${AuraSpell}]} && ${Me.Book[${AuraSpell}]}) {
                 /if (${Cursor.ID}) /call CheckCursor CheckAura
-                |/memorize "${AuraSpell}" gem${MiscGem}
-                        /call CastMemSpell "${AuraSpell}" ${MiscGem} 0 CheckAura
-                /delay 15s ${Me.Gem[${MiscGem}].Name.Equal[${AuraSpell}]}
+                /if (${Twist}) {
+                    /while (${Me.BardSongPlaying}) {
+                        /if (${Twist}) /squelch /twist off
+                        /stopsong
+                        /delay 10
+                    }
+                }
+                /varset DontMoveMe 1
+                /call CastMemSpell "${AuraSpell}" ${MiscGem} 0 CheckAura
+                /varset DontMoveMe 0
+                |/delay 15s ${Me.Gem[${MiscGem}].Name.Equal[${AuraSpell}]}
             }
             /if (${Me.Book[${AuraSpell}]}) {
                 /squelch /twist once ${Me.Gem[${AuraSpell}]}
@@ -3347,7 +3558,15 @@ Sub Main
         /if (${DebugBuffs}) /echo \atDEBUGBUFFS SummonStuff Enter SSpell: ${SSpell} SumItem: ${SumItem} SumNum: ${SumNum} \agLine#: ${Macro.CurLine}
         /if (${FindItemCount[=${SumItem}]}<${SumNum}) {
             :summonagain
-            /if (${Twist}) /multiline ; /squelch /twist off ; /varset Twisting 0
+            /if (${Twist}) {
+                /squelch /twist off
+                /varset Twisting 0
+                /while (${Me.BardSongPlaying}) {
+                    /stopsong
+                    /delay 10
+                    /if (${Twist}) /squelch /twist off
+                }
+            }
             /if (${Me.FreeInventory}==0) {
                 /echo No room in inventory skipping summoning >> ${SumItem} <<.
                 /goto :summondone
@@ -3426,20 +3645,21 @@ Sub Main
             /if (${IniIDCount}<=0 || ${BuffName.Equal[null]}) /return
             | Start scan of buffs listed on toons in ini file
             /for k 1 to ${IniIDCount}
+                /varset skipFlag 0
                 /if (${AggroTargetID}) /return
                 | If the Spawn ID is not in the zone and not a PC/merc and not me skip to next ID
                 /if (!${Spawn[${IniIDList.Arg[${k},|]}].ID} || ${Select[${Spawn[${IniIDList.Arg[${k},|]}].Type},AURA,BANNER,CAMPFIRE,CORPSE,CHEST,ITEM,NPC,TRIGGER,TRAP,TIMER,MOUNT]} || ${IniIDList.Arg[${k},|]}==${Me.ID}) /goto :NextCharCheck
                 | If Buff is a Mana,Aura,Mount,Me,Summon,End, an item, self buff or Spawn ID is me skip because none of these are cast on others
                 /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckINIBuffs  IniBuffCheck 1: Mana,Aura,Mount,Me,Summon,End:${Select[${2ndPart},Mana,Aura,Mount,Me,Summon,End,0]} Item:${FindItemCount[=${BuffName}]}>=1 Self:${Spell[${BuffName}].TargetType.Find[self]} \agLine#: ${Macro.CurLine}
                 | Set buff to correct spell to check for with Dual tag
-                /if (${2ndPart.Equal[Dual]}) {
+                /if (${2ndPart.Find[Dual]}) {
                     /if (${Select[${Spell[${3rdPart}].TargetType},self]})  {
                         /goto :NextCharCheck
                     } else /varset BuffName ${3rdPart}
                 }
                 | If buff marked MA skipped if spawn ID isn't MA
-                /if (${2ndPart.Equal[MA]} && ${Spawn[${IniIDList.Arg[${k},|]}].CleanName.NotEqual[${MainAssist}]} || ${2ndPart.Equal[!MA]} && ${Spawn[${IniIDList.Arg[${k},|]}].CleanName.Equal[${MainAssist}]}) /goto :NextCharCheck
-                /if ((${2ndPart.Equal[Caster]} && ${Select[${Spawn[${IniIDList.Arg[${k},|]}].Class.ShortName},CLR,DRU,SHM,BST,ENC,MAG,NEC,PAL,SHD,RNG,WIZ]}==0) || (${2ndPart.Equal[Melee]} && ${Select[${Spawn[${IniIDList.Arg[${k},|]}].Class.ShortName},BRD,BER,BST,MNK,PAL,ROG,RNG,SHD,WAR]}==0)) /goto :NextCharCheck
+                /if (${Select[${2ndPart},MA,DualMA]} && ${Spawn[${IniIDList.Arg[${k},|]}].CleanName.NotEqual[${MainAssist}]} || ${2ndPart.Equal[!MA]} && ${Spawn[${IniIDList.Arg[${k},|]}].CleanName.Equal[${MainAssist}]}) /goto :NextCharCheck
+                /if ((${Select[${2ndPart},Caster,DualCaster]}>0 && ${Select[${Spawn[${IniIDList.Arg[${k},|]}].Class.ShortName},CLR,DRU,SHM,BST,ENC,MAG,NEC,PAL,SHD,RNG,WIZ]}==0) || (${Select[${2ndPart},Melee,DualMelee]}>0 && ${Select[${Spawn[${IniIDList.Arg[${k},|]}].Class.ShortName},BRD,BER,BST,MNK,PAL,ROG,RNG,SHD,WAR]}==0)) /goto :NextCharCheck
                 /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckINIBuffs  IniBuffCheck 1.1: 2ndPart: ${2ndPart} Class Name: ${Spawn[${IniIDList.Arg[${k},|]}].Class.ShortName} \agLine#: ${Macro.CurLine}
                 | Temp variable to store buff name after stripping rk stuff makes it easier to compare
                 /varset IniTempBuff ${BuffName}
@@ -3472,7 +3692,7 @@ Sub Main
                 /next l
                 /if (!${skipFlag}) { 
                     | If buff has dual tag assign current buff to spell that needs to be cast
-                    /if (${2ndPart.Equal[Dual]}) /varset BuffName ${1stPart}
+                    /if (${2ndPart.Find[Dual]}) /varset BuffName ${1stPart}
                     | varset ini buff timer toon Id spell Id to shorten var and clarity
                     /varset PBTimerID ${IniIDList.Arg[${k},|]}${Spell[${BuffName}].ID}
                     | Define timer for spell i am about to cast
@@ -3498,7 +3718,7 @@ Sub Main
                     /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckINIBuffs IniBuffCheck 8: IniBuffTimer${PBTimerID}:${IniBuffTimer${PBTimerID}} IniNextTimer:${IniNextTimer} \agLine#: ${Macro.CurLine}
                 }
                 :NextCharCheck
-                /if (${2ndPart.Equal[Dual]}) /varset BuffName ${3rdPart}
+                /if (${2ndPart.Find[Dual]}) /varset BuffName ${3rdPart}
             /next k
         }
         /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckIniBuffs Leave \agLine#: ${Macro.CurLine}
@@ -3508,8 +3728,8 @@ Sub Main
 | ----------------------------------------------------------------------------
     Sub RegenOther(RGName, Stat, int StatPct, RegonOnClasses)
     | Casting on others during combat will interrupt fast med
-    /if (${Medding} && ${MedCombat}) /return
-    /if (${Me.Invis}) /return
+    /if (${Medding} && ${MedCombat}) /return FALSE
+    /if (${Me.Invis}) /return FALSE
         /if (${DebugBuffs}) /echo \atDEBUGBUFFS RegenOther Enter \agLine#: ${Macro.CurLine} ${RGName} ${Stat} ${StatPct} ${RegonOnClasses} \agLine#: ${Macro.CurLine}
         /declare i int local 
         /declare ROResult string local FALSE
@@ -3532,6 +3752,7 @@ Sub Main
                 /call CastWhat "${RGName}" ${Group.Member[${i}].ID} Regenother
                 /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
                     /echo Casting ${RGName} on ${Group.Member[${i}].CleanName} for ${Stat}.
+                    |/varcalc Buff${i}GM${j} (${Spell[${1stPart}].Duration.TotalSeconds}*${DurationMod})*10
                     /varset ROResult TRUE
                     /break
                 }
@@ -3685,7 +3906,11 @@ Sub Main
         | Check to have pet come to owner if owner out of camp too long.
         /if (${Select[${Role},pettank,hunterpettank]} && ${Math.Distance[${Me.Y},${Me.X}:${CampYLoc},${CampXLoc}]}>${CampRadius} && (${Math.Distance[${Me.Pet.Y},${Me.Pet.X}:${CampYLoc},${CampXLoc}]}<=${CampRadius}) && ${Me.Pet.Stance.Equal[GUARD]}) /pet follow
         |/if (${Me.Pet.ID} && ${Me.Gem[${MiscGem}].Name.NotEqual[${ReMemMiscSpell}]}) /memorize "${ReMemMiscSpell}" gem${MiscGem}
-        /if (${Me.Pet.ID} && ${Me.Gem[${MiscGem}].Name.NotEqual[${ReMemMiscSpell}]} && ${MiscGemRemem}) /call CastMemSpell "${ReMemMiscSpell}" ${MiscGem} 0 DoPetStuff
+        /if (${Me.Pet.ID} && ${Me.Gem[${MiscGem}].Name.NotEqual[${ReMemMiscSpell}]} && ${MiscGemRemem}) {
+            /varset DontMoveMe 1
+            /call CastMemSpell "${ReMemMiscSpell}" ${MiscGem} 0 DoPetStuff
+            /varset DontMoveMe 0
+        }
         /if (${Debug}) /echo \atDEBUG DoPetStuff Leave \agLine#: ${Macro.CurLine}
     /return
 | -------------------------------------------------------------------------------------
@@ -4139,7 +4364,7 @@ Sub Main
         :WaitOnRez
         /if (${EverQuest.GameState.Equal[CHARSELECT]}) /endmac
         /if ((${Me.Hovering} || ${CampZone} != ${Zone.ID}) && ${RezAcceptOn} && ${IAmDead}) {
-            /if (${Attacking}) /call CombatReset
+            /if (${Attacking}) /call CombatReset 0 endmacroif
             /delay 10
             /if (${ClickBacktoCamp}) /call CampfireBack
             /if (${CampOnDeath}) /call DoICamp
@@ -4151,6 +4376,8 @@ Sub Main
                 /if (${Twist}) {
                     /squelch /twist off
                     /delay 20
+                } else /if (${Me.BardSongPlaying}) {
+                    /stopsong
                 }
                 /endmac
             }
@@ -4164,9 +4391,12 @@ Sub Main
         /if (!${CampOnDeath}) /return
         /if (!${CampOnDeathTimer} && ${CampZone} != ${Zone.ID} && ${Me.Buff[Revival Sickness].ID}) {
             /echo I am dead and not where I am suppose to be. Time to camp out.
-            /if (${Twist}) {
-                /squelch /twist off
-                /delay 20
+            /if (${IAmABard}) {
+                /while (${Me.BardSongPlaying}) {
+                    /if (${Twist}) /squelch /twist off
+                    /stopsong
+                    /delay 10
+                }
             }
             /docommand /camp desktop
             /delay 40s
@@ -4178,27 +4408,40 @@ Sub Main
 | ----------------------------------------------------------------------------
     Sub DoBardStuff
         /if (${Me.Class.Name.NotEqual[Bard]}) /return
+        /if (!${Twist}) {
+            /varset Twisting 0
+            /varset DPSTwisting 0
+            /if (${Me.BardSongPlaying} && ${Me.Casting.ID} && !${Window[CastingWindow].Open}) /stopsong
+        }
         /if (!${BardStartTwist} && !${Me.Invis}) {
-            /squelch /twist off
-            /delay 10
+            /while (${Me.BardSongPlaying}) {
+                /if (${Twist}) /squelch /twist off
+                /stopsong
+                /delay 10
+            }
             /if (${TwistWhat.Length} && ${TwistWhat.Find[order]}==0) /squelch /twist ${TwistWhat}
             /varset BardStartTwist 1
             /return
         }
         /if (${Me.Invis} && ${Twist} || (${Medding} && ${MedCombat} && ${AggroTargetID})) {
-            /squelch /twist off
-            /stop song
+            /while (${Me.BardSongPlaying}) {
+                /if (${Twist}) /squelch /twist off
+                /stopsong
+                /delay 10
+            }
             /return
         }
         /if (${Debug}) /echo \atDEBUG DoBardStuff: Enter \agLine#: ${Macro.CurLine}
         /if (${MeleeTwistOn} && ${CombatStart} && (!${DPSTwisting} || (${DPSTwisting} && !${Twist}))) {
-             /if (!${DPSTwisting} && ${MeleeTwistWhat.NotEqual[Continuous]}) /echo == Starting melee twist
+            /if (!${DPSTwisting} && ${MeleeTwistWhat.NotEqual[Continuous]}) /echo == Starting melee twist
             /varset DPSTwisting 1
             /varset Twisting 0
             /if (${MeleeTwistWhat.Equal[Continuous]}) {
                 /if (${Twist}) {
                     /echo == Continuing normal twist for melee
                     /return
+                } else {
+                    /squelch /twist ${TwistWhat}
                 }
             } else {
                 /squelch /twist ${MeleeTwistWhat}
@@ -4215,7 +4458,13 @@ Sub Main
                 /echo == Starting normal twist
             }
         }
-        /if (!${TwistOn} && !${CombatStart} && ${Twist}) /squelch /twist off
+        /if (!${TwistOn} && !${CombatStart} && ${Twist}) {
+            /while (${Me.BardSongPlaying}) {
+                /if (${Twist}) /squelch /twist off
+                /stopsong
+                /delay 10
+            }
+        }
         /delay 1
         /if (${Debug}) /echo \atDEBUG DoBardStuff: Leave \agLine#: ${Macro.CurLine}
     /return
@@ -4233,7 +4482,7 @@ Sub Main
                 |-- Druid AA or Spell group evac casting.
                 /if (${Select[${Me.Class.ShortName},DRU]}) {
                     |- Drop Divine Barrier if it is up so we can exodus group!
-                    /removebuff Divine Barrier
+                    /removebuff "Divine Barrier"
                     /if (${Me.AltAbilityReady[Exodus]}) {
                         /call CastWhat "Exodus" ${Me.ID} GroupEscape
                     } else /if (${Me.Book[Succor]}) {
@@ -4284,7 +4533,7 @@ Sub Main
                         /delay 10 ${Target.ID}==${Spawn[${MainAssist} ${MainAssistType}].ID}
                     }
                 }
-                /if (${DebugHeal}) /echo \amDEBUGHEALS CheckHealth:  Tank OOG: ${Spawn[${MainAssist}].PctHPs} ${Spawn[${MainAssist} ${MainAssistType}].ID}  ${Spawn[${MainAssist} ${MainAssistType}].Type.NotEqual[corpse]} \agLine#: ${Macro.CurLine}
+                /if (${DebugHeal}) /echo \amDEBUGHEALS CheckHealth:  Tank OOG: ${Spawn[${MainAssist}].PctHPs} ${SingleHealPointMA} ${Spawn[${MainAssist} ${MainAssistType}].ID}  ${Spawn[${MainAssist} ${MainAssistType}].Type.NotEqual[corpse]} \agLine#: ${Macro.CurLine}
                 |Add code to check if pet HP < needed.
                 /if (${Spawn[${MainAssist} ${MainAssistType}].PctHPs} < ${SingleHealPointMA}) /call SingleHeal "${MainAssist}" "${MainAssistType}" ${Spawn[${MainAssist} ${MainAssistType}].PctHPs} 6
             }
@@ -4297,7 +4546,7 @@ Sub Main
                 /varset MostHurtHP 100
                 /varset MostHurtNo 0
                 /for i 0 to 5
-                    /if (${Select[${HealsOn},2]} && ${Select[${Spawn[${MainAssist} ${MainAssistType}].ID},${Group.Member[${i}].ID},${Group.Member[${i}].Pet.ID}]}>0) /continue
+                    /if (${Select[${HealsOn},2]} && ${Spawn[${MainAssist} ${MainAssistType}].ID} && ${Select[${Spawn[${MainAssist} ${MainAssistType}].ID},${Group.Member[${i}].ID},${Group.Member[${i}].Pet.ID}]}>0) /continue
                     /if (${Group} && ${Group.Member[${i}].ID} && ${Group.Member[${i}].Type.NotEqual[corpse]} && ${Group.Member[${i}].PctHPs}>=1) {
                     /if (${DebugHeal}) /echo \amDEBUGHEALS CheckHealth:  -- Most Hurt:${i} ${MostHurtNo} ${MostHurtName} ${MostHurtID} ${MostHurtHP} \agLine#: ${Macro.CurLine}
                         /if (${Group.Member[${i}].PctHPs} < ${MostHurtHP}) {
@@ -4363,7 +4612,9 @@ Sub Main
         /if (${Select[${SHealType},PC,Pet,Mercenary]}==0) /return
         /if (${Me.Invis} && !${AggroTargetID}) /return    
         /if (${DebugHeal}) /echo \amDEBUGHEALS SingleHeal Enter: \ayName: ${SHealName} TType: ${SHealType} Hps%: ${SHealHPs} WhoNum:${WhoNum} \agLine#: ${Macro.CurLine}
+        /varset GoMByPass 1
         /doevents
+        /varset GoMByPass 0
         /declare i               int     local   0
         /declare SHealSpell      string  local
         /declare SHealTag        string  local
@@ -4375,66 +4626,70 @@ Sub Main
         | Set MA ID to 6 to keep spell durations correct
         /if (${WhoNum}!=6 && ${SHealThem}==${MainAssistID}) /varset WhoNum 6
         :NoHeal
+        /if (${SHealType.Equal[corpse]} || !${Spawn[=${SHealName} ${SHealType}].ID} || ${Spawn[=${SHealName}].Type.Equal[corpse]}) /return
         /varset HealAgain 0
         /varset HealLoopCount 0
         /for i 1 to ${SingleHeal.Size}
             | If heal is null or off |0 or spell/aa/item not ready skip it
             /if (${DebugHeal}) /echo \amDEBUGHEALS SingleHeal \awSpell ${i}: ${SingleHeal[${i}]}  ${SingleHeal[${i}].Arg[1,|]}   ${SingleHeal[${i}].Arg[2,|]}   ${SingleHeal[${i}].Arg[3,|]} \agLine#: ${Macro.CurLine}
             /if (${DebugHeal}) /echo \amDEBUGHEALS SingleHeal \awSpellSkip: !${SingleHeal[${i}].Length} || ${SingleHeal[${i}].Arg[2,|].Equal[0]} \agLine#: ${Macro.CurLine}
-            /if (!${SingleHeal[${i}].Length} || ${SingleHeal[${i}].Arg[2,|].Equal[0]}) /goto :SNextHeal            
+            /if (!${SingleHeal[${i}].Length} || ${SingleHeal[${i}].Arg[2,|].Equal[0]}) /continue
             /varset SHealSpell   ${SingleHeal[${i}].Arg[1,|]}
             /varset SHealPct     ${SingleHeal[${i}].Arg[2,|]}
             /varset SHealTag     ${SingleHeal[${i}].Arg[3,|]}
             /varset SHealRange ${Spell[${SHealSpell}].Range}
-            /if (${Spell[${SHealSpell}].TargetType.Find[Group v]})  /varset SHealRange ${Spell[${SHealSpell}].AERange}
+            /call CastReady "${SHealSpell}" singleheal
+            /varset SpellReadyL ${Macro.Return}
+            /if (!${SpellReadyL}) /continue
+            /if (${Spell[${SHealSpell}].TargetType.Find[Group v]}) /varset SHealRange ${Spell[${SHealSpell}].AERange}
             /if (!${SHealRange}) /varset SHealRange 100
             | New Conditional Check to Skip spell
-            /if (${ConditionsOn} && ${HealsCOn} && ${If[${SHCond[${i}]},0,1]}) /goto :SNextHeal
+            /if (${ConditionsOn} && ${HealsCOn} && ${If[${SHCond[${i}]},0,1]}) /continue
             | Skip Heal if pet 
-            /if (${Spawn[${SHealThem}].Type.NotEqual[Pet]} && ${SHealTag.Equal[pet]}) /goto :SNextHeal
-            /if (${SHealThem}!=${MainAssistID} && (${HealGroupPetsOn} && ${SHealTag.Equal[pet]} && ${Spawn[${SHealThem}].Type.NotEqual[pet]}) || (!${HealGroupPetsOn} && ${SHealTag.Equal[pet]})) /goto :SNextHeal
+            /if (${Spawn[${SHealThem}].Type.NotEqual[Pet]} && ${SHealTag.Equal[pet]}) /continue
+            /if (${SHealThem}!=${MainAssistID} && (${HealGroupPetsOn} && ${SHealTag.Equal[pet]} && ${Spawn[${SHealThem}].Type.NotEqual[pet]}) || (!${HealGroupPetsOn} && ${SHealTag.Equal[pet]})) /continue
             | If tag MA/Mob and heal target not MA or tag !MA and heal target MA skip
             /if (${DebugHeal}) /echo \amDEBUGHEALS SingleHeal \awTAG: ${SHealTag.Equal[MA]} && ${SHealThem}!=${MainAssistID} || ${SHealTag.Equal[Mob]} && ${SHealThem}!=${MainAssistID} || ${SHealTag.Equal[!MA]} && ${SHealThem}==${MainAssistID} \agLine#: ${Macro.CurLine}
-            /if ((${SHealTag.Equal[MA]} && ${SHealThem}!=${MainAssistID}) || (${SHealTag.Equal[Mob]} && ${SHealThem}!=${MainAssistID}) || (${SHealTag.Equal[!MA]} && ${SHealThem}==${MainAssistID})) /goto :SNextHeal
+            /if ((${SHealTag.Equal[MA]} && ${SHealThem}!=${MainAssistID}) || (${SHealTag.Equal[Mob]} && ${SHealThem}!=${MainAssistID}) || (${SHealTag.Equal[!MA]} && ${SHealThem}==${MainAssistID})) /continue
             | Cleric Divine Arbitration and Epics do not work on pets or people out of group
-            /if (${Spawn[${SHealThem}].Type.Equal[Pet]}  && (${SHealSpell.Find[Aegis of Superior Divinity]} || ${SHealSpell.Find[Harmony of the Soul]} ||  ${SHealSpell.Find[Divine Arbitration]})) /goto :SNextHeal
-            /if (!${Spawn[${SHealName} ${SHealType} group].ID} && (${SHealSpell.Find[Aegis of Superior Divinity]} || ${SHealSpell.Find[Harmony of the Soul]} ||  ${SHealSpell.Find[Divine Arbitration]})) /goto :SNextHeal
+            /if (${Spawn[${SHealThem}].Type.Equal[Pet]}  && (${SHealSpell.Find[Aegis of Superior Divinity]} || ${SHealSpell.Find[Harmony of the Soul]} ||  ${SHealSpell.Find[Divine Arbitration]})) /continue
+            /if (!${Spawn[${SHealName} ${SHealType} group].ID} && (${SHealSpell.Find[Aegis of Superior Divinity]} || ${SHealSpell.Find[Harmony of the Soul]} ||  ${SHealSpell.Find[Divine Arbitration]})) /continue
             | intervention and survival lines only work on group members
-            /if (!${Spawn[${SHealName} ${SHealType} group].ID} && ${Select[${Me.Class.Name},Druid,Shaman]} && (${SHealSpell.Find[Intervention]} || ${SHealSpell.Find[Survival]})) /goto :SNextHeal    
+            /if (!${Spawn[${SHealName} ${SHealType} group].ID} && ${Select[${Me.Class.Name},Druid,Shaman]} && (${SHealSpell.Find[Intervention]} || ${SHealSpell.Find[Survival]})) /continue    
             | Check For Life Taps
             /if (${SHealTag.Find[Tap]}) {
                 /if (!${Pulled} && ${CombatStart} && ${Me.PctHPs}<=${SHealPct} && ${Target.Type.NotEqual[Corpse]} && ${Spawn[${MyTargetID}].ID} && ${Spawn[${MyTargetID}].Distance}<=${SHealRange} && ${Spell${i}GM0}==0) {
-                    /if (${Cast.Ready[${SHealSpell}]}) {
-                        /call CastWhat "${SHealSpell}" ${Spawn[${MyTargetID}].ID} SingleHeal
-                    } else /goto :SNextHeal
+                    |/if (${Cast.Ready[${SHealSpell}]}) {
+                    /call CastWhat "${SHealSpell}" ${Spawn[${MyTargetID}].ID} SingleHeal
+                    |} else /continue
                     /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
                         /call BroadCast ${IRCOn} ${EQBCOn} o "${SHealSpell} for  >> ${Me.CleanName} <<"
                         /varcalc Spell${i}GM0 (${Spell[${SHealSpell}].Duration.TotalSeconds}*${DurationMod})*10
                         /if (${DebugHeal}) /echo DEBUGHEALS SingleHeal Assign Timer:Spell${i}GM0 (${Spell[${SHealSpell}].Duration.TotalSeconds}*${DurationMod}) ${Spell${i}GM0} Line#: ${Macro.CurLine}
                         /return
-                    } else /if (${Macro.Return.Equal[CAST_CANCELED]}) /return
-                } else /goto :SNextHeal
+                    } else /if (${Macro.Return.Equal[CAST_CANCELLED]}) /return
+                } else /continue
             }
             | Check For Nuke Heals - contibuted by thenomadman
             /if (${SHealTag.Find[Mob]}) {
-                /if (!${AggroTargetID}) /goto :SNextHeal
+                /if (!${AggroTargetID}) /continue
                 /doevents Switch
                 /if ((${DPSOn} || ${MeleeOn}) && !${MyTargetID} || ${Spawn[${MyTargetID}].Type.Equal[Corpse]}) /call Assist Heals
                 /if (${MyTargetID} && ${Spawn[${MainAssist}].PctHPs}<=${SHealPct} && ${Spawn[${MyTargetID}].LineOfSight} && ${Spawn[${MyTargetID}].Distance}<=${SHealRange} && !${Spawn[${MyTargetID}].Type.Equal[Corpse]}) {
                     /varset HealAgain 2
-                    /if (${Cast.Ready[${SHealSpell}]}) {
-                        /call CastWhat "${SHealSpell}" ${Spawn[${MyTargetID}].ID} SingleHeal
-                    } else /goto :SNextHeal
+                    |/if (${Cast.Ready[${SHealSpell}]}) {
+                    /call CastWhat "${SHealSpell}" ${Spawn[${MyTargetID}].ID} SingleHeal
+                    |} else /continue
                     /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
                         /call BroadCast ${IRCOn} ${EQBCOn} o "${SHealSpell} for >>${Spawn[${SHealName} ${SHealType}].CleanName} << cast on ${Spawn[${MyTargetID}].CleanName}"
                         /varset HealAgain 1
                         /return
-                    } else /if (${Macro.Return.Equal[CAST_CANCELED]}) /return
-                } else /goto :SNextHeal
+                    } else /if (${Macro.Return.Equal[CAST_CANCELLED]}) /return
+                } else /continue
             }
             | Check conditons for heals
             /if (${DebugHeal}) /echo \amDEBUGHEALS SingleHeal \aw${SHealHPs}<=${SHealPct} && ${Spawn[${SHealName} ${SHealType}].Distance}<=${SHealRange} && ${Spell${i}GM${WhoNum}}==0 \agLine#: ${Macro.CurLine}
-            /if (${SHealHPs}<=${SHealPct} && ${Spawn[${SHealName} ${SHealType}].Distance}<=${SHealRange} && ${Spell${i}GM${WhoNum}}==0 && ${Cast.Ready[${SHealSpell}]}) {
+            /if (${SHealHPs}<=${SHealPct} && ${Spawn[${SHealName} ${SHealType}].Distance}<=${SHealRange} && ${Spell${i}GM${WhoNum}}==0) {
                 | target has qualified for a heal
                 /varset HealAgain 2
                 /if (${Spell[${SHealSpell}].TargetType.Equal[Free Target]}) {
@@ -4445,19 +4700,19 @@ Sub Main
                     }
                     /if (!${Target.CanSplashLand}) {
                         /echo Splash Spell will NOT land on target. Skipping.
-                        /goto :SNextHeal                  
+                        /continue                  
                     }
                 }
                 /if (${Select[${EverQuest.Server},zek]} && ${Select[${Target.Type},PC]} && ${Me.Combat}) {
                     /attack off
                     /delay 25 !${Me.Combat}
                 }
-                /if (${SHealThem}==${MainAssistID} && ${Spawn[${MainAssist} ${MainAssistType}].ID}) /removebuff Divine Barrier
-                /if (${Cast.Ready[${SHealSpell}]}) {
-                    /call CastWhat "${SHealSpell}" ${SHealThem} SingleHeal
-                } else {
-                    /goto :SNextHeal
-                }
+                /if (${SHealThem}==${MainAssistID} && ${Spawn[${MainAssist} ${MainAssistType}].ID}) /removebuff "Divine Barrier"
+                |/if (${Cast.Ready[${SHealSpell}]}) {
+                /call CastWhat "${SHealSpell}" ${SHealThem} SingleHeal
+                |} else {
+                |    /continue
+                |}
                 /if (${DebugHeal}) /echo \amDEBUGHEALS SingleHeal \awMR: ${Macro.Return} \agLine#: ${Macro.CurLine}
                 /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
                     /call BroadCast ${IRCOn} ${EQBCOn} o "${SHealSpell} on  >> ${Spawn[${SHealName} ${SHealType}].CleanName} <<"
@@ -4470,14 +4725,18 @@ Sub Main
                     | Prioritize heals by setting flag to check Health again
                     /varset HealAgain 1
                     /return
-                } else /if (${Macro.Return.Equal[CAST_CANCELED]}) /return
+                } else /if (${Macro.Return.Equal[CAST_CANCELLED]}) /return
+            | Check if target still needs a heal. spell might not be ready or timer not zero.
+            } else /if (${SHealHPs}<=${SHealPct} && ${Spawn[${SHealName} ${SHealType}].Distance}<=${SHealRange}) {
+                /varset HealAgain 2
             }
         :SNextHeal
             /if (${DebugHeal}) /delay 2
-            /varcalc HealLoopCount ${HealLoopCount}+1
+            |/varcalc HealLoopCount ${HealLoopCount}+1
         /next i
         | if target qualified for a heal but did not recieve one due to cooldown etc try to heal again. Release after 3s
-        /if (${HealAgain}==2 && ${SingleHeal.Size}==${HealLoopCount} && ${HealLoopTimer}) /goto :NoHeal
+        |/if (${HealAgain}==2 && ${SingleHeal.Size}==${HealLoopCount} && ${HealLoopTimer}) /goto :NoHeal
+        /if (${HealAgain}==2 && ${HealLoopTimer}) /goto :NoHeal
         /if (${DebugHeal}) {
             /echo \amDEBUGHEALS \aySingleHeal Leave \agLine#: ${Macro.CurLine}
             /delay 1
@@ -4667,7 +4926,7 @@ Sub Main
         } else {
             /call LootMobs
         }
-        /call DoWeMove
+        /call DoWeMove 0 lootstuff
         /if (${Debug}) /echo \atDEBUG LootStuff: Leave \agLine#: ${Macro.CurLine}
     /return
 | -------------------------------------------------------------------------------------
@@ -4765,13 +5024,13 @@ Sub Main
 | -------------------------------------------------------------------------------------
 | SUB: Do Mez Stuff
 | -------------------------------------------------------------------------------------
-    Sub DoMezStuff
+    Sub DoMezStuff(string SentFrom)
         /doevents 
         /if (!${MezOn}) /return
         /if (${Me.Hovering}) /return
         /if (!${MyTargetID} && ${Spawn[=${MainAssist}].ID} && ${Spawn[=${MainAssist}].Type.NotEqual[Mercenary]}) /return
         /if (${DMZ} && ${Me.InInstance}==FALSE) /return
-        /if (${DebugMez}) /echo \atDEBUGMEZ DoMezStuff: Enter \agLine#: ${Macro.CurLine}
+        /if (${DebugMez}) /echo \atDEBUGMEZ DoMezStuff: Enter ${SentFrom} \agLine#: ${Macro.CurLine}
         /declare i int local 0
         /declare j int local 0
         /declare skipFlag int local 0
@@ -4784,7 +5043,7 @@ Sub Main
             /return
         }
         | Necros can't AE mez. But you don't need to check it twice.
-        /if (${Select[${MezOn},1,3]} && ${MezAECount}>0 && ${MezMobAECount}>=${MezAECount} && ${MezAETimer}==0 && ${Select[${Me.Class.ShortName},BRD,ENC]})  {
+        /if (${Select[${MezOn},1,2,3]} && ${MezAECount}>0 && ${MezMobAECount}>=${MezAECount} && ${MezAETimer}==0 && ${Select[${Me.Class.ShortName},BRD,ENC]})  {
             /if (${DebugMez}) /echo I'm about to AEMez \agLine#: ${Macro.CurLine}
             /if (${SpawnCount[npc xtarhater loc ${Spawn[id ${MezAEClosest}].X} ${Spawn[id ${MezAEClosest}].Y} radius ${Spell[${MezAESpell}].AERange}]}>=${SpawnCount[npc loc ${Spawn[id ${MezAEClosest}].X} ${Spawn[id ${MezAEClosest}].Y} radius ${Spell[${MezAESpell}].AERange}]})  /call MezMobsAE ${MezAEClosest}
         }
@@ -4794,8 +5053,13 @@ Sub Main
             /if (${DebugMez}) /echo we are in the mezcondition loop i is: ${i} \agLine#: ${Macro.CurLine}
             | Test -> Is my single mez spell ready
             /if (!${Me.SpellReady[${MezSpell}]} && !${IAmABard}) {
-                /if (${DebugMez}) /echo ${MezSpell} not ready, goto return \agLine#: ${Macro.CurLine}
-                /return
+                /if (${MezOn}!=2) {
+                    /if (${DebugMez}) /echo ${MezSpell} not ready, goto return \agLine#: ${Macro.CurLine}
+                    /return
+                }
+                /while (!${Me.SpellReady[${MezSpell}]}) {
+                    /delay 2
+                }
             }
             | Test -> array not empty,
             /if (${MezArray[${i},1].Equal[NULL]}) {
@@ -4912,7 +5176,7 @@ Sub Main
                 /varset WasChasing 1
                 /squelch /stick off
                 /moveto off
-                /if (${PullMoveUse.Equal[nav]}) /nav stop
+                /if (${PullMoveUse.Equal[nav]} && ${Navigation.Active}) /nav stop
                 /delay 30 !${Me.Moving}
             }
             /echo I AM AE MEZZING ${MezAESpell}
@@ -5134,7 +5398,7 @@ Sub Main
                     /varset f1 0
                     /varcalc i ${i}+1
                     /varset DebuffText ${DPS[${i}].Arg[1,|]}
-                    /if (${DebugCombat}) /echo ${DebuffText} ${DPS[${i}].Length}  ${DebuffText.NotEqual[null]} ${DBOList${i}.Find[|${DebuffTargetID}]} ${DBOTimer${i}} ${i} ${DebuffCount} ${TempTimer} \agLine#: ${Macro.CurLine}                 
+                    /if (${DebugCombat}) /echo ${DebuffText} ${DPS[${i}].Length} ${DebuffText.NotEqual[null]} ${DBOList${i}.Find[|${DebuffTargetID}]} ${DBOTimer${i}} ${i} ${DebuffCount} ${TempTimer} \agLine#: ${Macro.CurLine}                 
                     |If mob not on list or debuff timer expired then increment counter of mobs needing debuff.
                     /if (${DPS[${i}].Length} && ${DebuffText.NotEqual[null]} && (!${DBOList${i}.Find[|${DebuffTargetID}]} || ${DBOTimer${i}}==0)) {
                         /varset c 1
@@ -5159,11 +5423,12 @@ Sub Main
                                     }
                                     | This is an AltAbility
                                 } else /if (${f1}==2) {
-                                    /if (${Me.AltAbilityTimer[${DebuffText}]}<=${TempTimer}) {
+                                    /if (${Math.Calc[${Me.AltAbilityTimer[${DebuffText}].TotalSeconds}*10]}<=${TempTimer}) {
                                         /echo Waiting on AltAbility To Cast ${DebuffText}
                                         /varset echoTimer 3s
                                     } else {
                                         /echo Skipping AltAbility. Wait time is to long for ${DebuffText}
+                                        /if (${DBOTimer${i}}==0) /varcalc DBOTimer${i} ${Me.AltAbilityTimer[${DebuffText}].TotalSeconds}*10
                                     }
                                     | This is an Item
                                 } else /if (${f1}==3) {
@@ -5172,6 +5437,7 @@ Sub Main
                                         /varset echoTimer 3s
                                     } else {
                                         /echo Skipping Item. Wait time is to long for ${DebuffText}
+                                        /if (${DBOTimer${i}}==0) /varcalc DBOTimer${i} ${FindItem[=${DebuffText}].TimerReady}*10
                                     }                          
                                 }
                             }
@@ -5194,7 +5460,11 @@ Sub Main
             }
             /if (${DebugCombat}) /echo \atDEBUGCOMBAT DebuffCast 1 DebuffTargetID: ${DebuffTargetID} ${i} Find: ${DBOList${i}.Find[|${DebuffTargetID}]} Timer: ${DBOTimer${i}} List: ${DBOList${i}} \agLine#: ${Macro.CurLine}
             /if (${GroupEscapeOn} && ${Select[${Me.Class.ShortName},WIZ,DRU]} && (${Raid.Members}==0)) /call GroupEscape
-            /if (${MezOn} && !${MezBroke}) /call DoMezStuff
+            /if (${MezOn} && !${MezBroke}) {
+                /varset GoMByPass 1
+                /call DoMezStuff DebuffCast
+                /varset GoMByPass 0
+            }
             /varset TempTimer 0
             /varset Tag1 ${DPS[${i}].Arg[4,|]}
             /varset Tag2 ${DPS[${i}].Arg[5,|]}
@@ -5205,8 +5475,17 @@ Sub Main
                 /goto :SkipCast
             }
             /if (${Spawn[${DebuffTargetID}].Type.Equal[Corpse]} || ${Int[${Spawn[${DebuffTargetID}].ID}]}==0) /return
-            /target id ${DebuffTargetID}
-            /delay 50 ${Target.ID}==${DebuffTargetID} && ${Target.BuffsPopulated}==TRUE
+            /if (${Target.ID}!=${DebuffTargetID}) {
+                /squelch /target clear
+                /delay 10 ${Target.ID}==0
+                /target id ${DebuffTargetID}
+                /delay 20 ${Target.ID}==${DebuffTargetID} && ${Target.BuffsPopulated}==TRUE
+            }
+            /if (${Target.BuffsPopulated}==TRUE) {
+                /echo Buffs Populated.
+            } else {
+                /echo Buffs NOT Populated.
+            }
             /if (${DebugCombat}) /echo \atDEBUGCOMBAT DebuffCast: Debuff: ${DebuffText} TargetID: ${Target.ID} DebuffTargetID: ${DebuffTargetID} : ${Target.Buff[${DebuffText}].ID} ${Target.Buff[${DebuffText}].Caster} ${Me.SpellInCooldown} ${Tag1} ${Tag2} \agLine#: ${Macro.CurLine}
             | Check Target for Buffs
             /if (${Target.BuffCount}) {
@@ -5280,7 +5559,7 @@ Sub Main
                     /varcalc TempTimer ${FindItem[=${DebuffText}].Spell.Duration.TotalSeconds}*10
                     | Timers for AltAbilities
                 } else /if (${Me.AltAbility[${DebuffText}]}) {
-                    /varset TempTimer ${Me.AltAbility[${DebuffText}].ReuseTime}s
+                    /varcalc TempTimer ${Me.AltAbility[${DebuffText}].Spell.Duration.TotalSeconds}*10
                     | Timers for spells
                 } else /if (${Me.Book[${DebuffText}]}) {
                     | - Custom timer for counterbias
@@ -5344,7 +5623,9 @@ Sub Main
             }
         /next i
         /doevents flush MezBroke
-        /call DoMezStuff
+        /varset GoMByPass 1
+        /call DoMezStuff Event_MezBroke
+        /varset GoMByPass 0
         | Set MezOn = 2 to let us know that the event was triggered. Will be set back to 1 in other location
         /varset MezBroke 1
         /if (${DebugMez}) /echo \atDEBUGMEZ event mezbroke Leave \agLine#: ${Macro.CurLine}
@@ -5638,11 +5919,25 @@ Sub Main
     Sub CanIDoStuff
     /if ((${CombatStart} || ${AggroTargetID} || ${Me.CombatState.NotEqual[COMBAT]})) /return
     /if (${Debug}) /echo \atDEBUG CanIDoStuff Enter \agLine#: ${Macro.CurLine}
-    /if (${IAmDead} && ${CampZone}==${Zone.ID} && (${Me.Buff[Resurrection Sickness].ID} || ${SpawnCount[pccorpse ${Me}]}==0) ) /varset IAmDead 0
+    /if (${IAmDead} && ${CampZone}==${Zone.ID} && (${Me.Buff[Resurrection Sickness].ID} || ${SpawnCount[pccorpse ${Me}]}==0) ) {
+        /varset IAmDead 0
+        /if (${IAmABard}) {
+            /while (${Me.BardSongPlaying}) {
+                /if (${Twist}) /squelch /twist off
+                /stopsong
+                /delay 5
+            }
+            /varset Twisting 0
+            /varset DPSTwisting 0
+        }
+    }
     | Turn off twist while invis
     /if (${Me.Invis} && ${IAmABard} && ${Twist}) {
-        /squelch /twist off
-        /stop song
+        /while (${Me.BardSongPlaying}) {
+            /if (${Twist}) /squelch /twist off
+            /stopsong
+            /delay 5
+        }
     }
     | Assign Master looter    
     /if (${Select[${Me},${Group.Leader}]}==1) /call AssignLooter
@@ -5880,7 +6175,7 @@ Sub Main
         /varset PullRange ${pRange}
         /varset PullWith ${pType}
         /varset PullRangeActual ${pRange2}
-        /if (${Bool[${Plugin[MQ2Map]}]}) /mapfilter CastRadius ${PullRange}
+        /if (${Bool[${Plugin[MQ2Map]}]}) /squelch /mapfilter CastRadius ${PullRange}
         |/if (${PullPathWpCount} && ${PullMoveUse.Equal[advpath]}) /varcalc MaxRadius ${TempMaxRadius}+${PullRangeActual}
         /if (${PullPathWpCount} && ${PullMoveUse.Equal[advpath]}) /varcalc MaxRadius ${TempMaxRadius}+${PullRange}
         /if (${DebugPull}) /echo MaxRadius is now ${MaxRadius} \agLine#: ${Macro.CurLine}
@@ -6157,7 +6452,7 @@ Sub Main
         /if (${DebugPull}) /echo \atDEBUGPULL PullCheck Enter ${PullMob} \agLine#: ${Macro.CurLine}
         /if (${DebugPull}) /echo \atDEBUGPULL PullCheck: 1.0: Name: ${Spawn[${PullMob}].CleanName} MobID: ${PullMob} ${PullMoveUse} \agLine#: ${Macro.CurLine}
         /if (${ChainPull}==2) /varset ChainPull 1
-        /if (${Select[${PullMoveUse},los,nav]}>=1 && (${Spawn[${PullMob}].Distance3D}<=360 || ${Spawn[${PullMob}].LineOfSight})) {
+        /if (${PullMob} && ${Select[${PullMoveUse},los,nav]}>=1 && (${Spawn[${PullMob}].Distance3D}<=360 || ${Spawn[${PullMob}].LineOfSight})) {
             /target id ${PullMob}
             /delay 20 ${Target.ID}==${PullMob}
         }
@@ -6213,7 +6508,6 @@ Sub Main
                 /varset FailCounter 0
                 /varset PullAlertTimer 0
                 /if (${PullWait}) {
-                    /echo Waiting ${PullWait} seconds for mobs to respawn.
                     /call BroadCast ${IRCOn} ${EQBCOn} t "PULLING-> Waiting ${PullWait} seconds for mobs to respawn."
                     /call PullDelay ${PullWait}
                 }
@@ -6221,7 +6515,7 @@ Sub Main
                     /if (${DebugPull}) /echo \atDEBUGPULL PullCheck Returning hunter to camp \agLine#: ${Macro.CurLine}
                     /varset ReturnToCamp 1
                     /echo ${Role}: There are no mobs within ${MaxRadius} trying to return to camp.
-                    /call DoWeMove
+                    /call DoWeMove 0 pullcheck
                 }    
                 /return 0
             }
@@ -6237,7 +6531,7 @@ Sub Main
         /varset Pulling 0
         :WaitForTimer
             /doevents
-            /call CheckForCombat 1 PullDelay
+            /call CheckForCombat 0 PullDelay
             /delay 2
             /if (${PDTimer}) /goto :WaitForTimer
         /if (${DebugPull}) /echo PullDelay Leave \agLine#: ${Macro.CurLine}
@@ -6305,7 +6599,9 @@ Sub Main
                 /Echo Mob not at 100% HPs Double checking for server lag PFlag: ${PFlag} PVPullMob: ${PVPullMob} - ${Spawn[${PVPullMob}].CleanName} MobCount: ${MobCount} 
                 /target id ${Spawn[${PVPullMob}].ID} 
                 /delay 20 ${Target.ID}==${PVPullMob} && ${Target.BuffsPopulated}==TRUE
-                /if (${Target.PctHPs}>99) /return 1
+                /if (${Target.PctHPs}>99) {
+                    /return 1
+                } else /squelch /alert add 1 id ${PVPullMob}
             }
             /return 0                
         }
@@ -6363,6 +6659,7 @@ Sub Main
         /if (${AutoFireOff}) /varset AutoFireOn 0
         /if (${IAmABard} && !${PullTwistOn} && ${WasTwistingPull}) { 
             /squelch /twist off
+            /stopsong
         }
         /if (!${Me.Mount.ID} && ${Me.Sitting}) /stand        
         /if (${Select[${Role},pullerpettank]} && ${PullRoleToggle} && ${Group.Puller.ID}!=${Me.ID}) {
@@ -6402,7 +6699,7 @@ Sub Main
             /if (((${AggroTargetID} && !${ChainPull}) || (${Me.XTarget[${XTSlot2}].ID} && ${ChainPull})) && ${Math.Distance[${CampYLoc},${CampXLoc}]} < ${CampRadius}) {
                 /echo Looks like mobs in camp aborting pull.
                 /call PullReset
-                /if (!${ChainPull}) /call CheckForCombat 1 Pull
+                /if (!${ChainPull}) /call CheckForCombat 0 Pull
                 /if (${DebugPull}) /echo \atDEBUGPULL Pull Mobs in camp detected \agLine#: ${Macro.CurLine}
                 /return
             }
@@ -6612,7 +6909,7 @@ Sub Main
                 /call WaitForMob
                 /varset Pulled 0
             } else {
-                /call DoWeMove 1
+                /call DoWeMove 1 pull
             }
         }
         /if (${DebugPull}) /echo \atDEBUGPULL Pull Leave Mob ID:${Spawn[${MyTargetID}].ID} \agLine#: ${Macro.CurLine}
@@ -6623,7 +6920,7 @@ Sub Main
     Sub BacktoCampReset  
         /if (${DebugPull}) /echo \atDEBUGPULL BacktoCampReset: Enter \agLine#: ${Macro.CurLine}
         /if (${ReturnToCamp}) {
-            /call DoWeMove
+            /call DoWeMove 0 backtocampreset
         }
         /if (${Math.Distance[${CampYLoc},${CampXLoc}]} < ${CampRadius}) {
             /call PullReset
@@ -6658,7 +6955,7 @@ Sub Main
                 /moveto id ${MyTargetID} mdist 15
                 /if (${Target.ID}) /face ${If[${FaceMobOn}==2,nolook,fast nolook]}
                 /look 0
-                /attack on
+                /if (${Target.Distance}<20) /attack on
                 /if (${PullMeleeStick} && !${PullAggroTargetID}) /stick id ${MyTargetID} 70%
                 /delay 5
             /if (!${PullAggroTargetID} && ${Target.PctHPs}==100) /goto :AttackAgain
@@ -6838,14 +7135,14 @@ Sub Main
                 }
             }
             /call Combat
-            /call CombatReset
+            /call CombatReset 0 pullhunter
             /call PullReset
             | Try to return home if exceeding max radius while in ANY hunter mode
             /if (${Math.Distance[${Me.Y},${Me.X}:${CampYLoc},${CampXLoc}]}>${Math.Calc[${MaxRadius}*.95]}) {
             /if (${DebugPull}) /echo \atDEBUGPULL PullHunter Returning hunter to camp \agLine#: ${Macro.CurLine}
                 /echo ${Role}: Reached edge of ${MaxRadius} hunting radius. Trying to return to camp.
                 /varset ReturnToCamp 1
-                /call DoWeMove
+                /call DoWeMove 0 pullhunter
             }    
         /if (${DebugPull}) /echo \atDEBUGPULL PullHunter Enter \agLine#: ${Macro.CurLine}
             /return
@@ -6878,7 +7175,7 @@ Sub Main
         | Check for being to far from camp.
         |/if (${Math.Distance[${CampYLoc},${CampXLoc}]}>=${Math.Calc[${MaxRadius}*.90]}) {
         /if ((${Math.Distance[${CampYLoc},${CampXLoc}]}>=${Math.Calc[${MaxRadius}*.90]} && ${Spawn[${MyTargetID}].Distance}>${Math.Calc[${MaxRadius}*.10]}) || ${Math.Distance[${CampYLoc},${CampXLoc}]}>=${MaxRadius} || ${PullNavTimer}==0) {
-            /nav stop
+            /if (${Navigation.Active}) /nav stop
             /call BackToCampReset
             /varset PullNavTimer 0
             /return TRUE
@@ -6933,7 +7230,7 @@ Sub Main
         /varset WaitTimer 45s
         /if (${Pulled}) {
             /if (${DebugPull}) /echo \atDEBUGPULL WaitForMob Waiting for mob \agLine#: ${Macro.CurLine}
-            /call DoWeMove 1
+            /call DoWeMove 1 waitformob
             /if (${ChainPull}) /varset LastMobPullID ${Target.ID}
             /declare FaceTimer timer local 0
             /if (${InvSlot[ranged].Item.Name.NotEqual[${OrigRanged}]} && ${OrigRanged.NotEqual[null]}) {
@@ -7066,7 +7363,7 @@ Sub Main
             /echo I am not detecting Main Assist pausing.
             :WaitForMA
                 /doevents
-                /call CheckForCombat 1 GroupWatch
+                /call CheckForCombat 0 GroupWatch
                 /call WaitSubs
                 /if (${Spawn[=${MainAssist}].ID}) {
                     /echo Main Assist is back resuming action.
@@ -7128,25 +7425,31 @@ Sub Main
             /doevents
             /if (${ReturnToCamp} && ${Math.Distance[${CampYLoc},${CampXLoc}]} > 15 ) {
                 /if (!${Me.Mount.ID} && ${Me.Sitting}) /stand
-                /call DoWeMove
+                /call DoWeMove 0 checkstats
                 /delay 100 ${MoveTo.Stopped}
             }
             |/delay 10
             |/call CheckCasting 50
             /delay 10
-            /call CheckForCombat 1 CheckStats
             /if (!${MedCombat}) /call WaitSubs
             /if (${AggroTargetID}) {
+                /call CheckForCombat 0 CheckStats
                 /varset Medding 0
                 /return
             }
         /if (${Spawn[${ckclass} ${cktype} ${charname}].Current${stat}}<${resume}) /goto :wait_for_resume
-        /if (${Select[${Role},puller,pullertank,pullerpettank,hunter,hunterpettank]}) /call BroadCast ${IRCOn} ${EQBCOn} t "${charname} is now above ${resume}% ${stat} resuming activity."
-        /echo ${charname} is now above ${resume}% ${stat} resuming activity.
+        /if (${Select[${Role},puller,pullertank,pullerpettank,hunter,hunterpettank]}) {
+            /call BroadCast ${IRCOn} ${EQBCOn} t "${charname} is now above ${resume}% ${stat} resuming activity."
+        } else {
+            /echo ${charname} is now above ${resume}% ${stat} resuming activity.
+        }
         /if (!${Me.Mount.ID} && ${Me.Sitting}) /stand
         /varset Medding 0
         /varset ChainPullHold 0 
-        /if (${IAmABard} && ${TwistMed}) /stopsong
+        /if (${IAmABard} && ${TwistMed}) {
+            /squelch /twist off
+            /stopsong
+        }
         /if (${ChainPull} && ${ChainPullPause.NotEqual[0]}) /varset ChainPullTimer ${ChainPullPause.Arg[1,"|"]}m
         /if (${Debug}) /echo \atDEBUG CheckStats Leave \agLine#: ${Macro.CurLine}
     /return
@@ -7229,10 +7532,14 @@ Sub Main
 | SUB: Bind Switch
 | ----------------------------------------------------------------------------
     Sub Bind_Switch
+        /declare WasAttacking int local ${Attacking}
         /echo New target called!
-        /call CombatReset
+        /call CombatReset 1 switch
         /call Assist
-        /call Combat
+        /if (${WasAttacking}) {
+            /squelch /attack on
+            /varset Attacking 1
+        }
     /return
 | ----------------------------------------------------------------------------
 | SUB: Bind SwitchMA
@@ -7277,7 +7584,7 @@ Sub Main
             
         }
         /call CheckRoles 0
-        /call CombatReset
+        /call CombatReset 0 switchma
         /call Assist
         |/call Combat
     /return
@@ -7289,7 +7596,7 @@ Sub Main
         /varset GotHitToggle 1
         /declare AttackingMobID int local
         /if (${AggroTargetID} && !${Target.ID} && !${ReturnToCamp}) {
-            /call CheckForCombat 1 Event_GotHit
+            /call CheckForCombat 0 Event_GotHit
         }
         /if (${Pulled} && ${WaitTimer} && ${Select[${Role},pullertank,pullerpettank]} && ${Math.Distance[${Me.Y},${Me.X}:${CampYLoc},${CampXLoc}]}<=${CampRadius}) {
             /if (${NearestSpawn[npc los radius ${CampRadius} targetable].ID}!=${MyTargetID}) {
@@ -7338,7 +7645,7 @@ Sub Main
         /if (${Message.Find[Drunken Monkey]} || ${Message.Find[effects]}) /return
         /delay 60s ${Me.ID} && ${Zone.ID}
         /if (!${JustZoned}) /echo Just zoned
-        /call CombatReset zoned
+        /call CombatReset 0 zoned
         /varset JustZoned 200
         /varset CampOnDeathTimer 10m
         /if (${ReturnToCamp} && ${CampZone}!=${Zone.ID}) /varset RememberCamp 1
@@ -7361,7 +7668,7 @@ Sub Main
             /varset ReturnToCamp 1
             /varset RememberCamp 0
         }
-        /call CombatReset zoned
+        /call CombatReset 0 zoned
         /call WinTitle
     /return
 | ----------------------------------------------------------------------------
@@ -7397,6 +7704,7 @@ Sub Main
 | ----------------------------------------------------------------------------
     Sub Event_Camping        
         /if (${IAmABard} && ${Twist}) /squelch /twist off
+        /stopsong
         /end
     /return
 | ----------------------------------------------------------------------------
@@ -7500,7 +7808,7 @@ Sub Main
     Sub Event_Invised
         /if (${IAmABard} && ${Twist}) {
             /squelch /twist off
-            /stop song
+            /stopsong
         }
     /return    
 | ----------------------------------------------------------------------------
@@ -7511,11 +7819,11 @@ Sub Main
         /echo I have died and the Angels wept.
         /if (${GMailEvents.Find[dead]}) /call GmailSend "I have died. EQ Said ${IDMessage} Loc ${Me.X}  ${Me.X}"
         /varset IAmDead 1
-        /call CombatReset ImDead
+        /call CombatReset 0 ImDead
         /doevents flush ImDead
         /if (${IAmABard}) {
             /squelch /twist off
-            /stop song
+            /stopsong
             /delay 10
         }
     /return
@@ -7527,7 +7835,7 @@ Sub Main
             /doevents flush GoMOn
             /return
         }
-        /if (!${CombatStart} || ${GoMTimer}) /return
+        /if (!${CombatStart} || ${GoMTimer} || ${GoMByPass}) /return
         | Release timer after trying to cast for 10 secs
         /varset GoMTimer 3s
         /declare i int local
@@ -7553,7 +7861,15 @@ Sub Main
                     /return
                 }
                 | Wait for global cooldown if active
-                /delay 60 ${Me.SpellInCooldown}==FALSE
+                |/delay 60 ${Me.SpellInCooldown}==FALSE
+                /while (${Me.SpellInCooldown}) {
+                    /if (${MeleeOn}) {
+                        /if (${WeaveArray.Size}>0) /call WeaveStuff ${MyTargetID}
+                        /if (${MashArray.Size}>0) /call MashButtons
+                    } else {
+                        /delay 2
+                    }
+                }
                 /if (${Me.SpellReady[${GoMCast}]}) {
                     /call CastWhat "${GoMCast}" ${GoMTarget} GoM
                 } else {
@@ -7622,7 +7938,7 @@ Sub Main
                     /varset holding 1
                 }
                 /delay 1s
-                /call CheckForCombat 1 AFKTools
+                /call CheckForCombat 0 AFKTools
                 /doevents
                 /goto :CZLockDown
             }
@@ -7797,13 +8113,13 @@ Sub Main
         /if (${ArrayName.Equal[dps]}) {
             /for i 1 to ${TempArray.Size}
                 /if (${TempArray[${i}].Find[|weave]} && ${TempArray[${i}].Arg[2,|].NotEqual[0]}) {
-                    /varset WeaveArray[${WArrayCount}] ${TempArray[${i}]}
+                    /varset WeaveArray[${WArrayCount}] ${TempArray[${i}].Arg[1,|]}|${TempArray[${i}].Arg[2,|]}
                     /vardata WeaveCond[${WArrayCount}] CArray[${i}]
                     /if (${Debug}) /echo ${WeaveArray[${WArrayCount}]}
                     /if (${WArrayCount}>1) /varset TempArray[${i}] NULL
                     /varcalc WArrayCount ${WArrayCount}+1
                 } else /if (${TempArray[${i}].Find[|mash]} && ${TempArray[${i}].Arg[2,|].NotEqual[0]}) {
-                    /varset MashArray[${MArrayCount}] ${TempArray[${i}].Arg[1,|]}
+                    /varset MashArray[${MArrayCount}] ${TempArray[${i}].Arg[1,|]}|${TempArray[${i}].Arg[2,|]}
                     /vardata MashCond[${MArrayCount}] CArray[${i}]
                     /if (${Debug}) /echo ${MashArray[${MArrayCount}]}
                     /if (${MArrayCount}) /varset TempArray[${i}] NULL
@@ -7944,7 +8260,9 @@ Sub Main
             /if (${HealPointTag.Equal[MA]} && ${HealHighestPointMA}>${SingleHealPointMA}) /varset SingleHealPointMA ${HealHighestPointMA}
             /if (${Debug}) /echo ${SingleHealPoint} \agLine#: ${Macro.CurLine}
         /next i
-        /if (${SHCount}) /call SortArray SingleHeal SHCond 100|100 >    
+        /if (${SHCount}) /call SortArray SingleHeal SHCond 100|100 >
+        /if (!${SingleHealPoint}) /varset SingleHealPoint 99
+        /if (!${SingleHealPointMA}) /varset SingleHealPointMA ${SingleHealPoint}
         /for j 1 to ${SingleHeal.Size}
              /if (${Debug}) /echo ${j} ${SingleHeal[${j}]} ${Spell[${SingleHeal[${j}].Arg[1,|]}].CastTime.Float} ${Spell[${SingleHeal[${j}].Arg[1,|]}].Duration} \agLine#: ${Macro.CurLine}
              
@@ -8103,7 +8421,7 @@ Sub Main
                     :MakeSureCO
                     /if (${WOTries}>5) /break
                     /if (${Select[${WOSpellTT},single,group]} && ${Me.Buff[${wospell}].ID})  {
-                        /if (${Select[${EverQuest.Server},fippy,vulak,ragefire,lockjaw]}==0) /removebuff ${wospell}
+                        /if (${Select[${EverQuest.Server},fippy,vulak,ragefire,lockjaw]}==0) /removebuff "${wospell}"
                         | reset spell timer on caster
                         /varset Buff${i}GM0 0
                         /varcalc WOTries ${WOTries}+1
@@ -8461,12 +8779,16 @@ Sub Main
         /if (${MezOn}) {
             /varset MezBroke 0
             /doevents MezBroke
-            /if (!${MezBroke}) /call DoMezStuff
+            /if (!${MezBroke}) {
+                /varset GoMByPass 1
+                /call DoMezStuff WaitSubs
+                /varset GoMByPass 0
+            }
         }
         /call WriteBuffs
         /if (${AutoRezOn}) /call RezCheck
         /call CanIDoStuff
-        /call CastMana
+        /call CastMana WaitSubs
         /if (${PetOn}) /call DoPetStuff
         /if (${BuffsOn}) /call CheckBuffs
         /if (${MercOn}) /call MercsDoWhat
@@ -8476,14 +8798,20 @@ Sub Main
 | ----------------------------------------------------------------------------
     Sub BroadCast(doirc, doeqbc, eqbcolor, message)
         /if (${eqbcolor.Equal[null]}) /varset eqbcolor w
-	    /if (${Macro.IsTLO[EQBC]}) {
-            /if (${EQBC.Connected}) {
-                /if (${doeqbc}) /${EQBCSay} [+${eqbcolor}+] [${Time}] ${message} [+x+]
+        /if (${doeqbc}) {
+            /if (${Macro.IsTLO[EQBC]}) {
+                /if (${EQBC.Connected}) {
+                    /if (TRUE) /${EQBCSay} [+${eqbcolor}+] [${Time}] ${message} [+x+]
+                } else {
+                    /echo You are NOT connected to an EQBC Server. Please check your connection.
+                    /echo ${message}
+                }
             } else {
-                /if (${doeqbc}) /echo You are NOT connected to an EQBC Server. Please check your connection.
+                /echo EQBC is Required, but the plugin is NOT Loaded.
+                /echo ${message}
             }
-		} else {
-            /if (${doeqbc}) /echo EQBC is Required, but the plugin is NOT Loaded.
+        } else {
+            /echo ${message}
         }
         /if (${Bool[${Plugin[MQ2IRC]}]} && ${doirc}) /i say ${message}
         /echo ${message}
@@ -8519,7 +8847,7 @@ Sub Main
 | ----------------------------------------------------------------------------
     Sub NamedWatch
     /if (!${BurnAllNamed} && !${GMailEvents.Find[named]}) /return
-    /if (${Spawn[${MyTargetID}].Named}) {
+    /if (${BurnAllNamed}==1 && ${Spawn[${MyTargetID}].Named}) {
         /popup *** Mob:(${Target.CleanName}) is a NAMED!
         /echo *** Mob:(${Target.CleanName}) is a NAMED!
         /if (${BurnAllNamed}) /call Event_Burn
@@ -8803,7 +9131,14 @@ Sub Main
 |-----------------------------------------------------------------------------  
 | SUB: Back Off and stop melee  
 | ----------------------------------------------------------------------------      
-    Sub Bind_BackOff  
+    Sub Bind_BackOff(string OnOffFlag)
+        /if (${Select[${OnOffFlag},on,off,1,0]}>0) {
+            /if (${Select[${OnOffFlag},on,1]}>0) {
+                /varset DPSPaused 0
+            } else {
+                /varset DPSPaused 2
+            }
+        }
         /if (${DPSPaused}) {  
             /if (${DPSPaused}==2 && ${UseMQ2Melee}) /squelch /melee on
             /varset DPSPaused 0  
@@ -8813,13 +9148,13 @@ Sub Main
             /varset CombatStart 0  
             /if (${UseMQ2Melee}) /squelch /melee off
             /squelch /attack off  
-            /if (${Stick.Active})  /stick off 
-            /call CombatReset  
+            /if (${Stick.Active}) /stick off 
+            /call CombatReset 0 backoff
             /varset DPSPaused 2 
             /echo Backing off - All Combat has been reset.
         }  
         /if (${ReturnToCamp} && ${Math.Distance[${CampYLoc},${CampXLoc}]} > 15) {  
-            /call DoWeMove  
+            /call DoWeMove 0 bind_backoff
         }  
         /doevents flush BackOff  
     /return 
@@ -8915,14 +9250,19 @@ Sub Main
 | -------------------------------------------------------------------------------------
 | SUB: Cast Mana
 | -------------------------------------------------------------------------------------      
-    Sub CastMana
+    Sub CastMana(string SentFrom)
         /if (${Me.Invis}) /return
+        /if (${DebugBuffs}) /echo \atDEBUG CastMana Enter ${SentFrom} \agLine#: ${Macro.CurLine}
         /declare i int local
         /for i 1 to ${Buffs.Size}    
         /if (${MezOn}) {
             /varset MezBroke 0
             /doevents MezBroke
-            /if (!${MezBroke}) /call DoMezStuff
+            /if (!${MezBroke}) {
+                /varset GoMByPass 1
+                /call DoMezStuff CastMana
+                /varset GoMByPass 0
+            }
         }
         /if (${HealsOn}) /call CheckHealth
         | Check and Cast mana type spells/aas/items - Canni/Paragon/Harvest - prevent toon from using before rez after zoning for 2 min
@@ -9181,9 +9521,21 @@ Sub Main
                         /delay 20 ${Int[${Me.Gem[${SpellToMem}]}]}==0
                     }
                     /if (!${Int[${Me.Gem[${i}].Name.Length}]} || ${Me.Gem[${i}].Name.NotEqual[${SpellToMem}]}) {
+                        /varset DontMoveMe 1
+                        /while (${Me.Moving}) {
+                            /delay 5
+                        }
                         /echo Meming ${SpellToMem} in slot ${i}
-                        /MemSpell ${i} "${SpellToMem}"
-                        /delay 90 ${Me.Gem[${i}].Name.Equal[${SpellToMem}]}
+                        /if (${Stick.Active}) {
+                            /stick pause
+                            /MemSpell ${i} "${SpellToMem}"
+                            /delay 90 ${Me.Gem[${i}].Name.Equal[${SpellToMem}]}
+                            /stick unpause
+                        } else {
+                            /MemSpell ${i} "${SpellToMem}"
+                            /delay 90 ${Me.Gem[${i}].Name.Equal[${SpellToMem}]}
+                        }
+                        /varset DontMoveMe 0
                     }
                 } else {
                     /echo Could Not find the spell ${SpellToMem} in your spell book.
@@ -9205,12 +9557,68 @@ Sub Main
         /varset MyTargetName ${Target.CleanName}
         /varset ParseDPS ${TimeToParse}s
         /call Combat
-        /call CombatReset
+        /call CombatReset 0 parse
         /target clear
         /attack off
         /stick off
         /endmacro
         /if (${Debug}) /echo \atDEBUGBUFFS Bind_Parse Leave \agLine#: ${Macro.CurLine}
+    /return
+| -------------------------------------------------------------------------------------
+| SUB: Bind_TrackMeDown
+| -------------------------------------------------------------------------------------
+    Sub Bind_TrackMeDown(int StickOff, int UseNavOnly, int IgnoreDistance)
+        /if (${DontMoveMe}) {
+            /echo WAIT UP! I was told not to move. Leaving TrackMeDown.
+            /return
+        }
+        /if (${Debug}) /echo \atDEBUG Bind_TrackMeDown Enter \agLine#: ${Macro.CurLine}
+        /declare tmdChaseAssist int local ${ChaseAssist}
+        /declare tmdReturnToCamp int local ${ReturnToCamp}
+        /declare tmdChaseDistance int local ${ChaseDistance}
+        /declare tmdCampRadiusExceed int local ${CampRadiusExceed}
+        | Check if I am Dead.
+        /if (${Me.Hovering} || ${IAmDead}) /return
+        | Check if Who to chase character is in the zone.
+        /if (${Spawn[pc ${WhoToChase}].ID}==0) /return
+        /varset BindActive 1
+        | Check if we are to use Navigation and it is loaded with a valid Mesh and Path.
+        /if (${UseNavOnly} ) {
+            /if (${PullMoveUse.NotEqual[nav]} || !${Navigation.MeshLoaded}) {
+                /echo I can't Track Down ${WhoToChase}. Navigation not loaded or bad Mesh.
+                /return
+            } else {
+                /if (${Navigation.PathExists[id ${Spawn[pc ${WhoToChase}].ID}]}==FASLE)
+                /echo I can't Track Down ${WhoToChase}. No Valid Path too destination.
+                /return
+            }
+        }
+        /varset ChaseAssist 2
+        /varset ReturnToCamp 0
+        /varset ChaseDistance 20
+        /if (${IgnoreDistance}) /varset CampRadiusExceed 100000
+        
+        /if (${Me.Casting.ID}) /Interrupt
+        | Go chase them down.
+        /call DoWeChase TrackMeDown
+        
+        | Set things back
+        /if (${tmdReturnToCamp}) {
+            /varset CampXLoc ${Me.X}
+            /varset CampYLoc ${Me.Y}
+            /varset CampZLoc ${Me.FloorZ}
+            /varset LookForward ${Me.Heading.DegreesCCW}
+            /echo >> New camp set ${Me.Y}, ${Me.X}
+        }
+        /if (${StickOff}) {
+            /if (${Stick.Active}) /squelch /stick off
+        }
+        /varset ChaseAssist ${tmdChaseAssist}
+        /varset ReturnToCamp ${tmdReturnToCamp}
+        /varset ChaseDistance ${tmdChaseDistance}
+        /varset CampRadiusExceed ${tmdCampRadiusExceed}
+        /varset BindActive 0
+        /if (${Debug}) /echo \atDEBUG Bind_TrackMeDown Leave \agLine#: ${Macro.CurLine}
     /return
 | -------------------------------------------------------------------------------------
 | Task Code
