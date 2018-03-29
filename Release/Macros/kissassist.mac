@@ -7755,7 +7755,8 @@ Sub Main
 | ----------------------------------------------------------------------------
     Sub Bind_ChaseMe
         /if (${EQBCOn} && ${Macro.IsTLO[EQBC]}) {
-            /bcg //chase on ${Me.CleanName}
+            /bcg //togglevariable ChaseAssist on ${Me.CleanName}
+            /bcg //changevarint General ChaseAssist 1
         } else {
             /echo ChaseMe command requires MQ2EQBC plugin loaded and EQBCOn flag turned on.
         }
