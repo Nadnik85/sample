@@ -87,9 +87,9 @@ bool RingBuffer::ReadLine(char *out, int &maxlen)
 	int len = maxlen;
 	if (len > r_avail)
 		len = r_avail;
-	for (x = 0; x < len; x++)
+	for (x = 0; (x < len) && (Read(((unsigned char *)out)[x])); x++)
 	{
-		if (Read(((unsigned char *)out)[x]))
+		//if (Read(((unsigned char *)out)[x]))
 		{
 			if (out[x] == '\n')
 			{
@@ -122,7 +122,7 @@ int RingBuffer::ReadUntil(char *out, int maxlen, char terminator)
 	unsigned char c = 0;
 	while ((c != terminator) && (x < maxlen) && (Read(c)))
 		out[x++] = c;
-	if (x >= maxlen)
+	if (x > maxlen)
 		out[x - 1] = 0;
 	else
 		out[x] = 0;
@@ -144,11 +144,11 @@ int RingBuffer::Write(const unsigned char in)
 int RingBuffer::Writef(const char * format, ...)
 {
 	int wrote = 0;
-	static char temp[MAX_PACKET] = { 0 };
-	memset(temp, 0, MAX_PACKET);
+	static char temp[MAX_BUF] = { 0 };
+	memset(temp, 0, MAX_BUF);
 	va_list args;
 	va_start(args, format);
-	wrote=vsnprintf(temp, MAX_PACKET, format, args);
+	wrote=vsnprintf(temp, MAX_BUF, format, args);
 	if (wrote) Write(temp, wrote);
 	va_end(args);
 	return wrote;
@@ -203,14 +203,18 @@ int RingBuffer::WriteAvailable()
 
 bool RingBuffer::isFull()
 {
+	/*
 	if((start==0)&&(end==(sz-1))) full=true;
 	else if((start>0)&&(end==(start-1))) full=true;
 	else full=false;
 	return full;
+	*/
+	return (w_avail > 0) ? false : true;
 }
 
 bool RingBuffer::isEmpty()
 {
-	empty=(start==end);
-	return empty;
+	//empty=(start==end);
+	//return empty;
+	return (r_avail > 0) ? false : true;
 }

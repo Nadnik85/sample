@@ -57,6 +57,7 @@ class Server
 
 		event *m_ev_service;
 		timeval m_tv_service;
+		HANDLE mutexes[3];
 
 #ifndef WIN32
 		pthread_t main_thread;
@@ -76,6 +77,7 @@ class Server
 
 		//static DWORD __stdcall WriteThread(LPVOID arg);
 		static unsigned __stdcall WriteThread(void * arg);
+		static unsigned __stdcall CleanupThread(void * arg);
 		HANDLE write_thread;
 		unsigned int write_thread_id;
 		HANDLE write_handle;

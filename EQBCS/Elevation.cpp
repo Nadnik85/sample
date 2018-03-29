@@ -32,6 +32,10 @@ WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
 bool service = false;
 bool debug = false;
 bool standalone = false;
+#ifdef _DEBUG
+bool debugtest = false;
+void RunTests(); // For Debug testing....
+#endif
 DWORD port = 2112;
 TCHAR ipaddr[2048] = { 0 };
 
@@ -532,6 +536,12 @@ BOOL OnInitDialog(HWND hWnd, HWND hwndFocus, LPARAM lParam)
 	SetDlgItemText(hWnd, IDC_IPADDRESS, ipaddr);
 	SetDlgItemInt(hWnd, IDC_PORT, port, FALSE);
 
+#ifdef _DEBUG
+	HWND hTestButton = GetDlgItem(hWnd, IDC_RUN_TESTS);
+	ShowWindow(hTestButton, SW_SHOW);
+	EnableWindow(hTestButton, TRUE);
+#endif
+
     // Get and display whether the primary access token of the process 
     // belongs to user account that is a member of the local Administrators 
     // group even if it currently is not elevated (IsUserInAdminGroup).
@@ -753,6 +763,12 @@ void OnCommand(HWND hWnd, int id, HWND hwndCtl, UINT codeNotify)
 		standalone = true;
 		EndDialog(hWnd, TRUE);  // Quit itself
 	break;
+#ifdef _DEBUG
+	case IDC_RUN_TESTS:
+		debugtest = true;
+		EndDialog(hWnd, TRUE);
+	break;
+#endif
     case IDOK:
     case IDCANCEL:
 		standalone = false;
@@ -880,6 +896,13 @@ int APIENTRY wWinMain(HINSTANCE hInstance,
 		RedirectIOToConsole();
 		svc_main(0, NULL, stop, port, ipaddr);
 	}
+#ifdef _DEBUG
+	else if (debugtest)
+	{
+		RedirectIOToConsole();
+		RunTests();
+	}
+#endif
 	else
 	{
 		SERVICE_TABLE_ENTRY dispatchTable[] =
@@ -906,5 +929,12 @@ int APIENTRY wWinMain(HINSTANCE hInstance,
 		RedirectIOToConsole();
 		svc_main(0, NULL, stop, port, ipaddr);
 	}
+#ifdef _DEBUG
+	else if (debugtest)
+	{
+		RedirectIOToConsole();
+		RunTests();
+	}
+#endif
 	return 0;
 }
