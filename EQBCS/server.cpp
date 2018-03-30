@@ -68,9 +68,9 @@ Server::Server()
 	m_tv_service.tv_sec = 1;
 	m_tv_service.tv_usec = 0;
 	memset(ip_address, 0, 128);
-	mutexes[0] = CreateMutex(NULL, FALSE, _T("Mutex0"));
-	mutexes[1] = CreateMutex(NULL, FALSE, _T("Mutex1"));
-	mutexes[2] = CreateMutex(NULL, FALSE, _T("Mutex2"));
+	//mutexes[0] = CreateMutex(NULL, FALSE, _T("Mutex0"));
+	//mutexes[1] = CreateMutex(NULL, FALSE, _T("Mutex1"));
+	//mutexes[2] = CreateMutex(NULL, FALSE, _T("Mutex2"));
 }
 
 Server::~Server()
@@ -168,8 +168,8 @@ bool Server::Start()
 			//read_thread = CreateThread(NULL, 0, ReadThread, this, 0, &read_thread_id);
 			//write_thread = CreateThread(NULL, 0, WriteThread, this, 0, &write_thread_id);
 			read_thread = (HANDLE)_beginthreadex(NULL, 0, (_beginthreadex_proc_type)&ReadThread, this, 0, &read_thread_id);
-			process_thread = (HANDLE)_beginthreadex(NULL, 0, (_beginthreadex_proc_type)&ProcessThread, this, 0, &process_thread_id);
-			write_thread = (HANDLE)_beginthreadex(NULL, 0, (_beginthreadex_proc_type)&WriteThread, this, 0, &write_thread_id);
+			//process_thread = (HANDLE)_beginthreadex(NULL, 0, (_beginthreadex_proc_type)&ProcessThread, this, 0, &process_thread_id);
+			//write_thread = (HANDLE)_beginthreadex(NULL, 0, (_beginthreadex_proc_type)&WriteThread, this, 0, &write_thread_id);
 #endif
 			fprintf(stdout, "Server::Start() Started Successfully.\n");
 			return true;
@@ -305,6 +305,7 @@ void Server::ProcessPendingWrites()
 			if (client->DeleteMe())
 			{
 				clients->Remove(client);
+				//remove->Add(client);
 				client->Disconnect();
 				fprintf(stderr, "Client::ProcessPendingWrites() Client [%s] Disconnected. %i client(s) remaining.\n", client->GetName(), clients->Count());
 				char msg[MAX_BUF] = { 0 };
@@ -580,6 +581,7 @@ void Server::OnCleanup(int fd, short event, void * arg)
 	{
 		Client *client = (Client *)((*server->cleanup)[x]);
 		client->CleanUp();
+		//server->clients->Remove(client);
 		server->cleanup->Remove(client);
 		delete client;
 	}
@@ -633,12 +635,12 @@ unsigned __stdcall Server::ReadThread(void *arg)
 		Server *server = (Server *)arg;
 		while (!server->main_thread_done)
 		{
-			WaitForSingleObject(server->mutexes[0], INFINITE);
+			//WaitForSingleObject(server->mutexes[0], INFINITE);
 			server->ProcessPendingReads();
-			ReleaseMutex(server->mutexes[0]);
-			//server->ProcessReceiveBuffers();
-			//server->ProcessPendingWrites();
-			//server->OnCleanup(0, 0, arg);
+			//ReleaseMutex(server->mutexes[0]);
+			server->ProcessReceiveBuffers();
+			server->ProcessPendingWrites();
+			server->OnCleanup(0, 0, arg);
 		}
 	}
 	fprintf(stderr, "Server::ReadThread() Ending.\r\n");

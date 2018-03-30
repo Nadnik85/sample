@@ -703,9 +703,10 @@ void Client::ProcessReadPacketBuffer()
 				ret = rbuf->ReadUntil(data, MAX_BUF - 1, ';');
 				if (ret > 0)
 				{
-					//fprintf(stderr, "Debug Login: %s\r\n", data);
+					fprintf(stderr, "Debug Login: %s\r\n", data);
 					HandleLogin(data);
 					command = false;
+					//authstart = false;
 				}
 			}
 		}

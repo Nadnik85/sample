@@ -1,9 +1,3 @@
-Mar 19 2018 by redguides
-- fixed a plugin loading issue
-
-Mar 19 2018 by redguides
-- MQ2Ic (eqmule) fix for crash some were having
-
 Mar 17 2018 by redguides
 - MQ2Melee (ChatWIthThisName) - bracketing issue fixed for Berserkers. 
 
