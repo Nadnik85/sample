@@ -1,4 +1,4 @@
-#include "sleepy_disord/websocketpp_websocket.h"
+#include <sleepy_discord\websocketpp_websocket.h>
 #include <nlohmann/json.hpp>
 
 #include "SafeQueue.h"
@@ -73,7 +73,7 @@ void DiscordThread(std::string token, std::string channelId, std::string control
 			{
 				auto response = client.sendMessage(channelId, escape_json(combinedMsg));
 				if (response.statusCode != 200)
-					toDiscord.enqueue("[MQ2Discord] Error, response text: " + response.text);
+					fromDiscord.enqueue("Error, response text: " + response.text);
 			}
 
 			// Every minute, send typing, to keep connection alive. Crude timer based on 1s sleep below
