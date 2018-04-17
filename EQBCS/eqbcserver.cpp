@@ -116,6 +116,43 @@ int svc_main(int argc, LPTSTR *argv, bool &stop, int port, LPTSTR ipaddr)
 	return 0;
 }
 
+#ifdef _DEBUG
+void RunTests()
+{
+	static char cbuf[MAX_BUF] = { 0 };
+	RingBuffer buf;
+	int i = 0;
+	for (int y = 0; y < 100; y++)
+	{
+		while (!buf.isFull())
+		{
+			buf.Writef("This is a test line %i...\n", i++);
+		}
+		for (int x = 0; x < 100; x++)
+		{
+			int maxlen = MAX_BUF;
+			memset(cbuf, 0, MAX_BUF);
+			if (buf.LineAvailable())
+			{
+				if (buf.ReadLine(cbuf, maxlen))
+					fprintf(stderr, "%s", cbuf);
+			}
+		}
+	}
+	while (!buf.isEmpty())
+	{
+		int maxlen = MAX_BUF;
+		if (buf.LineAvailable())
+		{
+			if (buf.ReadLine(cbuf, maxlen))
+				fprintf(stderr, "%s", cbuf);
+		}
+		else
+			break;
+	}
+}
+#endif
+
 BOOL CtrlHandler(DWORD fdwCtrlType)
 {
 	switch (fdwCtrlType)

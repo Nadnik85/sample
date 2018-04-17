@@ -13,6 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 Change log:
+# Version: 2.8 - SwiftyMUSE 03-11-2018 - Added global hotkey processing
 # Version: 2.7 - EqMule 10-04-2016 - Added a new flag to make sure we have tried to get credentials. and some other stuff
 # Version: 2.6 - Derple 08-21-2016 - Added a new flag which disables autologin after the first successful login.  It can re-enabled by pressing HOME.
 # Version: 2.5 - Eqmule 07-29-2016 - Moved processing into its own detour, removed waitforinputidle and all arbitrary Sleeps.
@@ -109,7 +110,10 @@ Change log:
 
 
 #include "../MQ2Plugin.h"
-PLUGIN_VERSION(2.7);
+#define   PLUGIN_NAME  "MQ2AutoLogin"
+#define   PLUGIN_DATE  20180311
+PLUGIN_VERSION(2.8);
+
 #include <map>
 #include <tlhelp32.h>
 PreSetup("MQ2AutoLogin");
@@ -134,7 +138,7 @@ bool bLoginCheckDone = false;
 ULONGLONG ullerrorwait = 0;
 
 struct _ServerData {
-    char *Name;
+    PCHAR Name;
     DWORD ID;
 };
 
@@ -244,13 +248,18 @@ bool bInGame = false;
 bool bSwitchServer = false;
 bool bSwitchChar = false;
 bool bSwitchTime = false;
-char szStationName[64] = {0};
+bool bInjectorUpdate = false;
+char szProfile[128] = { 0 };
+char szStationName[64] = { 0 };
 char szCustomIni[64] = { 0 };
-char szPassword[64] = {0};
-char szServerName[32] = {0};
-char szCharacterName[64] = {0};
+char szPassword[64] = { 0 };
+char szHotkey[64] = { 0 };
+char szServerName[32] = { 0 };
+char szCharacterName[64] = { 0 };
 char szSelectCharacterName[64] = { 0 };
-char szNewChar[0x40] = {0};
+char szNewChar[0x40] = { 0 };
+char szUserName[64] = { 0 };
+char szBlobKey[64] = { 0 };
 ULONGLONG dwTime = 0;
 ULONGLONG switchTime = 0;
 map<string, class CXWnd2 *> WindowMap;
@@ -259,50 +268,127 @@ map<string, class CXWnd2 *> WindowMap;
 // this changes frequently so it needs to be done this way
 #define pLoginClient ((LoginServerAPI*)*(DWORD*)dwLoginClient)
 
-
 bool SetOffsets();
 bool SetOffsetsUI();
 void HandleWindows();
 void LoginReset();
-void SwitchCharacter(char *szName);
-void SelectCharacter( char *szName );
-DWORD GetProcessCount(char *exeName);
-void DebugLog(char *szFormat, ...);
-unsigned long _FindPattern(unsigned long dwAddress,unsigned long dwLen,unsigned char *bPattern,char * szMask);
+void SwitchCharacter(PCHAR szName);
+void SelectCharacter(PCHAR szName );
+DWORD GetProcessCount(PCHAR exeName);
+void DebugLog(PCHAR szFormat, ...);
+unsigned long _FindPattern(unsigned long dwAddress,unsigned long dwLen,unsigned char *bPattern,char *szMask);
 unsigned long _GetDWordAt(unsigned long address, unsigned long numBytes);
 unsigned long _GetFunctionAddressAt(unsigned long address, unsigned long addressOffset, unsigned long numBytes);
 
+//__LoadFrontEnd_x not used?
+//ida style sig1 just mov     ecx, hLibModule : 8B 0D ? ? ? ? 68 ? ? ? ? 51 FF D6 A3 ? ? ? ? 85 C0 75 18
+//ida style sig2 func start: 68 ? ? ? ? FF 15 ? ? ? ? A3 ? ? ? ? 85 C0
+//8B 0D ?? ?? ?? ?? 68 ?? ?? ?? ?? 51 FF D6 A3 ?? ?? ?? ?? 85 C0 75 ?? FF 15 ?? ?? ?? ?? 50 68 ?? ?? ?? ?? E8 ?? ?? ?? ?? 83 C4 ?? 33 C0 5E C3
+//x   x  ?  ?  ?  ?  x  ?  ?  ?  ?  x  x  x  x  ?  ?  ?  ?  x  x  x  ?  x  x  ?  ?  ?  ?  x  x  ?  ?  ?  ?  x  ?  ?  ?  ?  x  x  ?  x  x  x  x
 
+//search in eqgame.exe
+//Feb 16 2018 Test
+//IDA Style Sig: FF 35 ? ? ? ? FF 15 ? ? ? ? A3
+#ifdef EMU
 PBYTE eqmainPattern = (PBYTE)"\x8B\x0D\x00\x00\x00\x00\x68\x00\x00\x00\x00\x51\xFF\xD6\xA3\x00\x00\x00\x00\x85\xC0\x75\x00\xFF\x15\x00\x00\x00\x00\x50\x68\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x83\xC4\x00\x33\xC0\x5E\xC3";
 char eqmainMask[] = "xx????x????xxxx????xxx?xx????xx????x????xx?xxxx";
-
+#else
+PBYTE eqmainPattern = (PBYTE)"\xFF\x35\x00\x00\x00\x00\xFF\x15\x00\x00\x00\x00\xA3";
+char eqmainMask[] = "xx????xx????x";
+#endif
+//A3 ? ? ? ? E8 ? ? ? ? 83 C4 ? 85 C0 74 ? 8B 96 ? ? ? ? 52 57 8B C8 E8 ? ? ? ? EB ?
+//eqmain.dll
+//Feb 16 2018 Test
+//A3 ? ? ? ? E8 ? ? ? ? 83 C4 04 85 C0
+#ifdef EMU
 PBYTE lvmPattern = (PBYTE)"\xA3\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x83\xC4\x00\x85\xC0\x74\x00\x8B\x96\x00\x00\x00\x00\x52\x57\x8B\xC8\xE8\x00\x00\x00\x00\xEB\x00";
 char lvmMask[] = "x????x????xx?xxx?xx????xxxxx????x?";
-
+#else
+PBYTE lvmPattern = (PBYTE)"\xA3\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x83\xC4\x04\x85\xC0";
+char lvmMask[] = "x????x????xxxxx";
+#endif
+//8B 15 ? ? ? ? 89 82 ? ? ? ? A1 ? ? ? ? C6 80 ? ? ? ? ? 8B 0D ? ? ? ? 89 1D ? ? ? ? 8B 11 8B 42 ? FF D0 85 C0 74 ?
+//eqmain.dll
+//Feb 16 2018 Test
+//A1 BC ? ? ? ? 88 18
+#ifdef EMU
 PBYTE xwmPattern = (PBYTE)"\x8B\x15\x00\x00\x00\x00\x89\x82\x00\x00\x00\x00\xA1\x00\x00\x00\x00\xC6\x80\x00\x00\x00\x00\x00\x8B\x0D\x00\x00\x00\x00\x89\x1D\x00\x00\x00\x00\x8B\x11\x8B\x42\x00\xFF\xD0\x85\xC0\x74\x00";
 char xwmMask[] = "xx????xx????x????xx?????xx????xx????xxxx?xxxxx?";
-
+#else
+PBYTE xwmPattern = (PBYTE)"\xA1\xBC\x00\x00\x00\x00\x88\x18";
+char xwmMask[] = "xx????xx";
+#endif
+// A1 ? ? ? ? 80 B8 ? ? ? ? ? 0F 84 ? ? ? ? 8D 88 ? ? ? ? 8B 01 3B C3 74 ? 89 45 ? 33 DB 8B 45 ? F0 FF ? 0F 94 C3 89 5D ?
+//eqmain.dll
+//Feb 16 2018 Test
+//8B 35 ? ? ? ? 8a 86
+#ifdef EMU
 PBYTE swmPattern = (PBYTE)"\xA1\x00\x00\x00\x00\x80\xB8\x00\x00\x00\x00\x00\x0F\x84\x00\x00\x00\x00\x8D\x88\x00\x00\x00\x00\x8B\x01\x3B\xC3\x74\x00\x89\x45\x00\x33\xDB\x8B\x45\x00\xF0\xFF\x00\x0F\x94\xC3\x89\x5D\x00";
 char swmMask[] = "x????xx?????xx????xx????xxxxx?xx?xxxx?xxxxxxxx?";
-
+#else
+PBYTE swmPattern = (PBYTE)"\x8B\x35\x00\x00\x00\x00\x8a\x86";
+char swmMask[] = "xx????xx";
+#endif
+// 8B 54 24 ? 56 8B 74 24 ? 8B C1 85 D2 75 ? 85 F6 75 ? 33 C0 5E C2 ? ?
+//eqmain.dll func start
+//Feb 16 2018 Test
+//IDA Style Sig: 53 8B 5C 24 0C 8B C1 57
+//Code Style Signature: \x53\x8B\x5C\x24\x0C\x8B\xC1\x57 xxxxxxxx
+#ifdef EMU
 PBYTE xmldataPattern = (PBYTE)"\x8B\x54\x24\x00\x56\x8B\x74\x24\x00\x8B\xC1\x85\xD2\x75\x00\x85\xF6\x75\x00\x33\xC0\x5E\xC2\x00\x00";
 char xmldataMask[] = "xxx?xxxx?xxxxx?xxx?xxxx??";
-
+#else
+PBYTE xmldataPattern = (PBYTE)"\x53\x8B\x5C\x24\x0C\x8B\xC1\x57";
+char xmldataMask[] = "xxxxxxxx";
+#endif
+// 55 8B EC 6A ? 68 ? ? ? ? 64 A1 ? ? ? ? 50 83 EC ? 53 56 57 A1 ? ? ? ? 33 C5 50 8D 45 ? 64 A3 ? ? ? ? 8B F1 83 7E ? ?
+//eqmain.dll func start
+//Feb 16 2018 Test
+//55 8B EC 6A FF 68 ? ? ? ? 64 A1 ? ? ? ? 50 83 EC 08 53 56 57 A1 ? ? ? ? 33 C5 50 8D 45 F4 64 A3 ? ? ? ? 8B F1 83 7E 14 00 74 5D 51 8B CC 89 65 F0 68 ? ? ? ? E8 ? ? ? ? 51 8B CC 89 65 EC 68 ? ? ? ? C7 45 ? ? ? ? ? E8 ? ? ? ? 8B 4E 14 C6 45 FC 01 E8 ? ? ? ? 8B F8 51 8B DC 8B 0F 85 C9 74 09 51 E8 ? ? ? ? 83 C4 04 8B 07 8B CE 89 03 C7 45 ? ? ? ? ? E8 ? ? ? ? 84 C0 75 17 8B 4E 1C 8B 7D 08 85 C9 74 26 8B 01 57 FF 90 ? ? ? ? 85 C0 74 29 B8 ? ? ? ? 8B 4D F4 64 89 0D ? ? ? ? 59 5F 5E 5B 8B E5 5D C2 04 00 8B 4E 14 85 C9 74 09 8B 01 57 FF 90 ? ? ? ? 8B 0D ? ? ? ? 57 E8 ? ? ? ? 8B 4D F4 64 89 0D ? ? ? ? 59 5F 5E 5B 8B E5 5D C2 04 00
+#ifdef EMU
 PBYTE lmousePattern = (PBYTE)"\x55\x8B\xEC\x6A\x00\x68\x00\x00\x00\x00\x64\xA1\x00\x00\x00\x00\x50\x83\xEC\x00\x53\x56\x57\xA1\x00\x00\x00\x00\x33\xC5\x50\x8D\x45\x00\x64\xA3\x00\x00\x00\x00\x8B\xF1\x83\x7E\x00\x00";
 char lmouseMask[] = "xxxx?x????xx????xxx?xxxx????xxxxx?xx????xxxx??";
-
+#else
+PBYTE lmousePattern = (PBYTE)"\x55\x8B\xEC\x6A\xFF\x68\x00\x00\x00\x00\x64\xA1\x00\x00\x00\x00\x50\x83\xEC\x08\x53\x56\x57\xA1\x00\x00\x00\x00\x33\xC5\x50\x8D\x45\xF4\x64\xA3\x00\x00\x00\x00\x8B\xF1\x83\x7E\x14\x00\x74\x5D\x51\x8B\xCC\x89\x65\xF0\x68\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x51\x8B\xCC\x89\x65\xEC\x68\x00\x00\x00\x00\xC7\x45\x00\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\x4E\x14\xC6\x45\xFC\x01\xE8\x00\x00\x00\x00\x8B\xF8\x51\x8B\xDC\x8B\x0F\x85\xC9\x74\x09\x51\xE8\x00\x00\x00\x00\x83\xC4\x04\x8B\x07\x8B\xCE\x89\x03\xC7\x45\x00\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x84\xC0\x75\x17\x8B\x4E\x1C\x8B\x7D\x08\x85\xC9\x74\x26\x8B\x01\x57\xFF\x90\x00\x00\x00\x00\x85\xC0\x74\x29\xB8\x00\x00\x00\x00\x8B\x4D\xF4\x64\x89\x0D\x00\x00\x00\x00\x59\x5F\x5E\x5B\x8B\xE5\x5D\xC2\x04\x00\x8B\x4E\x14\x85\xC9\x74\x09\x8B\x01\x57\xFF\x90\x00\x00\x00\x00\x8B\x0D\x00\x00\x00\x00\x57\xE8\x00\x00\x00\x00\x8B\x4D\xF4\x64\x89\x0D\x00\x00\x00\x00\x59\x5F\x5E\x5B\x8B\xE5\x5D\xC2\x04\x00";
+char lmouseMask[] = "xxxxxx????xx????xxxxxxxx????xxxxxxxx????xxxxxxxxxxxxxxx????x????xxxxxxx????xx?????x????xxxxxxxx????xxxxxxxxxxxxx????xxxxxxxxxxx?????x????xxxxxxxxxxxxxxxxxxx????xxxxx????xxxxxx????xxxxxxxxxxxxxxxxxxxxxx????xx????xx????xxxxxx????xxxxxxxxxx";
+#endif
+// A3 ? ? ? ? 8B 56 ? 8B 4A ? 6A ? 51 52 8B C8 C7 45 ? ? ? ? ? E8 ? ? ? ?
+//eqmain.dll dword in func
+//Feb 16 2018 Test
+//IDA Style Sig: 89 0D ? ? ? ? 8B 46 2C
+#ifdef EMU
 PBYTE lcPattern = (PBYTE)"\xA3\x00\x00\x00\x00\x8B\x56\x00\x8B\x4A\x00\x6A\x00\x51\x52\x8B\xC8\xC7\x45\x00\x00\x00\x00\x00\xE8\x00\x00\x00\x00";
 char lcMask[] = "x????xx?xx?x?xxxxxx?????x????";
-
-//login::pulse
+#else
+PBYTE lcPattern = (PBYTE)"\x89\x0D\x00\x00\x00\x00\x8B\x46\x2C";
+char lcMask[] = "xx????xxx";
+#endif
+//Login__Pulse_x
+// 56 8B F1 E8 ? FD FF FF 8B CE 5E E9 ? ? FF FF C7 01
+//Feb 16 2018 Test
+//IDA Style Sig: 56 8B F1 E8 ? ? ? ? 8B CE
+#ifdef EMU
 PBYTE lpPattern = (PBYTE)"\x56\x8B\xF1\xE8\x00\xFD\xFF\xFF\x8B\xCE\x5E\xE9\x00\x00\xFF\xFF\xC7\x01";
 char lpMask[] = "xxxx?xxxxxxx??xxxx";
-
+#else
+PBYTE lpPattern = (PBYTE)"\x56\x8B\xF1\xE8\x00\x00\x00\x00\x8B\xCE";
+char lpMask[] = "xxxx????xx";
+#endif
 
 #ifndef EMU
 #define SPLASH "dbgsplash"
-PBYTE lcEGPattern = (PBYTE)"\x55\x8B\xEC\x6A\xFF\x68\x00\x00\x00\x00\x64\xA1\x00\x00\x00\x00\x50\x83\xEC\x34\x53\x56\xA1\x00\x00\x00\x00\x33\xC5\x50\x8D\x45\xF4\x64\xA3\x00\x00\x00\x00\x8B\xF1\x33\xDB\xC7\x45\x00\x00\x00\x00\x00\xC7\x45\x00\x00\x00\x00\x00\x89\x5D\xEC\x89\x5D\xE8\x8D\x45\xE0\x50\x89\x5D\xFC\xE8\x00\x00\x00\x00\x8D\x4D\xF0\x51\xE8\x00\x00\x00\x00\x83\xC4\x08\x8D\x4D\xC0\xE8\x00\x00\x00\x00\x8B\x45\xE4\x8B\x55\x08\x50\x8D\x4D\xD8\xC6\x45\xFC\x01\x89\x55\xD4\xE8\x00\x00\x00\x00\x8B\x4D\xF0\x8B\x55\x10\x8B\x45\x0C\x52\x89\x4D\xDC\x50\x8D\x4D\xC0\x51\x8B\xCE\xE8\x00\x00\x00\x00\x8D\x4D\xC0\x8B\xF0\x88\x5D\xFC\xE8\x00\x00\x00\x00\xC7\x45\x00\x00\x00\x00\x00\xC7\x45\x00\x00\x00\x00\x00\x39\x5D\xEC\x7E\x20\x8B\x45\xE4\x83\xC0\xFC\x8B\xD0\x83\xC9\xFF\xF0\x0F\xC1\x0A\x49\x85\xC9\x7F\x0C\x8B\x55\xE0\x50\x8B\x42\x08\x8D\x4D\xE0\xFF\xD0\x8B\xC6\x8B\x4D\xF4\x64\x89\x0D\x00\x00\x00\x00\x59\x5E\x5B\x8B\xE5\x5D\xC2\x0C\x00";
-char lcEGMask[] = "xxxxxx????xx????xxxxxxx????xxxxxxxx????xxxxxx?????xx?????xxxxxxxxxxxxxx????xxxxx????xxxxxxx????xxxxxxxxxxxxxxxxxx????xxxxxxxxxxxxxxxxxxxxx????xxxxxxxxx????xx?????xx?????xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx????xxxxxxxxx";
+// 55 8B EC 6A FF 68 ? ? ? ? 64 A1 ? ? ? ? 50 83 EC 34 53 56 A1 ? ? ? ? 33 C5 50 8D 45 F4 64 A3 ? ? ? ? 8B F1 33 DB C7 45 ? ? ? ? ? C7 45 ? ? ? ? ? 89 5D EC 89 5D E8 8D 45 E0 50 89 5D FC E8 ? ? ? ? 8D 4D F0 51 E8 ? ? ? ? 83 C4 08 8D 4D C0 E8 ? ? ? ? 8B 45 E4 8B 55 08 50 8D 4D D8 C6 45 FC 01 89 55 D4 E8 ? ? ? ? 8B 4D F0 8B 55 10 8B 45 0C 52 89 4D DC 50 8D 4D C0 51 8B CE E8 ? ? ? ? 8D 4D C0 8B F0 88 5D FC E8 ? ? ? ? C7 45 ? ? ? ? ? C7 45 ? ? ? ? ? 39 5D EC 7E 20 8B 45 E4 83 C0 FC 8B D0 83 C9 FF F0 0F C1 0A 49 85 C9 7F 0C 8B 55 E0 50 8B 42 08 8D 4D E0 FF D0 8B C6 8B 4D F4 64 89 0D ? ? ? ? 59 5E 5B 8B E5 5D C2 0C ?
+//eqmain.dll start func
+//55 8B EC 6A FF 68 ? ? ? ? 64 A1 ? ? ? ? 50 83 EC 34 53 56 A1
+//Feb 16 2018 Test
+//IDA Style Sig: 55 8B EC 6A FF 68 ? ? ? ? 64 A1 ? ? ? ? 50 83 EC 34 56
+#ifdef EMU
+PBYTE lcEGPattern = (PBYTE)"\x55\x8B\xEC\x6A\xFF\x68\x00\x00\x00\x00\x64\xA1\x00\x00\x00\x00\x50\x83\xEC\x34\x53\x56\xA1";
+char lcEGMask[] = "xxxxxx????xx????xxxxxxx";
+#else
+PBYTE lcEGPattern = (PBYTE)"\x55\x8B\xEC\x6A\xFF\x68\x00\x00\x00\x00\x64\xA1\x00\x00\x00\x00\x50\x83\xEC\x34\x56";
+char lcEGMask[] = "xxxxxx????xx????xxxxx";
+#endif
 #else
 #define SPLASH "soesplash"
 PBYTE lcEGPattern = (PBYTE)"\x55\x8B\xEC\x6A\xFF\x68\x00\x00\x00\x00\x64\xA1\x00\x00\x00\x00\x50\x83\xEC\x18\x56\xA1\x00\x00\x00\x00\x33\xC5\x50\x8D\x45\xF4\x64\xA3\x00\x00\x00\x00\x8B\xF1\x8d\x4d\xDC\xE8\x00\x00\x00\x00\x00\x4d\x10\x00\x00\x00\x00\x00\x0c\x51\x89\x45\xf0\x52\x8D\x45";
@@ -317,7 +403,7 @@ int StrToBlobA(LPCSTR szIn,DATA_BLOB *BlobOut)
 {
 	size_t len = strlen(szIn);
 	BlobOut->pbData = (BYTE *)LocalAlloc(LPTR,(len)+1);
-	char *szArg = new char[len+1];
+	PCHAR szArg = new char[len+1];
 	strcpy_s(szArg,len+1,szIn);
 	BYTE CurByte=0;
 	DWORD out=0;
@@ -438,6 +524,17 @@ template <unsigned int _Size>bool GetPassword(CHAR(&szBuffer)[_Size])
 	}
 	return false;
 }
+
+template <unsigned int _Size>bool GetServerName(CHAR(&szBuffer)[_Size])
+{
+	if (EQADDR_SERVERNAME) {
+		strcpy_s(szBuffer,_Size,EQADDR_SERVERNAME);
+		if (szBuffer[0] != '\0') {
+			return true;
+		}
+	}
+	return false;
+}
 //todo fix this to do an actual select on the listitem
 template <unsigned int _Size>DWORD SelectServer(CHAR(&szShortName)[_Size])
 {
@@ -533,7 +630,7 @@ template <unsigned int _Size>DWORD GetServerID(CHAR(&szName)[_Size])
     return 0;
 }
 
-void Cmd_SwitchServer(PSPAWNINFO pChar, char *szLine)
+void Cmd_SwitchServer(PSPAWNINFO pChar, PCHAR szLine)
 {
     char szServer[MAX_STRING] = {0};
     char szCharacter[MAX_STRING] = {0};
@@ -562,6 +659,7 @@ void Cmd_SwitchServer(PSPAWNINFO pChar, char *szLine)
             }
             EzCommand("/camp");
 			bInGame = false;
+			bInjectorUpdate = true;
             WriteChatf("Switching to \ag%s\ax on server \ag%s\ax", szCharacterName, szServer);
             return;
         }
@@ -586,7 +684,7 @@ void Cmd_SwitchServer(PSPAWNINFO pChar, char *szLine)
     WriteChatf("\ayUsage:\ax /switchserver <server short name> <character name>");
 }
 
-void Cmd_SwitchCharacter(PSPAWNINFO pChar, char *szLine)
+void Cmd_SwitchCharacter(PSPAWNINFO pChar, PCHAR szLine)
 {
     char szArg1[MAX_STRING] = {0};
 
@@ -606,6 +704,7 @@ void Cmd_SwitchCharacter(PSPAWNINFO pChar, char *szLine)
                 }
                 EzCommand("/camp");
 				bSwitchChar = true;
+				bInjectorUpdate = true;
 				WriteChatf("Switch to \ag%s\ax is now active and will commence at character select.", szNewChar);
             }
             else
@@ -625,7 +724,7 @@ void Cmd_SwitchCharacter(PSPAWNINFO pChar, char *szLine)
     }
 }
 
-void Cmd_Relog(PSPAWNINFO pChar, char *szLine)
+void Cmd_Relog(PSPAWNINFO pChar, PCHAR szLine)
 {
     if(GetGameState() == GAMESTATE_INGAME)
     {
@@ -668,17 +767,23 @@ void Cmd_Relog(PSPAWNINFO pChar, char *szLine)
         }
         EzCommand("/camp");
 		bInGame = false;
+		bInjectorUpdate = true;
     }
 }
 DWORD Login__Pulse_x = 0;
 bool bGotOffsets = false;
 bool GetAllOffsets(DWORD dweqmain)
 {
+	//MessageBox(NULL, "Inject", "AutoLogin::GetAllOffsets", MB_SYSTEMMODAL | MB_OK);
 	if (!dweqmain)
 		return false;
 	if(dwLoginClient = _FindPattern(dweqmain, 0x100000, lcPattern, lcMask))
     {
-        dwLoginClient = _GetDWordAt(dwLoginClient, 1);
+		#ifndef EMU
+		dwLoginClient = _GetDWordAt(dwLoginClient, 2);
+		#else
+		dwLoginClient = _GetDWordAt(dwLoginClient, 1);
+		#endif
     }
     else
     {
@@ -706,7 +811,11 @@ bool GetAllOffsets(DWORD dweqmain)
 
     if(dwSidlMgr = _FindPattern(dweqmain, 0x100000, swmPattern, swmMask))
     {
-        dwSidlMgr = _GetDWordAt(dwSidlMgr, 1);
+		#ifndef EMU
+		dwSidlMgr = _GetDWordAt(dwSidlMgr, 2);
+		#else
+		dwSidlMgr = _GetDWordAt(dwSidlMgr, 1);
+		#endif
     }
     else
     {
@@ -714,9 +823,13 @@ bool GetAllOffsets(DWORD dweqmain)
         return false;
     }
 
-    if(dwWndMgr = _FindPattern(dweqmain, 0x100000, xwmPattern, xwmMask))
+    if(dwWndMgr = _FindPattern(dweqmain, 0x200000, xwmPattern, xwmMask))
     {
-        dwWndMgr = _GetDWordAt(dwWndMgr, 2);
+        #ifndef EMU
+		dwWndMgr = _GetDWordAt(dwWndMgr, 1);
+		#else
+		dwWndMgr = _GetDWordAt(dwWndMgr, 2);
+		#endif
     }
     else
     {
@@ -724,7 +837,7 @@ bool GetAllOffsets(DWORD dweqmain)
         return false;
     }
 
-    if(dwLoginMgr = _FindPattern(dweqmain, 0x100000, lvmPattern, lvmMask))
+    if(dwLoginMgr = _FindPattern(dweqmain, 0x200000, lvmPattern, lvmMask))
     {
         dwLoginMgr = _GetDWordAt(dwLoginMgr, 1);
 		dwServerInfo = dwLoginMgr - 4;
@@ -856,7 +969,7 @@ void SetupCustomIni()
     if( szCustomIni && szCustomIni[0] != '\0' )
         return;
 
-    if( char *pLogin = GetLoginName() )
+    if(PCHAR pLogin = GetLoginName() )
     {
         strcpy_s( szStationName, pLogin );
         if( gpps )
@@ -999,7 +1112,7 @@ PLUGIN_API VOID InitializePlugin(VOID)
             GetPrivateProfileString(szSession, "Character", 0, szCharacterName, 64, INIFileName);
             GetPrivateProfileString(szSession, "SelectCharacter", 0, szSelectCharacterName, 64, INIFileName);
 		} else {
-			if(char *pLogin = GetLoginName())
+			if(PCHAR pLogin = GetLoginName())
             {
 				strcpy_s(szStationName, pLogin);
                 GetPrivateProfileString(szStationName, "Password", 0, szPassword, 64, INIFileName);
@@ -1097,7 +1210,27 @@ PLUGIN_API VOID SetGameState(DWORD GameState)
         bInGame = true;
     }
 }
-
+template <unsigned int _Size>bool CurrentCharacter(CHAR(&szBuffer)[_Size])
+{
+	if (CXWnd*pWnd = FindMQ2Window("CLW_CharactersScreen")) {
+		if (CListWnd *charlist = (CListWnd *)pWnd->GetChildItem("Character_List")) {
+			if (charlist->ItemsArray.Count) {
+				CXStr Str;
+				int column = 2;
+				CHAR szOut[MAX_STRING] = { 0 };
+				charlist->GetItemText(&Str, charlist->CurSel, column);
+				GetCXStr(Str.Ptr, szOut, MAX_STRING);
+				if (szOut[0] != '\0') {
+					strcpy_s(szBuffer, _Size, szOut);
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+int BugTimer = 0;
+int retrylogincounter = 0;
 PLUGIN_API VOID OnPulse(VOID)
 {
 	//ok since in game pulse starts at charselect we can use that for charswitching and serverswithcing as well as relog...
@@ -1108,8 +1241,40 @@ PLUGIN_API VOID OnPulse(VOID)
         bLogin = true;
         return;
     }
-
-    if (GetGameState() == GAMESTATE_CHARSELECT) {
+	if (GetGameState() == GAMESTATE_INGAME) {
+		if (retrylogincounter)
+			retrylogincounter = 0;
+	}
+	if (GetGameState() == GAMESTATE_CHARSELECT) {
+		//fix for the stuck at char select "Loading Characters" bug.
+		BugTimer++;
+		if (BugTimer > 100 && retrylogincounter==0) {
+			BugTimer = 0;
+			if (CSidlScreenWnd *pWnd = (CSidlScreenWnd *)FindMQ2Window("ConfirmationDialogBox")) {
+				if (pWnd->dShow == 1) {
+					if (CStmlWnd *Child = (CStmlWnd*)pWnd->GetChildItem("cd_textoutput")) {
+						CHAR InputCXStr[MAX_STRING] = { 0 };
+						GetCXStr(Child->STMLText, InputCXStr, MAX_STRING);
+						if (strstr(InputCXStr, "Loading Characters")) {
+							if (DWORD pCharSelect = *(DWORD*)pinstCCharacterListWnd) {
+								retrylogincounter = 1;
+								bLogin = true;
+								if (szServerName && szServerName[0] == '\0') {
+									GetServerName(szServerName);
+								}
+								if (szNewChar && szNewChar[0] == '\0') {
+									CurrentCharacter(szNewChar);
+								}
+								switchTime = MQGetTickCount64() + 3000;
+								Beep(1000, 100);
+								((CCharacterListWnd *)pCharSelect)->Quit();
+								AutoLoginDebug("Quit() called due to charselect list being empty");
+							}
+						}
+					}
+				}
+			}
+		}
 		if(dwTime && szNewChar[0] && GetAsyncKeyState(VK_END) & 1)
         {
             WriteChatf("END key pressed. Login of %s aborted.",szNewChar);
@@ -1122,8 +1287,13 @@ PLUGIN_API VOID OnPulse(VOID)
         {
             // world -> char select
 			AutoLoginDebug("SetGameState(GAMESTATE_CHARSELECT): bSwitchServer = true");
-			DWORD pCharSelect = *(DWORD*)pinstCCharacterSelect;
-			((CCharacterSelect *)pCharSelect)->Quit();
+			DWORD pCharSelect = *(DWORD*)pinstCCharacterListWnd;
+			((CCharacterListWnd *)pCharSelect)->Quit();
+			if (bInjectorUpdate)
+			{
+				IC_LoaderClearLoaded(szProfile, szStationName, szServerName, szCharacterName, GetCurrentProcessId());
+			}
+			bInjectorUpdate = false;
 			return;
 		}
 		if (bSwitchChar) 
@@ -1131,6 +1301,11 @@ PLUGIN_API VOID OnPulse(VOID)
             //we have to give the chatwindow time to show up at char select... so we wait a couple seconds...
 			switchTime = MQGetTickCount64() + 2000;
 			bSwitchChar = false;
+			if (bInjectorUpdate)
+			{
+				IC_LoaderClearLoaded(szProfile, szStationName, szServerName, szCharacterName, GetCurrentProcessId());
+			}
+			bInjectorUpdate = false;
 			return;
 		}
 		if (switchTime && switchTime <= MQGetTickCount64() && szNewChar[0] != '\0' ) 
@@ -1140,6 +1315,7 @@ PLUGIN_API VOID OnPulse(VOID)
 			switchTime = 0;
 			dwTime = MQGetTickCount64() + 3000;
             SelectCharacter( szNewChar );
+			IC_LoaderSetLoaded(szProfile, szStationName, szServerName, szNewChar, GetCurrentProcessId());
 			return;
 		}
         if( switchTime && switchTime <= MQGetTickCount64() && szSelectCharacterName[0] != '\0' )
@@ -1148,7 +1324,8 @@ PLUGIN_API VOID OnPulse(VOID)
             WriteChatf( "Selecting \ag%s\ax in 3 seconds. please Wait... or press the END key to abort", szSelectCharacterName );
             switchTime = 0;
             SelectCharacter( szSelectCharacterName );
-            return;
+			IC_LoaderSetLoaded(szProfile, szStationName, szServerName, szCharacterName, GetCurrentProcessId());
+			return;
         }
 		if (szNewChar[0] != '\0' && dwTime && dwTime <= MQGetTickCount64())
 		{
@@ -1165,7 +1342,7 @@ PLUGIN_API VOID OnPulse(VOID)
 	}
 }
 
-void SwitchCharacter(char *szName)
+void SwitchCharacter(PCHAR szName)
 {
 	if (szName && szName[0] != '\0') {
 		if (CXWnd*pWnd = FindMQ2Window("CLW_CharactersScreen")) {
@@ -1179,9 +1356,9 @@ void SwitchCharacter(char *szName)
 						GetCXStr(Str.Ptr, szOut, MAX_STRING);
 						if (szOut[0] != '\0') {
 							if (!_stricmp(szName, szOut)) {
-								DWORD pCharSelect = *(DWORD*)pinstCCharacterSelect;
-								((CCharacterSelect *)pCharSelect)->SelectCharacter(i);
-								((CCharacterSelect *)pCharSelect)->EnterWorld();
+								DWORD pCharSelect = *(DWORD*)pinstCCharacterListWnd;
+								((CCharacterListWnd *)pCharSelect)->SelectCharacter(i);
+								((CCharacterListWnd *)pCharSelect)->EnterWorld();
                                 
                                 if (bEndAfterCharSelect)
 								{
@@ -1204,7 +1381,7 @@ void SwitchCharacter(char *szName)
 	}
 }
 
-void SelectCharacter( char *szName )
+void SelectCharacter(PCHAR szName )
 {
     if( szName && szName[0] != '\0' ) {
         if( CXWnd*pWnd = FindMQ2Window( "CLW_CharactersScreen" ) ) {
@@ -1218,8 +1395,8 @@ void SelectCharacter( char *szName )
                         GetCXStr( Str.Ptr, szOut, MAX_STRING );
                         if( szOut[0] != '\0' ) {
                             if( !_stricmp( szName, szOut ) ) {
-                                DWORD pCharSelect = *(DWORD*)pinstCCharacterSelect;
-                                ((CCharacterSelect *)pCharSelect)->SelectCharacter(i);
+                                DWORD pCharSelect = *(DWORD*)pinstCCharacterListWnd;
+                                ((CCharacterListWnd *)pCharSelect)->SelectCharacter(i);
                                 return;
                             }
                         }
@@ -1235,7 +1412,7 @@ void SelectCharacter( char *szName )
     }
 }
 
-inline bool WindowActive(char *name)
+inline bool WindowActive(PCHAR name)
 {
 	if (dwEQMainBase) {
 		if (WindowMap.find(name) != WindowMap.end()) {
@@ -1416,48 +1593,66 @@ void HandleWindows()
 			if (bUseMQ2Login) {
 				AutoLoginDebug("HandleWindows(): Using MQ2Login Method");
 				CEditWnd *csidlwnd = (CEditWnd*)pWnd;
-				GetCXStr(csidlwnd->InputText, szStationName, 64);
-				if (szStationName[0]) {
-					if (char *pDest = strchr(szStationName, '_')) {
+				GetCXStr(csidlwnd->InputText, szUserName, 64);
+				if (szUserName[0]) {
+					strcpy_s(szProfile, szUserName);
+					AutoLoginDebug("HandleWindows() szUserName(%s)", szUserName);
+					if (PCHAR pDest = strchr(szProfile, '_')) {
 						//we have a mq2login user... good boy/girl :) welcome to 2016.
 						pDest[0] = '\0';
 						pDest++;
-						sprintf_s(szCharacterName, "%s_Blob", pDest);
-						CHAR szProfile[128] = { 0 };
-						strcpy_s(szProfile, szCharacterName);
-						if (char *pDest2 = strchr(szProfile, ':')) {
+						sprintf_s(szBlobKey, "%s_Blob", pDest);
+						strcpy_s(szCharacterName, szBlobKey);
+						AutoLoginDebug("HandleWindows() szProfile(%s), szCharacterName(%s)", szProfile, szCharacterName);
+						if (PCHAR pDest2 = strchr(szCharacterName, ':')) {
 							pDest2[0] = '\0';
-							strcpy_s(szServerName, szProfile);
+							strcpy_s(szServerName, szCharacterName);
 						} else {
-							strcpy_s(szServerName, szStationName);
+							strcpy_s(szServerName, szUserName);
 						}
+						AutoLoginDebug("HandleWindows() szProfile(%s), szBlobKey(%s), szServerName(%s)", szProfile, szBlobKey, szServerName);
 						//now that we have the server and the charname, we can figure out the stationname and password from the blob
-						CHAR szBlob[2048] = { 0 };
-						if (GetPrivateProfileString(szStationName, szCharacterName, "", szBlob, sizeof(szBlob), INIFileName)) {
+						CHAR szBlob[MAX_STRING] = { 0 };
+						if (GetPrivateProfileString(szProfile, szBlobKey, "", szBlob, sizeof(szBlob), INIFileName)) {
 							if (pDest = strrchr(szBlob, '=')) {
 								pDest[0] = '\0';
 							}
+							AutoLoginDebug("HandleWindows() szBlob(%s)", szBlob);
 							DATA_BLOB db = { 0 };
 							DATA_BLOB dbout = { 0 };
 							if (StrToBlobA(szBlob, &db)) {
 								if (DecryptData(&db, &dbout)) {
-									if (char *thestring = (char*)dbout.pbData) {
-										//we should parse out Login, CharName, Pass
-										CHAR szTemp[2048] = { 0 };
+									if (PCHAR thestring = (PCHAR)dbout.pbData) {
+										AutoLoginDebug("HandleWindows() thestring(%s)", thestring);
+										//we should parse out Login, CharName, Pass, hotkey
+										CHAR szTemp[MAX_STRING] = { 0 };
 										strcpy_s(szTemp, thestring);
 										LocalFree(db.pbData);//always remember to free this (MSDN)
 										LocalFree(dbout.pbData);//always remember to free this (MSDN)
-										if (char *pDest = strchr(szTemp, ':')) {
+										if (PCHAR pDest = strchr(szTemp, ':')) {
 											pDest[0] = '\0';
 											strcpy_s(szStationName, szTemp);
+											AutoLoginDebug("HandleWindows() szStationName(%s)", szStationName);
 											pDest++;
 											if (pDest[0]) {
 												strcpy_s(szTemp, pDest);
 												if (pDest = strchr(szTemp, ':')) {
 													pDest[0] = '\0';
 													strcpy_s(szCharacterName, szTemp);
+													AutoLoginDebug("HandleWindows() szCharacterName(%s)", szCharacterName);
 													pDest++;
 													strcpy_s(szPassword, pDest);
+													if (pDest[0]) {
+														strcpy_s(szTemp, pDest);
+														if (pDest = strchr(szTemp, ':')) {
+															pDest[0] = '\0';
+															strcpy_s(szPassword, szTemp);
+															pDest++;
+															strcpy_s(szHotkey, pDest);
+														}
+													}
+													AutoLoginDebug("HandleWindows() szProfile(%s), szStationName(%s), szServerName(%s), szCharacterName(%s)", szProfile, szStationName, szServerName, szCharacterName);
+													IC_LoaderSetLoaded(szProfile, szStationName, szServerName, szCharacterName, GetCurrentProcessId());
 												}
 											}
 										}
@@ -1471,7 +1666,7 @@ void HandleWindows()
 						SetCXStr(&((CEditWnd*)pWnd)->InputText, szStationName);
 						ScreenMode = oldscreenmode;
 					}
-					else if (char *pDest = strchr(szStationName, ';')) {//special login
+					else if (PCHAR pDest = strchr(szUserName, ';')) {//special login
 						//basically this allows for a piped login
 						//where password,server, and name are sent directly.
 						//should not be used under normal circumstances
@@ -1482,17 +1677,17 @@ void HandleWindows()
 						pDest[0] = '\0';
 						pDest++;
 						sprintf_s(szCharacterName, "%s", pDest);
-						CHAR szProfile[128] = { 0 };
+						//CHAR szProfile[128] = { 0 };
 						strcpy_s(szProfile, szCharacterName);
-						if (char *pDest2 = strchr(szProfile, ':')) {
+						if (PCHAR pDest2 = strchr(szProfile, ':')) {
 							pDest2[0] = '\0';
 							strcpy_s(szServerName, szProfile);
 						} else {
-							strcpy_s(szServerName, szStationName);
+							strcpy_s(szServerName, szUserName);
 						}
 						//now that we have the server and the charname, we can figure out the stationname and password from the blob
-						CHAR szBlob[2048] = { 0 };
-						if (GetPrivateProfileString(szStationName, szCharacterName, "", szBlob, sizeof(szBlob), INIFileName)) {
+						CHAR szBlob[MAX_STRING] = { 0 };
+						if (GetPrivateProfileString(szUserName, szCharacterName, "", szBlob, sizeof(szBlob), INIFileName)) {
 							if (pDest = strrchr(szBlob, '=')) {
 								pDest[0] = '\0';
 							}
@@ -1500,13 +1695,13 @@ void HandleWindows()
 							DATA_BLOB dbout = { 0 };
 							if (StrToBlobA(szBlob, &db)) {
 								if (DecryptData(&db, &dbout)) {
-									if (char *thestring = (char*)dbout.pbData) {
-										//we should parse out Login, CharName, Pass
-										CHAR szTemp[2048] = { 0 };
+									if (PCHAR thestring = (PCHAR)dbout.pbData) {
+										//we should parse out Login, CharName, Pass, Hotkey
+										CHAR szTemp[MAX_STRING] = { 0 };
 										strcpy_s(szTemp, thestring);
 										LocalFree(db.pbData);//always remember to free this (MSDN)
 										LocalFree(dbout.pbData);//always remember to free this (MSDN)
-										if (char *pDest = strchr(szTemp, ':')) {
+										if (PCHAR pDest = strchr(szTemp, ':')) {
 											pDest[0] = '\0';
 											strcpy_s(szStationName, szTemp);
 											pDest++;
@@ -1517,6 +1712,16 @@ void HandleWindows()
 													strcpy_s(szCharacterName, szTemp);
 													pDest++;
 													strcpy_s(szPassword, pDest);
+													if (pDest[0]) {
+														strcpy_s(szTemp, pDest);
+														if (pDest = strchr(szTemp, ':')) {
+															pDest[0] = '\0';
+															strcpy_s(szPassword, szTemp);
+															pDest++;
+															strcpy_s(szHotkey, pDest);
+														}
+													}
+													IC_LoaderSetLoaded(szProfile, szStationName, szServerName, szCharacterName, GetCurrentProcessId());
 												}
 											}
 										}
@@ -1689,10 +1894,14 @@ void HandleWindows()
         {
             char szTemp[MAX_STRING] = {0};
 
-            if(((CXWnd2*)pWnd)->GetType() == UI_STMLBox)
-                GetCXStr(((CStmlWnd*)pWnd)->STMLText,szTemp,MAX_STRING);
-            else
-                GetCXStr(((CSidlScreenWnd*)pWnd)->WindowText,szTemp,MAX_STRING);
+			if (((CXWnd2*)pWnd)->GetType() == UI_STMLBox) {
+				CStmlWnd*pcstm = (CStmlWnd*)pWnd;
+				GetCXStr(pcstm->STMLText, szTemp, MAX_STRING);
+			}
+			else {
+				CSidlScreenWnd*pcsidl = (CSidlScreenWnd*)pWnd;
+				GetCXStr(pcsidl->WindowText, szTemp, MAX_STRING);
+			}
 
             // click OK button if news window is open
             if(szTemp[0] && !strcmp(szTemp, "NEWS"))
@@ -1785,7 +1994,7 @@ bool SetOffsetsUI()
     return true;
 }
 
-DWORD GetProcessCount(char *exeName)
+DWORD GetProcessCount(PCHAR exeName)
 {
     HANDLE hnd = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
     PROCESSENTRY32 proc;
@@ -1819,7 +2028,7 @@ inline void LoginReset()
 }
 
 #ifdef AUTOLOGIN_DBG
-void DebugLog(char *szFormat, ...)
+void DebugLog(PCHAR szFormat, ...)
 {
    char szOutput[512] = {0};
     char szTmp[512] = {0};
@@ -1843,7 +2052,7 @@ void DebugLog(char *szFormat, ...)
 #endif
 
 // originally created by: radioactiveman/bunny771/(dom1n1k?) of GameDeception -----------
-inline bool _DataCompare(const unsigned char* pData, const unsigned char* bMask, const char* szMask)
+inline bool _DataCompare(const unsigned char *pData, const unsigned char *bMask, const char *szMask)
 {
     for(;*szMask;++szMask,++pData,++bMask)
         if(*szMask=='x' && *pData!=*bMask )
@@ -1851,10 +2060,10 @@ inline bool _DataCompare(const unsigned char* pData, const unsigned char* bMask,
     return (*szMask) == 0;
 }
 
-unsigned long _FindPattern(unsigned long dwAddress,unsigned long dwLen,unsigned char *bPattern,char * szMask)
+unsigned long _FindPattern(unsigned long dwAddress,unsigned long dwLen,unsigned char *bPattern,char *szMask)
 {
     for(unsigned long i=0; i < dwLen; i++)
-        if(_DataCompare( (unsigned char*)( dwAddress+i ),bPattern,szMask) )
+        if(_DataCompare( (unsigned char *)( dwAddress+i ),bPattern,szMask) )
             return (unsigned long)(dwAddress+i);
    
     return 0;

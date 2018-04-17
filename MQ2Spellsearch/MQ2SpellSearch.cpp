@@ -194,10 +194,10 @@ DWORD WINAPI FindSpellThread(LPVOID lpParam)
 			if (pSpell->Name != NULL) 
 			{ 
 				strcpy_s(szSpellName, pSpell->Name); 
-				_strlwr_s(szSpellName); 
-				strcpy_s(szSpellCastOnYou, pSpell->CastOnYou); 
+				_strlwr_s(szSpellName);
+				strcpy_s(szSpellCastOnYou, GetSpellString(pSpell->ID,2)); 
 				_strlwr_s(szSpellCastOnYou); 
-				strcpy_s(szSpellCastOnOther, pSpell->CastOnAnother); 
+				strcpy_s(szSpellCastOnOther, GetSpellString(pSpell->ID,3)); 
 				_strlwr_s(szSpellCastOnOther); 
 				if ( strstr(szSpellName, szSearchString) || 
 					strstr(szSpellCastOnYou, szSearchString) || 
@@ -377,15 +377,20 @@ VOID ShowSpellInfo(PSPELL pSpell)
 	spellout(szBuff); 
 
 	//show cast messages if they are defined for the spell 
-	if ( strlen(pSpell->CastOnYou)>1 ) 
-	{ 
-		sprintf_s(szBuff,"CastOnYou:\at%s", pSpell->CastOnYou); 
-		spellout(szBuff); 
+	if (char*str = GetSpellString(pSpell->ID,2))
+	{
+		/*CastByMe,CastByOther,CastOnYou,CastOnAnother,WearOff*/
+		if (str[0]) {
+			sprintf_s(szBuff, "CastOnYou:\at%s", str);
+			spellout(szBuff);
+		}
 	} 
-	if ( strlen(pSpell->CastOnAnother)>1 ) 
+	if (char*str = GetSpellString(pSpell->ID,3)) 
 	{ 
-		sprintf_s(szBuff,"CastOnOther:\atAradune%s",pSpell->CastOnAnother); 
-		spellout(szBuff); 
+		if (str[0]) {
+			sprintf_s(szBuff, "CastOnOther:\atAradune%s", str);
+			spellout(szBuff);
+		}
 	} 
 
 	//show autocast if it is specified 

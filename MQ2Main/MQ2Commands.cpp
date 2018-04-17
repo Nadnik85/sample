@@ -42,6 +42,7 @@ VOID Unload(PSPAWNINFO pChar, PCHAR szLine)
 	DebugSpew("%s", ToUnloadString);
 	WriteChatColor(ToUnloadString, USERCOLOR_DEFAULT);
 	gbUnload = TRUE;
+	IC_MQ2Unload(GetCurrentProcessId());
 }
 // ***************************************************************************
 // Function:    ListMacros
@@ -1634,6 +1635,7 @@ VOID CMQ2Alerts::FreeAlerts(DWORD List)
 // ***************************************************************************
 VOID Alert(PSPAWNINFO pChar, PCHAR szLine)
 {
+	bool bOutput = pChar ? true : false;
 	bRunNextCommand = TRUE;
 	CHAR szArg[MAX_STRING] = { 0 };
 	CHAR szLLine[MAX_STRING] = { 0 };
@@ -1767,8 +1769,10 @@ VOID Alert(PSPAWNINFO pChar, PCHAR szLine)
 				}
 				if (pSearchSpawn)
 					free(pSearchSpawn);
-				DebugSpew("Alert - %s", Buffer);
-				WriteChatColor(Buffer, USERCOLOR_DEFAULT);
+				if (bOutput) {
+					DebugSpew("Alert - %s", Buffer);
+					WriteChatColor(Buffer, USERCOLOR_DEFAULT);
+				}
 				DidSomething = TRUE;
 			}
 		}

@@ -179,7 +179,7 @@ FUNCTION_AT_VIRTUAL_ADDRESS(int CXWnd::HandleRButtonUpAfterHeld(class CXPoint *,
 FUNCTION_AT_VIRTUAL_ADDRESS(int CXWnd::WndNotification(class CXWnd *,unsigned __int32,void *),0x88);
 FUNCTION_AT_VIRTUAL_ADDRESS(int CXWnd::OnResize(int,int),0x09c);
 FUNCTION_AT_VIRTUAL_ADDRESS(int CXWnd::OnMinimizeBox(void),0xac);
-FUNCTION_AT_VIRTUAL_ADDRESS(int CXWnd::Show(bool,bool,bool),0x0d8);
+FUNCTION_AT_VIRTUAL_ADDRESS(int CXWnd::Show(bool, bool, bool),0x0d8);
 #if defined (EMU)
 FUNCTION_AT_VIRTUAL_ADDRESS(class CXRect CXWnd::GetClientRect(void)const,0xf8);
 FUNCTION_AT_VIRTUAL_ADDRESS(void CXWnd::SetWindowTextA(class CXStr &),0x124);
@@ -790,71 +790,74 @@ FUNCTION_AT_ADDRESS(void  CCharacterCreation::FinalizeNewPCAndSendToWorld(void),
 #ifdef CCharacterCreation__GetCharCreateText_x
 FUNCTION_AT_ADDRESS(char *  CCharacterCreation::GetCharCreateText(char *,int,int,int,int),CCharacterCreation__GetCharCreateText);
 #endif
-#ifdef CCharacterSelect__CCharacterSelect_x
-FUNCTION_AT_ADDRESS( CCharacterSelect::CCharacterSelect(class CXWnd *),CCharacterSelect__CCharacterSelect);
+#ifdef CCharacterListWnd__CCharacterListWnd_x
+FUNCTION_AT_ADDRESS( CCharacterListWnd::CCharacterListWnd(class CXWnd *),CCharacterListWnd__CCharacterListWnd);
 #endif
-#ifdef CCharacterSelect__Init_x
-FUNCTION_AT_ADDRESS(void  CCharacterSelect::Init(void),CCharacterSelect__Init);
+#ifdef CCharacterListWnd__Init_x
+FUNCTION_AT_ADDRESS(void  CCharacterListWnd::Init(void),CCharacterListWnd__Init);
 #endif
-#ifdef CCharacterSelect__Activate_x
-FUNCTION_AT_ADDRESS(void  CCharacterSelect::Activate(void),CCharacterSelect__Activate);
+#ifdef CCharacterListWnd__Activate_x
+FUNCTION_AT_ADDRESS(void  CCharacterListWnd::Activate(void),CCharacterListWnd__Activate);
 #endif
-#ifdef CCharacterSelect__EnableButtons_x
-FUNCTION_AT_ADDRESS(void  CCharacterSelect::EnableButtons(bool),CCharacterSelect__EnableButtons);
+#ifdef CCharacterListWnd__EnableButtons_x
+FUNCTION_AT_ADDRESS(void  CCharacterListWnd::EnableButtons(bool),CCharacterListWnd__EnableButtons);
 #endif
-#ifdef CCharacterSelect__EnableEqMovementCommands_x
-FUNCTION_AT_ADDRESS(void  CCharacterSelect::EnableEqMovementCommands(bool),CCharacterSelect__EnableEqMovementCommands);
+#ifdef CCharacterListWnd__EnableEqMovementCommands_x
+FUNCTION_AT_ADDRESS(void  CCharacterListWnd::EnableEqMovementCommands(bool),CCharacterListWnd__EnableEqMovementCommands);
 #endif
-#ifdef CCharacterSelect__EnterWorld_x
-FUNCTION_AT_ADDRESS(void  CCharacterSelect::EnterWorld(void),CCharacterSelect__EnterWorld);
+#ifdef CCharacterListWnd__EnterWorld_x
+FUNCTION_AT_ADDRESS(void  CCharacterListWnd::EnterWorld(void),CCharacterListWnd__EnterWorld);
 #endif
-#ifdef CCharacterSelect__Quit_x
-FUNCTION_AT_ADDRESS(void  CCharacterSelect::Quit(void),CCharacterSelect__Quit);
+#ifdef CCharacterListWnd__Quit_x
+FUNCTION_AT_ADDRESS(void  CCharacterListWnd::Quit(void),CCharacterListWnd__Quit);
 #endif
-#ifdef CCharacterSelect__EnterExplorationMode_x
-FUNCTION_AT_ADDRESS(void  CCharacterSelect::EnterExplorationMode(void),CCharacterSelect__EnterExplorationMode);
+#ifdef CCharacterListWnd__UpdateList_x
+FUNCTION_AT_ADDRESS(void CCharacterListWnd::UpdateList(bool),CCharacterListWnd__UpdateList);
 #endif
-#ifdef CCharacterSelect__LeaveExplorationMode_x
-FUNCTION_AT_ADDRESS(void  CCharacterSelect::LeaveExplorationMode(void),CCharacterSelect__LeaveExplorationMode);
+#ifdef CCharacterListWnd__EnterExplorationMode_x
+FUNCTION_AT_ADDRESS(void  CCharacterListWnd::EnterExplorationMode(void),CCharacterListWnd__EnterExplorationMode);
 #endif
-#ifdef CCharacterSelect__IsValidCharacterSelected_x
-FUNCTION_AT_ADDRESS(int  CCharacterSelect::IsValidCharacterSelected(void),CCharacterSelect__IsValidCharacterSelected);
+#ifdef CCharacterListWnd__LeaveExplorationMode_x
+FUNCTION_AT_ADDRESS(void  CCharacterListWnd::LeaveExplorationMode(void),CCharacterListWnd__LeaveExplorationMode);
 #endif
-#ifdef CCharacterSelect__IsEmptyCharacterSlot_x
-FUNCTION_AT_ADDRESS(int  CCharacterSelect::IsEmptyCharacterSlot(int),CCharacterSelect__IsEmptyCharacterSlot);
+#ifdef CCharacterListWnd__IsValidCharacterSelected_x
+FUNCTION_AT_ADDRESS(int  CCharacterListWnd::IsValidCharacterSelected(void),CCharacterListWnd__IsValidCharacterSelected);
 #endif
-#ifdef CCharacterSelect__NumberOfCharacters_x
-FUNCTION_AT_ADDRESS(int  CCharacterSelect::NumberOfCharacters(void),CCharacterSelect__NumberOfCharacters);
+#ifdef CCharacterListWnd__IsEmptyCharacterSlot_x
+FUNCTION_AT_ADDRESS(int  CCharacterListWnd::IsEmptyCharacterSlot(int),CCharacterListWnd__IsEmptyCharacterSlot);
 #endif
-#ifdef CCharacterSelect__IsEvil_x
-FUNCTION_AT_ADDRESS(unsigned char  CCharacterSelect::IsEvil(int,int,int),CCharacterSelect__IsEvil);
+#ifdef CCharacterListWnd__NumberOfCharacters_x
+FUNCTION_AT_ADDRESS(int  CCharacterListWnd::NumberOfCharacters(void),CCharacterListWnd__NumberOfCharacters);
 #endif
-#ifdef CCharacterSelect__SelectCharacter_x
-FUNCTION_AT_ADDRESS(void  CCharacterSelect::SelectCharacter(int,bool,bool),CCharacterSelect__SelectCharacter);
+#ifdef CCharacterListWnd__IsEvil_x
+FUNCTION_AT_ADDRESS(unsigned char  CCharacterListWnd::IsEvil(int,int,int),CCharacterListWnd__IsEvil);
 #endif
-#ifdef CCharacterSelect__SetLoadZonePlayerLocation_x
-FUNCTION_AT_ADDRESS(void  CCharacterSelect::SetLoadZonePlayerLocation(void),CCharacterSelect__SetLoadZonePlayerLocation);
+#ifdef CCharacterListWnd__SelectCharacter_x
+FUNCTION_AT_ADDRESS(void  CCharacterListWnd::SelectCharacter(int,bool,bool),CCharacterListWnd__SelectCharacter);
 #endif
-#ifdef CCharacterSelect__DeleteCharacter_x
-FUNCTION_AT_ADDRESS(void  CCharacterSelect::DeleteCharacter(void),CCharacterSelect__DeleteCharacter);
+#ifdef CCharacterListWnd__SetLoadZonePlayerLocation_x
+FUNCTION_AT_ADDRESS(void  CCharacterListWnd::SetLoadZonePlayerLocation(void),CCharacterListWnd__SetLoadZonePlayerLocation);
 #endif
-#ifdef CCharacterSelect__UpdateButtonNames_x
-FUNCTION_AT_ADDRESS(void  CCharacterSelect::UpdateButtonNames(void),CCharacterSelect__UpdateButtonNames);
+#ifdef CCharacterListWnd__DeleteCharacter_x
+FUNCTION_AT_ADDRESS(void  CCharacterListWnd::DeleteCharacter(void),CCharacterListWnd__DeleteCharacter);
 #endif
-#ifdef CCharacterSelect__SetLocationByClass_x
-FUNCTION_AT_ADDRESS(void  CCharacterSelect::SetLocationByClass(class EQPlayer *,bool,int),CCharacterSelect__SetLocationByClass);
+#ifdef CCharacterListWnd__UpdateButtonNames_x
+FUNCTION_AT_ADDRESS(void  CCharacterListWnd::UpdateButtonNames(void),CCharacterListWnd__UpdateButtonNames);
 #endif
-#ifdef CCharacterSelect__CreateExplorationModePlayers_x
-FUNCTION_AT_ADDRESS(void  CCharacterSelect::CreateExplorationModePlayers(void),CCharacterSelect__CreateExplorationModePlayers);
+#ifdef CCharacterListWnd__SetLocationByClass_x
+FUNCTION_AT_ADDRESS(void  CCharacterListWnd::SetLocationByClass(class EQPlayer *,bool,int),CCharacterListWnd__SetLocationByClass);
 #endif
-#ifdef CCharacterSelect__RemoveExplorationModePlayers_x
-FUNCTION_AT_ADDRESS(void  CCharacterSelect::RemoveExplorationModePlayers(void),CCharacterSelect__RemoveExplorationModePlayers);
+#ifdef CCharacterListWnd__CreateExplorationModePlayers_x
+FUNCTION_AT_ADDRESS(void  CCharacterListWnd::CreateExplorationModePlayers(void),CCharacterListWnd__CreateExplorationModePlayers);
 #endif
-#ifdef CCharacterSelect__SetRoomLocationByIndex_x
-FUNCTION_AT_ADDRESS(void  CCharacterSelect::SetRoomLocationByIndex(int,class EQPlayer *),CCharacterSelect__SetRoomLocationByIndex);
+#ifdef CCharacterListWnd__RemoveExplorationModePlayers_x
+FUNCTION_AT_ADDRESS(void  CCharacterListWnd::RemoveExplorationModePlayers(void),CCharacterListWnd__RemoveExplorationModePlayers);
 #endif
-#ifdef CCharacterSelect__SwitchModel_x
-FUNCTION_AT_ADDRESS(void  CCharacterSelect::SwitchModel(class EQPlayer *,unsigned char,int,unsigned char,unsigned char),CCharacterSelect__SwitchModel);
+#ifdef CCharacterListWnd__SetRoomLocationByIndex_x
+FUNCTION_AT_ADDRESS(void  CCharacterListWnd::SetRoomLocationByIndex(int,class EQPlayer *),CCharacterListWnd__SetRoomLocationByIndex);
+#endif
+#ifdef CCharacterListWnd__SwitchModel_x
+FUNCTION_AT_ADDRESS(void  CCharacterListWnd::SwitchModel(class EQPlayer *,unsigned char,int,unsigned char,unsigned char),CCharacterListWnd__SwitchModel);
 #endif
 #ifdef CChatManager__CChatManager_x
 FUNCTION_AT_ADDRESS( CChatManager::CChatManager(void),CChatManager__CChatManager);
@@ -897,6 +900,9 @@ FUNCTION_AT_ADDRESS(void  CTargetWnd::Init(void),CTargetWnd__Init);
 #endif
 #ifdef CTargetWnd__RefreshTargetBuffs_x
 FUNCTION_AT_ADDRESS(void  CTargetWnd::RefreshTargetBuffs(PBYTE),CTargetWnd__RefreshTargetBuffs);
+#endif
+#ifdef CTargetWnd__HandleBuffRemoveRequest_x
+FUNCTION_AT_ADDRESS(void CTargetWnd::HandleBuffRemoveRequest(CXWnd*),CTargetWnd__HandleBuffRemoveRequest);
 #endif
 #ifdef UdpManager__ProcessIcmpErrors_x
 FUNCTION_AT_ADDRESS(void  UdpManager::ProcessIcmpErrors(void),UdpManager__ProcessIcmpErrors);
@@ -1326,6 +1332,18 @@ FUNCTION_AT_ADDRESS( CFindItemWnd::CFindItemWnd(class CXWnd *),CFindItemWnd__CFi
 #endif
 #ifdef IString__Append_x
 FUNCTION_AT_ADDRESS(void IString2::Append(char *c),IString__Append);
+#endif
+#ifdef LootFiltersManager__AddItemLootFilter_x
+FUNCTION_AT_ADDRESS(bool LootFiltersManager::AddItemLootFilter(int, int, const char*, int, bool),LootFiltersManager__AddItemLootFilter);
+#endif
+#ifdef LootFiltersManager__GetItemFilterData_x
+FUNCTION_AT_ADDRESS(const PItemFilterData LootFiltersManager::GetItemFilterData(int),LootFiltersManager__GetItemFilterData);
+#endif
+#ifdef LootFiltersManager__RemoveItemLootFilter_x
+FUNCTION_AT_ADDRESS(bool LootFiltersManager::RemoveItemLootFilter(int,int),LootFiltersManager__RemoveItemLootFilter);
+#endif
+#ifdef LootFiltersManager__SetItemLootFilter_x
+FUNCTION_AT_ADDRESS(bool LootFiltersManager::SetItemLootFilter(int, int, const char*, int, bool, bool),LootFiltersManager__SetItemLootFilter);
 #endif
 #ifdef CFeedbackWnd__CFeedbackWnd_x
 FUNCTION_AT_ADDRESS( CFeedbackWnd::CFeedbackWnd(class CXWnd *),CFeedbackWnd__CFeedbackWnd);
@@ -2001,6 +2019,12 @@ FUNCTION_AT_ADDRESS(void CItemDisplayWnd::RemoveAugmentRequest(int AugSlot),CIte
 #ifdef CItemDisplayWnd__SetItem_x
 FUNCTION_AT_ADDRESS(void CItemDisplayWnd::SetItem(PCONTENTS *pCont, int flags),CItemDisplayWnd__SetItem);
 #endif
+#ifdef CItemDisplayWnd__AboutToShow_x
+FUNCTION_AT_ADDRESS(bool CItemDisplayWnd::AboutToShow(void),CItemDisplayWnd__AboutToShow);
+#endif
+#ifdef CItemDisplayWnd__WndNotification_x
+FUNCTION_AT_ADDRESS(int CItemDisplayWnd::WndNotification(CXWnd *, unsigned __int32, void *),CItemDisplayWnd__WndNotification);
+#endif
 #ifdef CItemDisplayWnd__SetItemText_x
 FUNCTION_AT_ADDRESS(void  CItemDisplayWnd::SetItemText(char *),CItemDisplayWnd__SetItemText);
 #endif
@@ -2416,6 +2440,9 @@ FUNCTION_AT_ADDRESS(void  CNoteWnd::SetNote(char *),CNoteWnd__SetNote);
 #ifdef CXStr__operator_lb_rb_x
 FUNCTION_AT_ADDRESS(char  CXStr::operator[](int)const ,CXStr__operator_lb_rb);
 #endif
+#ifdef COptionsWnd__FillChatFilterList_x
+FUNCTION_AT_ADDRESS(void COptionsWnd::FillChatFilterList(void),COptionsWnd__FillChatFilterList);
+#endif
 #ifdef COptionsWnd__COptionsWnd_x
 FUNCTION_AT_ADDRESS( COptionsWnd::COptionsWnd(class CXWnd *),COptionsWnd__COptionsWnd);
 #endif
@@ -2505,9 +2532,6 @@ FUNCTION_AT_ADDRESS(int  COptionsWnd::ChatPageWndNotification(class CXWnd *,unsi
 #endif
 #ifdef COptionsWnd__ColorPageWndNotification_x
 FUNCTION_AT_ADDRESS(int  COptionsWnd::ColorPageWndNotification(class CXWnd *,unsigned __int32,void *),COptionsWnd__ColorPageWndNotification);
-#endif
-#ifdef COptionsWnd__SaveColors_x
-FUNCTION_AT_ADDRESS(void  COptionsWnd::SaveColors(int,int,int,int),COptionsWnd__SaveColors);
 #endif
 #ifdef COptionsWnd__RestoreDefaultColors_x
 FUNCTION_AT_ADDRESS(void  COptionsWnd::RestoreDefaultColors(void),COptionsWnd__RestoreDefaultColors);
@@ -4205,7 +4229,7 @@ FUNCTION_AT_ADDRESS(int  EQ_Character::ApplyFatigue(int),EQ_Character__ApplyFati
 FUNCTION_AT_ADDRESS(int  EQ_Character::max_encumbrance(void),EQ_Character__max_encumbrance);
 #endif
 #ifdef EQ_Character__CanUseItem_x
-FUNCTION_AT_ADDRESS(int  EQ_Character::CanUseItem(class EQ_Item *),EQ_Character__CanUseItem);
+FUNCTION_AT_ADDRESS(bool EQ_Character1::CanUseItem(PCONTENTS *, bool, bool),EQ_Character__CanUseItem);
 #endif
 #ifdef EQ_Character__encum_factor_x
 FUNCTION_AT_ADDRESS(float  EQ_Character::encum_factor(void),EQ_Character__encum_factor);
@@ -5840,7 +5864,7 @@ FUNCTION_AT_ADDRESS(void  CEverQuest::ReportDeath(struct _EQPlayerDeath *),CEver
 FUNCTION_AT_ADDRESS(void  CEverQuest::SetDefaultDamageDescByRace(char *,int,unsigned char),CEverQuest__SetDefaultDamageDescByRace);
 #endif
 #ifdef CEverQuest__ReportSuccessfulHit_x
-FUNCTION_AT_ADDRESS(void  CEverQuest::ReportSuccessfulHit(struct _EQSuccessfulHit *,unsigned char,int),CEverQuest__ReportSuccessfulHit);
+FUNCTION_AT_ADDRESS(void CEverQuest::ReportSuccessfulHit(EQSuccessfulHit *pHit,unsigned char bOutputText,int ActualHeal),CEverQuest__ReportSuccessfulHit);
 #endif
 #ifdef CEverQuest__GetCombatSound_x
 FUNCTION_AT_ADDRESS(int  CEverQuest::GetCombatSound(class EQPlayer *,class EQPlayer *),CEverQuest__GetCombatSound);
@@ -7463,7 +7487,11 @@ FUNCTION_AT_ADDRESS( CRadioGroup::CRadioGroup(class CXStr),CRadioGroup__CRadioGr
 FUNCTION_AT_ADDRESS(class CXStr  CRadioGroup::GetName(void)const ,CRadioGroup__GetName);
 #endif
 #ifdef CSidlScreenWnd__CreateChildrenFromSidl_x
-FUNCTION_AT_ADDRESS(void  CSidlScreenWnd::CreateChildrenFromSidl(void),CSidlScreenWnd__CreateChildrenFromSidl);
+#if !defined(EMU)
+FUNCTION_AT_ADDRESS(void  CSidlScreenWnd::CreateChildrenFromSidl(DWORD), CSidlScreenWnd__CreateChildrenFromSidl);
+#else
+FUNCTION_AT_ADDRESS(void  CSidlScreenWnd::CreateChildrenFromSidl(void), CSidlScreenWnd__CreateChildrenFromSidl);
+#endif
 #endif
 #ifdef CSidlScreenWnd__StoreIniVis_x
 FUNCTION_AT_ADDRESS(void  CSidlScreenWnd::StoreIniVis(void),CSidlScreenWnd__StoreIniVis);
@@ -7662,7 +7690,7 @@ FUNCTION_AT_ADDRESS(class CXRect  CXWnd::GetRelativeRect(void)const ,CXWnd__GetR
 FUNCTION_AT_ADDRESS(class CXRect  CXWnd::GetScreenRect(void)const ,CXWnd__GetScreenRect);
 #endif
 #ifdef CXWnd__Resize_x
-FUNCTION_AT_ADDRESS(int  CXWnd::Resize(int,int),CXWnd__Resize);
+FUNCTION_AT_ADDRESS(int  CXWnd::Resize(int, int, bool, bool, bool),CXWnd__Resize);
 #endif
 #ifdef CXWnd__GetChildItem_x
 FUNCTION_AT_ADDRESS(class CXWnd *  CXWnd::GetChildItem(CXStr const &),CXWnd__GetChildItem);
@@ -8403,7 +8431,25 @@ FUNCTION_AT_ADDRESS(class CXStr  CPageWnd::GetTabText(void)const ,CPageWnd__GetT
 FUNCTION_AT_ADDRESS(void CPageWnd::SetTabText(CXStr &)const,CPageWnd__SetTabText);
 #endif
 #ifdef CWebManager__CreateHtmlWnd_x
-FUNCTION_AT_ADDRESS(int  CWebManager::CreateHtmlWnd(void*, void*, void*, char, void*),CWebManager__CreateHtmlWnd);
+FUNCTION_AT_ADDRESS(CHtmlWnd* CWebManager::CreateHtmlWnd(const char*, const char*, const char*, bool, const char*),CWebManager__CreateHtmlWnd);
+#endif
+#ifdef CHtmlWnd__SetClientCallbacks_x
+FUNCTION_AT_ADDRESS(void CHtmlWnd::SetClientCallbacks(void*),CHtmlWnd__SetClientCallbacks);
+#endif
+#ifdef CHtmlWnd__AddObserver_x
+FUNCTION_AT_ADDRESS(void CHtmlWnd::AddObserver(IObserver *),CHtmlWnd__AddObserver);
+#endif
+#ifdef CHtmlWnd__RemoveObserver_x
+FUNCTION_AT_ADDRESS(void CHtmlWnd::RemoveObserver(IObserver *),CHtmlWnd__RemoveObserver);
+#endif
+#ifdef Window__getProgress_x
+FUNCTION_AT_ADDRESS(float Window::getProgress(bool &bIsLoading), Window__getProgress);
+#endif
+#ifdef Window__getStatus_x
+FUNCTION_AT_ADDRESS(const wchar_t *Window::getStatus() const, Window__getStatus);
+#endif
+#ifdef Window__getURI_x
+FUNCTION_AT_ADDRESS(const char *Window::getURI() const, Window__getURI);
 #endif
 #ifdef CXMLSOMDocumentBase__Init_x
 FUNCTION_AT_ADDRESS(void  CXMLSOMDocumentBase::Init(void),CXMLSOMDocumentBase__Init);
@@ -10034,5 +10080,9 @@ FUNCTION_AT_ADDRESS(int CXWnd::SetFont(void*), CXWnd__SetFont);
 #ifdef CCollisionInfoTargetVisibility__CCollisionInfoTargetVisibility_x
 FUNCTION_AT_ADDRESS(CCollisionInfoTargetVisibility::CCollisionInfoTargetVisibility(class CLineSegment *, class EQPlayer *, class EQPlayer *), CCollisionInfoTargetVisibility__CCollisionInfoTargetVisibility);
 #endif
-
+#ifdef EQSpellStrings__GetString_x
+#ifndef EMU
+FUNCTION_AT_ADDRESS(char* EQSpellStrings::GetString(int SpellID, int StrIndex), EQSpellStrings__GetString);
+#endif
+#endif
 #pragma warning( pop )

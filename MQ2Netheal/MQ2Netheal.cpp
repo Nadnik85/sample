@@ -43,7 +43,7 @@ ClassList     canni = { 0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0 };
 class LifeRec {
 public:
 	DWORD        SpawnID;                    // Spawn ID?
-	long         LifePct;                    // Life Pct?
+	__int64         LifePct;                    // Life Pct?
 	long         Spawned;                    // Spawn Type?
 	float        RangeTo;                    // Distance?
 	DWORD        ClassID;                    // Class?
@@ -166,7 +166,7 @@ long SpawnMask(PSPAWNINFO x) {
 	return (!m || m->Type != SPAWN_PLAYER) ? st_wn : st_wp;
 }
 
-void UpdateIDLifePCT(DWORD ID, int PCT) {
+void UpdateIDLifePCT(DWORD ID, __int64 PCT) {
 	PSPAWNINFO Member = (PSPAWNINFO)GetSpawnByID(ID);
 	if (long SpType = SpawnMask(Member)&st_pw) {
 		LifeRec *CurOne = LifeLoad(ID);
@@ -178,7 +178,7 @@ void UpdateIDLifePCT(DWORD ID, int PCT) {
 			NameMap.insert(map<string, DWORD>::value_type(CurOne->Name, ID));
 		}
 		else {
-			long HPDif = PCT - CurOne->LifePct; if (HPDif>4 || HPDif<0) CurOne->DATimer = 0;
+			__int64 HPDif = PCT - CurOne->LifePct; if (HPDif>4 || HPDif<0) CurOne->DATimer = 0;
 			if (CurOne->DATimer && CurOne->Updated>CurOne->DATimer) CurOne->DATimer = 0;
 			if (CurOne->HOTimer && CurOne->Updated>CurOne->HOTimer) CurOne->HOTimer = 0;
 		}
@@ -196,7 +196,7 @@ void UpdateIDLifePCT(DWORD ID, int PCT) {
 
 template <unsigned int _Size>PSTR MakeHeal(CHAR(&Buffer)[_Size], PSPAWNINFO x) {
 	if ((SpawnMask(x)&st_pw) == 0) Buffer[0] = 0;
-	else sprintf_s(Buffer, "%d=%d:", x->SpawnID, x->HPCurrent * 100 / x->HPMax);
+	else sprintf_s(Buffer, "%d=%I64d:", x->SpawnID, x->HPCurrent * 100 / x->HPMax);
 	return Buffer;
 }
 
@@ -557,8 +557,8 @@ public:
 				Dest.Float = CurOne->RangeTo;
 				return true;
 			case PctHPs:
-				Dest.Type = pIntType;
-				Dest.Int = CurOne->LifePct;
+				Dest.Type = pInt64Type;
+				Dest.Int64 = CurOne->LifePct;
 				return true;
 			case Pet:
 				Dest.Type = pBoolType;

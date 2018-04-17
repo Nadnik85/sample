@@ -178,6 +178,7 @@ Client::~Client()
 void Client::Init()
 {
 	accepted=false;
+	authstart = false;
 	auth_timeout=true;
 	sock=0;
 	addrlen=0;
@@ -381,7 +382,7 @@ unsigned int Client::GetAvailableBytes()
 
 int Client::ReadPacket()
 {
-	unsigned char data[MAX_PACKET];
+	unsigned char data[MAX_BUF];
 	int avail=GetAvailableBytes();
 	if(avail)
 	do
@@ -390,9 +391,9 @@ int Client::ReadPacket()
 		int tobuf=0;
 		int buffered=0;
 
-		memset(data,0,MAX_PACKET);
+		memset(data,0,MAX_BUF);
 		//bytes=sslsock.Read(data, MAX_PACKET);
-		bytes = recv(sock, (char *)data, MAX_PACKET, 0);
+		bytes = recv(sock, (char *)data, MAX_BUF, 0);
 		if(bytes>0)
 		{
 			tobuf=0;
@@ -452,7 +453,7 @@ void Client::ProcessWritePacketBuffer()
 		int wrote = 0;
 		int total = 0;
 		int avail = wbuf->ReadAvailable();
-		avail = (avail > MAX_PACKET) ? MAX_PACKET : avail;
+		avail = (avail > MAX_BUF) ? MAX_BUF : avail;
 		packet_t packet = { 0 };
 		char * ppacket = (char *)packet;
 		read = wbuf->Read(&packet, avail);
@@ -472,7 +473,30 @@ void Client::ProcessWritePacketBuffer()
 
 void Client::HandleLogin(char *data)
 {
-	static char message[MAX_PACKET] = { 0 };
+	static char message[MAX_BUF] = { 0 };
+	char *pc = data;
+	char *pc2 = NULL;
+	if (data[0] == '=')
+		pc = data + 1;
+	if ((pc2 = strchr(pc, ';')) != NULL)
+	{
+		*pc2 = 0;
+		if ((*(server->clients))[pc] != NULL)
+		{
+			authenticated = false;
+			SendPacket((packet_t *)"This user is already connected...\n");
+			fprintf(stderr, "The user is already connected...\r\n");
+			Disconnect();
+			return;
+		}
+		{
+			strncpy(name, pc, strlen(pc));
+			authenticated = true;
+			_snprintf(message, MAX_BUF, "\tNBJOIN=%s\n", name);
+			server->SendToAll(message);
+		}
+	}
+	/*
 	if (_strnicmp("LOGIN=", data, 6) == 0)
 	{
 		char *pc = data + 6;
@@ -491,11 +515,25 @@ void Client::HandleLogin(char *data)
 			{
 				strncpy(name, pc, strlen(pc));
 				authenticated = true;
-				_snprintf(message, MAX_PACKET, "\tNBJOIN=%s\n", name);
+				_snprintf(message, MAX_BUF, "\tNBJOIN=%s\n", name);
 				server->SendToAll(message);
 			}
 		}
 	}
+	else if ((!authstart) && (_strnicmp("LOGIN", data, 5) == 0) && (strlen(data)==5))
+	{
+		// Login portion broken apart (go "EQBC Interface")
+		authstart = true;
+	}
+	else if (authstart)
+	{
+		char *pc = NULL;
+		if ((pc = strchr(data, ';')) != NULL)
+		{
+			*pc = 0;
+		}
+	}
+*/
 }
 
 void Client::HandleCommands(char *data)
@@ -540,8 +578,8 @@ void Client::HandleNetbotMessage(char * data)
 void Client::HandleMSGAll(char * data)
 {
 	fprintf(stderr, "<%s>  [*ALL*] %s", name, data);
-	char message[MAX_PACKET] = { 0 };
-	//snprintf(message, MAX_PACKET, "\tMSGALL\n<%s> %s", name, data, true);
+	char message[MAX_BUF] = { 0 };
+	//snprintf(message, MAX_BUF, "\tMSGALL\n<%s> %s", name, data, true);
 	server->SendMSGAll(this, data, true);
 	//wbuf->Write(message, strlen(message));
 }
@@ -549,7 +587,7 @@ void Client::HandleMSGAll(char * data)
 void Client::HandleTell(char * data)
 {
 	//fprintf(stderr, "<%s> %s", name, data); // No Echo for tell?
-	char message[MAX_PACKET] = { 0 };
+	char message[MAX_BUF] = { 0 };
 	server->SendTell(this, data);
 }
 
@@ -577,8 +615,8 @@ void Client::HandleLocalEcho(char * data)
 
 void Client::HandleBCI(char * data)
 {
-	char message[MAX_PACKET];
-	memset(message, 0, MAX_PACKET);
+	char message[MAX_BUF];
+	memset(message, 0, MAX_BUF);
 	server->SendTell(this, data, true);
 /*
 	char _name[128] = { 0 };
@@ -639,24 +677,42 @@ void Client::ProcessCommands(char *data)
 
 void Client::ProcessReadPacketBuffer()
 {
-	static char data[MAX_PACKET] = { 0 };
-	memset(data, 0, MAX_PACKET);
+	static bool discardpong = false;
+	static char *data=NULL;
+	data = (char *)malloc(MAX_BUF);
+	memset(data, 0, MAX_BUF);
 	while ((authenticated && rbuf->LineAvailable()) || ((!authenticated) && (rbuf->ReadAvailable()>0)))
 	{
 		int ret = 0;
 		if (!authenticated)
 		{
-			ret = rbuf->ReadUntil(data, MAX_PACKET - 1, ';');
-			if (ret > 0)
+			if (!authstart)
 			{
-				//fprintf(stderr, "Debug Login: %s\r\n", data);
-				HandleLogin(data);
-				command = false;
+				ret = rbuf->ReadUntil(data, 5, '=');
+				if (_strnicmp(data, "LOGIN", 5) == 0)
+				{
+					authstart = true;
+				}
+				else
+				{
+					fprintf(stderr, "Unknown data before login: %s", data);
+				}
+			}
+			else
+			{
+				ret = rbuf->ReadUntil(data, MAX_BUF - 1, ';');
+				if (ret > 0)
+				{
+					fprintf(stderr, "Debug Login: %s\r\n", data);
+					HandleLogin(data);
+					command = false;
+					//authstart = false;
+				}
 			}
 		}
 		else if (command)
 		{
-			ret = MAX_PACKET - 1;
+			ret = MAX_BUF - 1;
 			if (rbuf->ReadLine(data, ret))
 			{
 				//fprintf(stderr, "Debug Command Data: %s", data);
@@ -664,9 +720,16 @@ void Client::ProcessReadPacketBuffer()
 				command = false;
 			}
 		}
+		else if (discardpong)
+		{
+			discardpong = false;
+			ret = MAX_BUF - 1;
+			rbuf->ReadLine(data, ret);
+			//fprintf(stderr, "Discarded %i byte(s): %s", ret, data);
+		}
 		else
 		{
-			ret = MAX_PACKET - 1;
+			ret = MAX_BUF - 1;
 			if (rbuf->ReadLine(data, ret))
 			{
 				//fprintf(stderr, "Debug Data: %s", data);
@@ -680,7 +743,11 @@ void Client::ProcessReadPacketBuffer()
 						{
 						case COMMAND_NAMES:HandleNames(data); break;
 						case COMMAND_NBNAMES:HandleNetbotNames(data); break;
-						case COMMAND_PONG:HandlePong(data); rbuf->ReadLine(data, ret); break;
+						case COMMAND_PONG:{
+								HandlePong(data);
+								discardpong = true;
+								command = false;
+							}break;
 						case COMMAND_LOCALECHO:HandleLocalEcho(data); break;
 						case COMMAND_DISCONNECT:HandleDisconnect(data); break;
 						//case COMMAND_NBMSG:HandleNetbotMessage(data); break;
@@ -695,8 +762,8 @@ void Client::ProcessReadPacketBuffer()
 					default:
 					{
 						fprintf(stderr, "<%s> %s", name, data);
-						char message[MAX_PACKET] = { 0 };
-						snprintf(message, MAX_PACKET, "<%s> %s", name, data);
+						char message[MAX_BUF] = { 0 };
+						snprintf(message, MAX_BUF, "<%s> %s", name, data);
 						server->SendMSGAll(this, message);
 						wbuf->Write(message, strlen(message));
 					}
@@ -704,6 +771,7 @@ void Client::ProcessReadPacketBuffer()
 			}
 		}
 	}
+	free(data);
 }
 
 void Client::ProcessPacket(packet_t *packet, int sz)

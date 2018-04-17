@@ -128,6 +128,7 @@ class Client
 		bool accepted;
 		bool authenticated;
 		bool deleteme;
+		bool authstart;
 
 		/* Socket Stuff/Client Info Stuff */
 		int GetSock() { return sock; };

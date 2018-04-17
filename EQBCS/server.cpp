@@ -68,6 +68,9 @@ Server::Server()
 	m_tv_service.tv_sec = 1;
 	m_tv_service.tv_usec = 0;
 	memset(ip_address, 0, 128);
+	//mutexes[0] = CreateMutex(NULL, FALSE, _T("Mutex0"));
+	//mutexes[1] = CreateMutex(NULL, FALSE, _T("Mutex1"));
+	//mutexes[2] = CreateMutex(NULL, FALSE, _T("Mutex2"));
 }
 
 Server::~Server()
@@ -165,8 +168,8 @@ bool Server::Start()
 			//read_thread = CreateThread(NULL, 0, ReadThread, this, 0, &read_thread_id);
 			//write_thread = CreateThread(NULL, 0, WriteThread, this, 0, &write_thread_id);
 			read_thread = (HANDLE)_beginthreadex(NULL, 0, (_beginthreadex_proc_type)&ReadThread, this, 0, &read_thread_id);
-			process_thread = (HANDLE)_beginthreadex(NULL, 0, (_beginthreadex_proc_type)&ProcessThread, this, 0, &process_thread_id);
-			write_thread = (HANDLE)_beginthreadex(NULL, 0, (_beginthreadex_proc_type)&WriteThread, this, 0, &write_thread_id);
+			//process_thread = (HANDLE)_beginthreadex(NULL, 0, (_beginthreadex_proc_type)&ProcessThread, this, 0, &process_thread_id);
+			//write_thread = (HANDLE)_beginthreadex(NULL, 0, (_beginthreadex_proc_type)&WriteThread, this, 0, &write_thread_id);
 #endif
 			fprintf(stdout, "Server::Start() Started Successfully.\n");
 			return true;
@@ -253,8 +256,8 @@ void Server::ProcessPendingReads()
 				client->Disconnect();
 				clients->Remove(client);
 				fprintf(stderr, "Server::ProcessPendingReads() Client [%s] Disconnected. %i client(s) remaining.\n", client->GetName(), clients->Count());
-				char msg[MAX_PACKET] = { 0 };
-				snprintf(msg, MAX_PACKET, "\tNBQUIT=%s\n", client->GetName());
+				char msg[MAX_BUF] = { 0 };
+				snprintf(msg, MAX_BUF, "\tNBQUIT=%s\n", client->GetName());
 				//client, "\tNBQUIT=%s\n", false);
 				SendToAll(msg, client);
 				cleanup->Add(client);
@@ -302,10 +305,11 @@ void Server::ProcessPendingWrites()
 			if (client->DeleteMe())
 			{
 				clients->Remove(client);
+				//remove->Add(client);
 				client->Disconnect();
 				fprintf(stderr, "Client::ProcessPendingWrites() Client [%s] Disconnected. %i client(s) remaining.\n", client->GetName(), clients->Count());
-				char msg[MAX_PACKET] = { 0 };
-				snprintf(msg, MAX_PACKET, "\tNBQUIT=%s\n", client->GetName());
+				char msg[MAX_BUF] = { 0 };
+				snprintf(msg, MAX_BUF, "\tNBQUIT=%s\n", client->GetName());
 				//client, "\tNBQUIT=%s\n", false);
 				SendToAll(msg, client);
 				cleanup->Add(client);
@@ -358,10 +362,10 @@ void Server::SendMSGAll(Client * source, const char * msg, bool cmd)
 		{
 			if (cmd)
 			{
-				static char message[MAX_PACKET] = { 0 };
-				memset(message, 0, MAX_PACKET);
-				//snprintf(message, MAX_PACKET, "\tMSGALL\n<%s> %s %s", source->GetName(), client->GetName(), msg);
-				snprintf(message, MAX_PACKET, "<%s> %s %s", source->GetName(), client->GetName(), msg);
+				static char message[MAX_BUF] = { 0 };
+				memset(message, 0, MAX_BUF);
+				//snprintf(message, MAX_BUF, "\tMSGALL\n<%s> %s %s", source->GetName(), client->GetName(), msg);
+				snprintf(message, MAX_BUF, "<%s> %s %s", source->GetName(), client->GetName(), msg);
 				client->SendBCMessage(message);
 			}
 			else
@@ -374,13 +378,13 @@ void Server::SendMSGAll(Client * source, const char * msg, bool cmd)
 void Server::SendNames(Client * source, const char * msg)
 {
 	if (!source->IsAuthenticated()) return;
-	static char message[MAX_PACKET] = { 0 };
-	memset(message, 0, MAX_PACKET);
+	static char message[MAX_BUF] = { 0 };
+	memset(message, 0, MAX_BUF);
 	char *pos = message;
 	char *pnamelist = message;
 	int space = 0;
 	clients->Lock();
-	pos += snprintf(message, MAX_PACKET, "-- Names:");
+	pos += snprintf(message, MAX_BUF, "-- Names:");
 	pnamelist = pos;
 	//for (int x = 0; x < clients->Count(); x++)
 	for (list<Client *>::iterator it = clients->clientlist.begin(); it != clients->clientlist.end(); ++it)
@@ -390,11 +394,11 @@ void Server::SendNames(Client * source, const char * msg)
 		{
 			int l = strlen(client->GetName()) + 1;
 			if (space++) *pos++ = ' ';
-			snprintf(pos, MAX_PACKET - (pos - message), " %s", client->GetName());
+			snprintf(pos, MAX_BUF - (pos - message), " %s", client->GetName());
 			pos += strlen(pos);
 		}
 	}
-	snprintf(pos, MAX_PACKET - (pos - message), ".\n");
+	snprintf(pos, MAX_BUF - (pos - message), ".\n");
 	/*
 	for (list<Client *>::iterator it = clients->clientlist.begin(); it != clients->clientlist.end(); ++it)
 	{
@@ -412,21 +416,21 @@ void Server::SendNames(Client * source, const char * msg)
 
 void Server::SendNetbotMessage(Client *source, const char *msg)
 {
-	static char message[MAX_PACKET] = { 0 };
-	memset(message, 0, MAX_PACKET);
-	_snprintf(message, MAX_PACKET, "\tNBPKT:%s:%s", source->GetName(), msg);
+	static char message[MAX_BUF] = { 0 };
+	memset(message, 0, MAX_BUF);
+	_snprintf(message, MAX_BUF, "\tNBPKT:%s:%s", source->GetName(), msg);
 	SendToAll(message, source);
 }
 
 void Server::SendNetbotNames(Client * source, const char * msg)
 {
 	if (!source->IsAuthenticated()) return;
-	static char message[MAX_PACKET] = { 0 };
-	memset(message, 0, MAX_PACKET);
+	static char message[MAX_BUF] = { 0 };
+	memset(message, 0, MAX_BUF);
 	char *pos = message;
 	char *pnamelist = message;
 	clients->Lock();
-	pos += snprintf(message, MAX_PACKET, "\tNBCLIENTLIST=");
+	pos += snprintf(message, MAX_BUF, "\tNBCLIENTLIST=");
 	pnamelist = pos;
 	//for (int x = 0; x < clients->Count(); x++)
 	int space = 0;
@@ -437,11 +441,11 @@ void Server::SendNetbotNames(Client * source, const char * msg)
 		{
 			int l = strlen(client->GetName()) + 1;
 			if(space++) *pos++ = ' ';
-			snprintf(pos, MAX_PACKET - (pos - message), "%s", client->GetName());
+			snprintf(pos, MAX_BUF - (pos - message), "%s", client->GetName());
 			pos += strlen(pos);
 		}
 	}
-	snprintf(pos, MAX_PACKET - (pos - message), "\n");
+	snprintf(pos, MAX_BUF - (pos - message), "\n");
 	/*
 	for (list<Client *>::iterator it = clients->clientlist.begin(); it != clients->clientlist.end(); ++it)
 	{
@@ -460,8 +464,8 @@ void Server::SendNetbotNames(Client * source, const char * msg)
 void Server::SendTell(Client * source, const char * msg, bool bci)
 {
 	if (!source->IsAuthenticated()) return;
-	static char message[MAX_PACKET];
-	memset(message, 0, MAX_PACKET);
+	static char message[MAX_BUF];
+	memset(message, 0, MAX_BUF);
 	char name[128] = { 0 };
 	int ret=sscanf_s(msg, "%s", name, 128);
 	if (ret != 1) return;
@@ -472,7 +476,7 @@ void Server::SendTell(Client * source, const char * msg, bool bci)
 		{
 			if ((_strnicmp(name, client->GetName(), strlen(name)) == 0) && (strlen(name) == strlen(client->GetName())))
 			{
-				snprintf(message, MAX_PACKET, "%c%s%c %s", bci ? '{' : '[', source->GetName(), bci ? '}' : ']', msg+strlen(name) + 1);
+				snprintf(message, MAX_BUF, "%c%s%c %s", bci ? '{' : '[', source->GetName(), bci ? '}' : ']', msg+strlen(name) + 1);
 				client->wbuf->Write(message, strlen(message));
 				return;
 			}
@@ -489,7 +493,7 @@ void Server::SendTell(Client * source, const char * msg, bool bci)
 			{
 				if ((_strnicmp(name, (*it1).c_str(), strlen(name)) == 0) && (strlen(name) == strlen((*it1).c_str())))
 				{
-					snprintf(message, MAX_PACKET, "%c%s%c %s", bci ? '{' : '[', source->GetName(), bci ? '}' : ']', msg + strlen(name) + 1);
+					snprintf(message, MAX_BUF, "%c%s%c %s", bci ? '{' : '[', source->GetName(), bci ? '}' : ']', msg + strlen(name) + 1);
 					client->wbuf->Write(message, strlen(message));
 					ret = 1;
 				}
@@ -577,6 +581,7 @@ void Server::OnCleanup(int fd, short event, void * arg)
 	{
 		Client *client = (Client *)((*server->cleanup)[x]);
 		client->CleanUp();
+		//server->clients->Remove(client);
 		server->cleanup->Remove(client);
 		delete client;
 	}
@@ -630,7 +635,9 @@ unsigned __stdcall Server::ReadThread(void *arg)
 		Server *server = (Server *)arg;
 		while (!server->main_thread_done)
 		{
+			//WaitForSingleObject(server->mutexes[0], INFINITE);
 			server->ProcessPendingReads();
+			//ReleaseMutex(server->mutexes[0]);
 			server->ProcessReceiveBuffers();
 			server->ProcessPendingWrites();
 			server->OnCleanup(0, 0, arg);
@@ -646,8 +653,12 @@ unsigned __stdcall Server::ProcessThread(void * arg)
 	{
 		Server *server = (Server *)arg;
 		while (!server->main_thread_done)
-			milisleep(1000);
-			//server->ProcessReceiveBuffers();
+			//milisleep(1000);
+		{
+			WaitForSingleObject(server->mutexes[1], INFINITE);
+			server->ProcessReceiveBuffers();
+			ReleaseMutex(server->mutexes[1]);
+		}
 	}
 	fprintf(stderr, "Server::ProcessThread() Ending.\r\n");
 	return 0;
@@ -662,10 +673,34 @@ unsigned __stdcall Server::WriteThread(void *arg)
 	{
 		Server *server = (Server *)arg;
 		while (!server->main_thread_done)
-			milisleep(1000);
-			//server->ProcessPendingWrites();
+			//milisleep(1000);
+		{
+			WaitForSingleObject(server->mutexes[2], INFINITE);
+			server->ProcessPendingWrites();
+			ReleaseMutex(server->mutexes[2]);
+		}
 	}
 	fprintf(stderr, "Server::WriteThread() Ending.\r\n");
+	return 0;
+}
+
+unsigned __stdcall Server::CleanupThread(void * arg)
+{
+	fprintf(stderr, "Server::CleanupThread() Starting.\r\n");
+	if (arg != NULL)
+	{
+		Server *server = (Server *)arg;
+		while (!server->main_thread_done)
+		{
+			milisleep(1000);
+			WaitForMultipleObjects(3, server->mutexes, TRUE, INFINITE);
+			server->OnCleanup(0, 0, arg);
+			ReleaseMutex(server->mutexes[0]);
+			ReleaseMutex(server->mutexes[1]);
+			ReleaseMutex(server->mutexes[2]);
+		}
+	}
+	fprintf(stderr, "Server::CleanupThread() Ending.\r\n");
 	return 0;
 }
 

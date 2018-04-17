@@ -3,7 +3,7 @@
 // Author: PinkFloyd33      |
 // Author: s0rcier          |
 // Version: 1.2             |
-// Date: 20061223           |
+// Date: 20061223           | 
 // v2.0 - Eqmule 07-22-2016 - Added string safety.
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
 // This plugin is designed to help with curing detrimental effects. It is used to reports harmful effects,

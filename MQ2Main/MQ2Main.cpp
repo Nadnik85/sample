@@ -42,7 +42,8 @@ BOOL APIENTRY DllMain( HANDLE hModule,
     PCHAR szProcessName;
     ghModule = (HMODULE)hModule;
     ghInstance = (HINSTANCE)hModule;
-
+	ghInjectorWnd = FindWindow(__MacroQuestWinClassName, __MacroQuestWinName);
+	
     GetModuleFileName(ghModule,szFilename,MAX_STRING);
     szProcessName = strrchr(szFilename,'\\');
     szProcessName[0] = '\0';
@@ -275,6 +276,13 @@ BOOL ParseINIFile(PCHAR lpINIPath)
 			}
 			return TRUE;
 }
+VOID InitializeMQ2IcExports()
+{
+	IC_LoaderSetLoaded = (fLoaderSetLoaded)GetProcAddress(ghmq2ic, "IC_LoaderSetLoaded");
+	IC_LoaderClearLoaded = (fLoaderClearLoaded)GetProcAddress(ghmq2ic, "IC_LoaderClearLoaded");
+	IC_MQ2Unload = (fMQ2Unload)GetProcAddress(ghmq2ic, "IC_MQ2Unload");
+	IC_ClassLvl = (fClassLvl)GetProcAddress(ghmq2ic, "IC_ClassLvl");
+}
 #ifdef ISXEQ
 void LoadMQ2Plugin(PMQPLUGIN hMQ2icplugin, const PCHAR pszFilename, char *modulepath, size_t bufflen, HMODULE *module)
 {
@@ -346,6 +354,9 @@ bool __cdecl MQ2Initialize()
 		//do an extra second for good measure...
 		Sleep(1000);
 	}
+	
+	if (!ghVariableLock)
+		ghVariableLock = CreateMutex(NULL, FALSE, NULL);
     if(!InitOffsets())
     {
         DebugSpewAlways("InitOffsets returned false - thread aborted.");
@@ -421,7 +432,8 @@ bool __cdecl MQ2Initialize()
 #else
 	LoadMQ2Plugin("mq2ic");
 #endif
-	ghmq2ic = GetModuleHandle("mq2ic.dll");
+	if (ghmq2ic = GetModuleHandle("mq2ic.dll"))
+		InitializeMQ2IcExports();
     InitializeMQ2Benchmarks();
 #ifndef ISXEQ
     InitializeParser();
@@ -503,6 +515,11 @@ void __cdecl MQ2Shutdown()
 		ReleaseMutex(ghLockDelayCommand);
 		CloseHandle(ghLockDelayCommand);
 		ghLockDelayCommand = 0;
+	}
+	if (ghVariableLock) {
+		ReleaseMutex(ghVariableLock);
+		CloseHandle(ghVariableLock);
+		ghVariableLock = 0;
 	}
 }
 
@@ -848,5 +865,8 @@ FUNCTION_AT_ADDRESS(CXStr *__cdecl STMLToText(CXStr *Out, CXStr const &In, bool 
 #endif
 #ifdef __GetAnimationCache_x
 FUNCTION_AT_ADDRESS(class IconCache *__cdecl GetAnimationCache(int index), __GetAnimationCache);
+#endif
+#ifdef __SaveColors_x
+FUNCTION_AT_ADDRESS(void SaveColors(int,int,int,int),__SaveColors);
 #endif
 

@@ -33,6 +33,7 @@ DATATYPE(MQ2SpellType, pSpellType, nullptr, 0);
 #ifndef EMU
 DATATYPE(MQ2AdvLootType, pAdvLootType, nullptr, 0);
 DATATYPE(MQ2AdvLootItemType, pAdvLootItemType, nullptr, 0);
+DATATYPE(MQ2ItemFilterDataType, pItemFilterDataType, nullptr, 0);
 #endif
 DATATYPE(MQ2AlertType, pAlertType, nullptr, 0);
 DATATYPE(MQ2AlertListType, pAlertListType, nullptr, 0);
@@ -57,6 +58,7 @@ DATATYPE(MQ2GroupType, pGroupType, nullptr, 0);
 DATATYPE(MQ2HeadingType, pHeadingType, nullptr, 0);
 DATATYPE(MQ2InvSlotType, pInvSlotType, nullptr, 0);
 DATATYPE(MQ2ItemType, pItemType, nullptr, 0);
+DATATYPE(MQ2ItemSpellType, pItemSpellType, nullptr, 0);
 DATATYPE(MQ2MacroQuestType, pMacroQuestType, pEverQuestType, 0);
 DATATYPE(MQ2MercenaryType, pMercenaryType, pSpawnType, 0);
 DATATYPE(MQ2MerchantType, pMerchantType, nullptr, 0);
