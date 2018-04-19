@@ -944,7 +944,17 @@ typedef struct _CONTENTS {
 /*0x0160*/
 __declspec(dllexport)  struct _CONTENTS *GetContent(UINT index);
 } CONTENTS, *PCONTENTS;
-
+#pragma pack(push)
+#pragma pack(8)
+typedef union _EqGuid {
+    struct {
+        UINT UniqueEntityID;
+		WORD WorldUniqueID;
+		WORD Reserved;
+    } DUMMYSTRUCTNAME;
+    unsigned __int64 GUID;
+} EqGuid;
+#pragma pack(pop)
 // Size 0x58 20110810 - dkaa
 // Size 0x58 20150326 - demonstar55
 // Size 0x68 Apr 10 2018 test see 8B2FD5 - eqmule
@@ -957,11 +967,10 @@ typedef struct _SPELLBUFF {
 	/*0x04*/    FLOAT     Modifier;      // Bard song modifier, 1.0 is default BaseDmgMod
 	/*0x08*/    LONG      SpellID;       // -1 or 0 for no spell..
 	/*0x0c*/    DWORD     Duration;
-	/*0x10*/    DWORD     CasterID;
-	/*0x14*/    DWORD     CasterID2;
-	/*0x18*/    DWORD     HitCount;
-	/*0x1C*/    DWORD     Unknown0x1C;
-	/*0x20*/    DWORD     Unknown0x20;
+	/*0x10*/    DWORD     Duration2;
+	/*0x14*/    DWORD     Duration3;
+	/*0x18*/    EqGuid    CasterGuid;
+	/*0x20*/    DWORD     HitCount;
 	/*0x24*/    FLOAT     Y;             // Referenced by SPA 441 (distance removal)
 	/*0x28*/    FLOAT     X;
 	/*0x2c*/    FLOAT     Z;
@@ -1127,19 +1136,6 @@ typedef struct _KEYRINGARRAY {
 	/*0x28*/
 } KEYRINGARRAY, *PKEYRINGARRAY;
 
-#pragma pack(push)
-#pragma pack(8)
-union EqGuid
-{
-	unsigned __int64 GUID;
-	struct Split
-	{
-		UINT UniqueEntityID;
-		WORD WorldUniqueID;
-		WORD Unknown;
-	};
-};
-#pragma pack(pop)
 struct Point 
 {
 	UINT PointType;

@@ -2581,6 +2581,7 @@ bool MQ2CharacterType::GETMEMBER()
 				if (pChar2->Buff[nBuff].SpellID <= 0)
 					return false;
 				Dest.Ptr = &pChar2->Buff[nBuff];
+				Dest.HighPart = nBuff;
 				Dest.Type = pBuffType;
 				return true;
 			}
@@ -2593,6 +2594,7 @@ bool MQ2CharacterType::GETMEMBER()
 						if (!_strnicmp(GETFIRST(), pSpell->Name, strlen(GETFIRST())))
 						{
 							Dest.Ptr = &pChar2->Buff[nBuff];
+							Dest.HighPart = nBuff;
 							Dest.Type = pBuffType;
 							return true;
 						}
@@ -2616,6 +2618,7 @@ bool MQ2CharacterType::GETMEMBER()
 					return false;
 
 				Dest.Ptr = &pChar2->ShortBuff[nBuff];
+				Dest.HighPart = nBuff;
 				Dest.Type = pBuffType;
 				return true;
 			}
@@ -2628,6 +2631,7 @@ bool MQ2CharacterType::GETMEMBER()
 						if (!_strnicmp(GETFIRST(), pSpell->Name, strlen(GETFIRST())))
 						{
 							Dest.Ptr = &pChar2->ShortBuff[nBuff];
+							Dest.HighPart = nBuff;
 							Dest.Type = pBuffType;
 							return true;
 						}
