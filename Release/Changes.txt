@@ -1,3 +1,7 @@
+Apr 19 2018 by eqmule
+- Fixed a bug in _SPELLBUFF, it had the wrong size and members
+  this will fix any problems with casting spells etc.
+
 Apr 18 2018 by eqmule and swiftymuse
 - Updated for LIVE
 - You should remove DataCompare, FindOffsets and GetDWordAt from your plugins, they exist as inlines from now on in core.
