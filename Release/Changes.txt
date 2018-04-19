@@ -1,3 +1,11 @@
+Apr 18 2018 by eqmule and swiftymuse
+- Updated for LIVE
+- You should remove DataCompare, FindOffsets and GetDWordAt from your plugins, they exist as inlines from now on in core.
+
+
+Apr 17 2018 by eqmule and swiftymuse
+- Updated for TEST
+
 Mar 17 2018 by eqmule
 - Added .Path to the MacroQuest TLO
   Usage /echo ${MacroQuest.Path}
@@ -6,7 +14,6 @@ Mar 17 2018 by eqmule
   Usage: /echo ${EverQuest.CharSelectList[1].Name}
   Usage: /echo ${EverQuest.CharSelectList[1].Count} yes I know it should be ${EverQuest.CharSelectList.Count} but just work with it like that.
   it returns the actual count of the characters in the list.
-- Fixed the ITEMINFO Struct so stacksize and so on works again
 
 Mar 16 2018 by eqmule
 - Updated for LIVE and TEST Fixed the ITEMINFO struct so things like StackSize works again.

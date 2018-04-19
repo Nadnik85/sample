@@ -788,6 +788,8 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD __gWorld;
 	EQLIB_VAR DWORD __HotkeyPage;
 	EQLIB_VAR DWORD __HWnd;
+	EQLIB_VAR DWORD __heqmain;
+	EQLIB_VAR DWORD LoginController__GiveTime;
 	EQLIB_VAR DWORD __InChatMode;
 	EQLIB_VAR DWORD __Inviter;
 	EQLIB_VAR DWORD __LastTell;

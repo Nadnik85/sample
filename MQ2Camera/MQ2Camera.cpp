@@ -12,7 +12,7 @@ PreSetup("MQ2Camera");
 
 #include <algorithm>
 
-
+using namespace std;
 namespace
 {
 	float s_origZoomCameraMaxDistance = 0.0;
@@ -20,7 +20,7 @@ namespace
 
 	bool s_initialized = false;
 
-	//.text:006646B1 loc_6646B1:                             ; CODE XREF: CEverQuest::MouseWheelScrolled(int)+4D↑j
+	//.text:006646B1 loc_6646B1:                             ; CODE XREF: CEverQuest::MouseWheelScrolled(int)+4D?j
 	//.text:006646B1                 mov     eax, dword_F32A3C
 	//.text:006646B6                 fld     dword ptr [eax+34h]
 	//.text:006646B9                 fstp    [esp+20h+var_1C]
@@ -77,7 +77,7 @@ namespace
 	//.text:005C5B32                 push    0
 	//.text:005C5B34                 call    dword ptr [eax+34h]
 	//.text:005C5B37
-	//.text:005C5B37 loc_5C5B37:                             ; CODE XREF: CDisplay::SetViewActor(CActorInterface *)+E↑j
+	//.text:005C5B37 loc_5C5B37:                             ; CODE XREF: CDisplay::SetViewActor(CActorInterface *)+E?j
 	//.text:005C5B37                 mov     ecx, [esp+1Ch+arg_0]
 	//.text:005C5B3B                 mov     CActorInterface * ViewActor, ecx
 	//.text:005C5B41                 test    ecx, ecx
@@ -102,27 +102,6 @@ public:
 };
 
 FUNCTION_AT_ADDRESS(void CDisplay_MQ2Camera_Extension::SetViewActor(CActorInterface*), CDisplay__SetViewActor_Offset);
-
-inline bool DataCompare(const unsigned char* pData, const unsigned char* bMask, const char* szMask)
-{
-	for (; *szMask; ++szMask, ++pData, ++bMask)
-	{
-		if (*szMask == 'x' && *pData != *bMask)
-			return false;
-	}
-	return (*szMask) == 0;
-}
-
-unsigned long FindPattern(unsigned long dwAddress, unsigned long dwLen, const unsigned char* bMask, const char* szMask)
-{
-	for (unsigned long i = 0; i < dwLen; i++)
-	{
-		if (DataCompare((unsigned char*)(dwAddress + i), bMask, szMask))
-			return (unsigned long)(dwAddress + i);
-	}
-
-	return 0;
-}
 
 template <typename T>
 T* GetDataPtrAtOffset(DWORD address, int offset)

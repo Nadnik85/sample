@@ -1,3 +1,28 @@
+Apr 18 2018 by redguides
+- KissAssist 10.2.5 (ctaylor22, Maskoi) now included
+- EQBCS.exe (Jimbob) lots of fixes, now works with multiple PCs
+- MQ2EQBC (ChatWithThisName) Made it so TLO EQBC.Names is updated anytime someone connects or disconnects. 
+- MQ2MoveUtils, MQ2Camera (eqmule) fixed for new compile
+- MQ2AutoLoot (plure) 
+Fixed issue Chatwiththisname brought up that would cause it to spam loot actions over and over again.  
+Added the ability to do looting during raid.  /AutoLoot raidloot [on|off] -> Toggle raid looting on and off, the default is off.
+Rewrote item actions such as /autoloot barter/sell/deposit to make the code cleaner (at least in my own opinion).
+- MQ2Melee (ChatWithThisName) Change as per EQMule convo in discord. 
+
+Apr 18 2018 by eqmule and swiftymuse
+- Updated for LIVE
+- You should remove DataCompare, FindOffsets and GetDWordAt from your plugins, they exist as inlines from now on in core.
+
+
+Apr 17 2018 by eqmule and swiftymuse
+- Updated for TEST
+
+Mar 19 2018 by redguides
+- fixed a plugin loading issue
+
+Mar 19 2018 by redguides
+- MQ2Ic (eqmule) fix for crash some were having
+
 Mar 17 2018 by redguides
 - MQ2Melee (ChatWIthThisName) - bracketing issue fixed for Berserkers. 
 

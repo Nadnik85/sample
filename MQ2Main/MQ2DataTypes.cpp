@@ -490,7 +490,7 @@ bool MQ2StringType::GETMEMBER()
 				return true;
 			}
 			pStr += nStart;
-			int StrLen = (int)strlen(pStr);
+			DWORD StrLen = (DWORD)strlen(pStr);
 			if (Len>StrLen)
 				Len = StrLen;
 			memmove(DataTypeTemp, pStr, Len);

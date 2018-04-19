@@ -28,6 +28,7 @@
 | -------------------------------------------------------------------------------------
 
 #turbo 80
+| #include custom.inc
 #include ninjadvloot.inc
 
 | #DEFINE /squelch " "
@@ -182,6 +183,7 @@ Sub CheckAllPlugins
 | If we dont put this here, there is a chance it will fail due to a chat event which trigger the undeclared variables check
 #Event Burn              "[MQ2] |${BurnText}|"
 Sub Main
+	/declare bCallCustom int outer 0
 	|new variable to keep status if we are being hit
 	/declare MeleeHit int outer 0
     |lets check a few plugins
@@ -1120,6 +1122,9 @@ Sub Main
             /if (${LootOn}) /call LootStuff
             /if (${DebugHeal}) /delay 5 
             /delay 1
+			/if (${bCallCustom}==1) {
+				/call MyCustom
+			}
         /goto :MainLoop
 
 :OnExit
@@ -1127,6 +1132,9 @@ Sub Main
 	/stick set verbflags 33554431
 	/stick set autosave on
 	/end
+/return
+Sub MyCustom
+
 /return
 | -------------------------------------------------------------------------------------
 | SUB: PParse Parse passed command line parameters
@@ -1144,9 +1152,9 @@ Sub PParse(int iniLoaded, int nump)
     /for i 0 to ${nump}
         /if (${Defined[PParam${i}]}) {
             /if (${Debug}) {
-				/echo \atDEBUG PParse Enter:  Defined[IniFileName] =  ${Defined[IniFileName]} ${Defined[PParam${i}]} #${i} PParam${i} = ${PParam${i}} PParam${i} Length = ${PParam${i}.Length} is PParam${i} equal ma? ${PParam${i}.Equal[ma]}  ${Int[${PParam${i}}]} \agLine#: ${Macro.CurLine}
+		/echo \atDEBUG PParse Enter:  Defined[IniFileName] =  ${Defined[IniFileName]} ${Defined[PParam${i}]} #${i} PParam${i} = ${PParam${i}} PParam${i} Length = ${PParam${i}.Length} is PParam${i} equal ma? ${PParam${i}.Equal[ma]}  ${Int[${PParam${i}}]} \agLine#: ${Macro.CurLine}
             }
-			/varcalc ipa ${i}+1
+	    /varcalc ipa ${i}+1
             /varcalc ipb ${i}-1
             /if (${PParam${i}.Equal[ini]} && ${Defined[IniFileName]}) {
                 /varset IniFileName ${PParam${ipa}}
@@ -1215,9 +1223,12 @@ Sub PParse(int iniLoaded, int nump)
 				}
             }
             /if (${PParam${i}.Equal[parse]} && ${Defined[ParseDPSTimer]}) {
-				/if (!${Defined[PParam${ipa}]}) /declare PParam${ipa} string outer
-				/varset ParseDPSTimer ${PParam${ipa}}
-			}
+		/if (!${Defined[PParam${ipa}]}) /declare PParam${ipa} string outer
+		/varset ParseDPSTimer ${PParam${ipa}}
+	    }
+	    /if (${PParam${i}.Equal[custom]}) {
+			/varset bCallCustom 1
+	    }
             /varset ipa 0
             /varset ipb 0
         }
@@ -1593,6 +1604,7 @@ Sub RangerStuff
         /if ((${DMZ} && ${Me.InInstance}==FALSE)) /return
         /if (!${Target.LineOfSight}) /return
         /if (${DPSPaused} ) /return
+        /if (${Me.XTarget}==0) /return
         /if (${Me.Song[Rallying Call].ID} && !${Select[${Role},tank,pullertank]}) /return
         | Check if mob mezzed
         /if (${Group.MainAssist.ID} && ${Group.MainAssist.ID}!=${Me.ID} && ${Target.Mezzed.ID}) {
@@ -1721,7 +1733,7 @@ Sub RangerStuff
                    | Debuff stuff
                    /call DoDebuffStuff ${MyTargetID}
                    |When returning the mob you were started on could be dead, so don't keep trying to kill a corpse.
-                   /if (${Spawn[${MyTargetID}].Type.Equal[Corpse]} || !${Spawn[${MyTargetID}].ID} || ${DPSPaused}) {
+                   /if (${Me.XTarget}==0 || ${Spawn[${MyTargetID}].Type.Equal[Corpse]} || !${Spawn[${MyTargetID}].ID} || ${DPSPaused}) {
                        /call CombatReset
                        /return
                    }
@@ -1772,7 +1784,7 @@ Sub RangerStuff
                     }
                     /attack on
                 }
-                /if (${Spawn[${MyTargetID}].Type.Equal[Corpse]} || !${Spawn[${MyTargetID}].ID}) {
+                /if (${Spawn[${MyTargetID}].Type.Equal[Corpse]} || !${Spawn[${MyTargetID}].ID} || ${Me.XTarget}==0) {
                     /call CombatReset
                     /return
                 }
@@ -1954,6 +1966,10 @@ Sub DoBandolier
                 }
 		/goto :skipcast
             }
+	    /if (${Me.XTarget}==0 && ${Spawn[${MyTargetID}].PctHPs}==100) {
+		|/echo screw this, we have noone on xtarget, so that means we should not be casting shit, its a non aggro mob...
+		/return
+	    }
 	    |well we got this far but is the mob within sight?
 	    /if (${MoveCloserIfNoLOS}) {
 		/if (${Bool[${Plugin[MQ2Nav]}]}) {
@@ -8502,7 +8518,7 @@ Sub Bind_GoBackToCamp
             /if (${Window[ConfirmationDialogBox].Open}) {
                 /nomodkey /notify ConfirmationDialogBox Yes_Button leftmouseup
             }
-            /delay 5s !${Me.Fellowship.Campfire}
+            /delay 5s !${Me.Fellowship.CampfireZone.ID}
         }
         /delay 1s
         /nomodkey /notify FellowshipWnd FP_RefreshList leftmouseup
@@ -8510,9 +8526,9 @@ Sub Bind_GoBackToCamp
         /nomodkey /notify FellowshipWnd FP_CampsiteKitList listselect 1
         /delay 1s
         /nomodkey /notify FellowshipWnd FP_CreateCampsite leftmouseup
-        /delay 5s ${Me.Fellowship.Campfire}
+        /delay 5s ${Me.Fellowship.CampfireZone.ID}
         /windowstate FellowshipWnd close
-        /if (${Me.Fellowship.Campfire}) /echo Campfire Dropped
+        /if (${Me.Fellowship.CampfireZone.ID}) /echo Campfire Dropped
     /return
 | ----------------------------------------------------------------------------
 | SUB: Sort Array
@@ -9237,7 +9253,7 @@ Sub FindGroupHeals
     Sub Campfire
         /if (!${CampfireOn}) /return
         /if (${CampfireTimer}) /return
-        /if (${Me.Fellowship.Campfire} && (${Me.Fellowship.CampfireZone.ID}==${Zone.ID} || ${Me.Fellowship.CampfireZone.Name.Find[guild hall]})) /return
+        /if (${Me.Fellowship.CampfireZone.ID} && (${Me.Fellowship.CampfireZone.ID}==${Zone.ID} || ${Me.Fellowship.CampfireZone.Name.Find[guild hall]})) /return
         /if (${Math.Distance[${CampYLoc},${CampXLoc}]}>${CampRadius}) /return
         /if (${AggroTargetID}) /return
         /if (${CombatStart}) /return
@@ -9456,7 +9472,7 @@ Sub FindGroupHeals
         /if (${Me.Buff[Revival Sickness].ID} && ${CampZone} != ${Zone.ID}) /varset IAmDead 1
         /if (${IAmDead}) {
             | Does Campfire Exist?
-            /if (!${Me.Fellowship.Campfire}) {
+            /if (!${Me.Fellowship.CampfireZone.ID}) {
                 /echo There is no campfire up.
                 /return
             }
