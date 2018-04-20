@@ -1845,20 +1845,24 @@ typedef struct _SPELL { //      1     |    0   | -30  |   0    | 103  | 125
 /*0x15f*/   BYTE    ClassLevel[0x24];        //per class., yes there are allocations for 0x24 see 4B5776 in eqgame dated 12 mar 2014 -eqmule
 /*0x183*/   BYTE    LightType;
 /*0x184*/   BYTE    SpellType;          //0=detrimental, 1=Beneficial, 2=Beneficial, Group Only
-/*0x185*/   BYTE    Activated;
-/*0x186*/   BYTE    Resist;             //0=un 1=mr 2=fr 3=cr 4=pr 5=dr 6=chromatic 7=prismatic 8=physical(skills,etc) 9=corruption
-/*0x187*/   BYTE    TargetType;         //03=Group v1, 04=PB AE, 05=Single, 06=Self, 08=Targeted AE, 0e=Pet, 28=AE PC v2, 29=Group v2, 2a=Directional
-/*0x188*/   BYTE    CastDifficulty;
-/*0x189*/   BYTE    Skill;
-/*0x18a*/   BYTE    ZoneType;           //01=Outdoors, 02=dungeons, ff=Any
-/*0x18b*/   BYTE    Environment;
-/*0x18c*/   BYTE    TimeOfDay;          // 0=any, 1=day only, 2=night only
-/*0x18d*/   BYTE    CastingAnim;
-/*0x18e*/   BYTE    AnimVariation;
-/*0x18f*/   BYTE    TargetAnim;
-/*0x190*/   BYTE    TravelType;
-/*0x191*/   BYTE    CancelOnSit;
-/*0x192*/   //bool    CountdownHeld;
+//correct to this point
+
+///*0x185*/   BYTE    Activated; is this gone?
+/*0x185*/   BYTE    Resist;   //see   4B0493 in apr 16 2018 exe        //0=un 1=mr 2=fr 3=cr 4=pr 5=dr 6=chromatic 7=prismatic 8=physical(skills,etc) 9=corruption
+
+//correct below this point
+/*0x186*/   BYTE    TargetType;         //03=Group v1, 04=PB AE, 05=Single, 06=Self, 08=Targeted AE, 0e=Pet, 28=AE PC v2, 29=Group v2, 2a=Directional
+/*0x187*/   BYTE    CastDifficulty;
+/*0x188*/   BYTE    Skill;
+/*0x189*/   BYTE    ZoneType;           //01=Outdoors, 02=dungeons, ff=Any
+/*0x18a*/   BYTE    Environment;
+/*0x18b*/   BYTE    TimeOfDay;          // 0=any, 1=day only, 2=night only
+/*0x18c*/   BYTE    CastingAnim;
+/*0x18d*/   BYTE    AnimVariation;
+/*0x18e*/   BYTE    TargetAnim;
+/*0x18f*/   BYTE    TravelType;
+/*0x190*/   BYTE    CancelOnSit;
+/*0x191*/   bool    CountdownHeld;
 /*0x192*/   CHAR    Name[0x40];
 /*0x1d2*/   CHAR    Target[0x20];
 /*0x1f2*/   CHAR    Extra[0x20];    //This is 'Extra' from Lucy (portal shortnames etc) official = NPC_FILENAME

@@ -1,12 +1,30 @@
+Apr 19 2018 by eqmule
+- Fixed a bug in _SPELLBUFF, it had the wrong size and members
+  this will fix any problems with casting spells etc.
+
+Apr 19 2018 by redguides
+- MQ2Discord (alynel) added. Allows you to control MQ2 via Discord! See the plugin section for instructions.
+
+Apr 19 2018 by eqmule
+- Fixed a bug in _SPELLBUFF, it had the wrong size and members
+  this will fix any problems with casting spells etc.
+
 Apr 18 2018 by redguides
+- MQ2EasyFind has command line support and can find paths without mq2nav mesh loaded. 
+  meshes will give far better performance, but this is a nice fallback.
+  example: /easyfind "West Freeport"
+  MQ2EasyFind.ini can be used to fix issues with mesh-less navigation
+  new TLO's:
+  ${EasyFind.Item[blah].X.Y.Z} and also .Name
+  ${EasyFind.Items} returns how many are in the list
 - KissAssist 10.2.5 (ctaylor22, Maskoi) now included
 - EQBCS.exe (Jimbob) lots of fixes, now works with multiple PCs
 - MQ2EQBC (ChatWithThisName) Made it so TLO EQBC.Names is updated anytime someone connects or disconnects. 
 - MQ2MoveUtils, MQ2Camera (eqmule) fixed for new compile
 - MQ2AutoLoot (plure) 
-Fixed issue Chatwiththisname brought up that would cause it to spam loot actions over and over again.  
-Added the ability to do looting during raid.  /AutoLoot raidloot [on|off] -> Toggle raid looting on and off, the default is off.
-Rewrote item actions such as /autoloot barter/sell/deposit to make the code cleaner (at least in my own opinion).
+  Fixed issue Chatwiththisname brought up that would cause it to spam loot actions over and over again.  
+  Added the ability to do looting during raid.  /AutoLoot raidloot [on|off] -> Toggle raid looting on and off, the default is off.
+  Rewrote item actions such as /autoloot barter/sell/deposit to make the code cleaner (at least in my own opinion).
 - MQ2Melee (ChatWithThisName) Change as per EQMule convo in discord. 
 
 Apr 18 2018 by eqmule and swiftymuse

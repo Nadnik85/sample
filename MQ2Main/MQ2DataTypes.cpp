@@ -5712,7 +5712,7 @@ bool MQ2SpellType::GETMEMBER()
 				EQ_Affect eff;
 				eff.ID = thespell->ID;
 				eff.Type = thespell->SpellType;
-				eff.Activatable = thespell->Activated;
+				eff.Activatable = 0;// thespell->Activated;
 				//eff.BaseDmgMod = thespell->BaseEffectsFocusCap;
 				eff.CasterID = pMe->pSpawn->SpawnID;
 				eff.CasterLevel = pMe->MainLevel;
@@ -5791,7 +5791,7 @@ bool MQ2SpellType::GETMEMBER()
 								pAffects[j].Type = 1;
 							}
 							pAffects[j].ID = pBuff->ID;
-							pAffects[j].Activatable = pBuff->Activated;
+							pAffects[j].Activatable = 0;// pBuff->Activated;
 							pAffects[j].CasterID = pMe->pSpawn->SpawnID;
 							pAffects[j].CasterLevel = pMe->MainLevel;
 							pAffects[j].BaseDmgMod = 1.0;
