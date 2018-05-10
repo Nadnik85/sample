@@ -1447,7 +1447,10 @@ static inline int SpawnType(PSPAWNINFO x, unsigned long mask) {
 }
 
 static inline PSPAWNINFO SpawnMe() {
-    return GetCharInfo()->pSpawn;
+    if(pCharSpawn) {
+        return (PSPAWNINFO)pCharSpawn;
+    }
+   return NULL;
 }
 
 static inline PSPAWNINFO SpawnMount() {

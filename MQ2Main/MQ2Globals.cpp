@@ -102,7 +102,9 @@ namespace MQ2Globals
 
 		pGuildList = (PGUILDS)__Guilds;
 		pSocialList = (PEQSOCIAL)__Socials;
+		#ifdef EMU
 		pgHotkeyPage = (PBYTE)__HotkeyPage;
+		#endif
 		pgCurrentSocial = (PINT)__CurrentSocial;
 
 		NewUIINI = (fEQNewUIINI)__NewUIINI;
@@ -263,7 +265,7 @@ namespace MQ2Globals
 		
 		return true;
 	}
-
+	DWORD LoginController__GiveTime = 0;
 	struct _actordefentry ActorDefList[] = {
 #include "actordef.h"
 		0, 0, "NULL"
@@ -1324,8 +1326,11 @@ namespace MQ2Globals
 	INITIALIZE_EQGAME_OFFSET(__GroupAggro);
 	INITIALIZE_EQGAME_OFFSET(__Guilds);
 	INITIALIZE_EQGAME_OFFSET(__gWorld);
+	#ifdef EMU
 	INITIALIZE_EQGAME_OFFSET(__HotkeyPage);
+	#endif
 	INITIALIZE_EQGAME_OFFSET(__HWnd);
+	INITIALIZE_EQGAME_OFFSET(__heqmain);
 	INITIALIZE_EQGAME_OFFSET(__InChatMode);
 	INITIALIZE_EQGAME_OFFSET(__Inviter);
 	INITIALIZE_EQGAME_OFFSET(__LastTell);

@@ -474,6 +474,7 @@ void Client::ProcessWritePacketBuffer()
 void Client::HandleLogin(char *data)
 {
 	static char message[MAX_BUF] = { 0 };
+	/*
 	char *pc = data;
 	char *pc2 = NULL;
 	if (data[0] == '=')
@@ -495,8 +496,8 @@ void Client::HandleLogin(char *data)
 			_snprintf(message, MAX_BUF, "\tNBJOIN=%s\n", name);
 			server->SendToAll(message);
 		}
-	}
-	/*
+	}//*/
+	//*
 	if (_strnicmp("LOGIN=", data, 6) == 0)
 	{
 		char *pc = data + 6;
@@ -513,13 +514,28 @@ void Client::HandleLogin(char *data)
 				return;
 			}
 			{
+				static char clientlist[MAX_BUF] = { 0 };
+				char *cptr = clientlist;
+				memset(clientlist, 0, MAX_BUF);
 				strncpy(name, pc, strlen(pc));
 				authenticated = true;
-				_snprintf(message, MAX_BUF, "\tNBJOIN=%s\n", name);
+				for (int x = 0; x < server->clients->Count(); x++)
+				{
+					_snprintf(cptr, (MAX_BUF - (cptr-clientlist)), "%s", (*(server->clients))[x]->GetName());
+					cptr += strlen(cptr);
+					if (x < server->clients->Count() - 1)
+					{
+						(*cptr) = ' ';
+						cptr++;
+					}
+				}
+				_snprintf(message, MAX_BUF, "\tNBJOIN=%s\n\tNBCLIENTLIST=%s\n", name, clientlist);
+				//_snprintf(message, MAX_BUF, "\tNBJOIN=%s\n", name);
 				server->SendToAll(message);
 			}
 		}
 	}
+/*
 	else if ((!authstart) && (_strnicmp("LOGIN", data, 5) == 0) && (strlen(data)==5))
 	{
 		// Login portion broken apart (go "EQBC Interface")
@@ -533,7 +549,7 @@ void Client::HandleLogin(char *data)
 			*pc = 0;
 		}
 	}
-*/
+//*/
 }
 
 void Client::HandleCommands(char *data)
@@ -686,6 +702,19 @@ void Client::ProcessReadPacketBuffer()
 		int ret = 0;
 		if (!authenticated)
 		{
+			ret = rbuf->Peek(data, MAX_BUF);
+			if ((ret > 0) && (_strnicmp(data, "LOGIN=", 6) == 0) && (strchr(data, ';')!=NULL))
+			{
+				ret = rbuf->ReadUntil(data, MAX_BUF - 1, ';');
+				fprintf(stderr, "Debug Login: %s\r\n", data);
+				command = false;
+				HandleLogin(data);
+			}
+			else
+			{
+				fprintf(stderr, "Debug: partial login, or invalid login: %s\n", data);
+			}
+			/*
 			if (!authstart)
 			{
 				ret = rbuf->ReadUntil(data, 5, '=');
@@ -708,7 +737,7 @@ void Client::ProcessReadPacketBuffer()
 					command = false;
 					//authstart = false;
 				}
-			}
+			}*/
 		}
 		else if (command)
 		{
