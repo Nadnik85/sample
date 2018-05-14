@@ -348,13 +348,17 @@ void EnqueueIfMatch(const PCHAR Line)
 
 PLUGIN_API DWORD OnWriteChatColor(PCHAR Line, DWORD Color, DWORD Filter)
 {
-	EnqueueIfMatch(Line);
+	char cleanLine[2048] = { 0 };
+	StripMQChat(Line, cleanLine);
+	EnqueueIfMatch(cleanLine);
     return 0;
 }
 
 PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color)
 {
-	EnqueueIfMatch(Line);
+	char cleanLine[2048] = { 0 };
+	StripMQChat(Line, cleanLine);
+	EnqueueIfMatch(cleanLine);
     return 0;
 }
 
