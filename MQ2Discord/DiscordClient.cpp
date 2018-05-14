@@ -27,6 +27,33 @@ std::string escape_json(const std::string &s) {
 	return o.str();
 }
 
+std::string unescape_json(const std::string &s) {
+	std::ostringstream o;
+	for (auto c = s.cbegin(); c != s.cend(); ++c) {
+		if (*c == '\\')
+		{
+			++c;
+			switch (*c)
+			{
+			case 't':	{ o << "\t"; break; }
+			case 'b':	{ o << "\b"; break; }
+			case 'f':	{ o << "\f"; break; }
+			case 'n':	{ o << "\n"; break; }
+			case 'r':	{ o << "\r"; break; }
+			case '\\':	{ o << "\\"; break; }
+			case '/':	{ o << "/";  break; }
+			case '"':	{ o << "\""; break; }
+			default:
+				;
+			}
+		}
+		else {
+			o << *c;
+		}
+	}
+	return o.str();
+}
+
 // Real simple client, all it does is invoke a callback when a message is received
 class CallbackDiscordClient : public SleepyDiscord::DiscordClient {
 public:
@@ -51,7 +78,9 @@ void DiscordThread(std::string token, std::string channelId, std::string control
 	{
 		CallbackDiscordClient client(token, [&](SleepyDiscord::Message & msg) {
 			if (msg.author.ID == controlUserId && msg.channelID == channelId)
-				fromDiscord.enqueue(msg.content);
+			{
+				fromDiscord.enqueue(unescape_json(msg.content));
+			}
 		});
 
 		fromDiscord.enqueue(connectMsg);
