@@ -290,12 +290,13 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD *gpbCommandEvent;
 #define gbCommandEvent (*gpbCommandEvent)
 
+  EQLIB_VAR CResolutionHandler **ppCResolutionHandler;
+#define pCResolutionHandler (*ppCResolutionHandler)
 	EQLIB_VAR DWORD *g_ppDrawHandler;
 #define g_pDrawHandler (*g_ppDrawHandler)
 
 	EQLIB_VAR PCHAR *EQMappableCommandList;
 	EQLIB_VAR PBYTE EQbCommandStates;
-	EQLIB_VAR DWORD gnNormalEQMappableCommands;
 
 #ifndef ISXEQ
 	EQLIB_VAR DWORD EQADDR_DIMAIN;
@@ -547,6 +548,7 @@ namespace MQ2Globals
 
 	EQLIB_VAR CFacePick **ppFacePick;
 	EQLIB_VAR CFindItemWnd **ppFindItemWnd;
+	EQLIB_VAR CFindLocationWnd **ppFindLocationWnd;
 	EQLIB_VAR CInvSlotMgr **ppInvSlotMgr;
 	//EQLIB_VAR CPopupWndManager **ppPopupWndManager;
 	EQLIB_VAR CNoteWnd **ppNoteWnd;
@@ -611,7 +613,6 @@ namespace MQ2Globals
 	EQLIB_VAR CPlayerNotesWnd **ppPlayerNotesWnd;
 	EQLIB_VAR CGemsGameWnd **ppGemsGameWnd;
 	EQLIB_VAR CStoryWnd **ppStoryWnd;
-	//EQLIB_VAR CFindLocationWnd **ppFindLocationWnd;
 	//EQLIB_VAR CAdventureRequestWnd **ppAdventureRequestWnd;
 	//EQLIB_VAR CAdventureMerchantWnd **ppAdventureMerchantWnd;
 	//EQLIB_VAR CAdventureStatsWnd **ppAdventureStatsWnd;
@@ -653,6 +654,7 @@ namespace MQ2Globals
 #define pEQSuiteTextureLoader (ppEQSuiteTextureLoader)
 #define pFacePick (*ppFacePick)
 #define pFindItemWnd (*ppFindItemWnd)
+#define pFindLocationWnd (*ppFindLocationWnd)
 #define pInvSlotMgr (*ppInvSlotMgr)
 #define pPopupWndManager (*ppPopupWndManager)
 #define pNoteWnd (*ppNoteWnd)
@@ -716,7 +718,6 @@ namespace MQ2Globals
 #define pPlayerNotesWnd (*ppPlayerNotesWnd)
 #define pGemsGameWnd (*ppGemsGameWnd)
 #define pStoryWnd (*ppStoryWnd)
-#define pFindLocationWnd (*ppFindLocationWnd)
 #define pAdventureRequestWnd (*ppAdventureRequestWnd)
 #define pAdventureMerchantWnd (*ppAdventureMerchantWnd)
 #define pAdventureStatsWnd (*ppAdventureStatsWnd)
@@ -858,6 +859,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD pinstMercAltAbilities;
 	EQLIB_VAR DWORD pinstModelPlayer;
 	EQLIB_VAR DWORD pinstPCData;
+	EQLIB_VAR DWORD pinstCResolutionHandler;
 	EQLIB_VAR DWORD pinstSkillMgr;
 	EQLIB_VAR DWORD pinstSpawnManager;
 	EQLIB_VAR DWORD pinstSpellManager;
@@ -938,7 +940,9 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD pinstCTrackingWnd;
 	EQLIB_VAR DWORD pinstCInspectWnd;
 	EQLIB_VAR DWORD pinstCSocialEditWnd;
+	#ifdef EMU
 	EQLIB_VAR DWORD pinstCFeedbackWnd;
+	#endif
 	EQLIB_VAR DWORD pinstCBugReportWnd;
 	EQLIB_VAR DWORD pinstCVideoModesWnd;
 	EQLIB_VAR DWORD pinstCTextEntryWnd;
@@ -1128,6 +1132,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD CDisplay__ReloadUI;
 	EQLIB_VAR DWORD CDisplay__WriteTextHD2;
 	EQLIB_VAR DWORD CDisplay__TrueDistance;
+	EQLIB_VAR DWORD CDisplay__SetViewActor;
 	
 	EQLIB_VAR DWORD CEditBaseWnd__SetSel;
 
@@ -1178,6 +1183,8 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD LootFiltersManager__RemoveItemLootFilter;
 	EQLIB_VAR DWORD LootFiltersManager__SetItemLootFilter;
 	EQLIB_VAR DWORD COptionsWnd__FillChatFilterList;
+	EQLIB_VAR DWORD CResolutionHandler__UpdateResolution;
+	EQLIB_VAR DWORD CResolutionHandler__GetWindowedStyle;
 	
 	EQLIB_VAR DWORD CGaugeWnd__CalcFillRect;
 	EQLIB_VAR DWORD CGaugeWnd__CalcLinesFillRect;
@@ -1541,6 +1548,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD EQSwitch__UseSwitch;
 
 	EQLIB_VAR BOOL gbTimeStampChat;
+	EQLIB_VAR size_t g_eqgameimagesize;
 
 	EQLIB_VAR BOOL gUseTradeOnTarget;
 	EQLIB_VAR BOOL gbBeepOnTells;
@@ -1584,6 +1592,8 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD CTaskWnd__UpdateTaskTimers;
 	EQLIB_VAR DWORD EqSoundManager__WavePlay;
 	EQLIB_VAR DWORD EqSoundManager__PlayScriptMp3;
+	EQLIB_VAR DWORD EqSoundManager__SoundAssistPlay;
+	EQLIB_VAR DWORD EqSoundManager__WaveInstancePlay;
 	EQLIB_VAR DWORD CCombatSkillsSelectWnd__ShouldDisplayThisSkill;
 	EQLIB_VAR DWORD ActorClient__GetPosition;
 	EQLIB_VAR DWORD ActorClient__GetPosition1;
@@ -1607,6 +1617,5 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD CCursorAttachment__Deactivate;
 	EQLIB_VAR DWORD CEQSuiteTextureLoader__GetDefaultUIPath;
 	EQLIB_VAR DWORD CEQSuiteTextureLoader__GetTexture;
-	
 }
 using namespace MQ2Globals;

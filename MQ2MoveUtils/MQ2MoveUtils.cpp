@@ -6,6 +6,21 @@ outside of a direct link to the forum post in which it is released, you must get
 link to the forum post directly to encourage any users of this plugin to donate to the developers at MacroQuest2.com 
 as required by the copyright holders of these functions, and desired by the developer. Please show your support!
 ****************/
+// version information
+//Version 12.0 Added string safety. Fixed Blech crash. - EqMule Jul 19 2016
+//Version 12.1 Added new savecode and fixed the offsetfinder - EqMule Sep 12 2017
+//Version 12.2 Updated patterns - SwiftyMUSE Feb 21 2018
+//Version 12.3 Moved patterns - SwiftyMUSE Apr 23 2018
+
+#define PLUGIN_NAME  "MQ2MoveUtils"		// Plugin Name
+#define PLUGIN_DATE   20180423			// Plugin Date
+#define PLUGIN_VERS   12.3				// Plugin Version
+
+#ifndef PLUGIN_API
+#include "../MQ2Plugin.h"
+PreSetup(PLUGIN_NAME);
+PLUGIN_VERSION(PLUGIN_VERS);
+#endif PLUGIN_API
 
 #include "../MQ2Plugin.h"
 #include "math.h"
@@ -30,14 +45,6 @@ as required by the copyright holders of these functions, and desired by the deve
  #define A_TIME_TYPE  __time64_t
 #endif
 
-// version information
-//Version 12.0 Added string safety. Fixed Blech crash. - EqMule Jul 19 2016
-//Version 12.1 Added new savecode and fixed the offsetfinder - EqMule Sep 12 2017
-
-const char*  MODULE_NAME    = "MQ2MoveUtils";
-const double MODULE_VERSION = 12.1;
-PreSetup(MODULE_NAME);
-PLUGIN_VERSION(MODULE_VERSION); // will truncate, hence we use our own TLO
 Blech *pMoveEvent = 0;
 // ------------------------------------------------------------------------------
 // constants - the unsigned chars are aesthetics but we use different values
@@ -176,7 +183,6 @@ bool bWrapped = false; // hi htw!
 char szMsg[MAX_STRING]         = {0};                // use for generic msg output
 char szDebugName[MAX_STRING]   = {0};                // debug file name
 char szCharName[MAX_STRING]    = {0};                // stores char name for INI read/write
-bool IgnoreTarget              = false;              // Used for movetocmd Underwater when using loc and not id param 
 const char szOn[10]            = "\agON\ax";         // used in outputs
 const char szOff[10]           = "\arOFF\ax";        // used in outputs
 const char szArriveMove[50]    = "/moveto location"; // output moveto arrival
@@ -215,6 +221,7 @@ int iJumpKey     = NULL;
 int iRunWalk     = NULL;
 int iDuckKey     = NULL;
 
+/*
 char* szFailedLoad[] = {
     "No Error",            // 0
     "TurnRight Address",   // 1
@@ -229,14 +236,13 @@ char* szFailedLoad[] = {
     "Backward"             // 10
 };
 unsigned long addrTurnRight     = NULL;
-bool bOffsetOverride            = false;
-//A3 ? ? ? ? C7 05 ? ? ? ? ? ? ? ? C7 05 ? ? ? ? ? ? ? ? 85 C0 0F 84
-PBYTE patternTurnRight          = (PBYTE)"\xA3\x00\x00\x00\x00\xC7\x05\x00\x00\x00\x00\x00\x00\x00\x00\xC7\x05\x00\x00\x00\x00\x00\x00\x00\x00\x85\xC0\x0F\x84";
-char maskTurnRight[]            = "x????xx????????xx????????xxxx";
 unsigned long addrMoveForward   = NULL;
-// A3 ? ? ? ? 85 C0 0F 84 ? ? ? ? A0 ? ? ? ? 24 03 C7 05 ? ? ? ? ? ? ? ? 0F BE C0 F7 D8 C7 05
+PBYTE patternTurnRight = (PBYTE)"\xA3\x00\x00\x00\x00\xC7\x05\x00\x00\x00\x00\x00\x00\x00\x00\xC7\x05\x00\x00\x00\x00\x00\x00\x00\x00\x85\xC0\x0F\x84";
+char maskTurnRight[] = "x????xx????????xx????????xxxx";
 PBYTE patternMoveForward = (PBYTE)"\xA3\x00\x00\x00\x00\x85\xC0\x0F\x84\x00\x00\x00\x00\xA0\x00\x00\x00\x00\x24\x03\xC7\x05\x00\x00\x00\x00\x00\x00\x00\x00\x0F\xBE\xC0\xF7\xD8\xC7\x05";
-char maskMoveForward[]          = "x????xxxx????x????xxxx????????xxxxxxx";
+char maskMoveForward[] = "x????xxxx????x????xxxx????????xxxxxxx";
+*/
+bool bOffsetOverride = false;
 // ----------------------------------------
 // function prototypes
 
@@ -930,13 +936,13 @@ public:
 protected:
     void Output()
     {
-        sprintf_s(szMsg, "\ay%s\aw:: MakeCamp off.", MODULE_NAME);
+        sprintf_s(szMsg, "\ay%s\aw:: MakeCamp off.", PLUGIN_NAME);
         WriteLine(szMsg, V_MAKECAMPV);
     };
 
     void OutputPC()
     {
-        sprintf_s(szMsg, "\ay%s\aw:: MakeCamp player off.", MODULE_NAME);
+        sprintf_s(szMsg, "\ay%s\aw:: MakeCamp player off.", PLUGIN_NAME);
         WriteLine(szMsg, V_MAKECAMPV);
     };
 };
@@ -1148,7 +1154,7 @@ protected:
         *pfRandomArc = fTempArc;
         *pfStableArc = fArcSize;
 
-        sprintf_s(szMsg, "\ay%s\aw:: Arcs Randomized! Max: %.2f  Min: %.2f", MODULE_NAME, RandMax, RandMin);
+        sprintf_s(szMsg, "\ay%s\aw:: Arcs Randomized! Max: %.2f  Min: %.2f", PLUGIN_NAME, RandMax, RandMin);
         WriteLine(szMsg, V_RANDOMIZE);
     };
 
@@ -1191,7 +1197,7 @@ public:
                 {
                     Reset();
                     EndPreviousCmd(true);
-                    sprintf_s(szMsg, "\ay%s\aw:: You are no longer sticking to anything.", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: You are no longer sticking to anything.", PLUGIN_NAME);
                     WriteLine(szMsg, V_STICKV);
                     return;
                 }
@@ -1206,7 +1212,7 @@ public:
                 PausedMU = false;
                 if (!CAMP->Auto)
                 {
-                    sprintf_s(szMsg, "\ay%s\aw:: Resuming previous command from movement pause.", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: Resuming previous command from movement pause.", PLUGIN_NAME);
                     WriteLine(szMsg, V_MOVEPAUSE);
                 }
                 Reset();
@@ -1239,7 +1245,7 @@ public:
                     Reset();
                     if (!UserKB) PausedMU = false;
                     EndPreviousCmd(true);
-                    sprintf_s(szMsg, "\ay%s\aw:: You are no longer sticking to anything.", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: You are no longer sticking to anything.", PLUGIN_NAME);
                     WriteLine(szMsg, V_STICKV);
                     return false;
                 }
@@ -1501,7 +1507,7 @@ public:
         pMU->Rooted = false;
         RootHead    = 0.0f;
         char szTempOut[MAX_STRING] = {0};
-        sprintf_s(szTempOut, "\ay%s\aw:: You are no longer rooted.", MODULE_NAME);
+        sprintf_s(szTempOut, "\ay%s\aw:: You are no longer rooted.", PLUGIN_NAME);
         WriteLine(szTempOut, V_SILENCE);
     };
 
@@ -1576,7 +1582,7 @@ public:
         case STANDSTATE_FEIGN:
             if (SET->Feign)
             {
-                sprintf_s(szMsg, "\ay%s\aw:: Not standing as you are currently Feign Death", MODULE_NAME);
+                sprintf_s(szMsg, "\ay%s\aw:: Not standing as you are currently Feign Death", PLUGIN_NAME);
                 WriteLine(szMsg, V_FEIGN);
                 break;
             }
@@ -1972,7 +1978,7 @@ bool CMoveToCmd::DidAggro()
     {
         pMU->MovetoBroke = true;
         EndPreviousCmd(true);
-        sprintf_s(szMsg, "\ay%s\aw:: Aggro gained during /moveto, Halting command...", MODULE_NAME);
+        sprintf_s(szMsg, "\ay%s\aw:: Aggro gained during /moveto, Halting command...", PLUGIN_NAME);
         WriteLine(szMsg, V_BREAKONAGGRO);
         return true;
     }
@@ -1985,7 +1991,7 @@ bool CStickCmd::AlwaysStatus()
     {
         if (AlwaysReady)
         {
-            sprintf_s(szMsg, "\ay%s\aw:: Stick awaiting next valid NPC target...", MODULE_NAME);
+            sprintf_s(szMsg, "\ay%s\aw:: Stick awaiting next valid NPC target...", PLUGIN_NAME);
             WriteLine(szMsg, V_STICKALWAYS);
             MOVE->StopMove(APPLY_TO_ALL);
             DoRandomize();
@@ -2022,7 +2028,7 @@ bool CPauseHandler::MouseCheck()
                 EndPreviousCmd(true);
                 if (!CAMP->Auto)
                 {
-                    sprintf_s(szMsg, "\ay%s\aw:: Current command ended from mouse movement.", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: Current command ended from mouse movement.", PLUGIN_NAME);
                     WriteLine(szMsg, V_MOUSEPAUSE);
                 }
                 return false;
@@ -2080,8 +2086,7 @@ public:
         OutWnd->Clickable                           = 1;
         OutStruct                                   = (_CSIDLWND*)GetChildItem("CWChatOutput");
         CloseOnESC                                  = 0;
-		StmlOut->MaxLines = 400;
-        //*(unsigned long*)&(((char*)StmlOut)[EQ_CHAT_HISTORY_OFFSET]) = 400;
+		StmlOut->MaxLines                           = 0x190;
         BitOff(WindowStyle, CWS_CLOSE);
     };
 
@@ -2341,7 +2346,7 @@ public:
             {
                 strcpy_s(DataTypeTemp, "ON");
             }
-            Dest.Ptr  = DataTypeTemp;
+            Dest.Ptr  = &DataTypeTemp[0];
             Dest.Type = pStringType;
             return true;
         case Leash:
@@ -2528,7 +2533,7 @@ public:
             {
                 strcpy_s(DataTypeTemp, "ON");
             }
-            Dest.Ptr  = DataTypeTemp;
+            Dest.Ptr  = &DataTypeTemp[0];
             Dest.Type = pStringType;
             return true;
         case Active:
@@ -2590,7 +2595,7 @@ public:
             {
                 strcpy_s(DataTypeTemp, psTarget->DisplayedName);
             }
-            Dest.Ptr  = DataTypeTemp;
+            Dest.Ptr  = &DataTypeTemp[0];
             Dest.Type = pStringType;
             return true;
         case DistMod:
@@ -2799,7 +2804,7 @@ public:
             {
                 strcpy_s(DataTypeTemp, "ON");
             }
-            Dest.Ptr  = DataTypeTemp;
+            Dest.Ptr  = &DataTypeTemp[0];
             Dest.Type = pStringType;
             return true;
         case CircleY:
@@ -2820,7 +2825,7 @@ public:
             {
                 strcpy_s(DataTypeTemp, "CCW");
             }
-            Dest.Ptr = DataTypeTemp;
+            Dest.Ptr = &DataTypeTemp[0];
             Dest.Type = pStringType;
             return true;
         case Direction:
@@ -2829,7 +2834,7 @@ public:
             {
                 strcpy_s(DataTypeTemp, "BACKWARDS");
             }
-            Dest.Ptr  = DataTypeTemp;
+            Dest.Ptr  = &DataTypeTemp[0];
             Dest.Type = pStringType;
             return true;
         case Clockwise:
@@ -2948,7 +2953,7 @@ public:
             {
                 strcpy_s(DataTypeTemp, "MAKECAMP");
             }
-            Dest.Ptr  = DataTypeTemp;
+            Dest.Ptr  = &DataTypeTemp[0];
             Dest.Type = pStringType;
             return true;
         case Stuck:
@@ -3008,8 +3013,8 @@ public:
             Dest.Type  = pFloatType;
             return true;
         case Version:
-            sprintf_s(DataTypeTemp, "%1.4f", MODULE_VERSION);
-            Dest.Ptr  = DataTypeTemp;
+            sprintf_s(DataTypeTemp, "%1.4f", PLUGIN_VERS);
+            Dest.Ptr  = &DataTypeTemp[0];
             Dest.Type = pStringType;
             return true;
         case MovePause:
@@ -3074,12 +3079,12 @@ void __stdcall CheckAggro_Event(unsigned int ID, void *pData, PBLECHVALUE pValue
     if (MOVETO->On && MOVETO->BreakHit)
     {
         pMU->MovetoBroke = true;
-        sprintf_s(szMsg, "\ay%s\aw:: Aggro gained during /moveto, Halting command...", MODULE_NAME);
+        sprintf_s(szMsg, "\ay%s\aw:: Aggro gained during /moveto, Halting command...", PLUGIN_NAME);
     }
     else if (STICK->On && STICK->BreakHit)
     {
         pMU->StickBroke = true;
-        sprintf_s(szMsg, "\ay%s\aw:: Aggro gained during /stick, Halting command...", MODULE_NAME);
+        sprintf_s(szMsg, "\ay%s\aw:: Aggro gained during /stick, Halting command...", PLUGIN_NAME);
     }
     else
     {
@@ -3099,7 +3104,7 @@ void __stdcall CheckGates_Event(unsigned int ID, void *pData, PBLECHVALUE pValue
         if (!strcmp(pValues->Value, psTarget->DisplayedName))
         {
             EndPreviousCmd(true);
-            sprintf_s(szMsg, "\ay%s\aw:: Mob gating ended previous command.", MODULE_NAME);
+            sprintf_s(szMsg, "\ay%s\aw:: Mob gating ended previous command.", PLUGIN_NAME);
             WriteLine(szMsg, V_BREAKONGATE);
         }
     }
@@ -3365,21 +3370,21 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
         // halt all other commands due to BreakOnGM/BreakOnSummon
         if (pMU->BrokeGM || pMU->BrokeSummon)
         {
-            sprintf_s(szMsg, "\ay%s\aw:: \arCommand failed due to \ay%s\ax triggering.", MODULE_NAME, pMU->BrokeGM ? "BreakOnGM" : "BreakOnSummon");
+            sprintf_s(szMsg, "\ay%s\aw:: \arCommand failed due to \ay%s\ax triggering.", PLUGIN_NAME, pMU->BrokeGM ? "BreakOnGM" : "BreakOnSummon");
             WriteLine(szMsg, V_SILENCE);
             return;
         }
         // halt all other commands due to rootme being on
         if (pMU->Rooted)
         {
-            sprintf_s(szMsg, "\ay%s\aw:: \arCommand failed due to \ayrootme\ax active.", MODULE_NAME);
+            sprintf_s(szMsg, "\ay%s\aw:: \arCommand failed due to \ayrootme\ax active.", PLUGIN_NAME);
             WriteLine(szMsg, V_SILENCE);
             return;
         }
         // halt new commands if plugin is paused & lockpause is on
         if (PAUSE->PausedCmd && pMU->LockPause)
         {
-            sprintf_s(szMsg, "\ay%s\aw:: \arCommand failed due to plugin paused with lockpause.", MODULE_NAME);
+            sprintf_s(szMsg, "\ay%s\aw:: \arCommand failed due to plugin paused with lockpause.", PLUGIN_NAME);
             WriteLine(szMsg, V_PAUSED);
             return;
         }
@@ -3391,7 +3396,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             {
                 PAUSE->TimeStop();
                 CAMP->Activate(pChSpawn->Y, pChSpawn->X);
-                sprintf_s(szMsg, "\ay%s\aw:: MakeCamp actived. Y(\ag%.2f\ax) X(\ag%.2f\ax) Radius(\ag%.2f\ax) Leash(%s) LeashLen(\ag%.2f\ax) Min(\ag%d\ax) Max(\ag%d\ax)", MODULE_NAME, CURCAMP->Y, CURCAMP->X, CURCAMP->Radius, CURCAMP->Leash ? "\agon\ax" : "\aroff\ax", CURCAMP->Length, CAMP->Min, CAMP->Max);
+                sprintf_s(szMsg, "\ay%s\aw:: MakeCamp actived. Y(\ag%.2f\ax) X(\ag%.2f\ax) Radius(\ag%.2f\ax) Leash(%s) LeashLen(\ag%.2f\ax) Min(\ag%d\ax) Max(\ag%d\ax)", PLUGIN_NAME, CURCAMP->Y, CURCAMP->X, CURCAMP->Radius, CURCAMP->Leash ? "\agon\ax" : "\aroff\ax", CURCAMP->Length, CAMP->Min, CAMP->Max);
                 WriteLine(szMsg, V_MAKECAMPV);
                 break;
             }
@@ -3409,7 +3414,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 }
                 STICK->TurnOn();
                 MOVE->DoStand();
-                sprintf_s(szMsg, "\ay%s\aw:: You are now sticking to \ag%s\ax.", MODULE_NAME, psTarget->DisplayedName);
+                sprintf_s(szMsg, "\ay%s\aw:: You are now sticking to \ag%s\ax.", PLUGIN_NAME, psTarget->DisplayedName);
                 WriteLine(szMsg, V_STICKV);
                 break;
             }
@@ -3420,7 +3425,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
         default:
             EndPreviousCmd(true);
             // possible future use, currently '/circle' and '/moveto' designed to fail
-            sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) /moveto or /circle command used with no parameter.", MODULE_NAME);
+            sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) /moveto or /circle command used with no parameter.", PLUGIN_NAME);
             WriteLine(szMsg, V_ERRORS);
             break;
         }
@@ -3444,7 +3449,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
         else if (!_strnicmp(szCurrentArg, "debug", 6))
         {
             DebugToINI(ucCmdUsed);
-            sprintf_s(szMsg, "\ay%s\aw:: Debug file created.", MODULE_NAME);
+            sprintf_s(szMsg, "\ay%s\aw:: Debug file created.", PLUGIN_NAME);
             WriteLine(szMsg, V_SAVED);
             return;
         }
@@ -3474,18 +3479,18 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 PAUSE->TimeStop();
                 MOVE->StopHeading();
                 MOVE->StopMove(APPLY_TO_ALL);
-                sprintf_s(szMsg, "\ay%s\aw:: \arPAUSED\ax%s", MODULE_NAME, pMU->LockPause ? " \ayLOCKED" : "");
+                sprintf_s(szMsg, "\ay%s\aw:: \arPAUSED\ax%s", PLUGIN_NAME, pMU->LockPause ? " \ayLOCKED" : "");
                 WriteLine(szMsg, V_PAUSED);
                 return;
             }
             if (!bDisplayLock)
             {
-                sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) Plugin was already paused.", MODULE_NAME);
+                sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) Plugin was already paused.", PLUGIN_NAME);
                 WriteLine(szMsg, V_ERRORS);
             }
             else
             {
-                sprintf_s(szMsg, "\ay%s\aw:: Pause \ayLOCKED", MODULE_NAME);
+                sprintf_s(szMsg, "\ay%s\aw:: Pause \ayLOCKED", PLUGIN_NAME);
                 WriteLine(szMsg, V_PAUSED);
             }
             return;
@@ -3498,13 +3503,13 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 pMU->LockPause = SET->LockPause; // reset one-time usage if non-default
                 PAUSE->TimeStop();
                 PAUSE->Reset();
-                sprintf_s(szMsg, "\ay%s\aw:: \agRESUMED", MODULE_NAME);
+                sprintf_s(szMsg, "\ay%s\aw:: \agRESUMED", PLUGIN_NAME);
                 WriteLine(szMsg, V_PAUSED);
                 return;
             }
             if (!bWrapped)
             {
-                sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) Plugin was not paused.", MODULE_NAME);
+                sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) Plugin was not paused.", PLUGIN_NAME);
                 WriteLine(szMsg, V_ERRORS);
             }
             bWrapped = false; // cheap fix
@@ -3513,7 +3518,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
         else if (!_strnicmp(szCurrentArg, "save", 5))
         {
             SaveConfig();
-            sprintf_s(szMsg, "\ay%s\aw:: Saved settings to %s", MODULE_NAME, INIFileName);
+            sprintf_s(szMsg, "\ay%s\aw:: Saved settings to %s", PLUGIN_NAME, INIFileName);
             WriteLine(szMsg, V_SAVED);
             return;
         }
@@ -3521,7 +3526,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
         {
             EndPreviousCmd(true);
             LoadConfig();
-            sprintf_s(szMsg, "\ay%s\aw:: Loaded settings from %s", MODULE_NAME, INIFileName);
+            sprintf_s(szMsg, "\ay%s\aw:: Loaded settings from %s", PLUGIN_NAME, INIFileName);
             WriteLine(szMsg, V_SAVED);
             return;
         }
@@ -3529,7 +3534,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
         {
             pMU->BrokeSummon = pMU->BrokeGM = false;
             EndPreviousCmd(true);
-            sprintf_s(szMsg, "\ay%s\aw:: Command usage allowed once again.", MODULE_NAME);
+            sprintf_s(szMsg, "\ay%s\aw:: Command usage allowed once again.", PLUGIN_NAME);
             WriteLine(szMsg, V_SILENCE);
             return;
         }
@@ -3559,7 +3564,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
         }
         else if (!_strnicmp(szCurrentArg, "verbflags", 10))
         {
-            sprintf_s(szMsg, "\ay%s\aw:: Current verbosity flags \ag%d", MODULE_NAME, uiVerbLevel);
+            sprintf_s(szMsg, "\ay%s\aw:: Current verbosity flags \ag%d", PLUGIN_NAME, uiVerbLevel);
             WriteLine(szMsg, V_SILENCE);
             return;
         }
@@ -3567,21 +3572,21 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
         // halt all other commands due to BreakOnGM/BreakOnSummon
         if (pMU->BrokeGM || pMU->BrokeSummon)
         {
-            sprintf_s(szMsg, "\ay%s\aw:: \arCommand failed due to \ay%s\ax triggering.", MODULE_NAME, pMU->BrokeGM ? "BreakOnGM" : "BreakOnSummon");
+            sprintf_s(szMsg, "\ay%s\aw:: \arCommand failed due to \ay%s\ax triggering.", PLUGIN_NAME, pMU->BrokeGM ? "BreakOnGM" : "BreakOnSummon");
             WriteLine(szMsg, V_SILENCE);
             return;
         }
         // halt all other commands due to rootme being on
         if (pMU->Rooted)
         {
-            sprintf_s(szMsg, "\ay%s\aw:: \arCommand failed due to \ayrootme\ax active.", MODULE_NAME);
+            sprintf_s(szMsg, "\ay%s\aw:: \arCommand failed due to \ayrootme\ax active.", PLUGIN_NAME);
             WriteLine(szMsg, V_SILENCE);
             return;
         }
         // halt new commands if plugin is paused & lockpause is on
         if (PAUSE->PausedCmd && pMU->LockPause)
         {
-            sprintf_s(szMsg, "\ay%s\aw:: \arCommand failed due to plugin paused with lockpause.", MODULE_NAME);
+            sprintf_s(szMsg, "\ay%s\aw:: \arCommand failed due to plugin paused with lockpause.", PLUGIN_NAME);
             WriteLine(szMsg, V_PAUSED);
             return;
         }
@@ -3620,11 +3625,11 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             if (isdigit(szCurrentArg[0]) || szCurrentArg[0] == '-' || szCurrentArg[0] == '.')
             {
                 STICK->DistMod = (float)atof(szCurrentArg);
-                sprintf_s(szMsg, "\ay%s\aw:: Stick modifier changed to Mod(\ag%.2f\ax) Mod%%(\ag%.2f%%\ax)", MODULE_NAME, STICK->DistMod, STICK->DistModP);
+                sprintf_s(szMsg, "\ay%s\aw:: Stick modifier changed to Mod(\ag%.2f\ax) Mod%%(\ag%.2f%%\ax)", PLUGIN_NAME, STICK->DistMod, STICK->DistModP);
                 WriteLine(szMsg, V_SETTINGS);
                 return;
             }
-            sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) \ay/stick mod [#]\ax supplied incorrectly.", MODULE_NAME);
+            sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) \ay/stick mod [#]\ax supplied incorrectly.", PLUGIN_NAME);
             WriteLine(szMsg, V_ERRORS);
             return;
         }
@@ -3635,7 +3640,6 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             {
             case CMD_MOVETO:
                 EndPreviousCmd(true);
-				IgnoreTarget = true;
                 if (isdigit(szCurrentArg[0]) || szCurrentArg[0] == '-' || szCurrentArg[0] == '.')
                 {
                     fTempY = (float)atof(szCurrentArg);
@@ -3708,7 +3712,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             }
             else
             {
-                sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) \ay/moveto %s\ax was supplied incorrectly.", MODULE_NAME, bUsingY ? "yloc [Y]" : "xloc [X]");
+                sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) \ay/moveto %s\ax was supplied incorrectly.", PLUGIN_NAME, bUsingY ? "yloc [Y]" : "xloc [X]");
                 WriteLine(szMsg, V_ERRORS);
                 return;
             }
@@ -3732,15 +3736,15 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 MOVE->StopHeading();
                 return;
             case CMD_STICK:
-                sprintf_s(szMsg, "\ay%s\aw:: You are no longer sticking to anything.", MODULE_NAME);
+                sprintf_s(szMsg, "\ay%s\aw:: You are no longer sticking to anything.", PLUGIN_NAME);
                 WriteLine(szMsg, V_STICKV);
                 break;
             case CMD_CIRCLE:
-                sprintf_s(szMsg, " \ay%s\aw:: Circling radius (\ag%.2f\ax), center (\ag%.2f\ax, \ag%.2f\ax) : \arOFF", MODULE_NAME, CIRCLE->Radius, CIRCLE->Y, CIRCLE->X);
+                sprintf_s(szMsg, " \ay%s\aw:: Circling radius (\ag%.2f\ax), center (\ag%.2f\ax, \ag%.2f\ax) : \arOFF", PLUGIN_NAME, CIRCLE->Radius, CIRCLE->Y, CIRCLE->X);
                 WriteLine(szMsg, V_CIRCLEV);
                 break;
             case CMD_MOVETO:
-                sprintf_s(szMsg, "\ay%s\aw:: Moveto off.", MODULE_NAME);
+                sprintf_s(szMsg, "\ay%s\aw:: Moveto off.", PLUGIN_NAME);
                 WriteLine(szMsg, V_MOVETOV);
                 break;
             }
@@ -3750,7 +3754,6 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
         else if (!_strnicmp(szCurrentArg, "id", 3) && ucCmdUsed != CMD_MAKECAMP)
         {
             EndPreviousCmd(true, ucCmdUsed, true);
-			IgnoreTarget = false;
             PSPAWNINFO pByID = NULL;
             GetArg(szCurrentArg, szInput, uiArgNum);
             if (*szCurrentArg)
@@ -3761,7 +3764,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 if (iValid < 1 || *pNotNum)
                 {
                     EndPreviousCmd(true);
-                    sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) SpawnID must be a positive numerical value.", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) SpawnID must be a positive numerical value.", PLUGIN_NAME);
                     WriteLine(szMsg, V_ERRORS);
                     return;
                 }
@@ -3771,7 +3774,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                     if (ME->IsMe(pByID))
                     {
                         EndPreviousCmd(true);
-                        sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) You cannot use yourself or your mount.", MODULE_NAME);
+                        sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) You cannot use yourself or your mount.", PLUGIN_NAME);
                         WriteLine(szMsg, V_ERRORS);
                         return;
                     }
@@ -3824,7 +3827,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 STICK->DistModP = (float)atof(szCurrentArg) / 100.0f;
                 // shouldnt do this here, need logic to output this only if used by itself
                 // cant do it on an 'else' for the pTarget 'if' because of 'always' param
-                sprintf_s(szMsg, "\ay%s\aw:: Stick mod changed Mod(\ag%.2f\ax) ModPercent(\ag%.2f%%\ax)", MODULE_NAME, STICK->DistMod, STICK->DistModP);
+                sprintf_s(szMsg, "\ay%s\aw:: Stick mod changed Mod(\ag%.2f\ax) ModPercent(\ag%.2f%%\ax)", PLUGIN_NAME, STICK->DistMod, STICK->DistModP);
                 WriteLine(szMsg, V_SETTINGS);
                 if (STICK->SetDist && STICK->Dist * STICK->DistModP > 0.0f) STICK->Dist *= STICK->DistModP; // possible float math error here?
                 STICK->TurnOn();
@@ -3832,7 +3835,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             else if (szCurrentArg[0] == '-')
             {
                 STICK->DistMod = (float)atof(szCurrentArg);
-                sprintf_s(szMsg, "\ay%s\aw:: Stick mod changed Mod(\ag%.2f\ax) ModPercent(\ag%.2f%%\ax)", MODULE_NAME, STICK->DistMod, STICK->DistModP);
+                sprintf_s(szMsg, "\ay%s\aw:: Stick mod changed Mod(\ag%.2f\ax) ModPercent(\ag%.2f%%\ax)", PLUGIN_NAME, STICK->DistMod, STICK->DistModP);
                 WriteLine(szMsg, V_SETTINGS);
                 if (STICK->SetDist && STICK->Dist + STICK->DistMod >= 0.0f) STICK->Dist += STICK->DistMod; // possible float math error here?
                 STICK->TurnOn();
@@ -3879,7 +3882,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 {
                     if (ME->IsMe(psTarget))
                     {
-                        sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) You cannot stick hold to yourself.", MODULE_NAME);
+                        sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) You cannot stick hold to yourself.", PLUGIN_NAME);
                         WriteLine(szMsg, V_ERRORS);
                         EndPreviousCmd(true);
                         return;
@@ -4052,7 +4055,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 else
                 {
                     EndPreviousCmd(true);
-                    sprintf_s(szMsg, "\ay%s\aw:: \arbackupdist must be 1.0 or larger.", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: \arbackupdist must be 1.0 or larger.", PLUGIN_NAME);
                     WriteLine(szMsg, V_ERRORS);
                     return;
                 }
@@ -4067,7 +4070,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 }
                 else
                 {
-                    sprintf_s(szMsg, "\ay%s\aw:: \arbreakdist must be 1.0 or larger.", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: \arbreakdist must be 1.0 or larger.", PLUGIN_NAME);
                     WriteLine(szMsg, V_ERRORS);
                     return;
                 }
@@ -4083,7 +4086,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 else
                 {
                     EndPreviousCmd(true);
-                    sprintf_s(szMsg, "\ay%s\aw:: \arsnapdist must be 1.0 or larger.", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: \arsnapdist must be 1.0 or larger.", PLUGIN_NAME);
                     WriteLine(szMsg, V_ERRORS);
                     return;
                 }
@@ -4099,7 +4102,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 else
                 {
                     EndPreviousCmd(true);
-                    sprintf_s(szMsg, "\ay%s\aw:: \arflexdist must be between 2.0 and 20.0.", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: \arflexdist must be between 2.0 and 20.0.", PLUGIN_NAME);
                     WriteLine(szMsg, V_ERRORS);
                     return;
                 }
@@ -4115,7 +4118,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 else
                 {
                     EndPreviousCmd(true);
-                    sprintf_s(szMsg, "\ay%s\aw:: \ar!frontarc must be between 1.0 and 260.0", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: \ar!frontarc must be between 1.0 and 260.0", PLUGIN_NAME);
                     WriteLine(szMsg, V_ERRORS);
                     return;
                 }
@@ -4131,7 +4134,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 else
                 {
                     EndPreviousCmd(true);
-                    sprintf_s(szMsg, "\ay%s\aw:: \arbehindarc must be between 1.0 and 260.0", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: \arbehindarc must be between 1.0 and 260.0", PLUGIN_NAME);
                     WriteLine(szMsg, V_ERRORS);
                     return;
                 }
@@ -4139,7 +4142,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             else if (!_strnicmp(szCurrentArg, "always", 7))
             {
                 STICK->FirstAlways();
-                sprintf_s(szMsg, "\ay%s\aw:: You will now stick to every valid NPC target supplied.", MODULE_NAME);
+                sprintf_s(szMsg, "\ay%s\aw:: You will now stick to every valid NPC target supplied.", PLUGIN_NAME);
                 WriteLine(szMsg, V_STICKV);
                 MOVE->DoStand();
                 return; // 'always' must be the last parameter
@@ -4176,13 +4179,13 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 }
                 else
                 {
-                    sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) Incorrectly used \ay/moveto dist [#]\ax", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) Incorrectly used \ay/moveto dist [#]\ax", PLUGIN_NAME);
                     WriteLine(szMsg, V_ERRORS);
                     return;
                 }
                 SET_M->Dist = MOVETO->Dist;
                 SET_M->Mod  = MOVETO->Mod;
-                sprintf_s(szMsg, "\ay%s\aw:: Moveto distance mod changed to \ag%.2f\ax.", MODULE_NAME, MOVETO->Dist);
+                sprintf_s(szMsg, "\ay%s\aw:: Moveto distance mod changed to \ag%.2f\ax.", PLUGIN_NAME, MOVETO->Dist);
                 WriteLine(szMsg, V_SETTINGS);
                 return;
             }
@@ -4200,7 +4203,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 }
                 else
                 {
-                    sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) Incorrectly used \ay/moveto mdist [#]\ax", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) Incorrectly used \ay/moveto mdist [#]\ax", PLUGIN_NAME);
                     WriteLine(szMsg, V_ERRORS);
                     return;
                 }
@@ -4248,7 +4251,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 }
                 else
                 {
-                    sprintf_s(szMsg, "\ay%s\aw:: \armoveto backup must be 1.0 or larger.", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: \armoveto backup must be 1.0 or larger.", PLUGIN_NAME);
                     WriteLine(szMsg, V_ERRORS);
                     return;
                 }
@@ -4262,7 +4265,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 }
                 else
                 {
-                    sprintf_s(szMsg, "\ay%s\aw:: \armoveto ydist must be 1.0 or larger.", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: \armoveto ydist must be 1.0 or larger.", PLUGIN_NAME);
                     WriteLine(szMsg, V_ERRORS);
                     return;
                 }
@@ -4276,7 +4279,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 }
                 else
                 {
-                    sprintf_s(szMsg, "\ay%s\aw:: \armoveto xdist must be 1.0 or larger.", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: \armoveto xdist must be 1.0 or larger.", PLUGIN_NAME);
                     WriteLine(szMsg, V_ERRORS);
                     return;
                 }
@@ -4314,7 +4317,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 else
                 {
                     CAMP->NewCamp(false);
-                    sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) \ay/makecamp [radius <dist>]\ax was supplied incorrectly.", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) \ay/makecamp [radius <dist>]\ax was supplied incorrectly.", PLUGIN_NAME);
                     WriteLine(szMsg, V_ERRORS);
                     return;
                 }
@@ -4345,13 +4348,13 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             {
                 if (!CURCAMP->On)
                 {
-                    sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) You do not have an active camp.", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) You do not have an active camp.", PLUGIN_NAME);
                     WriteLine(szMsg, V_ERRORS);
                     return;
                 }
                 CAMP->DoReturn = true;
                 MOVE->DoStand();
-                sprintf_s(szMsg, "\ay%s\aw:: MakeCamp returning to within camp radius immediately.", MODULE_NAME);
+                sprintf_s(szMsg, "\ay%s\aw:: MakeCamp returning to within camp radius immediately.", PLUGIN_NAME);
                 WriteLine(szMsg, V_MAKECAMPV);
                 return;
             }
@@ -4359,17 +4362,17 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             {
                 if (CURCAMP->Pc)
                 {
-                    sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) You cannot use this command with a player-camp active.", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) You cannot use this command with a player-camp active.", PLUGIN_NAME);
                     WriteLine(szMsg, V_ERRORS);
                     return;
                 }
                 if (!ALTCAMP->On || (ALTCAMP->X == 0.0f && ALTCAMP->Y == 0.0f))
                 {
-                    sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) You cannot use this command until you've established an altcamp location.", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) You cannot use this command until you've established an altcamp location.", PLUGIN_NAME);
                     WriteLine(szMsg, V_ERRORS);
                     return;
                 }
-                sprintf_s(szMsg, "\ay%s\aw:: MakeCamp returning to altcamp immediately.%s", MODULE_NAME, CURCAMP->On ? " Current camp now \arOFF\ax." : "");
+                sprintf_s(szMsg, "\ay%s\aw:: MakeCamp returning to altcamp immediately.%s", PLUGIN_NAME, CURCAMP->On ? " Current camp now \arOFF\ax." : "");
                 CAMP->NewCamp(false);
                 CAMP->DoAlt = true;
                 MOVE->DoStand();
@@ -4389,13 +4392,13 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 }
                 if (!pCampPlayer)
                 {
-                    sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) Invalid player name and do not have a valid player target.", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) Invalid player name and do not have a valid player target.", PLUGIN_NAME);
                     WriteLine(szMsg, V_ERRORS);
                     return;
                 }
                 if (ME->IsMe(pCampPlayer))
                 {
-                    sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) You cannot makecamp yourself.", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) You cannot makecamp yourself.", PLUGIN_NAME);
                     WriteLine(szMsg, V_ERRORS);
                     return;
                 }
@@ -4432,7 +4435,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 else
                 {
                     CAMP->NewCamp(false);
-                    sprintf_s(szMsg, "\ay%s\aw:: \armakecamp bearing parameter must be a number.", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: \armakecamp bearing parameter must be a number.", PLUGIN_NAME);
                     WriteLine(szMsg, V_ERRORS);
                     return;
                 }
@@ -4447,7 +4450,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 else
                 {
                     CAMP->NewCamp(false);
-                    sprintf_s(szMsg, "\ay%s\aw:: \armakecamp scatsize must be 1.0 or larger.", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: \armakecamp scatsize must be 1.0 or larger.", PLUGIN_NAME);
                     WriteLine(szMsg, V_ERRORS);
                     return;
                 }
@@ -4462,7 +4465,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 else
                 {
                     CAMP->NewCamp(false);
-                    sprintf_s(szMsg, "\ay%s\aw:: \armakecamp scatdist must be 1.0 or larger.", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: \armakecamp scatdist must be 1.0 or larger.", PLUGIN_NAME);
                     WriteLine(szMsg, V_ERRORS);
                     return;
                 }
@@ -4507,7 +4510,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 }
                 else
                 {
-                    sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) Use \ay/circle radius [#]\ax to set radius.", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) Use \ay/circle radius [#]\ax to set radius.", PLUGIN_NAME);
                     WriteLine(szMsg, V_ERRORS);
                     return;
                 }
@@ -4577,7 +4580,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             // if user reports this error, needs investigation
             EndPreviousCmd(true);
             char szTempOut[MAX_STRING] = {0};
-            sprintf_s(szTempOut, "\ay%s\aw:: \ar/stick NO TARGET ERROR", MODULE_NAME);
+            sprintf_s(szTempOut, "\ay%s\aw:: \ar/stick NO TARGET ERROR", PLUGIN_NAME);
             WriteLine(szTempOut, V_SILENCE);
             return;
         }
@@ -4626,9 +4629,9 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
         }
 
         if (STICK->Behind || STICK->BehindOnce || STICK->Pin || STICK->NotFront) STICK->Strafe = true;
-        sprintf_s(szMsg, "\ay%s\aw:: You are now sticking to %s.", MODULE_NAME, szTempID);
+        sprintf_s(szMsg, "\ay%s\aw:: You are now sticking to %s.", PLUGIN_NAME, szTempID);
         WriteLine(szMsg, V_STICKV);
-        sprintf_s(szMsg, "\ay%s\aw:: Dir(%s) Dist(\ag%.2f\ax) %sHead(%s)%s%s%s%s", MODULE_NAME, szDir, STICK->Dist, bOutputMod ? szTempMod : "", szTempHead, STICK->Hold ? szTempHold : "", STICK->UW ? " \agUW\ax" : "", STICK->MoveBack ? " \agMB\ax" : "", STICK->Healer ? " \agHEALER\ax" : "");
+        sprintf_s(szMsg, "\ay%s\aw:: Dir(%s) Dist(\ag%.2f\ax) %sHead(%s)%s%s%s%s", PLUGIN_NAME, szDir, STICK->Dist, bOutputMod ? szTempMod : "", szTempHead, STICK->Hold ? szTempHold : "", STICK->UW ? " \agUW\ax" : "", STICK->MoveBack ? " \agMB\ax" : "", STICK->Healer ? " \agHEALER\ax" : "");
         WriteLine(szMsg, V_STICKFV);
     }
     else if (ucCmdUsed == CMD_MOVETO)
@@ -4639,23 +4642,23 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
         sprintf_s(szZInfo, " %.2f.", MOVETO->Z);
         sprintf_s(szInfoY, " YDist(\ag%.2f\ax)", MOVETO->DistY);
         sprintf_s(szInfoX, " XDist(\ag%.2f\ax)", MOVETO->DistX);
-        sprintf_s(szMsg, "\ay%s\aw:: Moving to loc %.2f %.2f%s  Dist(\ag%.2f\ax) Head(%s)%s", MODULE_NAME, MOVETO->Y, MOVETO->X, MOVETO->Z != 0.0f ? szZInfo : ".", MOVETO->Dist, szTempHead, MOVETO->PreciseY ? szInfoY : (MOVETO->PreciseX ? szInfoX : ""));
+        sprintf_s(szMsg, "\ay%s\aw:: Moving to loc %.2f %.2f%s  Dist(\ag%.2f\ax) Head(%s)%s", PLUGIN_NAME, MOVETO->Y, MOVETO->X, MOVETO->Z != 0.0f ? szZInfo : ".", MOVETO->Dist, szTempHead, MOVETO->PreciseY ? szInfoY : (MOVETO->PreciseX ? szInfoX : ""));
         WriteLine(szMsg, V_MOVETOV);
     }
     else if (ucCmdUsed == CMD_CIRCLE)
     {
-        sprintf_s(szMsg, " \ay%s\aw:: Circling radius (\ag%.2f\ax), center (\ag%.2f\ax, \ag%.2f\ax)%s%s%s - Head(%s) : %s", MODULE_NAME, CIRCLE->Radius, CIRCLE->Y, CIRCLE->X, CIRCLE->CCW ? ", Reverse" : "", CIRCLE->Backward ? ", Backwards" : "", CIRCLE->Drunk ? ", \agDrunken\ax" : "", szTempHead, CIRCLE->On ? "\agON" : "\arOFF");
+        sprintf_s(szMsg, " \ay%s\aw:: Circling radius (\ag%.2f\ax), center (\ag%.2f\ax, \ag%.2f\ax)%s%s%s - Head(%s) : %s", PLUGIN_NAME, CIRCLE->Radius, CIRCLE->Y, CIRCLE->X, CIRCLE->CCW ? ", Reverse" : "", CIRCLE->Backward ? ", Backwards" : "", CIRCLE->Drunk ? ", \agDrunken\ax" : "", szTempHead, CIRCLE->On ? "\agON" : "\arOFF");
         WriteLine(szMsg, V_CIRCLEV);
     }
     else if (ucCmdUsed == CMD_MAKECAMP)
     {
         if (!CURCAMP->Pc)
         {
-            sprintf_s(szMsg, "\ay%s\aw:: MakeCamp (%s). Y(\ag%.2f\ax) X(\ag%.2f\ax) Radius(\ag%.2f\ax) Leash(%s - \ag%.2f\ax) Delay(\ag%d\ax to \ag%d\ax)", MODULE_NAME, CURCAMP->On ? "\agon\ax" : "\aroff\ax", CURCAMP->Y, CURCAMP->X, CURCAMP->Radius, CURCAMP->Leash ? "\agon\ax" : "\aroff\ax", CURCAMP->Length, CAMP->Min, CAMP->Max);
+            sprintf_s(szMsg, "\ay%s\aw:: MakeCamp (%s). Y(\ag%.2f\ax) X(\ag%.2f\ax) Radius(\ag%.2f\ax) Leash(%s - \ag%.2f\ax) Delay(\ag%d\ax to \ag%d\ax)", PLUGIN_NAME, CURCAMP->On ? "\agon\ax" : "\aroff\ax", CURCAMP->Y, CURCAMP->X, CURCAMP->Radius, CURCAMP->Leash ? "\agon\ax" : "\aroff\ax", CURCAMP->Length, CAMP->Min, CAMP->Max);
         }
         else
         {
-            sprintf_s(szMsg, "\ay%s\aw:: MakeCamp Player (\ag%s\ax). Radius(\ag%.2f\ax) Leash(%s - \ag%.2f\ax) Delay(\ag%d\ax to \ag%d\ax)", MODULE_NAME, CURCAMP->PcName, CURCAMP->Radius, CURCAMP->Leash ? "\agon\ax" : "\aroff\ax", CURCAMP->Length, CAMP->Min, CAMP->Max);
+            sprintf_s(szMsg, "\ay%s\aw:: MakeCamp Player (\ag%s\ax). Radius(\ag%.2f\ax) Leash(%s - \ag%.2f\ax) Delay(\ag%d\ax to \ag%d\ax)", PLUGIN_NAME, CURCAMP->PcName, CURCAMP->Radius, CURCAMP->Leash ? "\agon\ax" : "\aroff\ax", CURCAMP->Length, CAMP->Min, CAMP->Max);
         }
         WriteLine(szMsg, V_MAKECAMPV);
         return; // return so makecamp doesnt stand up
@@ -4710,7 +4713,7 @@ void CalcOurAngle(PSPAWNINFO pLPlayer, char* szLine)
     float fDist   = GetDistance(pChSpawn, psTarget);
     float fDist3D = GetDistance3D(pChSpawn->X, pChSpawn->Y, pChSpawn->Z, psTarget->X, psTarget->Y, psTarget->Z);
     char szTempOut[MAX_STRING] = {0};
-    sprintf_s(szTempOut, "\ay%s\aw:: AngularDist ( \ag%.2f\ax ) Adjust ( \ag%.2f\ax ) Sane ( \ag%.2f\ax ) Dist ( \ag%.2f\ax ) Dist3D ( \ag%.2f\ax ) Melee ( \ag%f\ax ) Stick ( \ag%f\ax)", MODULE_NAME, fAngle, fReqHead, fSaneH, fDist, fDist3D, fMeleeRng, fStickRng);
+    sprintf_s(szTempOut, "\ay%s\aw:: AngularDist ( \ag%.2f\ax ) Adjust ( \ag%.2f\ax ) Sane ( \ag%.2f\ax ) Dist ( \ag%.2f\ax ) Dist3D ( \ag%.2f\ax ) Melee ( \ag%f\ax ) Stick ( \ag%f\ax)", PLUGIN_NAME, fAngle, fReqHead, fSaneH, fDist, fDist3D, fMeleeRng, fStickRng);
     WriteChatf("%s",szTempOut);
     sprintf_s(szTempOut, " - Walking ( %s )  RunSpeed ( \ag%.2f\ax ) SpeedMultiplier ( \ag%.2f\ax )", (*EQADDR_RUNWALKSTATE) ? "\arno\ax" : "\agyes\ax", pChSpawn->RunSpeed, pChSpawn->SpeedMultiplier);
     WriteChatf("%s",szTempOut);
@@ -4724,7 +4727,7 @@ void RootCmd(PSPAWNINFO pLPlayer, char* szLine)
 
     if (SET->WinEQ || bOffsetOverride)
     {
-        sprintf_s(szTempOut, "\ay%s\aw:: \arUnable to use this command due to use of old movement type.", MODULE_NAME);
+        sprintf_s(szTempOut, "\ay%s\aw:: \arUnable to use this command due to use of old movement type.", PLUGIN_NAME);
         WriteLine(szTempOut, V_SILENCE);
         return;
     }
@@ -4741,7 +4744,7 @@ void RootCmd(PSPAWNINFO pLPlayer, char* szLine)
         CAMP->NewCamp(CURCAMP->On);
         pMU->Rooted    = true;
         MOVE->RootHead = ((PSPAWNINFO)pCharSpawn)->Heading;
-        sprintf_s(szTempOut, "\ay%s\aw:: You are now rooted in place.", MODULE_NAME);
+        sprintf_s(szTempOut, "\ay%s\aw:: You are now rooted in place.", PLUGIN_NAME);
         WriteLine(szTempOut, V_SILENCE);
     }
 }
@@ -4756,7 +4759,7 @@ bool ToggleSetting(const char* pszToggleOutput, bool* pbEvalThis, bool* pbUsedTo
 
     // setting we are changing = did we use 'toggle' ? setting toggled ELSE set to 'on' or 'off'
     *pbEvalThis = *pbUsedToggle ? !*pbEvalThis : *pbTurnOn;
-    sprintf_s(szTheMsg, "\ay%s\aw:: %s turned %s", MODULE_NAME, pszToggleOutput, *pbEvalThis ? szOn : szOff);
+    sprintf_s(szTheMsg, "\ay%s\aw:: %s turned %s", PLUGIN_NAME, pszToggleOutput, *pbEvalThis ? szOn : szOff);
     WriteLine(szTheMsg, V_SETTINGS);
     return *pbEvalThis; // changesetting is only evaluating
 }
@@ -4962,21 +4965,21 @@ void ChangeSetting(unsigned char ucCmdUsed, bool bToggle, char szSetting[MAX_STR
             if (!_strnicmp(szSetState, "true", 5))
             {
                 pMU->Head = SET->Head = H_TRUE;
-                sprintf_s(szMsg, "\ay%s\aw:: Heading adjustment type set to: \agtrue", MODULE_NAME);
+                sprintf_s(szMsg, "\ay%s\aw:: Heading adjustment type set to: \agtrue", PLUGIN_NAME);
             }
             else if (!_strnicmp(szSetState, "loose", 6))
             {
                 pMU->Head = SET->Head = H_LOOSE;
-                sprintf_s(szMsg, "\ay%s\aw:: Heading adjustment type set to: \ayloose", MODULE_NAME);
+                sprintf_s(szMsg, "\ay%s\aw:: Heading adjustment type set to: \ayloose", PLUGIN_NAME);
             }
             else if (!_strnicmp(szSetState, "fast", 5))
             {
                 pMU->Head = SET->Head = H_FAST;
-                sprintf_s(szMsg, "\ay%s\aw:: Heading adjustment type set to: \arfast", MODULE_NAME);
+                sprintf_s(szMsg, "\ay%s\aw:: Heading adjustment type set to: \arfast", PLUGIN_NAME);
             }
             else
             {
-                sprintf_s(szSetError, "\ay%s\aw:: \arERROR\ax: Invalid '%s set' syntax ( \ar%s\ax ) [true|loose|fast]", MODULE_NAME, szCommand, szParameter);
+                sprintf_s(szSetError, "\ay%s\aw:: \arERROR\ax: Invalid '%s set' syntax ( \ar%s\ax ) [true|loose|fast]", PLUGIN_NAME, szCommand, szParameter);
                 WriteLine(szSetError, V_ERRORS);
                 return;
             }
@@ -4988,7 +4991,7 @@ void ChangeSetting(unsigned char ucCmdUsed, bool bToggle, char szSetting[MAX_STR
         }
         else
         {
-            sprintf_s(szSetError, "\ay%s\aw:: \arERROR\ax: Invalid '%s set' syntax ( \ar%s\ax ) [on|off|number]", MODULE_NAME, szCommand, szParameter);
+            sprintf_s(szSetError, "\ay%s\aw:: \arERROR\ax: Invalid '%s set' syntax ( \ar%s\ax ) [on|off|number]", PLUGIN_NAME, szCommand, szParameter);
             WriteLine(szSetError, V_ERRORS);
             return;
         }
@@ -5059,7 +5062,7 @@ void ChangeSetting(unsigned char ucCmdUsed, bool bToggle, char szSetting[MAX_STR
             {
                 uiVerbLevel &= ~V_AUTOPAUSE;
             }
-            sprintf_s(szMsg, "\ay%s\aw:: Display AutoPause output: %s", MODULE_NAME, (uiVerbLevel & V_AUTOPAUSE) == V_AUTOPAUSE ? szOn : szOff);
+            sprintf_s(szMsg, "\ay%s\aw:: Display AutoPause output: %s", PLUGIN_NAME, (uiVerbLevel & V_AUTOPAUSE) == V_AUTOPAUSE ? szOn : szOff);
             WriteLine(szMsg, V_SETTINGS);
         }
         else if (!_strnicmp(szParameter, "stucklogic", 13))
@@ -5088,7 +5091,7 @@ void ChangeSetting(unsigned char ucCmdUsed, bool bToggle, char szSetting[MAX_STR
             {
                 uiVerbLevel &= ~V_VERBOSITY;
             }
-            sprintf_s(szMsg, "\ay%s\aw:: Basic verbosity turned: %s", MODULE_NAME, (uiVerbLevel & V_VERBOSITY) == V_VERBOSITY ? szOn : szOff);
+            sprintf_s(szMsg, "\ay%s\aw:: Basic verbosity turned: %s", PLUGIN_NAME, (uiVerbLevel & V_VERBOSITY) == V_VERBOSITY ? szOn : szOff);
             WriteLine(szMsg, V_SETTINGS);
         }
         else if (!_strnicmp(szParameter, "fullverbosity", 14))
@@ -5105,7 +5108,7 @@ void ChangeSetting(unsigned char ucCmdUsed, bool bToggle, char szSetting[MAX_STR
             {
                 uiVerbLevel &= ~V_FULLVERBOSITY;
             }
-            sprintf_s(szMsg, "\ay%s\aw:: Enhanced verbosity turned: %s", MODULE_NAME, (uiVerbLevel & V_FULLVERBOSITY) == V_FULLVERBOSITY ? szOn : szOff);
+            sprintf_s(szMsg, "\ay%s\aw:: Enhanced verbosity turned: %s", PLUGIN_NAME, (uiVerbLevel & V_FULLVERBOSITY) == V_FULLVERBOSITY ? szOn : szOff);
             WriteLine(szMsg, V_SETTINGS);
         }
         else if (!_strnicmp(szParameter, "totalsilence", 13))
@@ -5131,7 +5134,7 @@ void ChangeSetting(unsigned char ucCmdUsed, bool bToggle, char szSetting[MAX_STR
             {
                 uiVerbLevel = uiRetainFlags;
             }
-            sprintf_s(szMsg, "\ay%s\aw:: Plugin silence turned: %s", MODULE_NAME, (uiVerbLevel == V_SILENCE) ? szOn : szOff);
+            sprintf_s(szMsg, "\ay%s\aw:: Plugin silence turned: %s", PLUGIN_NAME, (uiVerbLevel == V_SILENCE) ? szOn : szOff);
             WriteLine(szMsg, V_SILENCE);
         }
         else if (!_strnicmp(szParameter, "totalverbosity", 15))
@@ -5157,7 +5160,7 @@ void ChangeSetting(unsigned char ucCmdUsed, bool bToggle, char szSetting[MAX_STR
             {
                 uiVerbLevel = uiRetainFlags;
             }
-            sprintf_s(szMsg, "\ay%s\aw:: Plugin total verbosity turned: %s", MODULE_NAME, (uiVerbLevel == V_EVERYTHING) ? szOn : szOff);
+            sprintf_s(szMsg, "\ay%s\aw:: Plugin total verbosity turned: %s", PLUGIN_NAME, (uiVerbLevel == V_EVERYTHING) ? szOn : szOff);
             WriteLine(szMsg, V_SILENCE);
         }
         else if (!_strnicmp(szParameter, "window", 7))
@@ -5194,7 +5197,7 @@ void ChangeSetting(unsigned char ucCmdUsed, bool bToggle, char szSetting[MAX_STR
             {
                 uiVerbLevel &= ~V_HIDEHELP;
             }
-            sprintf_s(szMsg, "\ay%s\aw:: Hide automatic help output: %s", MODULE_NAME, (uiVerbLevel & V_HIDEHELP) == V_HIDEHELP ? szOn : szOff);
+            sprintf_s(szMsg, "\ay%s\aw:: Hide automatic help output: %s", PLUGIN_NAME, (uiVerbLevel & V_HIDEHELP) == V_HIDEHELP ? szOn : szOff);
             WriteLine(szMsg, V_SETTINGS);
         }
         else if (!_strnicmp(szParameter, "breakontarget", 14))
@@ -5244,7 +5247,7 @@ void ChangeSetting(unsigned char ucCmdUsed, bool bToggle, char szSetting[MAX_STR
             }
             else
             {
-                sprintf_s(szSetError, "\ay%s\aw:: \arERROR\ax: Not a valid %s %s ( \ar%s\ax ).", MODULE_NAME, szCommand, bToggle ? "toggle" : "set option", szParameter);
+                sprintf_s(szSetError, "\ay%s\aw:: \arERROR\ax: Not a valid %s %s ( \ar%s\ax ).", PLUGIN_NAME, szCommand, bToggle ? "toggle" : "set option", szParameter);
                 WriteLine(szSetError, V_ERRORS);
                 return;
             }
@@ -5280,13 +5283,13 @@ void ChangeSetting(unsigned char ucCmdUsed, bool bToggle, char szSetting[MAX_STR
         else if (!_strnicmp(szParameter, "loose", 6) && ucCmdUsed != CMD_MAKECAMP)
         {
             pMU->Head = bToggle ? (pMU->Head == H_LOOSE ? H_FAST : H_LOOSE) : (bTurnOn ? H_LOOSE : H_FAST);
-            sprintf_s(szMsg, "\ay%s\aw:: Active \ay%s\ax loose heading turned %s (Cur: %s)", MODULE_NAME, szCommand, (pMU->Head == H_LOOSE) ? szOn : szOff, (pMU->Head == H_LOOSE) ? "\ayloose\ax" : "\arfast\ax");
+            sprintf_s(szMsg, "\ay%s\aw:: Active \ay%s\ax loose heading turned %s (Cur: %s)", PLUGIN_NAME, szCommand, (pMU->Head == H_LOOSE) ? szOn : szOff, (pMU->Head == H_LOOSE) ? "\ayloose\ax" : "\arfast\ax");
             WriteLine(szMsg, V_SETTINGS);
         }
         else if (!_strnicmp(szParameter, "truehead", 9) && ucCmdUsed != CMD_MAKECAMP)
         {
             pMU->Head = bToggle ? (pMU->Head == H_TRUE ? H_FAST : H_TRUE) : (bTurnOn ? H_TRUE : H_FAST);
-            sprintf_s(szMsg, "\ay%s\aw:: Active \ay%s\ax true turning turned %s (Cur: %s)", MODULE_NAME, szCommand, (pMU->Head == H_TRUE) ? szOn : szOff, (pMU->Head == H_TRUE) ? "\ayloose\ax" : "\arfast\ax");
+            sprintf_s(szMsg, "\ay%s\aw:: Active \ay%s\ax true turning turned %s (Cur: %s)", PLUGIN_NAME, szCommand, (pMU->Head == H_TRUE) ? szOn : szOff, (pMU->Head == H_TRUE) ? "\ayloose\ax" : "\arfast\ax");
             WriteLine(szMsg, V_SETTINGS);
         }
         else if (!_strnicmp(szParameter, "nohottfront", 12))
@@ -5353,7 +5356,7 @@ void ChangeSetting(unsigned char ucCmdUsed, bool bToggle, char szSetting[MAX_STR
             bCustomMsg = true;
             SET_CAMP->Scatter = bToggle ? !SET_CAMP->Scatter : bTurnOn;
             CURCAMP->Scatter = SET_CAMP->Scatter;
-            sprintf_s(szMsg, "\ay%s\aw:: Scatter camp returns (%s) ScatDist(\ag%.2f\ax) Bearing(\ag%.2f\ax) ScatSize(\ag%.2f\ax)", MODULE_NAME, SET_CAMP->Scatter ? szOn : szOff, SET_CAMP->ScatDist, SET_CAMP->Bearing, SET_CAMP->ScatSize);
+            sprintf_s(szMsg, "\ay%s\aw:: Scatter camp returns (%s) ScatDist(\ag%.2f\ax) Bearing(\ag%.2f\ax) ScatSize(\ag%.2f\ax)", PLUGIN_NAME, SET_CAMP->Scatter ? szOn : szOff, SET_CAMP->ScatDist, SET_CAMP->Bearing, SET_CAMP->ScatSize);
         }
         else if (!_strnicmp(szParameter, "flex", 5))
         {
@@ -5361,7 +5364,7 @@ void ChangeSetting(unsigned char ucCmdUsed, bool bToggle, char szSetting[MAX_STR
         }
         else
         {
-            sprintf_s(szSetError, "\ay%s\aw:: \arERROR\ax: Not a valid %s %s ( \ar%s\ax ).", MODULE_NAME, szCommand, bToggle ? "toggle" : "set option", szParameter);
+            sprintf_s(szSetError, "\ay%s\aw:: \arERROR\ax: Not a valid %s %s ( \ar%s\ax ).", PLUGIN_NAME, szCommand, bToggle ? "toggle" : "set option", szParameter);
             WriteLine(szSetError, V_ERRORS);
             return;
         }
@@ -5383,139 +5386,139 @@ void ChangeSetting(unsigned char ucCmdUsed, bool bToggle, char szSetting[MAX_STR
         if (!_strnicmp(szParameter, "pulsecheck", 11))
         {
             STUCK->Check = (unsigned int)fDigit > 1 ? (unsigned int)fDigit : STUCK->Check;
-            sprintf_s(szMsg, "\ay%s\aw:: StuckLogic pulse check rate set to \ag%d\ax pulses.", MODULE_NAME, STUCK->Check);
+            sprintf_s(szMsg, "\ay%s\aw:: StuckLogic pulse check rate set to \ag%d\ax pulses.", PLUGIN_NAME, STUCK->Check);
         }
         else if (!_strnicmp(szParameter, "pulseunstuck", 13))
         {
             STUCK->Unstuck = (unsigned int)fDigit > 1 ? (unsigned int)fDigit : STUCK->Unstuck;
-            sprintf_s(szMsg, "\ay%s\aw:: StuckLogic pulse unstuck value set to \ag%d\ax pulses.", MODULE_NAME, STUCK->Unstuck);
+            sprintf_s(szMsg, "\ay%s\aw:: StuckLogic pulse unstuck value set to \ag%d\ax pulses.", PLUGIN_NAME, STUCK->Unstuck);
         }
         else if (!_strnicmp(szParameter, "diststuck", 10))
         {
             STUCK->Dist = fDigit > 0.0f ? fDigit : STUCK->Dist;
-            sprintf_s(szMsg, "\ay%s\aw:: StuckLogic distance moved per pulse (else stuck) set to \ag%.3f", MODULE_NAME, STUCK->Dist);
+            sprintf_s(szMsg, "\ay%s\aw:: StuckLogic distance moved per pulse (else stuck) set to \ag%.3f", PLUGIN_NAME, STUCK->Dist);
         }
         else if (!_strnicmp(szParameter, "campmindelay", 13))
         {
             SET_CAMP->MinDelay((int)fDigit);
             CAMP->MinDelay(SET_CAMP->Min);
-            sprintf_s(szMsg, "\ay%s\aw:: Mindelay for camp return set to \ag%d", MODULE_NAME, SET_CAMP->Min);
+            sprintf_s(szMsg, "\ay%s\aw:: Mindelay for camp return set to \ag%d", PLUGIN_NAME, SET_CAMP->Min);
         }
         else if (!_strnicmp(szParameter, "campmaxdelay", 13))
         {
             SET_CAMP->MaxDelay((int)fDigit);
             CAMP->MaxDelay(SET_CAMP->Max);
-            sprintf_s(szMsg, "\ay%s\aw:: Maxdelay for camp return set to \ag%d", MODULE_NAME, CAMP->Max);
+            sprintf_s(szMsg, "\ay%s\aw:: Maxdelay for camp return set to \ag%d", PLUGIN_NAME, CAMP->Max);
         }
         else if (!_strnicmp(szParameter, "pausemindelay", 14))
         {
             PAUSE->MinDelay((int)fDigit);
-            sprintf_s(szMsg, "\ay%s\aw:: Mindelay for mpause/mousepause set to \ag%d", MODULE_NAME, PAUSE->Min);
+            sprintf_s(szMsg, "\ay%s\aw:: Mindelay for mpause/mousepause set to \ag%d", PLUGIN_NAME, PAUSE->Min);
         }
         else if (!_strnicmp(szParameter, "pausemaxdelay", 14))
         {
             PAUSE->MaxDelay((int)fDigit);
-            sprintf_s(szMsg, "\ay%s\aw:: Maxdelay for mpause/mousepause set to \ag%d", MODULE_NAME, PAUSE->Max);
+            sprintf_s(szMsg, "\ay%s\aw:: Maxdelay for mpause/mousepause set to \ag%d", PLUGIN_NAME, PAUSE->Max);
         }
         else if (!_strnicmp(szParameter, "strafemindelay", 15))
         {
             SET_S->MinDelay((int)fDigit);
             STICK->MinDelay(SET_S->Min);
-            sprintf_s(szMsg, "\ay%s\aw:: Mindelay for strafe resume set to \ag%d", MODULE_NAME, SET_S->Min);
+            sprintf_s(szMsg, "\ay%s\aw:: Mindelay for strafe resume set to \ag%d", PLUGIN_NAME, SET_S->Min);
         }
         else if (!_strnicmp(szParameter, "strafemaxdelay", 15))
         {
             SET_S->MaxDelay((int)fDigit);
             STICK->MaxDelay(SET_S->Max);
-            sprintf_s(szMsg, "\ay%s\aw:: Maxdelay for strafe resume set to \ag%d", MODULE_NAME, SET_S->Max);
+            sprintf_s(szMsg, "\ay%s\aw:: Maxdelay for strafe resume set to \ag%d", PLUGIN_NAME, SET_S->Max);
         }
         else if (!_strnicmp(szParameter, "ydist", 6))
         {
             SET_M->DistY = fDigit >= 1.0f ? fDigit : SET_M->DistY;
             MOVETO->DistY = SET_M->DistY;
-            sprintf_s(szMsg, "\ay%s\aw:: MoveTo Y-Precision set to \ag%.2f", MODULE_NAME, SET_M->DistY);
+            sprintf_s(szMsg, "\ay%s\aw:: MoveTo Y-Precision set to \ag%.2f", PLUGIN_NAME, SET_M->DistY);
         }
         else if (!_strnicmp(szParameter, "xdist", 6))
         {
             SET_M->DistX = fDigit >= 1.0f ? fDigit : SET_M->DistX;
             MOVETO->DistY = SET_M->DistY;
-            sprintf_s(szMsg, "\ay%s\aw:: MoveTo X-Precision set to \ag%.2f", MODULE_NAME, SET_M->DistX);
+            sprintf_s(szMsg, "\ay%s\aw:: MoveTo X-Precision set to \ag%.2f", PLUGIN_NAME, SET_M->DistX);
         }
         else if (!_strnicmp(szParameter, "dist", 5) && ucCmdUsed == CMD_MOVETO)
         {
             SET_M->Dist = fDigit >= 1.0f ? fDigit : SET_M->Dist;
             MOVETO->Dist = SET_M->Dist;
-            sprintf_s(szMsg, "\ay%s\aw:: MoveTo ArrivalDist set to \ag%.2f", MODULE_NAME, SET_M->Dist);
+            sprintf_s(szMsg, "\ay%s\aw:: MoveTo ArrivalDist set to \ag%.2f", PLUGIN_NAME, SET_M->Dist);
         }
         else if (!_strnicmp(szParameter, "snapdist", 9))
         {
             SET_S->DistSnap = fDigit >= 1.0f ? fDigit : SET_S->DistSnap;
             STICK->DistSnap = SET_S->DistSnap;
-            sprintf_s(szMsg, "\ay%s\aw:: Snaproll Distance from target set to \ag%.2f", MODULE_NAME, SET_S->DistSnap);
+            sprintf_s(szMsg, "\ay%s\aw:: Snaproll Distance from target set to \ag%.2f", PLUGIN_NAME, SET_S->DistSnap);
         }
         else if (!_strnicmp(szParameter, "summondist", 11))
         {
             SET->DistSummon = fDigit >= 1.0f ? fDigit : SET->DistSummon;
-            sprintf_s(szMsg, "\ay%s\aw:: BreakOnSummon distance set to \ag%.2f", MODULE_NAME, SET->DistSummon);
+            sprintf_s(szMsg, "\ay%s\aw:: BreakOnSummon distance set to \ag%.2f", PLUGIN_NAME, SET->DistSummon);
         }
         else if (!_strnicmp(szParameter, "turnrate", 9))
         {
             SET->TurnRate = fDigit >= 1.0f && fDigit <= 100.0f ? fDigit : SET->TurnRate;
-            sprintf_s(szMsg, "\ay%s\aw:: Loose Turn Rate set to \ag%.2f", MODULE_NAME, SET->TurnRate);
+            sprintf_s(szMsg, "\ay%s\aw:: Loose Turn Rate set to \ag%.2f", PLUGIN_NAME, SET->TurnRate);
         }
         else if (!_strnicmp(szParameter, "!frontarc", 10))
         {
             SET_S->ArcNotFront = fDigit <= 260.0f && fDigit > 1.0f ? fDigit : SET_S->ArcNotFront;
             STICK->ArcNotFront = SET_S->ArcNotFront;
-            sprintf_s(szMsg, "\ay%s\aw:: !front arc set to \ag%.2f", MODULE_NAME, SET_S->ArcNotFront);
+            sprintf_s(szMsg, "\ay%s\aw:: !front arc set to \ag%.2f", PLUGIN_NAME, SET_S->ArcNotFront);
         }
         else if (!_strnicmp(szParameter, "behindarc", 10))
         {
             SET_S->ArcBehind = fDigit <= 260.0f && fDigit > 1.0f ? fDigit : SET_S->ArcBehind;
             STICK->ArcBehind = SET_S->ArcBehind;
-            sprintf_s(szMsg, "\ay%s\aw:: behind arc set to \ag%.2f", MODULE_NAME, SET_S->ArcBehind);
+            sprintf_s(szMsg, "\ay%s\aw:: behind arc set to \ag%.2f", PLUGIN_NAME, SET_S->ArcBehind);
         }
         else if (!_strnicmp(szParameter, "breakdist", 10))
         {
             SET_S->DistBreak = fDigit >= 1.0f ? fDigit : SET_S->DistBreak;
             STICK->DistBreak = SET_S->DistBreak;
-            sprintf_s(szMsg, "\ay%s\aw:: BreakOnWarp dist set to \ag%.2f", MODULE_NAME, SET_S->DistBreak);
+            sprintf_s(szMsg, "\ay%s\aw:: BreakOnWarp dist set to \ag%.2f", PLUGIN_NAME, SET_S->DistBreak);
         }
         else if (!_strnicmp(szParameter, "campradius", 11))
         {
             SET_CAMP->SetRadius(fDigit);
             CURCAMP->SetRadius(SET_CAMP->Radius);
-            sprintf_s(szMsg, "\ay%s\aw:: Camp radius set to \ag%.2f", MODULE_NAME, SET_CAMP->Radius);
+            sprintf_s(szMsg, "\ay%s\aw:: Camp radius set to \ag%.2f", PLUGIN_NAME, SET_CAMP->Radius);
         }
         else if (!_strnicmp(szParameter, "circleradius", 13))
         {
             SET_C->SetRadius(fDigit);
             CIRCLE->SetRadius(SET_C->Radius);
-            sprintf_s(szMsg, "\ay%s\aw:: Circle radius set to \ag%.2f", MODULE_NAME, SET_C->Radius);
+            sprintf_s(szMsg, "\ay%s\aw:: Circle radius set to \ag%.2f", PLUGIN_NAME, SET_C->Radius);
         }
         else if (!_strnicmp(szParameter, "leashlength", 12))
         {
             SET_CAMP->SetLeash(fDigit);
             CURCAMP->SetLeash(SET_CAMP->Length);
-            sprintf_s(szMsg, "\ay%s\aw:: Leash length set to \ag%.2f", MODULE_NAME, SET_CAMP->Length);
+            sprintf_s(szMsg, "\ay%s\aw:: Leash length set to \ag%.2f", PLUGIN_NAME, SET_CAMP->Length);
         }
         else if (!_strnicmp(szParameter, "bearing", 8))
         {
             SET_CAMP->Bearing = fDigit;
             CURCAMP->Bearing = SET_CAMP->Bearing;
-            sprintf_s(szMsg, "\ay%s\aw:: Camp return scatter bearing set to \ag%.2f", MODULE_NAME, SET_CAMP->Bearing);
+            sprintf_s(szMsg, "\ay%s\aw:: Camp return scatter bearing set to \ag%.2f", PLUGIN_NAME, SET_CAMP->Bearing);
         }
         else if (!_strnicmp(szParameter, "scatsize", 9))
         {
             SET_CAMP->ScatSize = fDigit >= 1.0f ? fDigit : SET_CAMP->ScatSize;
             CURCAMP->ScatSize = SET_CAMP->ScatSize;
-            sprintf_s(szMsg, "\ay%s\aw:: Camp return scatter size set to \ag%.2f", MODULE_NAME, SET_CAMP->ScatSize);
+            sprintf_s(szMsg, "\ay%s\aw:: Camp return scatter size set to \ag%.2f", PLUGIN_NAME, SET_CAMP->ScatSize);
         }
         else if (!_strnicmp(szParameter, "scatdist", 9))
         {
             SET_CAMP->ScatDist = fDigit >= 1.0f ? fDigit : SET_CAMP->ScatDist;
             CURCAMP->ScatDist = SET_CAMP->ScatDist;
-            sprintf_s(szMsg, "\ay%s\aw:: Camp return scatter dist set to \ag%.2f", MODULE_NAME, SET_CAMP->ScatDist);
+            sprintf_s(szMsg, "\ay%s\aw:: Camp return scatter dist set to \ag%.2f", PLUGIN_NAME, SET_CAMP->ScatDist);
         }
         else if (!_strnicmp(szParameter, "backupdist", 11) && (ucCmdUsed == CMD_MOVETO || ucCmdUsed == CMD_STICK))
         {
@@ -5529,25 +5532,25 @@ void ChangeSetting(unsigned char ucCmdUsed, bool bToggle, char szSetting[MAX_STR
                 SET_S->DistBack = fDigit > 1.0f ? fDigit : SET_S->DistBack;
                 STICK->DistBack = SET_S->DistBack;
             }
-            sprintf_s(szMsg, "\ay%s\aw:: Range to use %s backwards positioning set to \ag%.2f", MODULE_NAME, szCommand, (ucCmdUsed == CMD_MOVETO) ? SET_M->DistBack : SET_S->DistBack);
+            sprintf_s(szMsg, "\ay%s\aw:: Range to use %s backwards positioning set to \ag%.2f", PLUGIN_NAME, szCommand, (ucCmdUsed == CMD_MOVETO) ? SET_M->DistBack : SET_S->DistBack);
         }
         else if (!_strnicmp(szParameter, "allowmove", 10))
         {
             SET->AllowMove = fDigit > 10.0f ? fDigit : SET->AllowMove;
-            sprintf_s(szMsg, "\ay%s\aw:: Allow movement when turning at \ag%.2f", MODULE_NAME, SET->AllowMove);
+            sprintf_s(szMsg, "\ay%s\aw:: Allow movement when turning at \ag%.2f", PLUGIN_NAME, SET->AllowMove);
         }
         else if (!_strnicmp(szParameter, "flexdist", 9))
         {
             SET_S->DistFlex = (fDigit >= 2.0f && fDigit <= 20.0f) ? fDigit : SET_S->DistFlex;
             STICK->DistFlex = SET_S->DistFlex;
-            sprintf_s(szMsg, "\ay%s\aw:: Stick Flexibility distance set to \ag%.2f", MODULE_NAME, SET_S->DistFlex);
+            sprintf_s(szMsg, "\ay%s\aw:: Stick Flexibility distance set to \ag%.2f", PLUGIN_NAME, SET_S->DistFlex);
         }
         else if (!_strnicmp(szParameter, "font", 5))
         {
             int iValid = (int)fDigit > 0 && (int)fDigit < 11 ? (int)fDigit : 0;
             if (iValid == 0)
             {
-                sprintf_s(szMsg, "\ay%s\aw:: \arError\ax - Font must be between 1 and 10.", MODULE_NAME);
+                sprintf_s(szMsg, "\ay%s\aw:: \arError\ax - Font must be between 1 and 10.", PLUGIN_NAME);
                 WriteLine(szMsg, V_ERRORS);
                 return;
             }
@@ -5565,11 +5568,11 @@ void ChangeSetting(unsigned char ucCmdUsed, bool bToggle, char szSetting[MAX_STR
                 // set to silence for both 0 and negative numbers
                 uiVerbLevel = V_SILENCE;
             }
-            sprintf_s(szMsg, "\ay%s\aw:: Verbosity flags set to \ag%d", MODULE_NAME, uiVerbLevel);
+            sprintf_s(szMsg, "\ay%s\aw:: Verbosity flags set to \ag%d", PLUGIN_NAME, uiVerbLevel);
         }
         else
         {
-            sprintf_s(szSetError, "\ay%s\aw:: \arERROR\ax: Invalid '%s set' parameter ( \ar%s\ax )", MODULE_NAME, szCommand, szParameter);
+            sprintf_s(szSetError, "\ay%s\aw:: \arERROR\ax: Invalid '%s set' parameter ( \ar%s\ax )", PLUGIN_NAME, szCommand, szParameter);
             WriteLine(szSetError, V_ERRORS);
             return;
         }
@@ -5603,7 +5606,7 @@ void MainProcess(unsigned char ucCmdUsed)
         if (STICK->On && (!psTarget || (STICK->Hold && STICK->HoldType != GetSpawnType(psTarget))))
         {
             EndPreviousCmd(true);
-            sprintf_s(szMsg, "\ay%s\aw:: You are no longer sticking to anything.", MODULE_NAME);
+            sprintf_s(szMsg, "\ay%s\aw:: You are no longer sticking to anything.", PLUGIN_NAME);
             WriteLine(szMsg, V_STICKV);
             return;
         }
@@ -5613,7 +5616,7 @@ void MainProcess(unsigned char ucCmdUsed)
     // handle /makecamp player if the player no longer exists or has died
     if (CURCAMP->Pc && (!pCampPlayer || CURCAMP->PcType != GetSpawnType(pCampPlayer)))
     {
-        sprintf_s(szMsg, "\ay%s\aw:: MakeCamp player ended due to player leaving/death.", MODULE_NAME);
+        sprintf_s(szMsg, "\ay%s\aw:: MakeCamp player ended due to player leaving/death.", PLUGIN_NAME);
         WriteLine(szMsg, V_MAKECAMPV);
         CAMP->ResetPlayer(false);
         return;
@@ -5623,7 +5626,7 @@ void MainProcess(unsigned char ucCmdUsed)
     // handle null pointers for all commands
     if (!pChData || !pLPlayer || !pChSpawn->SpawnID || !GetCharInfo2())
     {
-        sprintf_s(szMsg, "\ay%s\aw:: Null pointer, turning off current command", MODULE_NAME);
+        sprintf_s(szMsg, "\ay%s\aw:: Null pointer, turning off current command", PLUGIN_NAME);
         WriteLine(szMsg, V_SILENCE);
         EndPreviousCmd(false);
         return;
@@ -5671,10 +5674,10 @@ void MainProcess(unsigned char ucCmdUsed)
         // if distance moved is larger than user value, halt commands & lock plugin
         if (SUMMON->CurDist > SET->DistSummon)
         {
-            sprintf_s(szMsg, "\ay%s\aw:: \arWARNING\ax Command ended from character summoned \ag%.2f\ax distance in a pulse.", MODULE_NAME, SUMMON->CurDist);
+            sprintf_s(szMsg, "\ay%s\aw:: \arWARNING\ax Command ended from character summoned \ag%.2f\ax distance in a pulse.", PLUGIN_NAME, SUMMON->CurDist);
             EndPreviousCmd(true);
             WriteLine(szMsg, V_BREAKONSUMMON);
-            sprintf_s(szMsg, "\ay%s\aw:: \arWARNING\ax Verify you are not being monitored and type \ag/stick imsafe\ax to allow command usage.", MODULE_NAME);
+            sprintf_s(szMsg, "\ay%s\aw:: \arWARNING\ax Verify you are not being monitored and type \ag/stick imsafe\ax to allow command usage.", PLUGIN_NAME);
             WriteLine(szMsg, V_BREAKONSUMMON);
             pMU->BrokeSummon = PAUSE->PausedMU = true;
             SpewDebug(DBG_MAIN, "Summon Detection fired. All Commands Paused. SET->DistSummon(%.2f) - Moved(%.2f)", SET->DistSummon, SUMMON->CurDist);
@@ -5692,7 +5695,7 @@ void MainProcess(unsigned char ucCmdUsed)
         {
             if ((uiVerbLevel & V_AUTOPAUSE) == V_AUTOPAUSE && !sbAPOutput)
             {
-                sprintf_s(szMsg, "\ay%s\aw:: AutoPause halting movement...", MODULE_NAME);
+                sprintf_s(szMsg, "\ay%s\aw:: AutoPause halting movement...", PLUGIN_NAME);
                 WriteLine(szMsg, V_AUTOPAUSE);
                 sbAPOutput = true;
                 MOVE->StopHeading();
@@ -5726,7 +5729,7 @@ void MainProcess(unsigned char ucCmdUsed)
             if (STICK->theLastID && STICK->BreakTarget) // if we had set the ID
             {
                 EndPreviousCmd(true);
-                sprintf_s(szMsg, "\ay%s\aw:: \arStick broken from target change.", MODULE_NAME);
+                sprintf_s(szMsg, "\ay%s\aw:: \arStick broken from target change.", PLUGIN_NAME);
                 WriteLine(szMsg, V_BREAKONWARP);
                 return;
             }
@@ -5742,7 +5745,7 @@ void MainProcess(unsigned char ucCmdUsed)
             if (!sbSelfOutput)
             {
                 MOVE->StopMove(APPLY_TO_ALL);
-                sprintf_s(szMsg, "\ay%s\aw:: Movement pausing due to self target...", MODULE_NAME);
+                sprintf_s(szMsg, "\ay%s\aw:: Movement pausing due to self target...", PLUGIN_NAME);
                 WriteLine(szMsg, V_AUTOPAUSE);
                 sbSelfOutput = true;
             }
@@ -5770,7 +5773,7 @@ void MainProcess(unsigned char ucCmdUsed)
                     if (!sbBWOutput)
                     {
                         MOVE->StopMove(APPLY_TO_ALL);
-                        sprintf_s(szMsg, "\ay%s\aw: Stick pausing until target back in BreakDist range...", MODULE_NAME);
+                        sprintf_s(szMsg, "\ay%s\aw: Stick pausing until target back in BreakDist range...", PLUGIN_NAME);
                         WriteLine(szMsg, V_BREAKONWARP);
                         sbBWOutput = true;
                         STICK->TimeStop();
@@ -5782,7 +5785,7 @@ void MainProcess(unsigned char ucCmdUsed)
                 else
                 {
                     EndPreviousCmd(true);
-                    sprintf_s(szMsg, "\ay%s\aw:: Stick ending from target warping out of BreakDist range.", MODULE_NAME);
+                    sprintf_s(szMsg, "\ay%s\aw:: Stick ending from target warping out of BreakDist range.", PLUGIN_NAME);
                     WriteLine(szMsg, V_BREAKONWARP);
                     return;
                 }
@@ -5824,7 +5827,7 @@ void MainProcess(unsigned char ucCmdUsed)
             if (CAMP->CurDist < CAMP->DifDist && CAMP->DifDist > CURCAMP->Length)
             {
                 EndPreviousCmd(true);
-                sprintf_s(szMsg, "\ay%s\aw:: Outside of leash length, breaking from current command", MODULE_NAME);
+                sprintf_s(szMsg, "\ay%s\aw:: Outside of leash length, breaking from current command", PLUGIN_NAME);
                 WriteLine(szMsg, V_MAKECAMPV);
                 return;
             }
@@ -6156,17 +6159,12 @@ void MainProcess(unsigned char ucCmdUsed)
     case CMD_MOVETO:
         if (bMoveToOOR)
         {
-            if (psTarget && MOVETO->UW && !IgnoreTarget)
+            if (psTarget && MOVETO->UW)
             {
                 double dLookAngle = (double)atan2(psTarget->Z + psTarget->AvatarHeight * StateHeightMultiplier(psTarget->StandState) -
                     pChSpawn->Z - pChSpawn->AvatarHeight * StateHeightMultiplier(pChSpawn->StandState), fabs(GetDistance3D(pChSpawn->Y, pChSpawn->X, pChSpawn->Z, psTarget->Y, psTarget->X, psTarget->Z))) * HEADING_HALF / (double)PI;
                 MOVE->NewFace(dLookAngle);
             }
-			else if (MOVETO->Z != 0.0f && MOVETO->UW)
-			{
-				double dLookAngle = (double)atan2(MOVETO->Z - pChSpawn->Z, fabs(GetDistance(pChSpawn->Y, pChSpawn->X, MOVETO->Y, MOVETO->X))) * HEADING_HALF / (double)PI;
-				MOVE->NewFace(dLookAngle);
-			}
             if (CAMP->Returning)
             {
                 fNewHeading = MOVE->SaneHead(atan2(CAMP->X - pChSpawn->X, CAMP->Y - pChSpawn->Y) * HEADING_HALF / (float)PI);
@@ -6207,15 +6205,15 @@ void MainProcess(unsigned char ucCmdUsed)
         {
             if (CAMP->DoReturn)
             {
-                sprintf_s(szMsg, "\ay%s\aw:: Arrived at %s", MODULE_NAME, szArriveCamp);
+                sprintf_s(szMsg, "\ay%s\aw:: Arrived at %s", PLUGIN_NAME, szArriveCamp);
             }
             else if (CAMP->DoAlt)
             {
-                sprintf_s(szMsg, "\ay%s\aw:: Arrived at %s", MODULE_NAME, szArriveAlt);
+                sprintf_s(szMsg, "\ay%s\aw:: Arrived at %s", PLUGIN_NAME, szArriveAlt);
             }
             else
             {
-                sprintf_s(szMsg, "\ay%s\aw:: Arrived at %s", MODULE_NAME, szArriveMove);
+                sprintf_s(szMsg, "\ay%s\aw:: Arrived at %s", PLUGIN_NAME, szArriveMove);
                 pMU->StoppedMoveto = true;
             }
             WriteLine(szMsg, V_MOVETOV);
@@ -6564,7 +6562,7 @@ void OutputHelp(unsigned char ucCmdUsed, bool bOnlyCmdHelp)
     }
 
     char szTempOut[MAX_STRING] = {0};
-    sprintf_s(szTempOut, "\ay%s \agv%1.4f", MODULE_NAME, MODULE_VERSION);
+    sprintf_s(szTempOut, "\ay%s \agv%1.4f", PLUGIN_NAME, PLUGIN_VERS);
     WriteLine(szTempOut, V_SILENCE);
 
     if (bDisplaySettings)
@@ -6745,7 +6743,7 @@ void DebugToWnd(unsigned char ucCmdUsed)
     char szDir[25]            = "\agNormal\ax";
     char szLongLine[48]       = "\ay---------------------------------------------";
 
-    sprintf_s(szTemp, "\ay%s v%1.4f - Current Status", MODULE_NAME, MODULE_VERSION);
+    sprintf_s(szTemp, "\ay%s v%1.4f - Current Status", PLUGIN_NAME, PLUGIN_VERS);
     WriteLine(szTemp, V_SILENCE);
     if (ucCmdUsed == CMD_STICK || ucCmdUsed == APPLY_TO_ALL)
     {
@@ -6846,29 +6844,29 @@ void SpewMUError(unsigned char ucErrorNum)
     switch(ucErrorNum)
     {
     case ERR_STICKSELF:
-        sprintf_s(szErrorMsg, "\ay%s\aw:: (\arERROR\ax) You cannot stick to yourself!", MODULE_NAME);
+        sprintf_s(szErrorMsg, "\ay%s\aw:: (\arERROR\ax) You cannot stick to yourself!", PLUGIN_NAME);
         break;
     case ERR_STICKNONE:
-        sprintf_s(szErrorMsg, "\ay%s\aw:: You must specify something to stick to!", MODULE_NAME);
+        sprintf_s(szErrorMsg, "\ay%s\aw:: You must specify something to stick to!", PLUGIN_NAME);
         break;
     case ERR_BADMOVETO:
         EndPreviousCmd(true);
-        sprintf_s(szErrorMsg, "\ay%s\aw:: (\arERROR\ax) \ay/moveto loc [ <Y> <X> [z] ]\ax was supplied incorrectly.", MODULE_NAME);
+        sprintf_s(szErrorMsg, "\ay%s\aw:: (\arERROR\ax) \ay/moveto loc [ <Y> <X> [z] ]\ax was supplied incorrectly.", PLUGIN_NAME);
         break;
     case ERR_BADMAKECAMP:
         CAMP->NewCamp(false);
-        sprintf_s(szErrorMsg, "\ay%s\aw:: (\arERROR\ax) \ay/makecamp loc [ <Y> <X> ]\ax was supplied incorrectly.", MODULE_NAME);
+        sprintf_s(szErrorMsg, "\ay%s\aw:: (\arERROR\ax) \ay/makecamp loc [ <Y> <X> ]\ax was supplied incorrectly.", PLUGIN_NAME);
         break;
     case ERR_BADCIRCLE:
         EndPreviousCmd(true);
-        sprintf_s(szErrorMsg, "\ay%s\aw:: (\arERROR\ax) Usage \ay/circle loc [ <y> <x> ] [other options]\ax", MODULE_NAME);
+        sprintf_s(szErrorMsg, "\ay%s\aw:: (\arERROR\ax) Usage \ay/circle loc [ <y> <x> ] [other options]\ax", PLUGIN_NAME);
         break;
     case ERR_BADSPAWN:
         EndPreviousCmd(true);
-        sprintf_s(szErrorMsg, "\ay%s\aw:: (\arERROR\ax) Invalid SpawnID and do not have a valid target.", MODULE_NAME);
+        sprintf_s(szErrorMsg, "\ay%s\aw:: (\arERROR\ax) Invalid SpawnID and do not have a valid target.", PLUGIN_NAME);
         break;
     case ERR_BADDELAY:
-        sprintf_s(szErrorMsg, "\ay%s\aw:: (\arERROR\ax) \ay[mindelay|maxdelay] [#]\ax was supplied incorrectly.", MODULE_NAME);
+        sprintf_s(szErrorMsg, "\ay%s\aw:: (\arERROR\ax) \ay[mindelay|maxdelay] [#]\ax was supplied incorrectly.", PLUGIN_NAME);
         break;
     default:
         // return if we didnt pass a valid msg number
@@ -6954,7 +6952,7 @@ void DebugToINI(unsigned char ucCmdUsed)
         break;
     }
 
-    sprintf_s(szTemp, "%s v%1.4f", MODULE_NAME, MODULE_VERSION);
+    sprintf_s(szTemp, "%s v%1.4f", PLUGIN_NAME, PLUGIN_VERS);
     WritePrivateProfileString("Version",       "Number",                szTemp,                                     szDebugName);
     WritePrivateProfileString("Commands",      "CommandUsed",           szCommand,                                  szDebugName);
     WritePrivateProfileString("GenericBOOL",   "pMU->Keybinds",         pMU->Keybinds         ? "true" : "false",   szDebugName);
@@ -7557,7 +7555,7 @@ void LoadConfig()
     GetPrivateProfileString("StuckLogic", "StuckLogic",     STUCK->On            ? "on" : "off", szTemp, MAX_STRING, INIFileName);
     STUCK->On = (!_strnicmp(szTemp, "on", 3));
     GetPrivateProfileString("StuckLogic", "DistStuck",      ftoa_s(STUCK->Dist, szTempF),          szTemp, MAX_STRING, INIFileName);
-	float diststuck = strtof(szTemp,NULL);
+    float diststuck = strtof(szTemp,NULL);
     if (diststuck > 0.0f)
     {
         STUCK->Dist = (float)diststuck;
@@ -7832,7 +7830,7 @@ void KeybindPressed(int iKeyPressed, int iKeyDown)
         {
             if (MOVETO->On && CURCAMP->On && CURCAMP->Leash && !CAMP->Auto)
             {
-                sprintf_s(szMsg, "\ay%s\aw:: Ended '/moveto' or '/makecamp return' because leash is on.", MODULE_NAME);
+                sprintf_s(szMsg, "\ay%s\aw:: Ended '/moveto' or '/makecamp return' because leash is on.", PLUGIN_NAME);
                 WriteLine(szMsg, V_MAKECAMPFV);
                 EndPreviousCmd(false);
             }
@@ -7847,7 +7845,7 @@ void KeybindPressed(int iKeyPressed, int iKeyDown)
         {
             if (!CAMP->Auto)
             {
-                sprintf_s(szMsg, "\ay%s\aw:: Current command ended from manual movement.", MODULE_NAME);
+                sprintf_s(szMsg, "\ay%s\aw:: Current command ended from manual movement.", PLUGIN_NAME);
                 WriteLine(szMsg, V_MOVEPAUSE);
             }
             EndPreviousCmd(false); //EndPreviousCmd(true); // this stops kb input
@@ -7968,8 +7966,37 @@ inline void FindKeys()
 // ----------------------------------------
 // Offsets & pointers
 
-
+/*
 // ---------------------------------------------------------------------------
+// credit: radioactiveman/bunny771/(dom1n1k?) --------------------------------
+bool DataCompare(const unsigned char* pucData, const unsigned char* pucMask, const char* pszMask)
+{
+    for (; *pszMask; ++pszMask, ++pucData, ++pucMask)
+        if (*pszMask == 'x' && *pucData != *pucMask) return false;
+    return (*pszMask) == NULL;
+}
+
+unsigned long FindPattern(unsigned long ulAddress, unsigned long ulLen, unsigned char* pucMask, char* pszMask)
+{
+    for (unsigned long i = 0; i < ulLen; i++)
+    {
+        if (DataCompare((unsigned char*)(ulAddress + i), pucMask, pszMask)) return (unsigned long)(ulAddress + i);
+    }
+    return 0;
+}
+// ---------------------------------------------------------------------------
+// copyright: ieatacid -------------------------------------------------------
+unsigned long GetDWordAt(unsigned long ulAddress, unsigned long ulNumBytes)
+{
+    if (ulAddress)
+    {
+        ulAddress += ulNumBytes;
+        return *(unsigned long*)ulAddress;
+    }
+    return 0;
+}
+// ---------------------------------------------------------------------------
+
 inline unsigned char FindPointers()
 {
 #ifdef EMU
@@ -7985,19 +8012,35 @@ inline unsigned char FindPointers()
    if ((pulBackward     = (unsigned long*)GetDWordAt(addrMoveForward, 30)) == 0)                      return 10;
    return 0;
 #else
-	if ((addrTurnRight = FindPattern(FixOffset(0x500000), 0x200000, patternTurnRight, maskTurnRight)) == 0)     return 1;
+	if ((addrTurnRight = FindPattern(FixOffset(0x580000), 0x200000, patternTurnRight, maskTurnRight)) == 0)     return 1;
 	if ((pulTurnRight = (unsigned long*)GetDWordAt(addrTurnRight, 1)) == 0)                         return 2;
 	if ((pulStrafeLeft = (unsigned long*)GetDWordAt(addrTurnRight, 7)) == 0)                         return 3;
 	if ((pulStrafeRight = (unsigned long*)GetDWordAt(addrTurnRight, 17)) == 0)                        return 4;
 	if ((pulAutoRun = (unsigned long*)GetDWordAt(addrTurnRight, 34)) == 0)                        return 5;
 	if ((pulTurnLeft = (unsigned long*)GetDWordAt(addrTurnRight, 42)) == 0)                        return 6;
-	if ((addrMoveForward = FindPattern(FixOffset(0x500000), 0x200000, patternMoveForward, maskMoveForward)) == 0) return 7;
+	if ((addrMoveForward = FindPattern(FixOffset(0x580000), 0x200000, patternMoveForward, maskMoveForward)) == 0) return 7;
 	if ((pulForward = (unsigned long*)GetDWordAt(addrMoveForward, 1)) == 0)                       return 8;
 	if (pulAutoRun != (unsigned long*)GetDWordAt(addrMoveForward, 51))                            return 9;
 	if ((pulBackward = (unsigned long*)GetDWordAt(addrMoveForward, 22)) == 0)                      return 10;
+
+	DebugSpewAlways("%s::pulTurnRight = 0x%x, 0x%x", PLUGIN_NAME, pulTurnRight, FixOffset(MQ2MoveUtils__pulTurnRight_x));
+	DebugSpewAlways("%s::pulStrafeLeft = 0x%x, 0x%x", PLUGIN_NAME, pulStrafeLeft, FixOffset(MQ2MoveUtils__pulStrafeLeft_x));
+	DebugSpewAlways("%s::pulStrafeRight = 0x%x, 0x%x", PLUGIN_NAME, pulStrafeRight, FixOffset(MQ2MoveUtils__pulStrafeRight_x));
+	DebugSpewAlways("%s::pulAutoRun = 0x%x, 0x%x", PLUGIN_NAME, pulAutoRun, FixOffset(MQ2MoveUtils__pulAutoRun_x));
+	DebugSpewAlways("%s::pulTurnLeft = 0x%x, 0x%x", PLUGIN_NAME, pulTurnLeft, FixOffset(MQ2MoveUtils__pulTurnLeft_x));
+	DebugSpewAlways("%s::pulForward = 0x%x, 0x%x", PLUGIN_NAME, pulForward, FixOffset(MQ2MoveUtils__pulForward_x));
+	DebugSpewAlways("%s::pulBackward = 0x%x, 0x%x", PLUGIN_NAME, pulBackward, FixOffset(MQ2MoveUtils__pulBackward_x));
+	pulAutoRun = (unsigned long *)FixOffset(__pulAutoRun_x);
+	pulForward = (unsigned long *)FixOffset(__pulForward_x);
+	pulBackward = (unsigned long *)FixOffset(__pulBackward_x);
+	pulTurnRight = (unsigned long *)FixOffset(__pulTurnRight_x);
+	pulTurnLeft = (unsigned long *)FixOffset(__pulTurnLeft_x);
+	pulStrafeLeft = (unsigned long *)FixOffset(__pulStrafeLeft_x);
+	pulStrafeRight = (unsigned long *)FixOffset(__pulStrafeRight_x);
 	return 0;
 #endif
 }
+*/
 
 PMQPLUGIN FindPlugin(char* PluginName)
 {
@@ -8022,16 +8065,29 @@ unsigned int __stdcall MQ2DataVariableLookup(char * VarName, char * Value,size_t
 PLUGIN_API void InitializePlugin()
 {
 	pMoveEvent = new Blech('#','|',MQ2DataVariableLookup);
+
     // offset-driven movement
+	/*
     unsigned char ucFailedLoad = FindPointers();
     if (ucFailedLoad)
     {
         char szFailOffset[500] = {0};
-        sprintf_s(szFailOffset, "\ay%s\aw:: Couldn't find movement pointer: \ar%s\ax.", MODULE_NAME, szFailedLoad[ucFailedLoad]);
+        sprintf_s(szFailOffset, "\ay%s\aw:: Couldn't find movement pointer: \ar%s\ax.", PLUGIN_NAME, szFailedLoad[ucFailedLoad]);
         WriteChatf("%s", szFailOffset);
-        MessageBox(NULL, szFailOffset, "MQ2MoveUtils v11.x", MB_OK);
+        //MessageBox(NULL, szFailOffset, "MQ2MoveUtils v11.x", MB_OK);
         bOffsetOverride = true;
     }
+
+	DebugSpewAlways("%s::addrTurnRight = 0x%x", PLUGIN_NAME, addrTurnRight);
+	DebugSpewAlways("%s::addrMoveForward = 0x%x", PLUGIN_NAME, addrMoveForward);
+	*/
+	pulAutoRun = (unsigned long *)FixOffset(__pulAutoRun_x);
+	pulForward = (unsigned long *)FixOffset(__pulForward_x);
+	pulBackward = (unsigned long *)FixOffset(__pulBackward_x);
+	pulTurnRight = (unsigned long *)FixOffset(__pulTurnRight_x);
+	pulTurnLeft = (unsigned long *)FixOffset(__pulTurnLeft_x);
+	pulStrafeLeft = (unsigned long *)FixOffset(__pulStrafeLeft_x);
+	pulStrafeRight = (unsigned long *)FixOffset(__pulStrafeRight_x);
 
     // commands
     AddCommand("/makecamp",  MakeCampWrapper, FALSE, TRUE, TRUE);
@@ -8166,7 +8222,7 @@ PLUGIN_API void SetGameState(unsigned long ulGameState)
     {
         if (pMU->Active() || CURCAMP->On)
         {
-            sprintf_s(szMsg, "\ay%s\aw:: GameState change ended previous command.", MODULE_NAME);
+            sprintf_s(szMsg, "\ay%s\aw:: GameState change ended previous command.", PLUGIN_NAME);
             WriteLine(szMsg, V_SILENCE);
         }
         EndPreviousCmd(false); // using true here causes ctd
@@ -8221,7 +8277,7 @@ PLUGIN_API void OnAddSpawn(PSPAWNINFO pNewSpawn)
         errno_t err = _localtime64_s(&THE_TIME,&tCurrentTime);
 #endif
         strftime(szTime, 20, " [%H:%M:%S]", &THE_TIME);
-        sprintf_s(szMsg, "\ay%s\aw:: \arWARNING\ax Plugin halted from\ag [GM] %s\ax in zone. -- \aw%s", MODULE_NAME, pNewSpawn->DisplayedName, szTime);
+        sprintf_s(szMsg, "\ay%s\aw:: \arWARNING\ax Plugin halted from\ag [GM] %s\ax in zone. -- \aw%s", PLUGIN_NAME, pNewSpawn->DisplayedName, szTime);
         WriteLine(szMsg, V_BREAKONGM);
         pMU->BrokeGM = true;
         EndPreviousCmd(ValidIngame());
@@ -8255,7 +8311,7 @@ PLUGIN_API void OnRemoveSpawn(PSPAWNINFO pOldSpawn)
         errno_t err = _localtime64_s(&THE_TIME,&tCurrentTime);
 #endif
         strftime(szTime, 20, " [%H:%M:%S]", &THE_TIME);
-        sprintf_s(szMsg, "\ay%s\aw::\ag [GM] %s\ax has left the zone or turned invisible. Use \ag/stick imsafe\ax to allow command usage. -- \aw%s", MODULE_NAME, pOldSpawn->DisplayedName, szTime);
+        sprintf_s(szMsg, "\ay%s\aw::\ag [GM] %s\ax has left the zone or turned invisible. Use \ag/stick imsafe\ax to allow command usage. -- \aw%s", PLUGIN_NAME, pOldSpawn->DisplayedName, szTime);
         WriteLine(szMsg, V_BREAKONGM);
     }
 }
@@ -8274,7 +8330,7 @@ PLUGIN_API void OnPulse()
         if (pMU->Active())
         {
             EndPreviousCmd(false);
-            sprintf_s(szMsg, "\ay%s\aw:: \arYour death has ended the previous command.", MODULE_NAME);
+            sprintf_s(szMsg, "\ay%s\aw:: \arYour death has ended the previous command.", PLUGIN_NAME);
             WriteLine(szMsg, V_SILENCE);
         }
         pMU->FixWalk = true;

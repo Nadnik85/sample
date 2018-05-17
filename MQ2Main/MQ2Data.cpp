@@ -846,11 +846,15 @@ TLO(dataGameTime)
 {
 	struct tm* pTime = (struct tm*)&DataTypeTemp[0];
 	ZeroMemory(pTime, sizeof(struct tm));
-	pTime->tm_mday = ((PWORLDDATA)pWorldData)->Day;
-	pTime->tm_hour = ((PWORLDDATA)pWorldData)->Hour - 1;
+	pTime->tm_sec = 0;
 	pTime->tm_min = ((PWORLDDATA)pWorldData)->Minute;
-	pTime->tm_mon = ((PWORLDDATA)pWorldData)->Month;
+	pTime->tm_hour = ((PWORLDDATA)pWorldData)->Hour - 1;
+	pTime->tm_mday = ((PWORLDDATA)pWorldData)->Day;
+	pTime->tm_mon = ((PWORLDDATA)pWorldData)->Month - 1;
 	pTime->tm_year = ((PWORLDDATA)pWorldData)->Year - 1900;
+	pTime->tm_wday = (((PWORLDDATA)pWorldData)->Day - 1) % 7;
+	pTime->tm_isdst = 0;
+
 	Ret.Ptr = pTime;
 	Ret.Type = pTimeType;
 	return true;
@@ -1012,6 +1016,15 @@ TLO(dataFindItemBank)
 {
 	if (!ISINDEX())
 		return false;
+	PCONTENTS pItem = 0;
+	if (ISNUMBER()) {
+		if (pItem = FindBankItemByID(GETNUMBER())) {
+			Ret.Ptr = pItem;
+			Ret.Type = pItemType;
+			return true;
+		}
+		return false;
+	}
 	PCHAR pName = GETFIRST();
 	BOOL bExact = false;
 
@@ -1021,7 +1034,7 @@ TLO(dataFindItemBank)
 		pName++;
 	}
 
-	if (PCONTENTS pItem = FindBankItemByName(pName, bExact)) {
+	if (pItem = FindBankItemByName(pName, bExact)) {
 		Ret.Ptr = pItem;
 		Ret.Type = pItemType;
 		return true;
@@ -1033,6 +1046,15 @@ TLO(dataFindItem)
 {
 	if (!ISINDEX())
 		return false;
+	PCONTENTS pItem = 0;
+	if (ISNUMBER()) {
+		if (pItem = FindItemByID(GETNUMBER())) {
+			Ret.Ptr = pItem;
+			Ret.Type = pItemType;
+			return true;
+		}
+		return false;
+	}
 	PCHAR pName = GETFIRST();
 	BOOL bExact = false;
 
@@ -1041,7 +1063,7 @@ TLO(dataFindItem)
 		bExact = true;
 		pName++;
 	}
-	if (PCONTENTS pItem = FindItemByName(pName, bExact)) {
+	if (pItem = FindItemByName(pName, bExact)) {
 		Ret.Ptr = pItem;
 		Ret.Type = pItemType;
 		return true;
@@ -1053,9 +1075,13 @@ TLO(dataFindItemCount)
 {
 	if (!ISINDEX())
 		return false;
+	if (ISNUMBER()) {
+		Ret.DWord = FindItemCountByID(GETNUMBER());
+		Ret.Type = pIntType;
+		return true;
+	}
 	PCHAR pName = GETFIRST();
 	BOOL bExact = false;
-
 	if (*pName == '=')
 	{
 		bExact = true;
@@ -1070,6 +1096,11 @@ TLO(dataFindItemBankCount)
 {
 	if (!ISINDEX())
 		return false;
+	if (ISNUMBER()) {
+		Ret.DWord = FindBankItemCountByID(GETNUMBER());
+		Ret.Type = pIntType;
+		return true;
+	}
 	PCHAR pName = GETFIRST();
 	BOOL bExact = false;
 

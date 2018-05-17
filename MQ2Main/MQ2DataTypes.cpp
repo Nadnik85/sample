@@ -20,6 +20,7 @@ GNU General Public License for more details.
 
 
 #include "MQ2Main.h"
+#pragma comment(lib, "version.lib")
 
 #ifdef ISXEQ
 #define ISINDEX() (argc>0)
@@ -413,39 +414,32 @@ bool MQ2StringType::GETMEMBER()
 		}
 		return false;
 	case Replace:
+	{
 		if (!ISINDEX())
 			return false;
+		if (PCHAR pComma = strchr(Index, ','))
 		{
-			char A[MAX_STRING] = { 0 };
-			char B[MAX_STRING] = { 0 };
-			char C[MAX_STRING] = { 0 };
-			char *pos;
-			if (!ISINDEX())
+			std::string subject = (char*)VarPtr.Ptr;
+			*pComma = 0;
+			const std::string search = (char*)Index;
+			*pComma = ',';
+			const std::string replace = (char*)&pComma[1];
+			if (!subject.size() || !search.size())
 				return false;
-			if (PCHAR pComma = strchr(Index, ','))
+			size_t pos = 0;
+			while((pos = subject.find(search, pos)) != std::string::npos) {
+				 subject.replace(pos, search.length(), replace);
+				 pos += replace.length();
+			}
+			strcpy_s(DataTypeTemp,subject.c_str());
+			if (Dest.Ptr = DataTypeTemp)
 			{
-				strcpy_s(A, (char*)VarPtr.Ptr);
-				*pComma = 0;
-				strcpy_s(B, (char*)Index);
-				*pComma = ',';
-				strcpy_s(C, (char*)&pComma[1]);
-				if (!A || !B || !C)
-					return false;
-				while ((pos = strstr(A, B)) != NULL)  /* if -> while */
-				{
-					DataTypeTemp[0] = '\0';
-					strncat_s(DataTypeTemp, A, pos - A);
-					strcat_s(DataTypeTemp, C);
-					strcat_s(DataTypeTemp, pos + strlen(B));
-					strcpy_s(A, DataTypeTemp); /* added */
-				}
-				if (Dest.Ptr = DataTypeTemp)
-				{
-					Dest.Type = pStringType;
-					return true;
-				}
+				Dest.Type = pStringType;
+				return true;
 			}
 		}
+		return false;
+	}
 	case Upper:
 		strcpy_s(DataTypeTemp, (char*)VarPtr.Ptr);
 		_strupr_s(DataTypeTemp);
@@ -2323,13 +2317,17 @@ bool MQ2BuffType::GETMEMBER()
 				for (LONG i = 0; i < slots; i++) {
 					LONG attrib = GetSpellAttrib(pSpell, i);
 					if (attrib == 55 || attrib == 78 || attrib == 161 || attrib == 162 || attrib == 450 || attrib == 451 || attrib == 452)
-						Dest.DWord += pBuff->SlotData[i];
+						for (LONG j = 0; j < NUM_SLOTDATA; j++) {
+							if (pBuff->SlotData[j].Slot == i) {
+								Dest.DWord += pBuff->SlotData[j].Value;
+							}
+						}
 				}
 				return true;
 			}
 		}
 		return false;
-	case Counters:
+	case TotalCounters:
 		if (PSPELL pSpell = GetSpellByID(pBuff->SpellID))
 		{
 			if (pSpell->SpellType == 0) {
@@ -2339,7 +2337,91 @@ bool MQ2BuffType::GETMEMBER()
 				for (LONG i = 0; i < slots; i++) {
 					LONG attrib = GetSpellAttrib(pSpell, i);
 					if (attrib == 35 || attrib == 36 || attrib == 116 || attrib == 369)
-						Dest.DWord += pBuff->SlotData[i];
+						for (LONG j = 0; j < NUM_SLOTDATA; j++) {
+							if (pBuff->SlotData[j].Slot == i) {
+								Dest.DWord += pBuff->SlotData[j].Value;
+							}
+						}
+				}
+				return true;
+			}
+		}
+		return false;
+	case CountersDisease:
+		if (PSPELL pSpell = GetSpellByID(pBuff->SpellID))
+		{
+			if (pSpell->SpellType == 0) {
+				Dest.DWord = 0;
+				Dest.Type = pIntType;
+				LONG slots = GetSpellNumEffects(pSpell);
+				for (LONG i = 0; i < slots; i++) {
+					LONG attrib = GetSpellAttrib(pSpell, i);
+					if (attrib == 35)
+						for (LONG j = 0; j < NUM_SLOTDATA; j++) {
+							if (pBuff->SlotData[j].Slot == i) {
+								Dest.DWord += pBuff->SlotData[j].Value;
+							}
+						}
+				}
+				return true;
+			}
+		}
+		return false;
+	case CountersPoison:
+		if (PSPELL pSpell = GetSpellByID(pBuff->SpellID))
+		{
+			if (pSpell->SpellType == 0) {
+				Dest.DWord = 0;
+				Dest.Type = pIntType;
+				LONG slots = GetSpellNumEffects(pSpell);
+				for (LONG i = 0; i < slots; i++) {
+					LONG attrib = GetSpellAttrib(pSpell, i);
+					if (attrib == 36)
+						for (LONG j = 0; j < NUM_SLOTDATA; j++) {
+							if (pBuff->SlotData[j].Slot == i) {
+								Dest.DWord += pBuff->SlotData[j].Value;
+							}
+						}
+				}
+				return true;
+			}
+		}
+		return false;
+	case CountersCurse:
+		if (PSPELL pSpell = GetSpellByID(pBuff->SpellID))
+		{
+			if (pSpell->SpellType == 0) {
+				Dest.DWord = 0;
+				Dest.Type = pIntType;
+				LONG slots = GetSpellNumEffects(pSpell);
+				for (LONG i = 0; i < slots; i++) {
+					LONG attrib = GetSpellAttrib(pSpell, i);
+					if (attrib == 116)
+						for (LONG j = 0; j < NUM_SLOTDATA; j++) {
+							if (pBuff->SlotData[j].Slot == i) {
+								Dest.DWord += pBuff->SlotData[j].Value;
+							}
+						}
+				}
+				return true;
+			}
+		}
+		return false;
+	case CountersCorruption:
+		if (PSPELL pSpell = GetSpellByID(pBuff->SpellID))
+		{
+			if (pSpell->SpellType == 0) {
+				Dest.DWord = 0;
+				Dest.Type = pIntType;
+				LONG slots = GetSpellNumEffects(pSpell);
+				for (LONG i = 0; i < slots; i++) {
+					LONG attrib = GetSpellAttrib(pSpell, i);
+					if (attrib == 369)
+						for (LONG j = 0; j < NUM_SLOTDATA; j++) {
+							if (pBuff->SlotData[j].Slot == i) {
+								Dest.DWord += pBuff->SlotData[j].Value;
+							}
+						}
 				}
 				return true;
 			}
@@ -4314,7 +4396,7 @@ bool MQ2CharacterType::GETMEMBER()
 		if (PCHARINFO2 pChar2 = GetCharInfo2()) {
 			for (unsigned long k = 0; k < NUM_LONG_BUFFS; k++) {
 				if (PSPELL pSpell = GetSpellByID(pChar2->Buff[k].SpellID)) {
-					if (pSpell->SpellType != 1) {
+					if (pSpell->SpellType != 0) {
 						LONG slots = GetSpellNumEffects(pSpell);
 						for (LONG i = 0; i < slots; i++) {
 							LONG attrib = GetSpellAttrib(pSpell, i);
@@ -4322,7 +4404,11 @@ bool MQ2CharacterType::GETMEMBER()
 								|| attrib == 161 /*Mitigate Spell Damage*/ || attrib == 162 /*Mitigate Melee Damage*/
 								|| attrib == 450 /*DoT Guard*/ || attrib == 451 /*Melee Threshold Guard*/
 								|| attrib == 452 /*Spell Threshold Guard*/) {
-								Dest.DWord += pChar2->Buff[k].SlotData[i];
+								for (LONG j = 0; j < NUM_SLOTDATA; j++) {
+									if (pChar2->Buff[k].SlotData[j].Slot == i) {
+										Dest.DWord += pChar2->Buff[k].SlotData[j].Value;
+									}
+								}
 							}
 						}
 					}
@@ -4330,7 +4416,7 @@ bool MQ2CharacterType::GETMEMBER()
 			}
 		}
 		return true;
-	case Counters://this case adds all resist Counters and returns that, why is this useful?
+	case TotalCounters://this case adds all resist Counters and returns that, why is this useful?
 		Dest.DWord = 0;//should we split these into 4? one for each debuff?
 		Dest.Type = pIntType;
 		if (PCHARINFO2 pChar2 = GetCharInfo2()) {
@@ -4341,7 +4427,103 @@ bool MQ2CharacterType::GETMEMBER()
 						for (LONG i = 0; i < slots; i++) {
 							LONG attrib = GetSpellAttrib(pSpell, i);
 							if (attrib == 35 /*Disease Counter*/ || attrib == 36 /*Poison*/ || attrib == 116 /*Curse*/ || attrib == 369/*Corruption*/) {
-								Dest.DWord += pChar2->Buff[k].SlotData[i];
+								for (LONG j = 0; j < NUM_SLOTDATA; j++) {
+									if (pChar2->Buff[k].SlotData[j].Slot == i) {
+										Dest.DWord += pChar2->Buff[k].SlotData[j].Value;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return true;
+	case CountersDisease://this case adds all resist Counters and returns that, why is this useful?
+		Dest.DWord = 0;//should we split these into 4? one for each debuff?
+		Dest.Type = pIntType;
+		if (PCHARINFO2 pChar2 = GetCharInfo2()) {
+			for (unsigned long k = 0; k < NUM_LONG_BUFFS; k++) {
+				if (PSPELL pSpell = GetSpellByID(pChar2->Buff[k].SpellID)) {
+					if (pSpell->SpellType == 0) {
+						LONG slots = GetSpellNumEffects(pSpell);
+						for (LONG i = 0; i < slots; i++) {
+							LONG attrib = GetSpellAttrib(pSpell, i);
+							if (attrib == 35 /*Disease Counter*/) {
+								for (LONG j = 0; j < NUM_SLOTDATA; j++) {
+									if (pChar2->Buff[k].SlotData[j].Slot == i) {
+										Dest.DWord += pChar2->Buff[k].SlotData[j].Value;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return true;
+	case CountersPoison://this case adds all resist Counters and returns that, why is this useful?
+		Dest.DWord = 0;//should we split these into 4? one for each debuff?
+		Dest.Type = pIntType;
+		if (PCHARINFO2 pChar2 = GetCharInfo2()) {
+			for (unsigned long k = 0; k < NUM_LONG_BUFFS; k++) {
+				if (PSPELL pSpell = GetSpellByID(pChar2->Buff[k].SpellID)) {
+					if (pSpell->SpellType == 0) {
+						LONG slots = GetSpellNumEffects(pSpell);
+						for (LONG i = 0; i < slots; i++) {
+							LONG attrib = GetSpellAttrib(pSpell, i);
+							if (attrib == 36 /*Poison*/) {
+								for (LONG j = 0; j < NUM_SLOTDATA; j++) {
+									if (pChar2->Buff[k].SlotData[j].Slot == i) {
+										Dest.DWord += pChar2->Buff[k].SlotData[j].Value;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return true;
+	case CountersCurse://this case adds all resist Counters and returns that, why is this useful?
+		Dest.DWord = 0;//should we split these into 4? one for each debuff?
+		Dest.Type = pIntType;
+		if (PCHARINFO2 pChar2 = GetCharInfo2()) {
+			for (unsigned long k = 0; k < NUM_LONG_BUFFS; k++) {
+				if (PSPELL pSpell = GetSpellByID(pChar2->Buff[k].SpellID)) {
+					if (pSpell->SpellType == 0) {
+						LONG slots = GetSpellNumEffects(pSpell);
+						for (LONG i = 0; i < slots; i++) {
+							LONG attrib = GetSpellAttrib(pSpell, i);
+							if (attrib == 116 /*Curse*/) {
+								for (LONG j = 0; j < NUM_SLOTDATA; j++) {
+									if (pChar2->Buff[k].SlotData[j].Slot == i) {
+										Dest.DWord += pChar2->Buff[k].SlotData[j].Value;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return true;
+	case CountersCorruption://this case adds all resist Counters and returns that, why is this useful?
+		Dest.DWord = 0;//should we split these into 4? one for each debuff?
+		Dest.Type = pIntType;
+		if (PCHARINFO2 pChar2 = GetCharInfo2()) {
+			for (unsigned long k = 0; k < NUM_LONG_BUFFS; k++) {
+				if (PSPELL pSpell = GetSpellByID(pChar2->Buff[k].SpellID)) {
+					if (pSpell->SpellType == 0) {
+						LONG slots = GetSpellNumEffects(pSpell);
+						for (LONG i = 0; i < slots; i++) {
+							LONG attrib = GetSpellAttrib(pSpell, i);
+							if (attrib == 369/*Corruption*/) {
+								for (LONG j = 0; j < NUM_SLOTDATA; j++) {
+									if (pChar2->Buff[k].SlotData[j].Slot == i) {
+										Dest.DWord += pChar2->Buff[k].SlotData[j].Value;
+									}
+								}
 							}
 						}
 					}
@@ -4412,7 +4594,8 @@ bool MQ2CharacterType::GETMEMBER()
 			if (pAggroInfo) {
 				for (int i = 0; i < xtm->XTargetSlots.Count; i++) {
 					XTARGETSLOT xts = xtm->XTargetSlots[i];
-					if (DWORD spID = xts.SpawnID && xts.xTargetType == XTARGET_AUTO_HATER) {
+					DWORD spID = xts.SpawnID;
+					if (spID && xts.xTargetType == XTARGET_AUTO_HATER) {
 						if (PSPAWNINFO pSpawn = (PSPAWNINFO)GetSpawnByID(spID)) {
 							if (pTarget && ((PSPAWNINFO)pTarget)->SpawnID == pSpawn->SpawnID)
 								continue;
@@ -4437,7 +4620,8 @@ bool MQ2CharacterType::GETMEMBER()
 			if (pAggroInfo) {
 				for (int i = 0; i < xtm->XTargetSlots.Count; i++) {
 					XTARGETSLOT xts = xtm->XTargetSlots[i];
-					if (DWORD spID = xts.SpawnID && xts.xTargetType == XTARGET_AUTO_HATER) {
+					DWORD spID = xts.SpawnID;
+					if (spID && xts.xTargetType == XTARGET_AUTO_HATER) {
 						if (PSPAWNINFO pSpawn = (PSPAWNINFO)GetSpawnByID(spID)) {
 							if (pTarget && ((PSPAWNINFO)pTarget)->SpawnID == pSpawn->SpawnID)
 								continue;
@@ -8810,7 +8994,7 @@ bool MQ2MacroQuestType::GETMEMBER()
 		// Convert the creation time time to local time. 
 		FileTimeToSystemTime(&FileData.ftLastWriteTime, &st);
 		FindClose(hFile);
-		sprintf_s(DataTypeTemp, "%d%d%d", st.wYear, st.wMonth, st.wDay);
+		sprintf_s(DataTypeTemp, "%04d%02d%02d", st.wYear, st.wMonth, st.wDay);
 		Dest.Ptr = &DataTypeTemp[0];
 		Dest.Type = pStringType;
 		return true;
@@ -8823,6 +9007,96 @@ bool MQ2MacroQuestType::GETMEMBER()
 		Dest.Ptr = &DataTypeTemp[0];
 		Dest.Type = pStringType;
 		return true;
+	case Version:
+	{
+		DataTypeTemp[0] = '\0';
+		HRESULT ret = S_FALSE;
+		CHAR    szGetName[256];
+		CHAR    szResult[2048];
+		LPCSTR   lpVersion;        // String pointer to Item text
+		DWORD   dwVerInfoSize;    // Size of version information block
+		DWORD   dwVerHnd = 0;        // An 'ignored' parameter, always '0'
+		UINT    uVersionLen;
+		BOOL    bRetCode;
+		HMODULE hMq2Main = 0;// GetModuleHandle("mq2main.dll");
+		GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCTSTR)&DataTypeTemp, &hMq2Main);
+		GetModuleFileName(hMq2Main, szResult, 2048);
+		dwVerInfoSize = GetFileVersionInfoSize(szResult, &dwVerHnd);
+		if (dwVerInfoSize) {
+			LPSTR   lpstrVffInfo;
+			HANDLE  hMem;
+			hMem = GlobalAlloc(GMEM_MOVEABLE, dwVerInfoSize);
+			lpstrVffInfo = (LPSTR)GlobalLock(hMem);
+			GetFileVersionInfo(szResult, dwVerHnd, dwVerInfoSize, lpstrVffInfo);
+
+			sprintf_s(szGetName,"%s","\\VarFileInfo\\Translation");
+			uVersionLen = 0;
+			lpVersion = NULL;
+			bRetCode = VerQueryValue((LPVOID)lpstrVffInfo,szGetName,(void **)&lpVersion,(UINT *)&uVersionLen);
+			if (bRetCode && uVersionLen && lpVersion) {
+				sprintf_s(szResult, "%04x%04x", (WORD)(*((DWORD *)lpVersion)),(WORD)(*((DWORD *)lpVersion) >> 16));
+			}
+			else {
+				sprintf_s(szResult, "%s","041904b0");
+			}
+			sprintf_s(szGetName, "\\StringFileInfo\\%s\\FileVersion", szResult);
+			uVersionLen = 0;
+			lpVersion = NULL;
+			bRetCode = VerQueryValue((LPVOID)lpstrVffInfo,szGetName,(void **)&lpVersion,(UINT *)&uVersionLen);
+			if (bRetCode && uVersionLen && lpVersion) {
+				sprintf_s(DataTypeTemp,"%s", lpVersion);
+			}
+			GlobalFree(hMem);
+		}
+		Dest.Ptr = &DataTypeTemp[0];
+		Dest.Type = pStringType;
+		return true;
+	}
+	case InternalName:
+	{
+		DataTypeTemp[0] = '\0';
+		HRESULT ret = S_FALSE;
+		CHAR    szGetName[256];
+		CHAR    szResult[2048];
+		LPCSTR   lpVersion;        // String pointer to Item text
+		DWORD   dwVerInfoSize;    // Size of version information block
+		DWORD   dwVerHnd = 0;        // An 'ignored' parameter, always '0'
+		UINT    uVersionLen;
+		BOOL    bRetCode;
+		HMODULE hMq2Main = 0;// GetModuleHandle("mq2main.dll");
+		GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCTSTR)&DataTypeTemp, &hMq2Main);
+		GetModuleFileName(hMq2Main, szResult, 2048);
+		dwVerInfoSize = GetFileVersionInfoSize(szResult, &dwVerHnd);
+		if (dwVerInfoSize) {
+			LPSTR   lpstrVffInfo;
+			HANDLE  hMem;
+			hMem = GlobalAlloc(GMEM_MOVEABLE, dwVerInfoSize);
+			lpstrVffInfo = (LPSTR)GlobalLock(hMem);
+			GetFileVersionInfo(szResult, dwVerHnd, dwVerInfoSize, lpstrVffInfo);
+
+			sprintf_s(szGetName,"%s","\\VarFileInfo\\Translation");
+			uVersionLen = 0;
+			lpVersion = NULL;
+			bRetCode = VerQueryValue((LPVOID)lpstrVffInfo,szGetName,(void **)&lpVersion,(UINT *)&uVersionLen);
+			if (bRetCode && uVersionLen && lpVersion) {
+				sprintf_s(szResult, "%04x%04x", (WORD)(*((DWORD *)lpVersion)),(WORD)(*((DWORD *)lpVersion) >> 16));
+			}
+			else {
+				sprintf_s(szResult, "%s","041904b0");
+			}
+			sprintf_s(szGetName, "\\StringFileInfo\\%s\\InternalName", szResult);
+			uVersionLen = 0;
+			lpVersion = NULL;
+			bRetCode = VerQueryValue((LPVOID)lpstrVffInfo,szGetName,(void **)&lpVersion,(UINT *)&uVersionLen);
+			if (bRetCode && uVersionLen && lpVersion) {
+				sprintf_s(DataTypeTemp,"%s", lpVersion);
+			}
+			GlobalFree(hMem);
+		}
+		Dest.Ptr = &DataTypeTemp[0];
+		Dest.Type = pStringType;
+		return true;
+	}
 	}
 	return false;
 }
@@ -13762,6 +14036,54 @@ bool MQ2WorldLocationType::GETMEMBER()
 	return false;
 }
 
+bool MQ2SolventType::GETMEMBER()
+{
+	try {
+		DWORD itemid = VarPtr.DWord;
+		if (itemid == -1)
+			itemid = 52023;
+		PMQ2TYPEMEMBER pMember = MQ2SolventType::FindMember(Member);
+		if (!pMember)
+			return false;
+		switch ((SolventTypeMembers)pMember->ID)
+		{
+			case Name:
+				strcpy_s(DataTypeTemp, GetAugmentNameByID(itemid));
+				Dest.Ptr = &DataTypeTemp[0];
+				Dest.Type = pStringType;
+				return true;
+			case ID:
+				Dest.DWord = itemid;
+				Dest.Type = pIntType;
+				return true;
+			case Item://do we have this solvent?
+				if (PCONTENTS pItem = FindItemByID(itemid))
+				{
+					Dest.Ptr = pItem;
+					Dest.Type = pItemType;
+					return true;
+				}
+				break;
+			case Count://do we have this solvent and if so how many?
+				Dest.DWord = 0;
+				if (PCONTENTS pCont= FindItemByID(itemid))
+				{
+					if (PITEMINFO pItem = GetItemFromContents(pCont))
+					{
+						Dest.DWord = FindItemCountByName(pItem->Name);		
+					}
+				}
+				Dest.Type = pIntType;
+				return true;
+			default:
+				return false;
+		};
+	}
+	catch (...) {
+		MessageBox(NULL, "CRAP! in SolventType", "An exception occured", MB_OK);
+	}
+	return false;
+}
 bool MQ2AugType::GETMEMBER()
 {
 	try {
@@ -13818,6 +14140,15 @@ bool MQ2AugType::GETMEMBER()
 					Dest.Ptr = pCret;
 					Dest.Type = pItemType;
 					return true;
+				}
+				break;
+			case Solvent:
+				if (PCONTENTS pCret = pCont->GetContent(index)) {
+					if (PITEMINFO ptheAug = GetItemFromContents(pCret)) {
+						Dest.DWord = ptheAug->SolventItemID;
+						Dest.Type = pSolventType;
+						return true;
+					}
 				}
 				break;
 			default:

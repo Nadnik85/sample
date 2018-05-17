@@ -11,8 +11,9 @@
 // 2.1 by Eqmule 2015-12-11 added support for eqgame.exe dated Dec 08 2015
 // 2.2 by rswiders 2016-05-05 added support to set the FPS indicator color (/fpscolor)
 // 2.3 - Eqmule 07-22-2016 - Added string safety.
+// 2.4 - Eqmule 04-20-2018 - Fixed a ctd in pulse when pWndMgr was NULL
 
-#define   PLUGIN_VERS     2.3     // Plugin Version
+#define   PLUGIN_VERS     2.4     // Plugin Version
 #pragma warning(disable:4786)
 //#define DEBUG_TRY 1
 #include "../MQ2Plugin.h"
@@ -364,7 +365,7 @@ PLUGIN_API VOID OnPulse(VOID)
       }
       else
       {
-         if (InForeground)
+         if (InForeground  && pWndMgr)
          {
             // just switched to background, release ctrl/alt/shift
             ((PCXWNDMGR)pWndMgr)->KeyboardFlags[0]=0;

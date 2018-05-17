@@ -1,3 +1,70 @@
+May 16 2018 by redguides
+- KissAssist (ctaylor22, maskoi) updated to 10.2.6! Gmail features, CastMount, and multi rez options. 
+  Check the kissassist forum for the full changelog.
+- MQ2AutoLoot (plure) Fixed issue with /autoloot sell. It was trying to sell before the merchant was done with the previous
+  sale, which caused it to act all buggy. It wasn't a pretty fix, I really need to figure out when a merchant is done being 
+  busy with the previous sale.
+
+May 16 2018 by eqmule
+- Updated for LIVE
+- Updated for TEST
+
+May 13 2018 by SwiftyMUSE
+- Added MQ2SoundControl to global build.
+- Removed patterns from MQ2Camera, MQ2Moveutils, MQ2SoundControl
+- Fixed keybinds, you can no longer bind to the 22 additional keybind names
+- Changed ${Me} and ${Buff} TLO's
+  Added DiseaseCounters, PoisonCounters, CurseCounters, CorruptionCounters
+  Changed Counters to TotalCounters
+  Updated all counters to correctly pull the spelldata values
+
+May 08 2018 by eqmule
+- Updated or TEST
+
+May 07 2018 by eqmule
+- ${FindItem} and ${FindBankItem} and ${FindItemCount} now takes item ids as well
+  Example: /echo ${FindItemCount[12345]} will find how many items with the id 12345 you have.
+- /itemnotify now takes item ids as well.
+  Example: /itemnotify #12345 leftmouseup will pick up an item with the id 12345 if one exist.
+  NOTE: the hash (#) IS mandatory when using it this way.
+
+Apr 27 2018 by eqmule
+- Added .Solvent to the Augslot TLO it returns a SolvenType and if empty just the Name :cred and nagging for weeks: maskoi
+  SolventType has 4 members: Name which is a string type, ID as int, Item as itemtype and Count as int.
+  Example 1: /echo ${FindItem[Cloth Cap].AugSlot[0].Solvent.Name}
+  Output: Class I Augmentation Distiller
+  Example 2: /echo ${FindItem[Cloth Cap].AugSlot[0].Solvent.ID}
+  Output: 47001
+  //if you dont have the solvent in your inventory:
+  Example 3: /echo ${FindItem[Cloth Cap].AugSlot[0].Solvent.Item.Name}
+  Output: NULL
+  Example 4: /echo ${FindItem[Cloth Cap].AugSlot[0].Solvent.Count}
+  Output: 0
+
+Apr 24 2018 by eqmule
+- Updated for TEST
+
+Apr 24 3018 by redguides
+- included other changes from (late) on April 23rd. $MacroQuest.Version and itemnotify fix.
+
+Apr 23 2018 by eqmule
+- Fixed Me.XTAggroCount and Me.XTHaterCount
+- Added ${MacroQuest.Version} it will grab whatever version is set in the resource for fileversion for mq2main.dll
+- Added ${MacroQuest.InternalName} it will grab whatever internal name is set in resource for the internalname for mq2main.dll
+- Fixed a crash in /itemnotify
+
+Apr 21 2018 by eqmule
+- Updated for LIVE
+- .Replace can once again take an empty second argument example ${Target.Name.Replace[mule,]} output Eq if targets name is Eqmule
+
+Apr 20 2018 by eqmule
+- Bugfixes.
+- Fixed a null pointer crash in MQ2FPS thanks to almar for the report and dump file.
+
+Apr 20 2018 by redguides
+- Happy earth day! (ok I jumped the gun, apparently it's some other holiday about trees)
+- MQ2EasyFind (eqmule) fix for run stopping/stuttering
+
 Apr 19 2018 by eqmule
 - Fixed a bug in _SPELLBUFF, it had the wrong size and members
   this will fix any problems with casting spells etc.

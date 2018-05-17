@@ -444,7 +444,7 @@ DECLARE_ABILITY_OPTION(pSENSE, "sensetraps", "[ON/OFF]?", "0", "${If[${meleemvi[
 DECLARE_ABILITY_OPTION(pSHIEL, "shield", "[ID] item?", "0", "${If[${meleemvi[plugin]} && ${Me.Skill[bash]},0,0]}");
 
 DECLARE_ABILITY_OPTION(pSLAMS, "slam", "[ON/OFF]?", "${If[${Select[${Me.Race.ID},2,9,10]},1,0]}", // 2=barbarian 9=troll 10=ogre
-"${If[${meleemvi[plugin]} && ${${Select[${Me.Race.ID},2,9,10]},1,0]}");
+"${If[${meleemvi[plugin]} && ${Select[${Me.Race.ID},2,9,10]},1,0]}");
 
 DECLARE_ABILITY_OPTION(pSLAPF, "slapface", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Slap in the Face]} || ${Me.CombatAbility[Slap in the Face rk. ii]} || ${Me.CombatAbility[Slap in the Face rk. iii]} || ${Me.CombatAbility[Kick in the Teeth]} || ${Me.CombatAbility[Kick in the Teeth rk. ii]} || ${Me.CombatAbility[Kick in the Teeth rk. iii]} || ${Me.CombatAbility[Punch in the Throat]} || ${Me.CombatAbility[Punch in the Throat rk. ii]} || ${Me.CombatAbility[Punch in the Throat rk. iii]} || ${Me.CombatAbility[Kick in the Shins]} || ${Me.CombatAbility[Kick in the Shins rk. ii]} || ${Me.CombatAbility[Kick in the Shins rk. iii]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Slap in the Face]} || ${Me.CombatAbility[Slap in the Face rk. ii]} || ${Me.CombatAbility[Slap in the Face rk. iii]} || ${Me.CombatAbility[Kick in the Teeth]} || ${Me.CombatAbility[Kick in the Teeth rk. ii]} || ${Me.CombatAbility[Kick in the Teeth rk. iii]} || ${Me.CombatAbility[Punch in the Throat]} || ${Me.CombatAbility[Punch in the Throat rk. ii]} || ${Me.CombatAbility[Punch in the Throat rk. iii]} || ${Me.CombatAbility[Kick in the Shins]} || ${Me.CombatAbility[Kick in the Shins rk. ii]} || ${Me.CombatAbility[Kick in the Shins rk. iii]}),1,0]}");
 

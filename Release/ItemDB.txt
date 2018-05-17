@@ -78,7 +78,14 @@
 10449	20	Enchanted Lrg. Brick of Adamantite
 10455	20	Enchanted Lrg. Brick of Mithril
 11051	1	Swirling Blue Potion
+11069	351	Fancy Red Apple
+11070	351	Fancy Green Apple
+11071	351	Fancy Pumpkin
+11083	351	Fancy Mushroom
 11301	20	Issued Water
+11373	351	Fancy Pie
+11921	351	Fancy Fruitcake
+12499	351	Fancy Ham
 13006	20	Water Flask
 13007	20	Ration
 13035	20	Elven Wine

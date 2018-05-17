@@ -1591,7 +1591,17 @@ EQLIB_OBJECT void CConfirmationDialog::ResetFocusOnClose(void);
 /*0x170*/    BYTE    Unknown0x170[0x18];
 /*0x188*/
 };
-
+class ItemGlobalIndex
+{
+public:
+	ItemGlobalIndex::ItemContainerInstance Location;
+	ItemGlobalIndex::ItemIndex Index;
+	//CHAR morestuff[2048];
+EQLIB_OBJECT	ItemGlobalIndex::ItemGlobalIndex();
+EQLIB_OBJECT bool ItemGlobalIndex::IsKeyRingLocation(void);
+EQLIB_OBJECT bool ItemGlobalIndex::IsEquippedLocation(void);
+EQLIB_OBJECT bool ItemGlobalIndex::IsValidIndex(void);
+};
 class CContainerMgr
 {
 public:
@@ -1632,6 +1642,31 @@ EQLIB_OBJECT void CContainerWnd::Deactivate(void);
 EQLIB_OBJECT bool CContainerWnd::ContainsNoDrop(void);
 EQLIB_OBJECT void CContainerWnd::HandleCombine(void);
 EQLIB_OBJECT void CContainerWnd::Init(void);
+
+/*0x04*/ PCONTENTS pCont;
+/*0x08*/ ItemGlobalIndex	Location;
+/*0x14*/ VeArray<CInvSlotWnd*> InvSlotWnds;
+/*0x18*/ CButtonWnd *pCombineButton;
+/*0x1c*/ CButtonWnd *pDoneButton;
+/*0x20*/ CButtonWnd *pStandardDoneButton;
+/*0x24*/ CButtonWnd *pCombineDoneButton;
+/*0x28*/ CButtonWnd *pContainerIcon;
+/*0x2c*/ CButtonWnd *pContainerStandardIcon;
+/*0x30*/ CButtonWnd *pContainerCombineIcon;
+/*0x34*/ CTextureAnimation *pIconAnimation;
+/*0x38*/ CLabel*ContainerLabel;
+/*0x3c*/ CInvSlotWnd *pContainerSlotTemplate;
+/*0x40*/ CXWnd *pStandardItems;
+/*0x44*/ CXWnd *pStandardItemsWithDone;
+/*0x48*/ CXWnd *pCombineItems;
+/*0x4c*/ CStmlWnd *pStandardSize;
+/*0x50*/ CStmlWnd *pCombineSize;
+/*0x54*/ bool bCombineValid;
+/*0x55*/ bool bUserCloseable;
+/*0x58*/ int ContainerType;//classic = 0,stamdard = 1, combine = 2
+/*0x5c*/ int IndexDoneButton;
+/*0x60*/ CContextMenu *ContextMenu;
+/*0x64*/ 
 };
 
 
@@ -1770,7 +1805,11 @@ EQLIB_OBJECT void CCursorAttachment::Deactivate(void);
 EQLIB_OBJECT void CCursorAttachment::DrawButtonText(void)const;
 EQLIB_OBJECT void CCursorAttachment::DrawQuantity(void)const;
 EQLIB_OBJECT void CCursorAttachment::Init(void);
+#ifndef EMU
+EQLIB_OBJECT void CCursorAttachment::AttachToCursor(class CTextureAnimation *overlay, class CTextureAnimation *bg, int type, int index, EqItemGuid &itemGuid, int itemID, char const *assigned_name, char const *name, int qty = -1, int IconID = -1);
+#else
 EQLIB_OBJECT void CCursorAttachment::AttachToCursor(CTextureAnimation *overlay, CTextureAnimation *bg, int type, int index, EqItemGuid &itemGuid, int itemID, char const *name, int qty);
+#endif
 };
 
 class CDIMap
@@ -2125,17 +2164,7 @@ EQLIB_OBJECT unsigned int CEQSuiteTextureLoader::CreateTexture(class CUITextureI
 EQLIB_OBJECT void CEQSuiteTextureLoader::UnloadAllTextures(void);
 EQLIB_OBJECT const CXStr& CEQSuiteTextureLoader::GetDefaultUIPath(int DirType) const;
 };
-class ItemGlobalIndex
-{
-public:
-	ItemGlobalIndex::ItemContainerInstance Location;
-	ItemGlobalIndex::ItemIndex Index;
-	//CHAR morestuff[2048];
-EQLIB_OBJECT	ItemGlobalIndex::ItemGlobalIndex();
-EQLIB_OBJECT bool ItemGlobalIndex::IsKeyRingLocation(void);
-EQLIB_OBJECT bool ItemGlobalIndex::IsEquippedLocation(void);
-EQLIB_OBJECT bool ItemGlobalIndex::IsValidIndex(void);
-};
+
 //oct 26 2015 - eqmule 
 typedef struct _TARGETRING {
 /*0x00*/	DWORD Gem;//the gem the spell below is memmed in... 0-11
@@ -2414,6 +2443,16 @@ EQLIB_OBJECT int CFeedbackWnd::WndNotification(class CXWnd *,unsigned __int32,vo
 //EQLIB_OBJECT void * CFeedbackWnd::`scalar deleting destructor'(unsigned int);
 //EQLIB_OBJECT void * CFeedbackWnd::`vector deleting destructor'(unsigned int);
 EQLIB_OBJECT void CFeedbackWnd::Deactivate(void);
+};
+
+class CFindLocationWnd : public CSidlScreenWnd
+{
+	//has virtuals, but we get those from CSidlScreenWnd
+public:
+	EQLIB_OBJECT bool CFindLocationWnd::HandleFindBegin();
+	EQLIB_OBJECT void CFindLocationWnd::HandleFindEnd();
+	EQLIB_OBJECT void CFindLocationWnd::HandleRowClicked(int Index);
+	EQLIB_OBJECT void CFindLocationWnd::HandleFindableZoneConnectionsMessage(class CUnSerializeBuffer &buf);
 };
 
 class CFileSelectionWnd : public CSidlScreenWnd
@@ -5124,33 +5163,77 @@ EQLIB_OBJECT unsigned int CRC32Generator::updateCRC32(unsigned int,unsigned char
 // private
 EQLIB_OBJECT static unsigned int * CRC32Generator::_crcTable;
 };
+typedef struct _ResolutionUpdateData 
+{
+	int Width;
+	int Height;
+	int BitsPerPixel;
+	int RefreshRate;
+	bool bFullscreen;
+	void Set(int width, int height, int bitsPerPixel, int refreshRate, bool bfullscreen = false)
+	{
+		Width = width;
+		Height = height;
+		BitsPerPixel = bitsPerPixel;
+		RefreshRate = refreshRate;
+		bFullscreen = bfullscreen;
+	}
+}ResolutionUpdateData,*PResolutionUpdateData;
+typedef struct _SDeviceInfo
+{
+	CHAR Name[0x80];
+}SDeviceInfo,*PSDeviceInfo;
 
-class CResolutionHandler
+class CResolutionHandlerBase
 {
 public:
-EQLIB_OBJECT static bool __cdecl CResolutionHandler::IsFullscreenAvailable(void);
-EQLIB_OBJECT static int __cdecl CResolutionHandler::GetDesktopBitsPerPixel(void);
-EQLIB_OBJECT static int __cdecl CResolutionHandler::GetDesktopHeight(void);
-EQLIB_OBJECT static int __cdecl CResolutionHandler::GetDesktopRefreshRate(void);
-EQLIB_OBJECT static int __cdecl CResolutionHandler::GetDesktopWidth(void);
-EQLIB_OBJECT static int __cdecl CResolutionHandler::GetHeight(void);
-EQLIB_OBJECT static int __cdecl CResolutionHandler::GetWidth(void);
-EQLIB_OBJECT static int __cdecl CResolutionHandler::Init(void);
-EQLIB_OBJECT static void __cdecl CResolutionHandler::ChangeToResolution(int,int,int,int,int);
-EQLIB_OBJECT static void __cdecl CResolutionHandler::SaveSettings(void);
-EQLIB_OBJECT static void __cdecl CResolutionHandler::Shutdown(void);
-EQLIB_OBJECT static void __cdecl CResolutionHandler::ToggleScreenMode(void);
-EQLIB_OBJECT static void __cdecl CResolutionHandler::UpdateWindowPosition(void);
-// private
-EQLIB_OBJECT static bool CResolutionHandler::ms_isFullscreen;
-EQLIB_OBJECT static int CResolutionHandler::ms_fullscreenBitsPerPixel;
-EQLIB_OBJECT static int CResolutionHandler::ms_fullscreenRefreshRate;
-EQLIB_OBJECT static int CResolutionHandler::ms_height;
-EQLIB_OBJECT static int CResolutionHandler::ms_width;
-EQLIB_OBJECT static int CResolutionHandler::ms_windowedOffsetX;
-EQLIB_OBJECT static int CResolutionHandler::ms_windowedOffsetY;
-};
+EQLIB_OBJECT static bool __cdecl CResolutionHandlerBase::IsFullscreenAvailable(void);
+EQLIB_OBJECT static int __cdecl CResolutionHandlerBase::GetDesktopBitsPerPixel(void);
+EQLIB_OBJECT static int __cdecl CResolutionHandlerBase::GetDesktopHeight(void);
+EQLIB_OBJECT static int __cdecl CResolutionHandlerBase::GetDesktopRefreshRate(void);
+EQLIB_OBJECT static int __cdecl CResolutionHandlerBase::GetDesktopWidth(void);
+EQLIB_OBJECT static int __cdecl CResolutionHandlerBase::GetHeight(void);
+EQLIB_OBJECT static int __cdecl CResolutionHandlerBase::GetWidth(void);
+EQLIB_OBJECT static int __cdecl CResolutionHandlerBase::Init(void);
+EQLIB_OBJECT static void __cdecl CResolutionHandlerBase::ChangeToResolution(int,int,int,int,int);
+EQLIB_OBJECT static void __cdecl CResolutionHandlerBase::SaveSettings(void);
+EQLIB_OBJECT static void __cdecl CResolutionHandlerBase::Shutdown(void);
+EQLIB_OBJECT static void __cdecl CResolutionHandlerBase::ToggleScreenMode(void);
+EQLIB_OBJECT static void __cdecl CResolutionHandlerBase::UpdateWindowPosition(void);
 
+
+	DWORD vfTable;
+	bool bIsFullscreen;
+	int FullscreenBitsPerPixel;
+	int FullscreenRefreshRate;
+	int FullscreenWidth;
+	int FullscreenHeight;
+	int WindowedWidth;
+	int WindowedHeight;
+    int WindowOffsetX;
+    int WindowOffsetY;
+	int RestoredWidth;
+	int RestoredHeight;
+	int RestoredOffsetX;
+	int RestoredOffsetY;
+	SDeviceInfo DeviceTable[0x10];
+	int DeviceCount;
+	long DeviceIndex;
+	bool bUseD3DTextureCompression;
+	bool bResizable;
+	bool bMaximized;
+	bool bAlwaysOnTop;
+	bool bActive;
+	UINT ActiveThreadID;
+	HWND ActiveWnd;
+	bool bChangingScreenResolutions;
+};
+class CResolutionHandler : public CResolutionHandlerBase
+{
+public:
+	EQLIB_OBJECT void UpdateResolution(ResolutionUpdateData& data);
+	EQLIB_OBJECT DWORD GetWindowedStyle() const;
+};
 class CRespawnWnd
 {
 public:
@@ -6648,7 +6731,12 @@ EQLIB_OBJECT void CXWndManager::UpdateChildAndSiblingInfo(void);
 // virtual
 EQLIB_OBJECT CXWndManager::~CXWndManager(void);
 EQLIB_OBJECT class CTextureFont *GetFont(int FontIndex) const {
-	return (CTextureFont *)((PCXWNDMGR)this)->FontsArray[FontIndex];
+	if (PCXWNDMGR wndmgr = (PCXWNDMGR)this) {
+		if (wndmgr->FontsArray.Count >= FontIndex) {
+			return (CTextureFont *)wndmgr->FontsArray[FontIndex];
+		}
+	}
+	return 0;
 }
 EQLIB_OBJECT int CXWndManager::DestroyWnd(CXWnd *wnd);
 //EQLIB_OBJECT void * CXWndManager::`scalar deleting destructor'(unsigned int);
@@ -6876,7 +6964,11 @@ EQLIB_OBJECT void EQ_Character::InitInnates(unsigned int,unsigned int);
 EQLIB_OBJECT void EQ_Character::InitMyLanguages(void);
 EQLIB_OBJECT void EQ_Character::InitSkills(unsigned char,unsigned int);
 EQLIB_OBJECT void EQ_Character::ItemSold(long);
-EQLIB_OBJECT void EQ_Character::ModifyCurHP(int,class EQPlayer *);
+#ifdef EMU
+EQLIB_OBJECT void EQ_Character::ModifyCurHP(int modification,class PlayerZoneClient *resposibleplayer,int skilltype);
+#else
+EQLIB_OBJECT void EQ_Character::ModifyCurHP(__int64 modification, class PlayerZoneClient *resposibleplayer,int skilltype);
+#endif
 EQLIB_OBJECT void EQ_Character::NotifyPCAffectChange(int,int);
 EQLIB_OBJECT void EQ_Character::ProcessAllStats(void);
 EQLIB_OBJECT void EQ_Character::ProcessEnvironment(void);

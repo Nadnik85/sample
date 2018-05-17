@@ -1268,7 +1268,11 @@ FUNCTION_AT_ADDRESS(bool  CCursorAttachment::IsOkToActivate(int),CCursorAttachme
 FUNCTION_AT_ADDRESS(bool  CCursorAttachment::RemoveAttachment(void),CCursorAttachment__RemoveAttachment);
 #endif
 #ifdef CCursorAttachment__AttachToCursor_x
+#ifndef EMU
+FUNCTION_AT_ADDRESS(void CCursorAttachment::AttachToCursor(class CTextureAnimation *overlay, class CTextureAnimation *bg, int type, int index, EqItemGuid &itemGuid, int itemID, char const *assigned_name, char const *name, int qty, int IconID),CCursorAttachment__AttachToCursor);
+#else
 FUNCTION_AT_ADDRESS(void CCursorAttachment::AttachToCursor(class CTextureAnimation *overlay, class CTextureAnimation *bg, int type, int index, EqItemGuid &itemGuid, int itemID, char const *name, int qty),CCursorAttachment__AttachToCursor);
+#endif
 #endif
 #ifdef CCursorAttachment__Deactivate_x
 FUNCTION_AT_ADDRESS(void CCursorAttachment::Deactivate(void),CCursorAttachment__Deactivate);
@@ -4088,7 +4092,11 @@ FUNCTION_AT_ADDRESS( EQ_Character::~EQ_Character(void),EQ_Character__dEQ_Charact
 FUNCTION_AT_ADDRESS(void  EQ_Character::EQ_CharacterResetAllMembers(void),EQ_Character__EQ_CharacterResetAllMembers);
 #endif
 #ifdef EQ_Character__ModifyCurHP_x
-FUNCTION_AT_ADDRESS(void  EQ_Character::ModifyCurHP(int,class EQPlayer *),EQ_Character__ModifyCurHP);
+#ifdef EMU
+FUNCTION_AT_ADDRESS(void  EQ_Character::ModifyCurHP(__int modification, class PlayerZoneClient *resposibleplayer,int skilltype),EQ_Character__ModifyCurHP);
+#else
+FUNCTION_AT_ADDRESS(void  EQ_Character::ModifyCurHP(__int64 modification, class PlayerZoneClient *resposibleplayer,int skilltype),EQ_Character__ModifyCurHP);
+#endif
 #endif
 #ifdef EQ_Character__normal_to_special_x
 FUNCTION_AT_ADDRESS(int __cdecl EQ_Character::normal_to_special(int),EQ_Character__normal_to_special);
@@ -6489,6 +6497,12 @@ FUNCTION_AT_ADDRESS(void __cdecl CResolutionHandler::ChangeToResolution(int,int,
 #endif
 #ifdef CResolutionHandler__UpdateWindowPosition_x
 FUNCTION_AT_ADDRESS(void __cdecl CResolutionHandler::UpdateWindowPosition(void),CResolutionHandler__UpdateWindowPosition);
+#endif
+#ifdef CResolutionHandler__UpdateResolution_x
+FUNCTION_AT_ADDRESS(void CResolutionHandler::UpdateResolution(ResolutionUpdateData& data),CResolutionHandler__UpdateResolution);
+#endif
+#ifdef CResolutionHandler__GetWindowedStyle_x
+FUNCTION_AT_ADDRESS(DWORD CResolutionHandler::GetWindowedStyle() const,CResolutionHandler__GetWindowedStyle);
 #endif
 #ifdef CResolutionHandler__GetDesktopWidth_x
 FUNCTION_AT_ADDRESS(int __cdecl CResolutionHandler::GetDesktopWidth(void),CResolutionHandler__GetDesktopWidth);

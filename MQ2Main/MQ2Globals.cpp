@@ -53,6 +53,7 @@ namespace MQ2Globals
 		EQADDR_ZONETYPE = (PBYTE)__ZoneType;
 		gbUseTellWindows = *(BOOL*)__UseTellWindows;
 		gpbRangedAttackReady = (PCHAR)__RangeAttackReady;
+		ppCResolutionHandler = (CResolutionHandler**)pinstCResolutionHandler;
 		gpbShowNetStatus = (PCHAR)__NetStatusToggle;
 		g_ppDrawHandler = (DWORD*)__DrawHandler;
 		gpShowNames = (DWORD*)__ShowNames;
@@ -157,6 +158,7 @@ namespace MQ2Globals
 		ppContainerMgr = (CContainerMgr**)pinstCContainerMgr;
 		ppChatManager = (CChatManager**)pinstCChatWindowManager;
 		ppFacePick = (CFacePick**)pinstCFacePick;
+		ppFindLocationWnd = (CFindLocationWnd**)pinstCFindLocationWnd;
 		#ifndef EMU
 		ppFindItemWnd = (CFindItemWnd**)pinstCFindItemWnd;
 		#endif
@@ -213,7 +215,6 @@ namespace MQ2Globals
 		ppSelectorWnd = (CSelectorWnd**)pinstCSelectorWnd;
 		ppTrackingWnd = (CTrackingWnd**)pinstCTrackingWnd;
 		ppInspectWnd = (CInspectWnd**)pinstCInspectWnd;
-		ppFeedbackWnd = (CFeedbackWnd**)pinstCFeedbackWnd;
 		ppBugReportWnd = (CBugReportWnd**)pinstCBugReportWnd;
 		ppVideoModesWnd = (CVideoModesWnd**)pinstCVideoModesWnd;
 		ppCompassWnd = (CCompassWnd**)pinstCCompassWnd;
@@ -227,6 +228,7 @@ namespace MQ2Globals
 		ppPetitionQWnd = (CPetitionQWnd**)pinstCPetitionQWnd;
 		#ifdef EMU
 		ppSoulmarkWnd = (CSoulmarkWnd**)pinstCSoulmarkWnd;
+		ppFeedbackWnd = (CFeedbackWnd**)pinstCFeedbackWnd;
 		#endif
 		ppCWebManager = (CWebManager**)pinstCWebManager;
 		ppTaskWnd = (CTaskWnd**)pinstCTaskWnd;
@@ -470,7 +472,6 @@ namespace MQ2Globals
 	fEQCommand        cmdPickZone = NULL;
 	fEQCommand        cmdAssist = NULL;
 
-	DWORD gnNormalEQMappableCommands;
 	PCHAR szEQMappableCommands[nEQMappableCommands];
 	decltype(ItemSlotMap) ItemSlotMap;
 
@@ -1066,6 +1067,7 @@ namespace MQ2Globals
 	PCHAR gpbRangedAttackReady = 0;
 	PCHAR gpbShowNetStatus = 0;
 	DWORD *g_ppDrawHandler = 0;
+	CResolutionHandler **ppCResolutionHandler = 0;
 	DWORD *gpShowNames = 0;
 	DWORD *gpPCNames = 0;
 	PBYTE pTributeActive = 0;
@@ -1073,6 +1075,7 @@ namespace MQ2Globals
 	#ifndef EMU
 	PAUTOSKILL gpAutoSkill = 0;
 	#endif
+	size_t g_eqgameimagesize = 0;
 	PBYTE gpShiftKeyDown = 0; // addr+1=ctrl, addr+2=alt
 	DWORD *gpMouseEventTime = 0;
 	DWORD *gpbCommandEvent = 0;
@@ -1178,6 +1181,7 @@ namespace MQ2Globals
 	CChatManager **ppChatManager = 0;
 	CFacePick **ppFacePick = 0;
 	CFindItemWnd **ppFindItemWnd = 0;
+	CFindLocationWnd **ppFindLocationWnd = 0;
 	CInvSlotMgr **ppInvSlotMgr = 0;
 	CNoteWnd **ppNoteWnd = 0;
 	CTipWnd **ppTipWndOFDAY = 0;
@@ -1379,6 +1383,7 @@ namespace MQ2Globals
 	INITIALIZE_EQGAME_OFFSET(pinstCharSpawn);
 	INITIALIZE_EQGAME_OFFSET(pinstControlledMissile);
 	INITIALIZE_EQGAME_OFFSET(pinstControlledPlayer);
+	INITIALIZE_EQGAME_OFFSET(pinstCResolutionHandler);
 	INITIALIZE_EQGAME_OFFSET(pinstCSidlManager);
 	INITIALIZE_EQGAME_OFFSET(pinstCXWndManager);
 	INITIALIZE_EQGAME_OFFSET(instDynamicZone);
@@ -1484,7 +1489,6 @@ namespace MQ2Globals
 	INITIALIZE_EQGAME_OFFSET(pinstCTrackingWnd);
 	INITIALIZE_EQGAME_OFFSET(pinstCInspectWnd);
 	INITIALIZE_EQGAME_OFFSET(pinstCSocialEditWnd);
-	INITIALIZE_EQGAME_OFFSET(pinstCFeedbackWnd);
 	INITIALIZE_EQGAME_OFFSET(pinstCBugReportWnd);
 	INITIALIZE_EQGAME_OFFSET(pinstCVideoModesWnd);
 	INITIALIZE_EQGAME_OFFSET(pinstCTextEntryWnd);
@@ -1496,6 +1500,7 @@ namespace MQ2Globals
 	INITIALIZE_EQGAME_OFFSET(pinstCPetitionQWnd);
 #ifdef EMU
 	INITIALIZE_EQGAME_OFFSET(pinstCSoulmarkWnd);
+	INITIALIZE_EQGAME_OFFSET(pinstCFeedbackWnd);
 #endif
 	INITIALIZE_EQGAME_OFFSET(pinstCStoryWnd);
 	INITIALIZE_EQGAME_OFFSET(pinstCJournalTextWnd);
@@ -1679,6 +1684,7 @@ namespace MQ2Globals
 	INITIALIZE_EQGAME_OFFSET(CDisplay__ReloadUI);
 	INITIALIZE_EQGAME_OFFSET(CDisplay__WriteTextHD2);
 	INITIALIZE_EQGAME_OFFSET(CDisplay__TrueDistance);
+	INITIALIZE_EQGAME_OFFSET(CDisplay__SetViewActor);
 	
 	INITIALIZE_EQGAME_OFFSET(CEditBaseWnd__SetSel);
 
@@ -1738,7 +1744,8 @@ namespace MQ2Globals
 	INITIALIZE_EQGAME_OFFSET(CGuild__GetGuildName);
 	INITIALIZE_EQGAME_OFFSET(CGuild__GetGuildIndex);
 	#endif
-	
+	INITIALIZE_EQGAME_OFFSET(CResolutionHandler__GetWindowedStyle);
+	INITIALIZE_EQGAME_OFFSET(CResolutionHandler__UpdateResolution);
 	INITIALIZE_EQGAME_OFFSET(COptionsWnd__FillChatFilterList);
 	INITIALIZE_EQGAME_OFFSET(CharacterBase__GetMemorizedSpell);
 	INITIALIZE_EQGAME_OFFSET(CharacterBase__CreateItemGlobalIndex);
@@ -2125,6 +2132,8 @@ namespace MQ2Globals
 	INITIALIZE_EQGAME_OFFSET(CTaskWnd__UpdateTaskTimers);
 	INITIALIZE_EQGAME_OFFSET(EqSoundManager__WavePlay);
 	INITIALIZE_EQGAME_OFFSET(EqSoundManager__PlayScriptMp3);
+	INITIALIZE_EQGAME_OFFSET(EqSoundManager__SoundAssistPlay);
+	INITIALIZE_EQGAME_OFFSET(EqSoundManager__WaveInstancePlay);
 	INITIALIZE_EQGAME_OFFSET(CCombatSkillsSelectWnd__ShouldDisplayThisSkill);
 	INITIALIZE_EQGAME_OFFSET(CTextureAnimation__SetCurCell);
 	INITIALIZE_EQGAME_OFFSET(CSidlManager__FindAnimation1);
@@ -2149,7 +2158,7 @@ namespace MQ2Globals
 	INITIALIZE_EQGAME_OFFSET(CCursorAttachment__Deactivate);
 	INITIALIZE_EQGAME_OFFSET(CEQSuiteTextureLoader__GetDefaultUIPath);
 	INITIALIZE_EQGAME_OFFSET(CEQSuiteTextureLoader__GetTexture);
-	
+
 #ifdef __IsResEffectSpell_x
 FUNCTION_AT_ADDRESS(bool IsResEffectSpell(int) ,__IsResEffectSpell);
 #endif

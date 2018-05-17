@@ -26,6 +26,7 @@
 //                          | 2017-08-22: Updated by Eqmule downflag and holyflag now takes 0, 1 or 2, if its set to 2 it tells the plugin to only parse it if a macro IS running.
 //                          | 2017-12-12: UPdated by rswiders (Ring of Scale abilities)
 //                          | 2018-01-19: Updated by Saar (rest of the RoS abilities)
+//                          | 2018-04-24: Updated by Eqmule (Slam Fix)
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
 // SHOW_ABILITY:    0=0ff, 1=Display every ability that plugin use.
 // SHOW_ATTACKING:  0=0ff, 1=Display Attacking Target
@@ -42,8 +43,8 @@
 // Distribution of this code in compile form without source code is prohibited.
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
 #define   PLUGIN_NAME  "MQ2Melee"   // Plugin Name
-#define   PLUGIN_DATE   20180119    // Plugin Date
-#define   PLUGIN_VERS   8.6         // Plugin Version
+#define   PLUGIN_DATE   20180424    // Plugin Date
+#define   PLUGIN_VERS   8.7         // Plugin Version
 
 #define   SHOW_ABILITY         0
 #define   SHOW_ATTACKING       1
@@ -1450,7 +1451,7 @@ static inline PSPAWNINFO SpawnMe() {
     if(pCharSpawn) {
         return (PSPAWNINFO)pCharSpawn;
     }
-   return NULL;
+	return NULL;
 }
 
 static inline PSPAWNINFO SpawnMount() {
@@ -2673,7 +2674,7 @@ unsigned long     MeleeTime   = 0;            // Melee Pulse Timer
 long      MeleeTarg           = 0;            // Melee Target ID
 long      MeleeType           = 0;            // Melee Target Type
 long      MeleeFlee           = 0;            // Melee Target Fleeing?
-long      MeleeLife           = 0;            // Melee Target Life %
+__int64      MeleeLife           = 0;            // Melee Target Life %
 long      MeleeCast           = 0;            // Melee Target Cast ?
 long      MeleeSize           = 0;            // Melee Name Size
 char      MeleeName[64]       = { 0 };        // Melee Name
@@ -3889,15 +3890,16 @@ bool OKtoParseShit(std::string &str)
     if (out.size()) {
         for (std::list<std::string>::iterator i = out.begin(); i != out.end(); i++) {
             bOkToCheck = false;
-            if (MQ2DataMap.find(*i) != MQ2DataMap.end()) {
-                bOkToCheck = true;
+			PCHAR pChar = (PCHAR)(*i).c_str();
+			if (FindMQ2Data(pChar)) {
+				bOkToCheck = true;
                 continue;
             }
             if (!bOkToCheck)
             {
                 //ok fine we didnt find it in the tlo map...
                 //lets check variables
-                if (VariableMap.find(*i) != VariableMap.end()) {
+                if (FindMQ2DataVariable(pChar)) {
                     bOkToCheck = true;
                     continue;
                 }
