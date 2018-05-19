@@ -1,6 +1,7 @@
 #include "DiscordClient.h"
 #include <nlohmann\json.hpp>
 #include <fstream>
+#include <regex>
 
 using nlohmann::json;
 
@@ -340,25 +341,27 @@ PLUGIN_API VOID OnPulse(VOID)
 void EnqueueIfMatch(const PCHAR Line)
 {
 	char buffer[MAX_STRING] = { 0 };
-	strcpy_s(buffer, Line);
+	
+	// Remove any colours
+	StripMQChat(Line, buffer);
+
+	// Remove any item links
+	std::regex re("\x12[A-F0-9]{56}([^\x12]*)\x12");
+	strcpy_s(buffer, std::regex_replace(buffer, re, "$1").c_str());
 	
 	if (bRun.load() && blechAllow.Feed(buffer) && !blechBlock.Feed(buffer))
-		toDiscord.enqueue(Line);
+		toDiscord.enqueue(buffer);
 }
 
 PLUGIN_API DWORD OnWriteChatColor(PCHAR Line, DWORD Color, DWORD Filter)
 {
-	char cleanLine[2048] = { 0 };
-	StripMQChat(Line, cleanLine);
-	EnqueueIfMatch(cleanLine);
+	EnqueueIfMatch(Line);
     return 0;
 }
 
 PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color)
 {
-	char cleanLine[2048] = { 0 };
-	StripMQChat(Line, cleanLine);
-	EnqueueIfMatch(cleanLine);
+	EnqueueIfMatch(Line);
     return 0;
 }
 

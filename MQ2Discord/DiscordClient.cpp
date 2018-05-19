@@ -54,6 +54,18 @@ std::string unescape_json(const std::string &s) {
 	return o.str();
 }
 
+// Escapes special discord characters
+std::string escape_discord(const std::string &s) {
+	std::ostringstream o;
+	for (auto c : s)
+	{
+		if (c == '`' || c == '*' || c == '_' || c == '~')
+			o << "\\";
+		o << c;
+	}
+	return o.str();
+}
+
 // Real simple client, all it does is invoke a callback when a message is received
 class CallbackDiscordClient : public SleepyDiscord::DiscordClient {
 public:
@@ -95,7 +107,7 @@ void DiscordThread(std::string token, std::string channelId, std::string control
 			std::string msg, combinedMsg;
 			while (combinedMsg.length() <= 1800 && toDiscord.tryDequeue(msg))
 			{
-				combinedMsg += msg + "\n";
+				combinedMsg += escape_discord(msg) + "\n";
 			}
 
 			if (combinedMsg != "")
