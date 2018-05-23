@@ -32,6 +32,7 @@
 | SUB: Main
 | --------------------------------------------------------------------------------------------
 Sub Main
+    /squelch /echo This line is required so this macro can be called by another macro (e.g. GoTrain.mac).
 	/declare HasVoA int outer 0
 	/declare InvScribeSlot int outer 1
 
