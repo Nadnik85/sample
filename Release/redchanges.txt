@@ -1,9 +1,40 @@
+May 25 2018 by redguides
+- MQ2Discord (alynel) fixed colours & item links
+- Scribe.mac (gse7en) Updated scribe.mac to allow macro to be called by another macro (e.g. GoTrain.mac)
+
+May 24 2018 by redguides
+- MQ2EasyFind (eqmule) can now take door ID as a parameter in the ini file for locations
+  Example: Fortress Mecanotus is a click door but the loc for it in find is in mid air, kinda where it catapults u so 
+  without the door ID easyfind won’t know where to go and where to click
+  Now I just made it Fortress Mecanotus=door:6 1234 4321 123
+- New Macro! ShrinkEm (sl968) Shrinks all members of your group.
+- New Utility! EQBCI (jimbob) gives eqbcs a beautiful GUI, check the utilities folder.
+- Alternate EQBCS applications added: EQBCS2.exe and EQBCS-eqmule.exe. They each have their pros and cons, none is perfect ...yet.
+
+May 22 2018 by eqmule
+-Fixed PCHARINFONEW
+
+May 21 2018 by SwiftyMUSE
+- Corrected stacking for changes to spa 148
+- Corrected display of spa 148 to use new data format
+
+May 18 2018 by eqmule
+- Updated for TEST
+- Added .Next and .Prev to the grounditem type. - cred Alynel
+  Usage: /declare NextItem ground local
+		 /echo ${Ground[thing i'm looking for].Next.ID}
+- Fixed Me.XTAggroCount
+
+May 17 2018 by redguides
+- New plugin! MQ2Clipboard (alynel) copies text, commands or output from MQ2 to your clipboard.
+- MQ2Autoloot (plure) Fixed issue with /autoloot sell. It was trying to sell before the merchant was done with the previous sale, 
+  which caused it to act all buggy. It wasn't a pretty fix, I really need to figure out when a merchant is done being busy 
+  with the previous sale. Fixed a feature with items marked destroy.
+
 May 16 2018 by redguides
 - KissAssist (ctaylor22, maskoi) updated to 10.2.6! Gmail features, CastMount, and multi rez options. 
   Check the kissassist forum for the full changelog.
-- MQ2AutoLoot (plure) Fixed issue with /autoloot sell. It was trying to sell before the merchant was done with the previous
-  sale, which caused it to act all buggy. It wasn't a pretty fix, I really need to figure out when a merchant is done being 
-  busy with the previous sale.
+- kissassist1004e15 aka eqmuleAssist updated to the latest version.
 
 May 16 2018 by eqmule
 - Updated for LIVE

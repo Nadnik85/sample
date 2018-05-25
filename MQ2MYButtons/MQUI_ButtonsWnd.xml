@@ -1,0 +1,637 @@
+<?xml version="1.0" encoding="us-ascii"?> 
+<!-- edited with XMLSPY v2004 rel. 3 U (http://www.xmlspy.com)--> 
+<!-- Vert mod is kept updated by Sokol and Kudane --> 
+<!-- Adapted theme by Evytyn (Bristlebane) --> 
+<XML ID="EQInterfaceDefinitionLanguage"> 
+   <Schema xmlns="EverQuestData" xmlns:dt="EverQuestDataTypes"/> 
+    
+   <Button item="MQHB_Button1"> 
+         <ScreenID>MQHB_Button1</ScreenID> 
+         <Font>1</Font> 
+         <RelativePosition>true</RelativePosition> 
+         <Location> 
+            <X>22</X> 
+            <Y>18</Y> 
+         </Location> 
+         <Size> 
+            <CX>30</CX> 
+            <CY>30</CY> 
+         </Size> 
+         <Text>1</Text> 
+         <TextColor> 
+            <R>255</R> 
+            <G>255</G> 
+            <B>255</B> 
+         </TextColor> 
+         <DecalSize> 
+            <CX>40</CX> 
+            <CY>40</CY> 
+         </DecalSize> 
+         <ButtonDrawTemplate> 
+            <Normal>A_SquareBtnNormal</Normal> 
+                  <Pressed>A_SquareBtnPressed</Pressed> 
+            <Flyby>A_SquareBtnFlyby</Flyby> 
+            <Disabled>A_SquareBtnDisabled</Disabled> 
+            <PressedFlyby>A_SquareBtnPressedFlyby</PressedFlyby> 
+         </ButtonDrawTemplate> 
+   </Button> 
+    
+    
+    
+   <Button item="MQHB_Button2"> 
+      <ScreenID>MQHB_Button2</ScreenID> 
+      <Font>1</Font> 
+      <RelativePosition>true</RelativePosition> 
+      <Location> 
+         <X>53</X> 
+         <Y>18</Y> 
+      </Location> 
+      <Size> 
+         <CX>30</CX> 
+         <CY>30</CY> 
+      </Size> 
+      <Text>2</Text> 
+      <TextColor> 
+         <R>255</R> 
+         <G>255</G> 
+         <B>255</B> 
+      </TextColor> 
+      <DecalSize> 
+         <CX>40</CX> 
+         <CY>40</CY> 
+      </DecalSize> 
+      <ButtonDrawTemplate> 
+         <Normal>A_SquareBtnNormal</Normal> 
+      <Pressed>A_SquareBtnPressed</Pressed> 
+      <Flyby>A_SquareBtnFlyby</Flyby> 
+      <Disabled>A_SquareBtnDisabled</Disabled> 
+      <PressedFlyby>A_SquareBtnPressedFlyby</PressedFlyby> 
+      </ButtonDrawTemplate> 
+   </Button> 
+    
+   <Button item="MQHB_Button3"> 
+      <ScreenID>MQHB_Button3</ScreenID> 
+      <Font>1</Font> 
+      <RelativePosition>true</RelativePosition> 
+      <Location> 
+         <X>84</X> 
+         <Y>18</Y> 
+      </Location> 
+      <Size> 
+         <CX>30</CX> 
+         <CY>30</CY> 
+      </Size> 
+      <Text>3</Text> 
+      <TextColor> 
+         <R>255</R> 
+         <G>255</G> 
+         <B>255</B> 
+      </TextColor> 
+      <DecalSize> 
+         <CX>40</CX> 
+         <CY>40</CY> 
+      </DecalSize> 
+      <ButtonDrawTemplate> 
+         <Normal>A_SquareBtnNormal</Normal> 
+               <Pressed>A_SquareBtnPressed</Pressed> 
+         <Flyby>A_SquareBtnFlyby</Flyby> 
+         <Disabled>A_SquareBtnDisabled</Disabled> 
+         <PressedFlyby>A_SquareBtnPressedFlyby</PressedFlyby> 
+      </ButtonDrawTemplate> 
+   </Button> 
+   <Button item="MQHB_Button4"> 
+      <ScreenID>MQHB_Button4</ScreenID> 
+      <Font>1</Font> 
+      <RelativePosition>true</RelativePosition> 
+      <Location> 
+         <X>115</X> 
+         <Y>18</Y> 
+      </Location> 
+      <Size> 
+         <CX>30</CX> 
+         <CY>30</CY> 
+      </Size> 
+      <Text>4</Text> 
+      <TextColor> 
+         <R>255</R> 
+         <G>255</G> 
+         <B>255</B> 
+      </TextColor> 
+      <DecalSize> 
+         <CX>40</CX> 
+         <CY>40</CY> 
+      </DecalSize> 
+      <ButtonDrawTemplate> 
+         <Normal>A_SquareBtnNormal</Normal> 
+         <Pressed>A_SquareBtnPressed</Pressed> 
+         <Flyby>A_SquareBtnFlyby</Flyby> 
+         <Disabled>A_SquareBtnDisabled</Disabled> 
+      <PressedFlyby>A_SquareBtnPressedFlyby</PressedFlyby> 
+      </ButtonDrawTemplate> 
+   </Button> 
+   <Button item="MQHB_Button5"> 
+      <ScreenID>MQHB_Button5</ScreenID> 
+      <Font>1</Font> 
+      <RelativePosition>true</RelativePosition> 
+      <Location> 
+         <X>146</X> 
+         <Y>18</Y> 
+      </Location> 
+      <Size> 
+         <CX>30</CX> 
+         <CY>30</CY> 
+      </Size> 
+      <Text>5</Text> 
+      <TextColor> 
+         <R>255</R> 
+         <G>255</G> 
+         <B>255</B> 
+      </TextColor> 
+      <DecalSize> 
+         <CX>40</CX> 
+         <CY>40</CY> 
+      </DecalSize> 
+      <ButtonDrawTemplate> 
+         <Normal>A_SquareBtnNormal</Normal> 
+         <Pressed>A_SquareBtnPressed</Pressed> 
+         <Flyby>A_SquareBtnFlyby</Flyby> 
+         <Disabled>A_SquareBtnDisabled</Disabled> 
+         <PressedFlyby>A_SquareBtnPressedFlyby</PressedFlyby> 
+      </ButtonDrawTemplate> 
+   </Button> 
+   <Button item="MQHB_Button6"> 
+      <ScreenID>MQHB_Button6</ScreenID> 
+      <Font>1</Font> 
+      <RelativePosition>true</RelativePosition> 
+      <Location> 
+         <X>177</X> 
+         <Y>18</Y> 
+      </Location> 
+      <Size> 
+         <CX>30</CX> 
+         <CY>30</CY> 
+      </Size> 
+      <Text>6</Text> 
+      <TextColor> 
+         <R>255</R> 
+         <G>255</G> 
+         <B>255</B> 
+      </TextColor> 
+      <DecalSize> 
+         <CX>40</CX> 
+         <CY>40</CY> 
+      </DecalSize> 
+      <ButtonDrawTemplate> 
+         <Normal>A_SquareBtnNormal</Normal> 
+         <Pressed>A_SquareBtnPressed</Pressed> 
+         <Flyby>A_SquareBtnFlyby</Flyby> 
+         <Disabled>A_SquareBtnDisabled</Disabled> 
+         <PressedFlyby>A_SquareBtnPressedFlyby</PressedFlyby> 
+      </ButtonDrawTemplate> 
+   </Button> 
+   <Button item="MQHB_Button7"> 
+      <ScreenID>MQHB_Button7</ScreenID> 
+      <Font>1</Font> 
+      <RelativePosition>true</RelativePosition> 
+      <Location> 
+         <X>208</X> 
+         <Y>18</Y> 
+      </Location> 
+      <Size> 
+         <CX>30</CX> 
+         <CY>30</CY> 
+      </Size> 
+      <Text>7</Text> 
+      <TextColor> 
+         <R>255</R> 
+         <G>255</G> 
+         <B>255</B> 
+      </TextColor> 
+      <DecalSize> 
+         <CX>40</CX> 
+         <CY>40</CY> 
+      </DecalSize> 
+      <ButtonDrawTemplate> 
+         <Normal>A_SquareBtnNormal</Normal> 
+         <Pressed>A_SquareBtnPressed</Pressed> 
+         <Flyby>A_SquareBtnFlyby</Flyby> 
+         <Disabled>A_SquareBtnDisabled</Disabled> 
+         <PressedFlyby>A_SquareBtnPressedFlyby</PressedFlyby> 
+      </ButtonDrawTemplate> 
+   </Button> 
+   <Button item="MQHB_Button8"> 
+      <ScreenID>MQHB_Button8</ScreenID> 
+      <Font>1</Font> 
+      <RelativePosition>true</RelativePosition> 
+      <Location> 
+         <X>239</X> 
+         <Y>18</Y> 
+      </Location> 
+      <Size> 
+         <CX>30</CX> 
+         <CY>30</CY> 
+      </Size> 
+      <Text>8</Text> 
+      <TextColor> 
+         <R>255</R> 
+         <G>255</G> 
+         <B>255</B> 
+      </TextColor> 
+      <DecalSize> 
+         <CX>40</CX> 
+         <CY>40</CY> 
+      </DecalSize> 
+      <ButtonDrawTemplate> 
+         <Normal>A_SquareBtnNormal</Normal> 
+         <Pressed>A_SquareBtnPressed</Pressed> 
+         <Flyby>A_SquareBtnFlyby</Flyby> 
+         <Disabled>A_SquareBtnDisabled</Disabled> 
+         <PressedFlyby>A_SquareBtnPressedFlyby</PressedFlyby> 
+      </ButtonDrawTemplate> 
+   </Button> 
+   <Button item="MQHB_Button9"> 
+         <ScreenID>MQHB_Button9</ScreenID> 
+         <Font>2</Font> 
+         <RelativePosition>true</RelativePosition> 
+         <Location> 
+            <X>270</X> 
+            <Y>18</Y> 
+         </Location> 
+         <Size> 
+            <CX>30</CX> 
+            <CY>30</CY> 
+         </Size> 
+         <Text>9</Text> 
+         <TextColor> 
+            <R>255</R> 
+            <G>255</G> 
+            <B>255</B> 
+         </TextColor> 
+         <DecalSize> 
+            <CX>40</CX> 
+            <CY>40</CY> 
+         </DecalSize> 
+         <ButtonDrawTemplate> 
+            <Normal>A_SquareBtnNormal</Normal> 
+            <Pressed>A_SquareBtnPressed</Pressed> 
+            <Flyby>A_SquareBtnFlyby</Flyby> 
+            <Disabled>A_SquareBtnDisabled</Disabled> 
+            <PressedFlyby>A_SquareBtnPressedFlyby</PressedFlyby> 
+         </ButtonDrawTemplate> 
+   </Button> 
+   <Button item="MQHB_Button10"> 
+            <ScreenID>MQHB_Button10</ScreenID> 
+            <Font>1</Font> 
+            <RelativePosition>true</RelativePosition> 
+            <Location> 
+               <X>301</X> 
+               <Y>18</Y> 
+            </Location> 
+            <Size> 
+               <CX>30</CX> 
+               <CY>30</CY> 
+            </Size> 
+            <Text>10</Text> 
+            <TextColor> 
+               <R>255</R> 
+               <G>255</G> 
+               <B>255</B> 
+            </TextColor> 
+            <DecalSize> 
+               <CX>40</CX> 
+               <CY>40</CY> 
+            </DecalSize> 
+            <ButtonDrawTemplate> 
+               <Normal>A_SquareBtnNormal</Normal> 
+               <Pressed>A_SquareBtnPressed</Pressed> 
+               <Flyby>A_SquareBtnFlyby</Flyby> 
+               <Disabled>A_SquareBtnDisabled</Disabled> 
+               <PressedFlyby>A_SquareBtnPressedFlyby</PressedFlyby> 
+            </ButtonDrawTemplate> 
+   </Button> 
+    
+
+    
+
+<Label item="MQHB_Label_1"> 
+    <ScreenID>MQHB_Label_1</ScreenID> 
+    <EQType>9999</EQType> 
+       <TooltipReference>${MyBntLbl1}</TooltipReference> 
+
+    <Font>1</Font> 
+    <RelativePosition>true</RelativePosition> 
+    <Location> 
+      <X>22</X> 
+      <Y>6</Y> 
+    </Location> 
+    <Size> 
+      <CX>30</CX> 
+      <CY>16</CY> 
+    </Size> 
+    <Text></Text> 
+    <TextColor> 
+      <R>210</R> 
+      <G>180</G> 
+      <B>40</B> 
+    </TextColor> 
+    <NoWrap>true</NoWrap> 
+    <AlignCenter>true</AlignCenter> 
+    <AlignRight>false</AlignRight> 
+  </Label> 
+  
+  
+  <Label item="MQHB_Label_2"> 
+    <ScreenID>MQHB_Label_2</ScreenID> 
+    <EQType>9999</EQType> 
+           <TooltipReference>${MyBntLbl2}</TooltipReference> 
+    
+    <Font>1</Font> 
+    <RelativePosition>true</RelativePosition> 
+    <Location> 
+      <X>53</X> 
+      <Y>6</Y> 
+    </Location> 
+    <Size> 
+      <CX>30</CX> 
+      <CY>16</CY> 
+    </Size> 
+    <Text></Text> 
+    <TextColor> 
+      <R>210</R> 
+      <G>180</G> 
+      <B>40</B> 
+    </TextColor> 
+    <NoWrap>true</NoWrap> 
+    <AlignCenter>true</AlignCenter> 
+    <AlignRight>false</AlignRight> 
+  </Label> 
+  
+  
+  <Label item="MQHB_Label_3"> 
+    <ScreenID>MQHB_Label_3</ScreenID> 
+    <EQType>9999</EQType> 
+           <TooltipReference>${MyBntLbl3}</TooltipReference> 
+    
+    <Font>1</Font> 
+    
+    <RelativePosition>true</RelativePosition> 
+    <Location> 
+      <X>84</X> 
+      <Y>6</Y> 
+    </Location> 
+    <Size> 
+      <CX>30</CX> 
+      <CY>16</CY> 
+    </Size> 
+    <Text></Text> 
+    <TextColor> 
+      <R>210</R> 
+      <G>180</G> 
+      <B>40</B> 
+    </TextColor> 
+    <NoWrap>true</NoWrap> 
+    <AlignCenter>true</AlignCenter> 
+    <AlignRight>false</AlignRight> 
+  </Label> 
+  
+  
+  
+  <Label item="MQHB_Label_4"> 
+    <ScreenID>MQHB_Label_4</ScreenID> 
+    <EQType>9999</EQType> 
+           <TooltipReference>${MyBntLbl4}</TooltipReference> 
+    
+    <Font>1</Font> 
+    <RelativePosition>true</RelativePosition> 
+    <Location> 
+      <X>115</X> 
+      <Y>6</Y> 
+    </Location> 
+    <Size> 
+      <CX>30</CX> 
+      <CY>16</CY> 
+    </Size> 
+    <Text></Text> 
+    <TextColor> 
+      <R>210</R> 
+      <G>180</G> 
+      <B>40</B> 
+    </TextColor> 
+    <NoWrap>true</NoWrap> 
+    <AlignCenter>true</AlignCenter> 
+    <AlignRight>false</AlignRight> 
+  </Label> 
+  
+  
+  
+  <Label item="MQHB_Label_5"> 
+    <ScreenID>MQHB_Label_5</ScreenID> 
+    <EQType>9999</EQType> 
+           <TooltipReference>${MyBntLbl5}</TooltipReference> 
+    
+    <Font>1</Font> 
+    <RelativePosition>true</RelativePosition> 
+    <Location> 
+      <X>146</X> 
+      <Y>6</Y> 
+    </Location> 
+    <Size> 
+      <CX>30</CX> 
+      <CY>16</CY> 
+    </Size> 
+    <Text></Text> 
+    <TextColor> 
+      <R>210</R> 
+      <G>180</G> 
+      <B>40</B> 
+    </TextColor> 
+    <NoWrap>true</NoWrap> 
+    <AlignCenter>true</AlignCenter> 
+    <AlignRight>false</AlignRight> 
+  </Label> 
+  
+  
+  <Label item="MQHB_Label_6"> 
+    <ScreenID>MQHB_Label_6</ScreenID> 
+    <EQType>9999</EQType> 
+           <TooltipReference>${MyBntLbl6}</TooltipReference> 
+    
+    <Font>1</Font> 
+    <RelativePosition>true</RelativePosition> 
+    <Location> 
+      <X>177</X> 
+      <Y>6</Y> 
+    </Location> 
+    <Size> 
+      <CX>30</CX> 
+      <CY>16</CY> 
+    </Size> 
+    <Text></Text> 
+    <TextColor> 
+      <R>210</R> 
+      <G>180</G> 
+      <B>40</B> 
+    </TextColor> 
+    <NoWrap>true</NoWrap> 
+    <AlignCenter>true</AlignCenter> 
+    <AlignRight>false</AlignRight> 
+  </Label> 
+  
+  <Label item="MQHB_Label_7"> 
+    <ScreenID>MQHB_Label_7</ScreenID> 
+    <EQType>9999</EQType> 
+           <TooltipReference>${MyBntLbl7}</TooltipReference> 
+    
+    <Font>1</Font> 
+    <RelativePosition>true</RelativePosition> 
+    <Location> 
+      <X>208</X> 
+      <Y>6</Y> 
+    </Location> 
+    <Size> 
+      <CX>30</CX> 
+      <CY>16</CY> 
+    </Size> 
+    <Text></Text> 
+    <TextColor> 
+      <R>210</R> 
+      <G>180</G> 
+      <B>40</B> 
+    </TextColor> 
+    <NoWrap>true</NoWrap> 
+    <AlignCenter>true</AlignCenter> 
+    <AlignRight>false</AlignRight> 
+  </Label> 
+  
+  <Label item="MQHB_Label_8"> 
+    <ScreenID>MQHB_Label_8</ScreenID> 
+    <EQType>9999</EQType> 
+           <TooltipReference>${MyBntLbl8}</TooltipReference> 
+    
+    <Font>1</Font> 
+    <RelativePosition>true</RelativePosition> 
+    <Location> 
+      <X>239</X> 
+      <Y>6</Y> 
+    </Location> 
+    <Size> 
+      <CX>30</CX> 
+      <CY>16</CY> 
+    </Size> 
+    <Text></Text> 
+    <TextColor> 
+      <R>210</R> 
+      <G>180</G> 
+      <B>40</B> 
+    </TextColor> 
+    <NoWrap>true</NoWrap> 
+    <AlignCenter>true</AlignCenter> 
+    <AlignRight>false</AlignRight> 
+  </Label> 
+  
+  
+<Label item="MQHB_Label_9"> 
+    <ScreenID>MQHB_Label_9</ScreenID> 
+    <EQType>9999</EQType> 
+           <TooltipReference>${MyBntLbl9}</TooltipReference> 
+    
+    <Font>1</Font> 
+    <RelativePosition>true</RelativePosition> 
+    <Location> 
+      <X>270</X> 
+      <Y>6</Y> 
+    </Location> 
+    <Size> 
+      <CX>30</CX> 
+      <CY>16</CY> 
+    </Size> 
+    <Text></Text> 
+    <TextColor> 
+      <R>210</R> 
+      <G>180</G> 
+      <B>40</B> 
+    </TextColor> 
+    <NoWrap>true</NoWrap> 
+    <AlignCenter>true</AlignCenter> 
+    <AlignRight>false</AlignRight> 
+  </Label> 
+  
+  
+  <Label item="MQHB_Label_10"> 
+      <ScreenID>MQHB_Label_10</ScreenID> 
+     <EQType>9999</EQType> 
+            <TooltipReference>${MyBntLbl10}</TooltipReference> 
+      
+    <Font>1</Font> 
+      <RelativePosition>true</RelativePosition> 
+      <Location> 
+        <X>301</X> 
+        <Y>6</Y> 
+      </Location> 
+      <Size> 
+        <CX>30</CX> 
+        <CY>16</CY> 
+      </Size> 
+      <Text></Text> 
+      <TextColor> 
+        <R>210</R> 
+        <G>180</G> 
+        <B>40</B> 
+      </TextColor> 
+      <NoWrap>true</NoWrap> 
+      <AlignCenter>true</AlignCenter> 
+      <AlignRight>false</AlignRight> 
+  </Label> 
+
+
+
+
+  
+   <Screen item="MQButtonWnd"><ScreenID/> 
+      <Font>2</Font> 
+      <RelativePosition>false</RelativePosition> 
+      <Location> 
+         <X>50</X> 
+         <Y>50</Y> 
+      </Location> 
+      <Size> 
+         <CX>350</CX> 
+         <CY>50</CY> 
+      </Size> 
+      <Text>MQ Buttons</Text> 
+      <Style_VScroll>false</Style_VScroll> 
+      <Style_HScroll>false</Style_HScroll> 
+      <Style_Transparent>true</Style_Transparent> 
+      <DrawTemplate>WDT_RoundedNoTitle</DrawTemplate> 
+      <Style_Titlebar>false</Style_Titlebar> 
+      <Style_Closebox>false</Style_Closebox> 
+      <Style_Minimizebox>false</Style_Minimizebox> 
+      <Style_Border>false</Style_Border> 
+      <Style_Sizable>false</Style_Sizable> 
+       
+      <Pieces>MQHB_Button1</Pieces> 
+      <Pieces>MQHB_Button2</Pieces> 
+      <Pieces>MQHB_Button3</Pieces> 
+      <Pieces>MQHB_Button4</Pieces> 
+      <Pieces>MQHB_Button5</Pieces> 
+      <Pieces>MQHB_Button6</Pieces> 
+      <Pieces>MQHB_Button7</Pieces> 
+      <Pieces>MQHB_Button8</Pieces> 
+      <Pieces>MQHB_Button9</Pieces> 
+      <Pieces>MQHB_Button10</Pieces> 
+       
+    
+       
+      <Pieces>MQHB_Label_1</Pieces> 
+      <Pieces>MQHB_Label_2</Pieces> 
+      <Pieces>MQHB_Label_3</Pieces> 
+      <Pieces>MQHB_Label_4</Pieces> 
+      <Pieces>MQHB_Label_5</Pieces> 
+      <Pieces>MQHB_Label_6</Pieces> 
+      <Pieces>MQHB_Label_7</Pieces> 
+      <Pieces>MQHB_Label_8</Pieces> 
+      <Pieces>MQHB_Label_9</Pieces> 
+      <Pieces>MQHB_Label_10</Pieces> 
+   </Screen> 
+</XML> 
+

@@ -1,3 +1,17 @@
+May 22 2018 by eqmule
+-Fixed PCHARINFONEW
+
+May 21 2018 by SwiftyMUSE
+- Corrected stacking for changes to spa 148
+- Corrected display of spa 148 to use new data format
+
+May 18 2018 by eqmule
+- Updated for TEST
+- Added .Next and .Prev to the grounditem type. - cred Alynel
+  Usage: /declare NextItem ground local
+		 /echo ${Ground[thing i'm looking for].Next.ID}
+- Fixed Me.XTAggroCount
+
 May 16 2018 by eqmule
 - Updated for LIVE
 - Updated for TEST
