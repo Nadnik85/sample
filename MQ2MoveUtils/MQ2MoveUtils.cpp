@@ -11,10 +11,11 @@ as required by the copyright holders of these functions, and desired by the deve
 //Version 12.1 Added new savecode and fixed the offsetfinder - EqMule Sep 12 2017
 //Version 12.2 Updated patterns - SwiftyMUSE Feb 21 2018
 //Version 12.3 Moved patterns - SwiftyMUSE Apr 23 2018
+//Version 12.4 Fixed a NULL ptr crash - EqMule May 28 2018
 
 #define PLUGIN_NAME  "MQ2MoveUtils"		// Plugin Name
-#define PLUGIN_DATE   20180423			// Plugin Date
-#define PLUGIN_VERS   12.3				// Plugin Version
+#define PLUGIN_DATE   20180528			// Plugin Date
+#define PLUGIN_VERS   12.4				// Plugin Version
 
 #ifndef PLUGIN_API
 #include "../MQ2Plugin.h"
@@ -8057,10 +8058,11 @@ PMQPLUGIN FindPlugin(char* PluginName)
 // MQ2 Exported functions
 unsigned int __stdcall MQ2DataVariableLookup(char * VarName, char * Value,size_t ValueLen)
 {
-    strcpy_s(Value,ValueLen,VarName);
-    if (!GetCharInfo())
-		return strlen(Value);
-    return strlen(ParseMacroParameter(GetCharInfo()->pSpawn,Value, ValueLen));
+	strcpy_s(Value, ValueLen, VarName);
+	if (PCHARINFO pChar = GetCharInfo()) {
+		return strlen(ParseMacroParameter(pChar->pSpawn, Value, ValueLen));
+	}
+	return strlen(Value);
 }
 PLUGIN_API void InitializePlugin()
 {
@@ -8185,10 +8187,11 @@ PLUGIN_API void ShutdownPlugin()
 }
 unsigned int __stdcall MQ2DataVariableLookup2(char * VarName, char * Value,size_t ValueLen)
 {
-    strcpy_s(Value,ValueLen,VarName);
-    if (!GetCharInfo())
-		return strlen(Value);
-    return strlen(ParseMacroParameter(GetCharInfo()->pSpawn,Value, ValueLen));
+	strcpy_s(Value, ValueLen, VarName);
+	if (PCHARINFO pChar = GetCharInfo()) {
+		return strlen(ParseMacroParameter(pChar->pSpawn, Value, ValueLen));
+	}
+	return strlen(Value);
 }
 PLUGIN_API void SetGameState(unsigned long ulGameState)
 {

@@ -423,6 +423,8 @@ enum MOUSE_DATA_TYPES {
 //eqmule May 11 2017
 //KeypressHandler__HandleKeyUp_x has this one
 #define nEQMappableCommands             0x20c
+//found using __BindList_x
+#define nNormalEQMappableCommands       (nEQMappableCommands - 0x16)
 
 #define MAX_PC_LEVEL                    110
 #define MAX_NPC_LEVEL                   200
@@ -525,6 +527,7 @@ enum MOUSE_DATA_TYPES {
 #define SPA_MELEE_THRESHOLD_GUARD		451
 #define SPA_SPELL_THRESHOLD_GUARD		452
 #define SPA_SPELLDAMAGETAKEN			483
+#define SPA_TRIGGER_BEST_SPELL_GROUP	470
 
 #define TT_PBAE                         0x04
 #define TT_TARGETED_AE                  0x08

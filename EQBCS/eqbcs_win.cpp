@@ -44,7 +44,7 @@ VOID ServiceStart (DWORD dwArgc, LPTSTR *lpszArgv)
 		Sleep(1000);
 		port = GetPrivateProfileInt(_T("EQBCS"), _T("Port"), 2112, ini_path);
 		DWORD ret = GetPrivateProfileString(_T("EQBCS"), _T("Address"), _T("0.0.0.0"), (LPWSTR)&ipaddr, 2048, ini_path);
-		svc_main((int)dwArgc, lpszArgv, stop, port, ipaddr);
+		svc_main((int)dwArgc, lpszArgv, stop, port, ipaddr, false);
 		ServiceStop();
 		Sleep(1000);
 		ServiceStop();

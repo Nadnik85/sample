@@ -1,6 +1,48 @@
+May 30 2018 by redguides
+MQ2EQBC (Redbot) added toggle "nameannounce" to show names on connect/disconnect. Defaults to on. /bccmd set nameannounce off
+
+May 30 2018 by eqmule
+- Fixed a bug in .FirstFreeSlot it returned 0 if all slots in a container was empty, but it should return 1 as in slot 1 is the first empty slot
+- Added support for the InvSlot TLO to return .Item (as a ItemType) for worldcontainers
+  Example: /echo ${InvSlot[enviro].Item.FirstFreeSlot}
+  it will echo the first free slot in the currently open worldcontainer (forge,loom etc)
+
+May 29 2018 by redguides
+- MQ2AutoGroup & MQ2EasyFind also fixed (eqmule)
+- EQBCS.exe (jimbob) Fixed channels issue. Filtered some debug messages for debug mode. Fixed some compile and debug issues
+
+May 29 2018 by eqmule
+- Fixed ${InvSlot[tradex].Item} where x is 1-16 for trading with players and 1-4 for NPCs
+- Fixed a crash in .IsNamed when Cmd was NULL
+- Fixed a potential NULL pointer crash in mq2hud
+- Fixed a potential NULL pointer crash in mq2chathook
+- Fixed a potential NULL pointer crash in mq2moveutils
+- Fixed a rare invalid pointer crash in mq2targetinfo
+- Fixed several crashes in MQ2SpellHotkeys
+- Fixed a WriteChatf crash in MQ2AutoLoot
+- Fixed a WriteChatf crash in MQ2Camera
+
+May 25 2018 by eqmule
+- Added .Trigger and .HasSPA to the Spell TLO
+  .Trigger[x] returns a SpellType.
+  .HasSPA[x] returns true or false
+  Usage:
+  Sub Main
+	/declare i int local
+	/if (${Spell[Livio's Malosenia].HasSPA[470]}==TRUE) {
+		/for i 1 to ${Spell[Livio's Malosenia].NumEffects}
+			/if (${Spell[Livio's Malosenia].Attrib[${i}]}==470) {
+				/echo the spell Livio's Malosenia triggers ${Spell[Livio's Malosenia].Trigger[${i}].Name}
+			}
+		/next i	
+	}
+  /return
+
 May 25 2018 by redguides
-- MQ2Discord (alynel) fixed colours & item links
+- MQ2Nav (brianiac, eqmule) fixed a crash with easyfind
+- MQ2Discord (alynel) fixed colour characters & item links, unescaped commands from discord
 - Scribe.mac (gse7en) Updated scribe.mac to allow macro to be called by another macro (e.g. GoTrain.mac)
+- New plugin! (MQ2MYButtons) Add an extra hotbutton bar, because why not?
 
 May 24 2018 by redguides
 - MQ2EasyFind (eqmule) can now take door ID as a parameter in the ini file for locations

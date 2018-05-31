@@ -54,15 +54,17 @@ bool LoadConfig(const char *configpath);
 void OnSignal(int fd, short event, void *arg);
 bool InitWinSock();
 BOOL CtrlHandler(DWORD fdwCtrlType);
+bool gDebug = false;
 
 //*
 #ifndef WIN32
 int main(int argc, char *argv[])
 #else
-int svc_main(int argc, LPTSTR *argv, bool &stop, int port, LPTSTR ipaddr)
+int svc_main(int argc, LPTSTR *argv, bool &stop, int port, LPTSTR ipaddr, bool debug)
 #endif
 {
 	char addr[64] = { 0 };
+	gDebug = debug;
 	//event ev_signal;
 	//event *ev_sstimer;
 	event_enable_debug_mode();

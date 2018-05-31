@@ -889,12 +889,12 @@ int APIENTRY wWinMain(HINSTANCE hInstance,
 	if (debug)
 	{
 		RedirectIOToConsole();
-		svc_main(0, NULL, stop, port, ipaddr);
+		svc_main(0, NULL, stop, port, ipaddr, true);
 	}
 	else if (standalone)
 	{
 		RedirectIOToConsole();
-		svc_main(0, NULL, stop, port, ipaddr);
+		svc_main(0, NULL, stop, port, ipaddr, false);
 	}
 #ifdef _DEBUG
 	else if (debugtest)
@@ -927,7 +927,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance,
 	if (debug || standalone)
 	{
 		RedirectIOToConsole();
-		svc_main(0, NULL, stop, port, ipaddr);
+		svc_main(0, NULL, stop, port, ipaddr, debug);
 	}
 #ifdef _DEBUG
 	else if (debugtest)

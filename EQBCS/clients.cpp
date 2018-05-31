@@ -30,6 +30,8 @@
 #define snprintf _snprintf
 #endif
 
+extern bool gDebug;
+
 Client::Client()
 {
 	Init();
@@ -665,6 +667,9 @@ void Client::HandleChannels(char * data)
 	channels.clear();
 	while (token!=NULL)
 	{
+		int len = strlen(token);
+		if (token[len - 1] == '\n')
+			token[len - 1] = 0;
 		channels.push_back(token);
 		token=strtok(NULL, " ");
 	}
@@ -706,13 +711,13 @@ void Client::ProcessReadPacketBuffer()
 			if ((ret > 0) && (_strnicmp(data, "LOGIN=", 6) == 0) && (strchr(data, ';')!=NULL))
 			{
 				ret = rbuf->ReadUntil(data, MAX_BUF - 1, ';');
-				fprintf(stderr, "Debug Login: %s\r\n", data);
+				if (gDebug) fprintf(stderr, "Debug Login: %s\r\n", data);
 				command = false;
 				HandleLogin(data);
 			}
 			else
 			{
-				fprintf(stderr, "Debug: partial login, or invalid login: %s\n", data);
+				if (gDebug) fprintf(stderr, "Debug: partial login, or invalid login: %s\n", data);
 			}
 			/*
 			if (!authstart)
@@ -744,7 +749,7 @@ void Client::ProcessReadPacketBuffer()
 			ret = MAX_BUF - 1;
 			if (rbuf->ReadLine(data, ret))
 			{
-				//fprintf(stderr, "Debug Command Data: %s", data);
+				if (gDebug) fprintf(stderr, "Debug Command Data: %s", data);
 				ProcessCommands(data);
 				command = false;
 			}
@@ -761,7 +766,8 @@ void Client::ProcessReadPacketBuffer()
 			ret = MAX_BUF - 1;
 			if (rbuf->ReadLine(data, ret))
 			{
-				//fprintf(stderr, "Debug Data: %s", data);
+				if(gDebug) fprintf(stderr, "Debug Data: \"%s\"\n", data);
+
 				switch (data[0])
 				{
 					case '\t':

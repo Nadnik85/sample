@@ -23,5 +23,5 @@ struct ScreenSaverSettings_T
 int Send_Start_Pending();
 int Send_Service_Running();
 bool IsUserLoggedIn();
-extern int svc_main(int argc, LPTSTR *argv, bool &stop, int port, TCHAR *addr);
+extern int svc_main(int argc, LPTSTR *argv, bool &stop, int port, TCHAR *addr, bool debug);
 #endif

@@ -696,8 +696,6 @@ public:
 	};
     int DynSize;
     int MaxDynSize;
-    Node *Head;
-    Node *Tail;
     int Count;
     union
     {
@@ -781,5 +779,13 @@ public:
 	ET** Chunks;
 	int ChunkAlloc;
 	bool bValid;
+};
+template <typename TNumBitsType, typename TElementType> class DynamicBitField
+{
+	typedef TNumBitsType NumBitsType;
+	typedef TElementType ElementType;
+	NumBitsType NumBits;
+	ElementType Element;
+	ElementType* Elements;
 };
 #pragma pack(pop)

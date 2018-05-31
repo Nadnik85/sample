@@ -1138,6 +1138,9 @@ FUNCTION_AT_ADDRESS( int CConfirmationDialog::WndNotification(class CXWnd *,unsi
 #ifdef CContainerMgr__GetFreeContainerWnd_x
 FUNCTION_AT_ADDRESS(class CContainerWnd *  CContainerMgr::GetFreeContainerWnd(void),CContainerMgr__GetFreeContainerWnd);
 #endif
+#ifdef CContainerMgr__OpenExperimentContainer_x
+FUNCTION_AT_ADDRESS(void CContainerMgr::OpenExperimentContainer(const VePointer<CONTENTS>& pCont, const ItemGlobalIndex& Location),CContainerMgr__OpenExperimentContainer);
+#endif
 #ifdef CContainerMgr__CContainerMgr_x
 FUNCTION_AT_ADDRESS( CContainerMgr::CContainerMgr(void),CContainerMgr__CContainerMgr);
 #endif
@@ -6845,6 +6848,9 @@ FUNCTION_AT_ADDRESS( SpellManager::SpellManager(char *),SpellManager__SpellManag
 #endif
 #ifdef SpellManager__dSpellManager_x
 FUNCTION_AT_ADDRESS( SpellManager::~SpellManager(void),SpellManager__dSpellManager);
+#endif
+#ifdef SpellManager__GetSpellByGroupAndRank_x
+FUNCTION_AT_ADDRESS(const EQ_Spell* SpellManager::GetSpellByGroupAndRank(int Group, int SubGroup, int Rank, bool bLesserRanksOk),SpellManager__GetSpellByGroupAndRank);
 #endif
 #ifdef CStoryWnd__CStoryWnd_x
 FUNCTION_AT_ADDRESS( CStoryWnd::CStoryWnd(class CXWnd *),CStoryWnd__CStoryWnd);

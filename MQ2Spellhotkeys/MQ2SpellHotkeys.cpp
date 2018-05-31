@@ -256,55 +256,57 @@ PLUGIN_API DWORD OnIncomingChat(CHAR *Line, DWORD Color)
     return 0; 
 } //end OnIncomingChat 
 
-// This is called every time MQ pulses 
+// This is called every time MQ pulses
+CHAR text[MAX_STRING] = {0}; 
 PLUGIN_API VOID OnPulse(VOID) 
 { 
-    CHAR text[MAX_STRING] = {0}; 
-
-    if (GetCharInfo()->pSpawn != NULL) { 
-        if (missed) { 
-            // For some reason, GetSpellByID can come back null even though we just started casting. 
-            if (GetCharInfo()->pSpawn->CastingData.SpellID != -1) { 
-                PSPELL cspell; 
-                //Find what spell is being cast. 
-                cspell = GetSpellByID(GetCharInfo()->pSpawn->CastingData.SpellID); 
-                strcpy_s(spellname, cspell->Name); 
-                // Now for searching all the spells 
-                for (spitr = spells.begin(); spitr != spells.end() ; spitr++) { 
-                    if (_stricmp((*spitr)->Name, spellname) == 0) { 
-                        // Found a match, queue messages for OnCast and OnHit 
-                        QueueMessages(&output_queue, &((*spitr)->OnCast)); 
-                        QueueMessages(&hit_queue, &((*spitr)->OnHit)); 
-                    } 
-                } 
-                missed = FALSE; 
-            } 
-        } 
-        // Now for outputing messages, one per pulse if we have any. 
-        if (!output_queue.empty()) { 
-            // Something there to send. Formating should be in already. 
-            DoCommand(GetCharInfo()->pSpawn, output_queue.front()); 
-            output_queue.pop_front(); 
-        } else if (!hit_queue.empty()) { 
-            if ( GetCharInfo()->pSpawn->CastingData.SpellETA == 0 ) { 
-                // Spell should have landed and haven't noticed any interrupts. 
-                am_casting = FALSE; 
-                DoCommand(GetCharInfo()->pSpawn, hit_queue.front()); 
-                hit_queue.pop_front(); 
-                if ((popups[OnHit]) && hit_queue.empty()) { 
-                    for (spitr = spells.begin(); spitr != spells.end() ; spitr++) { 
-                        if (_stricmp((*spitr)->Name, spellname) == 0) { 
-                            if ((*spitr)->DoPopUps) { 
-                                sprintf_s(text, "%s was successful.", spellname); 
-                                DisplayOverlayText(text, COLOR_PURPLE, 100, 50, 500, 3000); 
-                            } 
-                        } 
-                    } 
-                } 
-                if (hit_queue.empty()) strcpy_s(spellname, ""); 
-            } 
-        } 
-    } 
+	if (GetGameState() == GAMESTATE_INGAME) {
+		if (PCHARINFO pChar = GetCharInfo()) {
+			if (missed) {
+				// For some reason, GetSpellByID can come back null even though we just started casting. 
+				if (pChar->pSpawn && pChar->pSpawn->CastingData.SpellID != -1) {
+					//Find what spell is being cast. 
+					if (PSPELL cspell = GetSpellByID(pChar->pSpawn->CastingData.SpellID)) {
+						strcpy_s(spellname, cspell->Name);
+						// Now for searching all the spells 
+						for (spitr = spells.begin(); spitr != spells.end(); spitr++) {
+							if (_stricmp((*spitr)->Name, spellname) == 0) {
+								// Found a match, queue messages for OnCast and OnHit 
+								QueueMessages(&output_queue, &((*spitr)->OnCast));
+								QueueMessages(&hit_queue, &((*spitr)->OnHit));
+							}
+						}
+					}
+					missed = FALSE;
+				}
+			}
+			// Now for outputing messages, one per pulse if we have any. 
+			if (!output_queue.empty()) {
+				// Something there to send. Formating should be in already. 
+				DoCommand(pChar->pSpawn, output_queue.front());
+				output_queue.pop_front();
+			}
+			else if (!hit_queue.empty()) {
+				if (pChar->pSpawn->CastingData.SpellETA == 0) {
+					// Spell should have landed and haven't noticed any interrupts. 
+					am_casting = FALSE;
+					DoCommand(pChar->pSpawn, hit_queue.front());
+					hit_queue.pop_front();
+					if ((popups[OnHit]) && hit_queue.empty()) {
+						for (spitr = spells.begin(); spitr != spells.end(); spitr++) {
+							if (_stricmp((*spitr)->Name, spellname) == 0) {
+								if ((*spitr)->DoPopUps) {
+									sprintf_s(text, "%s was successful.", spellname);
+									DisplayOverlayText(text, COLOR_PURPLE, 100, 50, 500, 3000);
+								}
+							}
+						}
+					}
+					if (hit_queue.empty()) strcpy_s(spellname, "");
+				}
+			}
+		}
+	}
 } //end OnPulse 
 
 // Lists requested info 

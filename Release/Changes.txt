@@ -1,3 +1,32 @@
+May 30 2018 by eqmule
+- Fixed a bug in .FirstFreeSlot it returned 0 if all slots in a container was empty, but it should return 1 as in slot 1 is the first empty slot
+- Added support for the InvSlot TLO to return .Item (as a ItemType) for worldcontainers
+  Example: /echo ${InvSlot[enviro].Item.FirstFreeSlot}
+  it will echo the first free slot in the currently open worldcontainer (forge,loom etc)
+
+May 29 2018 by eqmule
+- Fixed ${InvSlot[tradex].Item} where x is 1-16 for trading with players and 1-4 for NPCs
+- Fixed a potential NULL pointer crash in mq2hud
+- Fixed a potential NULL pointer crash in mq2chathook
+- Fixed a potential NULL pointer crash in mq2moveutils
+- Fixed a rare invalid pointer crash in mq2targetinfo
+
+May 25 2018 by eqmule
+- Added .Trigger and .HasSPA to the Spell TLO
+  .Trigger[x] returns a SpellType.
+  .HasSPA[x] returns true or false
+  Usage:
+  Sub Main
+	/declare i int local
+	/if (${Spell[Livio's Malosenia].HasSPA[470]}==TRUE) {
+		/for i 1 to ${Spell[Livio's Malosenia].NumEffects}
+			/if (${Spell[Livio's Malosenia].Attrib[${i}]}==470) {
+				/echo the spell Livio's Malosenia triggers ${Spell[Livio's Malosenia].Trigger[${i}].Name}
+			}
+		/next i	
+	}
+  /return
+
 May 22 2018 by eqmule
 -Fixed PCHARINFONEW
 
