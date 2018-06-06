@@ -48,19 +48,20 @@
 |--------------------------------------------------------------------------------
 	Sub CheckSoulstone
 
-	/if (${Me.Level}<=105)	/varset SoulStoneName	Torrential Soulstone
-	/if (${Me.Level}<=100)	/varset SoulStoneName	Coalescent Soulstone
-	/if (${Me.Level}<=95)	/varset SoulStoneName	Luminous Soulstone
-	/if (${Me.Level}<=90)	/varset SoulStoneName	Phantasmal Soulstone
-	/if (${Me.Level}<=85)	/varset SoulStoneName	Iridescent Soulstone
-	/if (${Me.Level}<=80)	/varset SoulStoneName	Prismatic Soulstone
-	/if (${Me.Level}<=75)	/varset SoulStoneName	Glowing Soulstone
-	/if (${Me.Level}<=70)	/varset SoulStoneName	Pristine Soulstone
-	/if (${Me.Level}<=55)	/varset SoulStoneName	Faceted Soulstone
-	/if (${Me.Level}<=50)	/varset SoulStoneName	Greater Soulstone
-	/if (${Me.Level}<=40)	/varset SoulStoneName	Soulstone
-	/if (${Me.Level}<=30)	/varset SoulStoneName	Lesser Soulstone
-	/if (${Me.Level}<=20)	/varset SoulStoneName	Minor Soulstone
+	/if (${Me.Level}<=110) /varset SoulStoneName Draconic Soulstone
+	/if (${Me.Level}<=105) /varset SoulStoneName Torrential Soulstone
+	/if (${Me.Level}<=100) /varset SoulStoneName Coalescent Soulstone
+	/if (${Me.Level}<=95) /varset SoulStoneName Luminous Soulstone
+	/if (${Me.Level}<=90) /varset SoulStoneName Phantasmal Soulstone
+	/if (${Me.Level}<=85) /varset SoulStoneName Iridescent Soulstone
+	/if (${Me.Level}<=80) /varset SoulStoneName Prismatic Soulstone
+	/if (${Me.Level}<=75) /varset SoulStoneName Glowing Soulstone
+	/if (${Me.Level}<=70) /varset SoulStoneName Pristine Soulstone
+	/if (${Me.Level}<=55) /varset SoulStoneName Faceted Soulstone
+	/if (${Me.Level}<=50) /varset SoulStoneName Greater Soulstone
+	/if (${Me.Level}<=40) /varset SoulStoneName Soulstone
+	/if (${Me.Level}<=30) /varset SoulStoneName Lesser Soulstone
+	/if (${Me.Level}<=20) /varset SoulStoneName Minor Soulstone
 
 	/delay 10
 
