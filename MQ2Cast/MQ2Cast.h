@@ -6,12 +6,6 @@
 // this is the ID that CastingData.SpellID returns if we aren't casting anything
 #define NOID		-1
 
-// TODO: holy nuts, what are these hard-coded delays? we can't just test for them?
-#define DELAY_CAST	12000
-#define DELAY_STOP	4000
-#define DELAY_PULSE	125
-#define DELAY_MEMO	10000
-
 enum class CastResult {
 	Idle,
 	Memorizing,
@@ -57,16 +51,7 @@ enum class PauseCommand {
 	Path		= 0x10
 };
 
-enum CastFlag {
-	Complete	= 0,
-	Request		= -1,
-	Progress1	= -2,
-	Progress2	= -3,
-	Progress3	= -4,
-	Progress4	= -5
-};
-
-enum CastRecast {
+enum class CastRecast {
 	Dead,
 	Land,
 	NTimes
