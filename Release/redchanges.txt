@@ -1,3 +1,14 @@
+Jun 07 2018 by eqmule
+- Fixed a crash in mq2linkdb
+- Fixed multiple potential null ptr crashes in core
+- synced some rof2 emu code to latest live
+
+June 5 2018
+MQ2AutoAccept (eqmule) Fixed a null ptr crash and added a check for a rez message so it wont accept that, its not this plugins job to accept rezzes.
+
+June 2 2018 by redguides
+A small updated to prepare for a new plugin ;)
+
 May 30 2018 by redguides
 MQ2EQBC (Redbot) added toggle "nameannounce" to show names on connect/disconnect. Defaults to on. /bccmd set nameannounce off
 
