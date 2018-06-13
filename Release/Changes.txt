@@ -1,3 +1,14 @@
+Jun 13 2018 by eqmule
+- Updated for TEST
+
+Jun 08 2018 by eqmule
+- Added ActorDef to the spawn tlo it returns the name of the actor as a string
+
+Jun 07 2018 by eqmule
+- Fixed a crash in mq2linkdb
+- Fixed multiple potential null ptr crashes in core
+- synced some rof2 emu code to latest live
+
 May 30 2018 by eqmule
 - Fixed a bug in .FirstFreeSlot it returned 0 if all slots in a container was empty, but it should return 1 as in slot 1 is the first empty slot
 - Added support for the InvSlot TLO to return .Item (as a ItemType) for worldcontainers
