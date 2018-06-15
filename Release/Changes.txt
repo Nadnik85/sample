@@ -1,4 +1,8 @@
 Jun 13 2018 by eqmule
+- Fixed ITEMINFO for TEST
+- Fixed invslot charm
+
+Jun 13 2018 by eqmule
 - Updated for TEST
 
 Jun 08 2018 by eqmule
