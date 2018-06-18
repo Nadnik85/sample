@@ -1,3 +1,9 @@
+Jun 18 2018 by eqmule
+- Added support for emu mq2labels plugin
+
+Jun 16 2018 by eqmule
+- Fixed a bug for TEST
+
 Jun 13 2018 by eqmule
 - Fixed ITEMINFO for TEST
 - Fixed invslot charm
