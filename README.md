@@ -18,19 +18,21 @@ https://www.redguides.com/forums/threads/26389-MacroQuest2-Beginner-s-Guide-(sta
 4) Enter this url: https://gitlab.com/redguides/VeryVanilla.git
 Specify a local folder to place the files, and click "Clone". If it's your first time cloning, you'll be asked for your GitLab login & password.
 
-5) Go to the cloned folder. Run MQ2auth.exe
+5) Go to the cloned folder. Run MQ2auth.exe and save.
 
 6) Open RG_Vanilla.sln
 
 7) Retarget projects? Click OK
 
-8) Build -> Configuration Manager -> switch from debug to release
+8) Go to MQ2Main -> Header Files -> MQ2Main.h and if there's a line that says "#define LIVE" change it to "#define TEST" 
 
-9) Build -> Clean Solution
+9) Build -> Configuration Manager -> switch from debug to release
 
-10) Build -> Build Solution
+10) Build -> Clean Solution
 
-11) You did it! You'll find the goodies in the release directory. If you want MQ2Nav it needs to be compiled on its own, see brainiac's instructions on github.
+11) Build -> Build Solution
+
+12) You did it! You'll find the goodies in the release directory. If you want MQ2Nav it needs to be compiled on its own, see brainiac's instructions on github.
 
 If you're new to compiling, you can find more detailed instructions here:
 
