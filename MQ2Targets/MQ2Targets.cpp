@@ -405,6 +405,8 @@ VOID DisplayHUDTarget(PMQRANK targInfo, DWORD X, DWORD Y, DWORD color)
 
 VOID MQ2TargetsStrReplaceSection(PCHAR szOriginal, size_t BufferSize, DWORD ReplacePos,PCHAR szReplaceString) 
 {
+	if (BufferSize == 0)
+		Sleep(0);
 	/*NewLength = strlen(szCurrent);
 	memmove(&pBrace[NewLength], &pEnd[1], strlen(&pEnd[1]) + 1);
 	int addrlen = (int)(pBrace - szOriginal);

@@ -1,3 +1,25 @@
+Jun 19 2018 by eqmule
+- Updated for TEST
+
+Jun 18 2018 by eqmule
+- Added support for emu mq2labels plugin
+
+Jun 16 2018 by eqmule
+- Fixed a bug for TEST
+
+Jun 14 2018 by eqmule
+- Fixed ITEMINFO for TEST
+- Fixed invslot charm
+
+Jun 13 2018 by redguides
+- LazyLobbyRez.mac (chatwiththisname) Added soulstone for level 106-110.
+
+Jun 13 2018 by eqmule
+- Updated for TEST
+
+Jun 08 2018 by eqmule
+- Added ActorDef to the spawn tlo it returns the name of the actor as a string
+
 Jun 07 2018 by eqmule
 - Fixed a crash in mq2linkdb
 - Fixed multiple potential null ptr crashes in core
