@@ -48,7 +48,8 @@ enum class PauseCommand {
 	FollowFlag	= 0x02,
 	Navigation	= 0x04,
 	FollowPath	= 0x08,
-	Path		= 0x10
+	Path		= 0x10,
+	MoveUtils	= 0x20
 };
 
 enum class CastRecast {
@@ -95,7 +96,11 @@ protected:
 	DWORD		LastID;			// Casting LastOne ID
 	CastResult	LastResult;		// Casting LastOne Result
 	ULONGLONG	Timeout;		// Casting Timeout
+	DWORD		LastTimestamp;	// Last Timestamp of Pulse
 	DWORD		OnTargetID;		// Casting OnTarget
+
+	// mem variables
+	//SPELLFAVORITE CastSpellFavorite;
 
 	// we need these to check if they are open
 	CXWnd *TributeMasterWnd;
@@ -137,6 +142,7 @@ public:
 		LastID = NOID;
 		LastResult = CastResult::Idle;
 		Timeout = 0;
+		LastTimestamp = 0;
 		OnTargetID = NOID;
 
 		ReloadUI();
@@ -221,6 +227,8 @@ public:
 
 	ULONGLONG getTimeout() { return Timeout; }
 	ULONGLONG updateTimeout();
+
+	bool shouldPulse();
 
 	DWORD getOnTargetID() { return OnTargetID; }
 	DWORD setOnTargetID(DWORD id) { OnTargetID = id; return OnTargetID; }
