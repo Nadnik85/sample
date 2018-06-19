@@ -1496,33 +1496,27 @@ bool CastingState::doImmobilize() {
 		}
 	}
 
-	if (FindMQ2DataType("MoveUtils")) {
-		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Immobilize]: MQ2MoveUtils Pause Request.", MQGetTickCount64()); }
-		addPauseMask(PauseCommand::MoveUtils);
-		Execute("/rootme");
-	} else {
-		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Immobilize]: Manual Stop Movement.", MQGetTickCount64()); }
+	if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Immobilize]: Manual Stop Movement.", MQGetTickCount64()); }
 
-		// This is basically MQ2MoveUtils stuff, but without all the fancy prevention. It's a one-shot and go kind of thing: no need to reload.
-		auto pulAutoRun = (unsigned long *)FixOffset(__pulAutoRun_x);
-		auto pulForward = (unsigned long *)FixOffset(__pulForward_x);
-		auto pulBackward = (unsigned long *)FixOffset(__pulBackward_x);
-		auto pulTurnRight = (unsigned long *)FixOffset(__pulTurnRight_x);
-		auto pulTurnLeft = (unsigned long *)FixOffset(__pulTurnLeft_x);
-		auto pulStrafeLeft = (unsigned long *)FixOffset(__pulStrafeLeft_x);
-		auto pulStrafeRight = (unsigned long *)FixOffset(__pulStrafeRight_x);
+	// This is basically MQ2MoveUtils stuff, but without all the fancy prevention. It's a one-shot and go kind of thing: no need to reload.
+	auto pulAutoRun = (unsigned long *)FixOffset(__pulAutoRun_x);
+	auto pulForward = (unsigned long *)FixOffset(__pulForward_x);
+	auto pulBackward = (unsigned long *)FixOffset(__pulBackward_x);
+	auto pulTurnRight = (unsigned long *)FixOffset(__pulTurnRight_x);
+	auto pulTurnLeft = (unsigned long *)FixOffset(__pulTurnLeft_x);
+	auto pulStrafeLeft = (unsigned long *)FixOffset(__pulStrafeLeft_x);
+	auto pulStrafeRight = (unsigned long *)FixOffset(__pulStrafeRight_x);
 
-		pKeypressHandler->CommandState[FindMappableCommand("autorun")] = 0;
-		*pulAutoRun = 0;
-		pKeypressHandler->CommandState[FindMappableCommand("strafe_left")] = 0;
-		*pulStrafeLeft = 0;
-		pKeypressHandler->CommandState[FindMappableCommand("strafe_right")] = 0;
-		*pulStrafeRight = 0;
-		pKeypressHandler->CommandState[FindMappableCommand("forward")] = 0;
-		*pulForward = 0;
-		pKeypressHandler->CommandState[FindMappableCommand("back")] = 0;
-		*pulBackward = 0;
-	}
+	pKeypressHandler->CommandState[FindMappableCommand("autorun")] = 0;
+	*pulAutoRun = 0;
+	pKeypressHandler->CommandState[FindMappableCommand("strafe_left")] = 0;
+	*pulStrafeLeft = 0;
+	pKeypressHandler->CommandState[FindMappableCommand("strafe_right")] = 0;
+	*pulStrafeRight = 0;
+	pKeypressHandler->CommandState[FindMappableCommand("forward")] = 0;
+	*pulForward = 0;
+	pKeypressHandler->CommandState[FindMappableCommand("back")] = 0;
+	*pulBackward = 0;
 
 	return isImmobile();
 }
@@ -1552,11 +1546,6 @@ bool CastingState::doRemobilize() {
 	if (isPaused(PauseCommand::Path)) {
 		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Remobilize]: MQ2AdvPath Unpause Request.", MQGetTickCount64()); }
 		Path("unpause");
-	}
-
-	if (isPaused(PauseCommand::MoveUtils)) {
-		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Remobilize]: MQ2MoveUtils Unpause Request.", MQGetTickCount64()); }
-		Execute("/rootme off");
 	}
 
 	clearPauseMask();
