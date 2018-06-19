@@ -69,15 +69,11 @@ public:
 		std::queue<ImmediateCommand> preQueue;
 		std::queue<ImmediateCommand> postQueue;
 
-		MQ2CastCommand(CastType cType, MQ2CastFunc cFunc, std::queue<ImmediateCommand> preQ, std::queue<ImmediateCommand> postQ) {
+		MQ2CastCommand(CastType cType, MQ2CastFunc cFunc, std::queue<ImmediateCommand> preQ = std::queue<ImmediateCommand>(), std::queue<ImmediateCommand> postQ = std::queue<ImmediateCommand>()) {
 			castType = cType;
 			castFunc = cFunc;
 			preQueue = preQ;
 			postQueue = postQ;
-		}
-
-		MQ2CastCommand(CastType cType, MQ2CastFunc cFunc) {
-			MQ2CastCommand(cType, cFunc, std::queue<ImmediateCommand>(), std::queue<ImmediateCommand>());
 		}
 	};
 
@@ -110,7 +106,7 @@ protected:
 
 	// the immediate queue (do these first)
 	// these return boolean because we don't pop them until the return true (so we can execute on multiple pulses)
-	// TODO: I feel like this needs to be a deque so we can prioritized things, but it can be changed to a queue later if that's not necessary
+	// TODO: I feel like this needs to be a deque so we can prioritize things, but it can be changed to a queue later if that's not necessary
 	std::deque<ImmediateCommand> immediateQueue;
 
 	// helper functions
@@ -196,11 +192,13 @@ public:
 	long cooldownTimeRemaining(int gemIdx);
 
 	int getGem(LONG spellID);
+	int getGem(PCHAR ID);
 
 	// queue functions
 	void pushCmd(MQ2CastCommand cmd);
 	void pushCmd(CastType type, MQ2CastFunc func);
 	void pushCmd(CastType type, CastingState::MQ2CastFunc func, std::queue<ImmediateCommand> preCmd, std::queue<ImmediateCommand> postCmd);
+	int getCmdSize();
 	MQ2CastCommand getCmd();
 	CastType getCmdType();
 	void clearCmds();

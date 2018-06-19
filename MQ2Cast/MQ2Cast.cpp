@@ -241,7 +241,7 @@ public:
 				Temps[0] = '\0';
 				if (cState.getCurrentID() != NOID || 
 					(cState.getCmdType() != CastType::Memorize && cState.getCmdType() != CastType::None) || 
-					(pCastingWnd && (PCSIDLWND)pCastingWnd->dShow)) {
+					(pCastingWnd && ((PCSIDLWND)pCastingWnd)->dShow)) {
 					strcat_s(Temps, "C"); // casting
 				}
 				if (cState.isPaused())									strcat_s(Temps, "S");	// stop moving
@@ -353,8 +353,8 @@ PLUGIN_API VOID CastDebug(PSPAWNINFO pChar, PCHAR Cmd) {
 	WriteChatf("\arMQ2Cast\ax::\amDEBUGGING is now %s\ax.", DEBUGGING ? "\aoON" : "\agOFF");
 }
 
-PLUGIN_API VOID CastCommand(PSPAWNINFO pChar, PCHAR Cmd)
-{
+PLUGIN_API VOID CastCommand(PSPAWNINFO pChar, PCHAR Cmd) {
+	if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Casting]: Command Start %d %s.", MQGetTickCount64(), pChar, Cmd); }
 	if (!gbInZone || cState.hasCastBar() || cState.isWindowOpen() || (pSpellBookWnd && ((PCSIDLWND)pSpellBookWnd)->dShow)) {
 		if (DEBUGGING) {
 			WriteChatf("[%I64u] MQ2Cast:[Casting]: Cannot Cast. [%d][%s%s%s%s]", MQGetTickCount64(), cState.getCurrentResult(),
@@ -365,9 +365,9 @@ PLUGIN_API VOID CastCommand(PSPAWNINFO pChar, PCHAR Cmd)
 
 	cState.Reset();
 
-	PCHAR szParam = { 0 };
-	PCHAR castID = { 0 };
-	PCHAR castTypeInput = { 0 };
+	CHAR szParam[MAX_STRING] = { 0 };
+	CHAR castID[MAX_STRING] = { 0 };
+	CHAR castTypeInput[MAX_STRING] = { 0 };
 
 	auto isArg = [&szParam](PCHAR arg) -> bool {
 		return !_strnicmp(szParam, arg, strlen(arg));
@@ -376,7 +376,8 @@ PLUGIN_API VOID CastCommand(PSPAWNINFO pChar, PCHAR Cmd)
 	std::queue<CastingState::ImmediateCommand> preQueue;
 	std::queue<CastingState::ImmediateCommand> postQueue;
 
-	for (int iParam = 0; (szParam = GetArg(szParam, Cmd, ++iParam))[0];) {
+	for (int iParam = 0; GetArg(szParam, Cmd, ++iParam)[0];) {
+		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Casting]: Argument %s at %d.", MQGetTickCount64(), szParam, iParam); }
 		if (!szParam[0]) {
 			break;
 		} else if (isArg("-targetid|")) {
@@ -420,7 +421,7 @@ PLUGIN_API VOID CastCommand(PSPAWNINFO pChar, PCHAR Cmd)
 				return true;
 			};
 
-			PCHAR passedName = { 0 };
+			CHAR passedName[MAX_STRING] = { 0 };
 			GetArg(passedName, szParam, 2, FALSE, FALSE, FALSE, '|');
 
 			preQueue.push(std::bind(bandolierCmd, "add", "MQ2CastSaved"));
@@ -438,8 +439,10 @@ PLUGIN_API VOID CastCommand(PSPAWNINFO pChar, PCHAR Cmd)
 		} else if (szParam[0] != '-' && !castID[0]) {
 			GetArg(castID, szParam, 1, FALSE, FALSE, FALSE, '|');
 			GetArg(castTypeInput, szParam, 2, FALSE, FALSE, FALSE, '|');
+			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Casting]: Spell Detected %s With Type %s.", MQGetTickCount64(), castID, castTypeInput); }
 		} else if (szParam[0] != '-' && !castTypeInput[0]) {
 			GetArg(castTypeInput, szParam, 1, FALSE, FALSE, FALSE, '|');
+			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Casting]: Type Detected %s.", MQGetTickCount64(), castTypeInput); }
 		}
 	}
 
@@ -454,7 +457,7 @@ PLUGIN_API VOID CastCommand(PSPAWNINFO pChar, PCHAR Cmd)
 	if (castTypeInput[0]) {
 		if (!_strnicmp(castTypeInput, "alt", 3)) {
 			castType = CastType::AltAbility;
-		} else if (!_strnicmp(castTypeInput, "gem", 3)) {
+		} else if (!_strnicmp(castTypeInput, "gem", 3) || IsNumber(castTypeInput)) {
 			castType = CastType::Spell;
 		} else if (!_strnicmp(castTypeInput, "item", 4)) {
 			castType = CastType::Item;
@@ -464,6 +467,7 @@ PLUGIN_API VOID CastCommand(PSPAWNINFO pChar, PCHAR Cmd)
 	}
 
 	if (castType == CastType::None) {
+		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Casting]: Found No Type From %s.", MQGetTickCount64(), castTypeInput); }
 		castType = cState.findCastableType(castID);
 	}
 
@@ -486,21 +490,27 @@ PLUGIN_API VOID CastCommand(PSPAWNINFO pChar, PCHAR Cmd)
 		break;
 	case CastType::Spell:
 	{
+		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Casting]: Queueing Spell.", MQGetTickCount64()); }
+
 		if (cState.isBard()) {
+			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Casting]: Is Bard.", MQGetTickCount64()); }
 			if (cState.isTwisting()) {
-				preQueue.push([]() { Execute("/stoptwist"); return true; });
+				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Casting]: Is Twisting.", MQGetTickCount64()); }
+				preQueue.push([]() { Execute("/stoptwist"); return !cState.isTwisting(); });
 			}
 
-			if (GetCharInfo()->pSpawn->CastingData.SpellID) {
-				preQueue.push([]() { Execute("/stopsong"); return true; });
+			if (cState.isCasting()) {
+				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Casting]: Is Singing.", MQGetTickCount64()); }
+				preQueue.push([]() { Execute("/stopsong"); return cState.isCasting(); });
 			}
 		}
 
 		int gemIdx = -1;
 		if (castTypeInput[0]) {
-			gemIdx = atoi(&castTypeInput[(_strnicmp(castTypeInput, "gem", 3)) ? 0 : 3]);
+			gemIdx = cState.getGem(&castTypeInput[0]);
 		}
 
+		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Casting]: Queueing %s From Gem %d.", MQGetTickCount64(), castID, gemIdx); }
 		castCmd = cState.castSpell(castID, gemIdx);
 		break;
 	}
@@ -510,6 +520,8 @@ PLUGIN_API VOID CastCommand(PSPAWNINFO pChar, PCHAR Cmd)
 		break;
 	};
 
+	if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Casting]: Found Command To Push.", MQGetTickCount64()); }
+
 	cState.pushCmd(castType, castCmd, preQueue, postQueue);
 	if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Casting]: Command Complete.", MQGetTickCount64()); }
 }
@@ -517,7 +529,11 @@ PLUGIN_API VOID CastCommand(PSPAWNINFO pChar, PCHAR Cmd)
 PLUGIN_API VOID DuckCommand(PSPAWNINFO pChar, PCHAR Cmd) {
 	auto interruptCmd = []() -> bool {
 		cState.clearCmds();
-		Execute("/stopcast");
+		if (cState.isBard()) {
+			Execute("/stopsong");
+		} else {
+			Execute("/stopcast");
+		}
 
 		return !gbInZone || cState.setDucking(cState.isCasting());
 	};
@@ -533,20 +549,9 @@ PLUGIN_API VOID MemoCommand(PSPAWNINFO pChar, PCHAR szLine) {
 		return;
 	}
 
-	auto memSpell = [pChar, szLine](PCHAR) -> void {
-		if (cState.isCasting()) {
-			return;
-		}
-
-		if (!cState.isImmobile()) {
-			cState.doNext(std::bind(&CastingState::doImmobilize, &cState));
-			return;
-		}
-	};
-
-	PCHAR szParam = { 0 };
-	PCHAR szSubParam = { 0 };
-	for (int iParam = 0; (szParam = GetArg(szParam, szLine, ++iParam))[0];) {
+	CHAR szParam[MAX_STRING] = { 0 };
+	CHAR szSubParam[MAX_STRING] = { 0 };
+	for (int iParam = 0; GetArg(szParam, szLine, ++iParam)[0];) {
 		if (!szParam[0]) {
 			break;
 		}
@@ -565,12 +570,12 @@ PLUGIN_API VOID MemoCommand(PSPAWNINFO pChar, PCHAR szLine) {
 
 		// if there is not a '|' character, then we need to grab the next argument and hope its a gem
 		if (!szSubParam[0]) {
-			szSubParam = GetArg(szSubParam, szLine, iParam + 1);
+			GetArg(szSubParam, szLine, iParam + 1);
 		}
 
 		// if there was an argument, let's try to parse it
 		if (szSubParam[0]) {
-			auto testGem = atoi(&szSubParam[(_strnicmp(szSubParam, "gem", 3)) ? 0 : 3]);
+			auto testGem = cState.getGem(&szSubParam[0]);
 
 			// got a gem, let's set it and increment the counter -- this can fail if the spellID of the next spell is less than the number of spell gems (there are a few cases of this)
 			if (testGem > 0 && testGem <= NUM_SPELL_GEMS) {
@@ -666,7 +671,7 @@ PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color) {
 			Parsed = false;
 
 			if (DEBUGGING) {
-				WriteChatf("[%I64u] OnIncomingChat:: ChatLine: %s Color: %d", GetTickCount642(), szLine, Color);
+				WriteChatf("[%I64u] OnIncomingChat:: ChatLine: %s Color: %d", MQGetTickCount64(), szLine, Color);
 			}
 
 			if (Color == 264) {
@@ -693,24 +698,31 @@ PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color) {
 PLUGIN_API VOID OnPulse(VOID) {
 	// get rid of the pulse check. just do stuff every pulse. be efficient.
 	if (!gbInZone || !GetCharInfo() || !GetCharInfo()->pSpawn) {
+		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: No Zone.", MQGetTickCount64()); }
 		return;
 	}
 
 	// execute the front of the immediate queue
 	if (!cState.doImmediate()) {
 		// if it's still executing, no need to worry about anything else
+		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Immediate Command Running.", MQGetTickCount64()); }
 		return;
 	}
+
+	cState.updateTimeout();
 
 	// are we casting something right now?
 	auto detectedID = cState.detectSpellCast();
 	if (detectedID != NOID) {
+		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Detected Spell Casting: %d.", MQGetTickCount64(), detectedID); }
 		if (cState.getOnTargetID() == NOID) {
 			cState.setOnTargetID(pTarget ? ((PSPAWNINFO)pTarget)->SpawnID : NOID);
+			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Setting Target ID %d.", MQGetTickCount64(), cState.getOnTargetID()); }
 		}
 
 		// was this an unexpected cast?
 		if (detectedID != cState.getCurrentID()) {
+			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Unexpected Cast -> Setting Variables.", MQGetTickCount64()); }
 			cState.setCurrentID(detectedID);
 			cState.setCurrentResult(CastResult::Casting);
 			cState.updateTimeout();
@@ -721,8 +733,28 @@ PLUGIN_API VOID OnPulse(VOID) {
 
 		return; // we are casting, don't do anything else.
 	} else if (cState.getCmdType() != CastType::None) {
+		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Nothing Casting With Queue Size %d -> Executing Command Type %d.", MQGetTickCount64(), cState.getCmdSize(), cState.getCmdType()); }
 		if (cState.getOnTargetID() == NOID) {
 			cState.setOnTargetID(pTarget ? ((PSPAWNINFO)pTarget)->SpawnID : NOID);
+			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Setting Target ID %d.", MQGetTickCount64(), cState.getOnTargetID()); }
+		} else if (pTarget) {
+			auto targetID = ((PSPAWNINFO)pTarget)->SpawnID;
+			if (targetID != NOID) {
+				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Wrong Target ID %d -> Set Target To ID %d.", MQGetTickCount64(), targetID, cState.getOnTargetID()); }
+				// we need to target. Push a command and return.
+				auto targetCmd = [targetID]() -> bool {
+					if (auto target = (PSPAWNINFO)GetSpawnByID(targetID)) {
+						*(PSPAWNINFO*)ppTarget = target;
+						cState.setOnTargetID(targetID);
+					}
+
+					// either it set or it failed to find the spawn, we want to continue in either case.
+					return true;
+				};
+
+				cState.pushImmediate(targetCmd);
+				return;
+			}
 		}
 
 		// these are "universal" checks, so don't include them in the individual command functions
@@ -730,9 +762,11 @@ PLUGIN_API VOID OnPulse(VOID) {
 		if (currentID != NOID) {
 			if (GetCharInfo()->Stunned) {
 				// can't do things while stunned!
+				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Found Stunned.", MQGetTickCount64()); }
 				cState.setCurrentResult(CastResult::Stunned);
 			} else if (!cState.getCastWhileInvis() && GetCharInfo()->pSpawn->HideMode) {
 				// we specified not to cast while invis
+				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Found Invis While CastWhileInvis=false.", MQGetTickCount64()); }
 				cState.setCurrentResult(CastResult::Invisible);
 			} else if (PSPELL currentSpell = GetSpellByID(currentID)) {
 				// maybe we have the wrong thing targeted?
@@ -746,6 +780,7 @@ PLUGIN_API VOID OnPulse(VOID) {
 				case 10: // Undead
 				case  9: // Animal
 				case  5: // Single
+					if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Found No Target When Spell Requires Target.", MQGetTickCount64()); }
 					if (!pTarget) {
 						cState.setCurrentResult(CastResult::NoTarget);
 					}
@@ -755,13 +790,17 @@ PLUGIN_API VOID OnPulse(VOID) {
 		}
 
 		// if we aren't done with the command, then execute it. If we are, don't do anything.
-		if (cState.getCurrentResult() < CastResult::Success) {
+		if (cState.getCurrentResult() < CastResult::Success && GetCharInfo()) {
+			auto pMySpawn = GetCharInfo()->pSpawn;
 			// check the timeout first. We know we aren't actually casting anything right now
-			if (MQGetTickCount64() > cState.getTimeout()) {
+			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Command Executing.", MQGetTickCount64()); }
+			if (!pMySpawn || pMySpawn->TimeStamp > cState.getTimeout()) {
 				// the assumption here is that we had sufficient time to cast the spell, so we probably actually cast it
+				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Command Timed Out With TimeStamp %d.", MQGetTickCount64(), pMySpawn->TimeStamp); }
 				cState.setCurrentResult(CastResult::Success);
 			} else {
 				// we should be doing something right now, so let's do it.
+				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Running Command Function.", MQGetTickCount64()); }
 				auto cmd = cState.getCmd();
 				cmd.castFunc(); // do the function
 			}
@@ -772,22 +811,27 @@ PLUGIN_API VOID OnPulse(VOID) {
 
 	// if we are finished, pop the command (will save off the ID and result and get ready for the next one)
 	if (cState.getCurrentResult() >= CastResult::Success) {
+		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Command Finished With Result %d.", MQGetTickCount64(), cState.getCurrentResult()); }
 		if (cState.decRecast() > 0) {
+			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Command Recast? (%d).", MQGetTickCount64(), cState.getRecast()); }
 			switch (cState.getRecast().first) {
 			case CastRecast::Dead:
 				if (auto target = (PSPAWNINFO)GetSpawnByID(cState.getOnTargetID())) {
 					if (target->StandState != STANDSTATE_DEAD) {
+						if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Not Dead! Recasting.", MQGetTickCount64()); }
 						cState.setCurrentResult(CastResult::Idle);
 					}
 				} // if we can't find the target, then assume its dead anyway
 				break;
 			case CastRecast::Land:
 				if (cState.getCurrentResult() != CastResult::Success) {
+					if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Not Successful! Recasting.", MQGetTickCount64()); }
 					cState.setCurrentResult(CastResult::Idle);
 				}
 				break;
 			case CastRecast::NTimes:
 				// all we need to do here is reset to idle and do it again
+				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Not Done! Recasting.", MQGetTickCount64()); }
 				cState.setCurrentResult(CastResult::Idle);
 				break;
 			default:
@@ -933,23 +977,23 @@ bool CastingState::isWindowOpen() {
 		return false;
 	}
 
-	if (pLootWnd && (PCSIDLWND)pLootWnd->dShow) {
+	if (pLootWnd && ((PCSIDLWND)pLootWnd)->dShow) {
 		return true;
 	}
 
-	if (pBankWnd && (PCSIDLWND)pBankWnd->dShow) {
+	if (pBankWnd && ((PCSIDLWND)pBankWnd)->dShow) {
 		return true;
 	}
 
-	if (pMerchantWnd && (PCSIDLWND)pMerchantWnd->dShow) {
+	if (pMerchantWnd && ((PCSIDLWND)pMerchantWnd)->dShow) {
 		return true;
 	}
 
-	if (pTradeWnd && (PCSIDLWND)pTradeWnd->dShow) {
+	if (pTradeWnd && ((PCSIDLWND)pTradeWnd)->dShow) {
 		return true;
 	}
 
-	if (pGiveWnd && (PCSIDLWND)pGiveWnd->dShow) {
+	if (pGiveWnd && ((PCSIDLWND)pGiveWnd)->dShow) {
 		return true;
 	}
 
@@ -973,7 +1017,7 @@ bool CastingState::isWindowOpen() {
 }
 
 bool CastingState::hasCastBar() {
-	if (!isBard() && pCastingWnd && (PCSIDLWND)pCastingWnd->dShow) {
+	if (!isBard() && pCastingWnd && ((PCSIDLWND)pCastingWnd)->dShow) {
 		if (DEBUGGING) { WriteChatf("MQ2Cast: pCastingWnd=TRUE"); }
 		return true;
 	}
@@ -982,7 +1026,7 @@ bool CastingState::hasCastBar() {
 }
 
 DWORD CastingState::detectSpellCast() {
-	if (GetCharInfo()->pSpawn) {
+	if (GetCharInfo() && GetCharInfo()->pSpawn) {
 		return GetCharInfo()->pSpawn->CastingData.SpellID;
 	}
 
@@ -990,7 +1034,7 @@ DWORD CastingState::detectSpellCast() {
 }
 
 CastType CastingState::findCastableType(PCHAR ID) {
-	if (!ID[0]) return CastType::None;
+	if (!ID) return CastType::None;
 
 	if (IsNumber(ID)) {
 		// don't check discs or abilities or gems here because they collide with spell ID's
@@ -1103,7 +1147,7 @@ bool CastingState::isCastableReady(PCHAR ID) {
 #pragma region Command Function Generators
 
 std::function<void()> CastingState::castItem(PCHAR ID) {
-	if (!ID[0]) return nullptr;
+	if (!ID) return nullptr;
 
 	auto execItem = [this](PCONTENTS pCont) -> void {
 		if (!pCont) {
@@ -1137,7 +1181,7 @@ std::function<void()> CastingState::castItem(PCHAR ID) {
 }
 
 std::function<void()> CastingState::castAltAbility(PCHAR ID) {
-	if (!ID[0]) return nullptr;
+	if (!ID) return nullptr;
 
 	auto executeAA = [this](DWORD AAIndex, int level) -> void {
 		if (!PlayerHasAAAbility(AAIndex)) {
@@ -1169,7 +1213,7 @@ std::function<void()> CastingState::castAltAbility(PCHAR ID) {
 }
 
 std::function<void()> CastingState::castDisc(PCHAR ID) {
-	if (!ID[0]) return nullptr;
+	if (!ID) return nullptr;
 
 	auto executeDisc = [this](DWORD spellID) -> void {
 		if (getCurrentID() == NOID) setCurrentID(spellID);
@@ -1217,7 +1261,7 @@ std::function<void()> CastingState::castDisc(PCHAR ID) {
 }
 
 std::function<void()> CastingState::castAbility(PCHAR ID) {
-	if (!ID[0]) return nullptr;
+	if (!ID) return nullptr;
 
 	auto executeSkill = [this](DWORD abilityIdx) -> void {
 		if (getCurrentID() == NOID) setCurrentID(abilityIdx);
@@ -1249,14 +1293,11 @@ std::function<void()> CastingState::castAbility(PCHAR ID) {
 }
 
 std::function<void()> CastingState::castSpell(PCHAR ID, int gemSlot) {
-	if (!ID[0]) return nullptr;
+	if (!ID) return nullptr;
 
 	// assume we either mean spell ID or spell name. Do not cast by gem here -- ergo,
 	// pass in the spellID if the user specifies gem. There are collisions between
 	// gem number and spellID.
-
-	// detected (not specified) gem
-	int gemIdx = -1;
 
 	// TODO: Handle `loc x y z` for splash casts here -- potentially pass args in CastCommand
 	auto executeCast = [this](int gemIdx, DWORD spellID, bool doWait = false) -> void {
@@ -1271,7 +1312,7 @@ std::function<void()> CastingState::castSpell(PCHAR ID, int gemSlot) {
 			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Failed Spell Mem.", MQGetTickCount64()); }
 			setCurrentResult(CastResult::NotReady);
 		} else if ((detectedID = detectSpellCast()) != NOID) {
-			if (detectedID != spellID) {
+			if (detectedID != spellID) { // TODO: do we re-queue here?
 				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Different Spell Casting.", MQGetTickCount64()); }
 				setCurrentResult(CastResult::NotReady);
 			} else {
@@ -1281,7 +1322,11 @@ std::function<void()> CastingState::castSpell(PCHAR ID, int gemSlot) {
 			}
 		} else {
 			if (auto pSpell = GetSpellByID(spellID)) {
-				if (doWait && cooldownTimeRemaining(gemIdx) > 0) {
+				if (!isImmobile() && !isBard()) {
+					if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Moving While Casting.", MQGetTickCount64()); }
+					doNext([this]() { doImmobilize(); return isImmobile(); });
+					setCurrentResult(CastResult::Idle);
+				} else if (doWait && cooldownTimeRemaining(gemIdx) > 0) {
 					if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Spell Memming Refresh.", MQGetTickCount64()); }
 					setCurrentResult(CastResult::Memorizing);
 				} else if (cooldownTimeRemaining(gemIdx) <= 0) {
@@ -1306,30 +1351,37 @@ std::function<void()> CastingState::castSpell(PCHAR ID, int gemSlot) {
 
 	// let's exploit the fact that GetSpellByName() will find the ID or the name
 	if (auto pSpell = GetSpellByName(ID)) {
-		if ((gemIdx = getGem(pSpell->ID)) != -1) {
+		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Found Spell: %s.", MQGetTickCount64(), pSpell->Name); }
+		int gemIdx = getGem(pSpell->ID);
+		if (gemIdx != -1) {
 			// we have the spell memorized
+			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Found Spell In Slot %d.", MQGetTickCount64(), gemIdx); }
 			return std::bind(executeCast, gemIdx, pSpell->ID);
-		} else if (gemSlot != -1 && GetCharInfo2()) {
+		} else if (gemSlot != -1) {
 			// okay, it's not memmed, let's try to mem it first
 			// push the mem command (queues are FIFO)
+			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Memming Spell In Slot %d.", MQGetTickCount64(), gemSlot); }
 			pushCmd(CastType::Memorize, memSpell(pSpell->Name, gemSlot));
 
+			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Then Cast Command Generated.", MQGetTickCount64()); }
 			// then return the function that will get pushed to the queue after the mem
 			return std::bind(executeCast, gemSlot, pSpell->ID, true);
 		} else {
 			// we don't have it memmed and we don't want to mem it, this will result in a NotReady
+			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Unmemmed Spell -- Not Casting.", MQGetTickCount64()); }
 			return std::bind(executeCast, -1, pSpell->ID);
 		}
 	}
 
+	if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Empty Cast Command Generated.", MQGetTickCount64()); }
 	// spell lookup failed, this with result in Unknown
 	return std::bind(executeCast, -1, NOID);
 }
 
 std::function<void()> CastingState::memSpell(PCHAR ID, int gemSlot) {
-	if (!ID[0]) return nullptr;
+	if (!ID) return nullptr;
 
-	return [this, ID, gemSlot]() -> void {
+	auto memCmd = [this, ID, gemSlot]() -> void {
 		if (getCurrentID() == NOID) setCurrentID(gemSlot);
 
 		if (!pSpellBookWnd) {
@@ -1340,6 +1392,10 @@ std::function<void()> CastingState::memSpell(PCHAR ID, int gemSlot) {
 				// it's memmed, we're done
 				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Memorize]: Memmed.", MQGetTickCount64()); }
 				setCurrentResult(CastResult::Success);
+			} else if (!isImmobile()) {
+				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Memorize]: Moving While Memming.", MQGetTickCount64()); }
+				doNext([this]() { doImmobilize(); return isImmobile(); });
+				setCurrentResult(CastResult::Idle);
 			} else if (getCurrentResult() == CastResult::Idle && gemSlot > 0 && gemSlot <= NUM_SPELL_GEMS && GetCharInfo2()) {
 				// we're idle and we have a valide gemslot to mem to, let's start memorizing
 				for (DWORD spellIdx = 0; spellIdx < NUM_BOOK_SLOTS; ++spellIdx) {
@@ -1374,6 +1430,9 @@ std::function<void()> CastingState::memSpell(PCHAR ID, int gemSlot) {
 			Execute("/book");
 		}
 	};
+
+	if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Memorize]: Mem Command Generated.", MQGetTickCount64()); }
+	return memCmd;
 }
 
 #pragma endregion
@@ -1474,9 +1533,42 @@ long CastingState::cooldownTimeRemaining(int gemIdx) {
 }
 
 int CastingState::getGem(LONG spellID) {
+	if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Gem]: Searching Gems For %d.", MQGetTickCount64(), spellID); }
 	for (int gemIdx = 0; gemIdx < NUM_SPELL_GEMS; ++gemIdx) {
-		if (GetMemorizedSpell(gemIdx) == spellID)
+
+		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Gem]: Testing Gem %d.", MQGetTickCount64(), gemIdx); }
+
+		if (PCHARINFO pCharInfo = GetCharInfo()) {
+			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Gem]: Got Char Info %d.", MQGetTickCount64(), pCharInfo); }
+			if (pCharInfo->pCharacterBase) {
+				if (CharacterBase *cb = (CharacterBase *)&pCharInfo->pCharacterBase) {
+					if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Gem]: Got Char Base %d.", MQGetTickCount64(), cb); }
+					auto gemID = cb->GetMemorizedSpell(gemIdx);
+
+					if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Gem]: Got Gem ID %d.", MQGetTickCount64(), gemID); }
+					if (gemID == spellID) {
+						return gemIdx;
+					}
+				}
+			}
+		}
+		/*
+		if (GetMemorizedSpell(gemIdx) == spellID) {
 			return gemIdx;
+		}*/
+	}
+
+	return -1;
+}
+
+int CastingState::getGem(PCHAR ID) {
+	if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Gem]: Has Gem \"%s\".", MQGetTickCount64(), ID); }
+	if (strlen(ID) >= 3 && !_strnicmp(ID, "gem", 3)) {
+		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Gem]: Parsing Gem As A String.", MQGetTickCount64()); }
+		return atoi(&ID[3]);
+	} else if (IsNumber(ID)) {
+		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Gem]: Parsing Gem As A Number.", MQGetTickCount64()); }
+		return atoi(ID);
 	}
 
 	return -1;
@@ -1486,6 +1578,7 @@ int CastingState::getGem(LONG spellID) {
 
 void CastingState::pushCmd(CastingState::MQ2CastCommand cmd) {
 	// last I heard, MSVC didn't do emplace very well, so just use push
+	if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Queue]: Pushing a Command of Type %d to the Queue.", MQGetTickCount64(), cmd.castType); }
 	cmdQueue.push(cmd);
 }
 
@@ -1495,6 +1588,11 @@ void CastingState::pushCmd(CastType type, CastingState::MQ2CastFunc func) {
 
 void CastingState::pushCmd(CastType type, CastingState::MQ2CastFunc func, std::queue<ImmediateCommand> preCmd, std::queue<ImmediateCommand> postCmd) {
 	pushCmd(MQ2CastCommand(type, func, preCmd, postCmd));
+	updateTimeout();
+}
+
+int CastingState::getCmdSize() {
+	return cmdQueue.size();
 }
 
 CastingState::MQ2CastCommand CastingState::getCmd() {
@@ -1557,11 +1655,32 @@ bool CastingState::doImmediate() {
 #pragma endregion
 
 ULONGLONG CastingState::updateTimeout() {
+	if (!GetCharInfo()) {
+		return Timeout;
+	}
+
 	if (auto pMySpawn = GetCharInfo()->pSpawn) {
 		if (pMySpawn->CastingData.SpellETA > 0) {
+			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Timeout]: Found Spell ETA %d -> TimeStamp %d.", MQGetTickCount64(), pMySpawn->CastingData.SpellETA, pMySpawn->TimeStamp); }
 			// TODO: potentially account for lag here (+ MQGetTickCount64() + 450 + (pConnection->Last) * 4;)
-			Timeout = pMySpawn->CastingData.SpellETA - pMySpawn->TimeStamp;
+			Timeout = pMySpawn->TimeStamp + pMySpawn->CastingData.SpellETA;
+		} else if (getCurrentID() != NOID) {
+			if (auto pSpell = GetSpellByID(getCurrentID())) {
+				if (getCmdType() == CastType::Memorize) {
+					if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Timeout]: Memming TimeStamp %d.", MQGetTickCount64(), pMySpawn->TimeStamp); }
+					// TODO: Can I get a memorization time?
+					Timeout = pMySpawn->TimeStamp + 1000;
+				} else {
+					if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Timeout]: Casting Time %d TimeStamp %d.", MQGetTickCount64(), pSpell->CastTime, pMySpawn->TimeStamp); }
+					Timeout = pMySpawn->TimeStamp + pSpell->CastTime;
+				}
+			} else {
+				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Timeout]: No Spell Detected TimeStamp %d.", MQGetTickCount64(), pMySpawn->TimeStamp); }
+				Timeout = pMySpawn->TimeStamp - 100;
+			}
 		} else {
+			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Timeout]: No Spell Casting TimeStamp %d.", MQGetTickCount64(), pMySpawn->TimeStamp); }
+			// -100 to guarantee its in the past
 			Timeout = pMySpawn->TimeStamp - 100;
 		}
 	}
