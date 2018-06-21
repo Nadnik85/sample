@@ -79,7 +79,7 @@ Sub Main
 /declare AssistPct[${NumberOfSpells}]	int	outer
 /call LoadIni Assist AssistPct			int	60 AssistPct
 
-/if (${DEBUG}) {
+/if (${Debug}) {
 /echo This is Main Assist:  ${MainAssist}
 /echo This is Number of Spells:  ${NumberOfSpells}
 }
@@ -118,10 +118,11 @@ Sub Main
         
         /if (${DEBUG}) {
            /echo Attack True!
+        }
            
            /goto :combat
 
-        }
+        
 
     } 
 
