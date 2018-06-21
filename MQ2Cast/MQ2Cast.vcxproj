@@ -114,6 +114,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="MQ2Cast.cpp" />
+    <ClCompile Include="MQ2CastCommand.cpp" />
+    <ClCompile Include="MQ2CastImmediate.cpp" />
+    <ClCompile Include="MQ2CastQueue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\MQ2Plugin.h" />

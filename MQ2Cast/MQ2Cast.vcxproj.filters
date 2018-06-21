@@ -18,6 +18,15 @@
     <ClCompile Include="MQ2Cast.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MQ2CastCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MQ2CastQueue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MQ2CastImmediate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\MQ2Plugin.h">
