@@ -116,7 +116,7 @@ Sub Main
     /delay 1s
     /if (${AssistOn} && ${Select[${Me.TargetOfTarget.Type},NPC,PET]}) {
         
-        /if ($DEBUG) {
+        /if (${DEBUG}) {
            /echo Attack True!
            
            /goto :combat
