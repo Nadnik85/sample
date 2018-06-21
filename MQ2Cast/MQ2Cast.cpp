@@ -71,7 +71,7 @@ void __stdcall CastEvent(unsigned int ID, void *pData, PBLECHVALUE pValues)
 	}
 
 	if (DEBUGGING) {
-		WriteChatf("[%I64u] MQ2Cast:[OnChat]: Result=[%d] Called=[%d].", MQGetTickCount64(), GetReturnString(CastingState::instance().getCurrentResult()), (long)pData);
+		WriteChatf("[%I64u] MQ2Cast:[OnChat]: Result=[%s] Called=[%d].", MQGetTickCount64(), GetReturnString(CastingState::instance().getCurrentResult()), (long)pData);
 	}
 }
 
@@ -849,11 +849,15 @@ bool CastingState::isImmobile() {
 
 // TODO: Add in general bard functionality
 bool CastingState::isBard() {
-	return GetCharInfo()->pSpawn && GetCharInfo()->pSpawn->mActorClient.Class == Bard;
+	if (auto pMyChar = GetCharInfo()) {
+		return pMyChar->pSpawn && pMyChar->pSpawn->mActorClient.Class == Bard;
+	}
+
+	return false;
 }
 
 bool CastingState::isTwisting() {
-	auto dtTwist = FindMQ2DataType("Twist");
+	auto dtTwist = FindMQ2DataType("twist");
 	return dtTwist && GetDWordMember(dtTwist, "Twisting");
 }
 

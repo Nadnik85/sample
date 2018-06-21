@@ -10,7 +10,7 @@ bool ImmobilizeCommand::execute() const {
 
 	// TODO: should bound the timeframe for stopping in case some unaccounted for plugin won't stop moving you
 	// go through various known plugins that move your character and request that they pause while casting
-	if (auto dtStick = FindMQ2DataType("Stick")) {
+	if (auto dtStick = FindMQ2DataType("stick")) {
 		auto pStickCommand = FindMQCommand("/stick");
 
 		if (GetDWordMember(dtStick, "Active") && pStickCommand) {
@@ -172,7 +172,6 @@ bool InvisCommand::execute() const {
 #pragma region StopCastCommand
 
 StopCastCommand::StopCastCommand() : ImmediateCommand() {
-	StopTwistCmd = FindMQCommand("/stoptwist");
 	StopSongCmd = FindEQCommand("/stopsong");
 	StopCastCmd = FindEQCommand("/stopcast");
 }
@@ -182,9 +181,13 @@ bool StopCastCommand::execute() const {
 	if (!pMyChar) return true;
 
 	if (CastingState::instance().isBard()) {
-		if (CastingState::instance().isTwisting() && StopTwistCmd) {
-			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[StopCastCommand]: Twisting %d.", MQGetTickCount64(), StopTwistCmd); }
-			StopTwistCmd->Function(pMyChar->pSpawn, "");
+		if (CastingState::instance().isTwisting()) {
+			if (auto StopTwistCmd = FindMQCommand("/stoptwist")) {
+				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[StopCastCommand]: Twisting %d.", MQGetTickCount64(), StopTwistCmd); }
+				StopTwistCmd->Function(pMyChar->pSpawn, "");
+			} else {
+				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[StopCastCommand]: Did Not Find /stoptwist.", MQGetTickCount64()); }
+			}
 		}
 
 		if (CastingState::instance().isCasting() && StopSongCmd) {

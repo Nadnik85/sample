@@ -168,7 +168,6 @@ namespace MQ2Cast {
 
 	class StopCastCommand : public ImmediateCommand {
 	private:
-		PMQCOMMAND StopTwistCmd;
 		fEQCommand StopSongCmd;
 		fEQCommand StopCastCmd;
 
