@@ -1,3 +1,8 @@
+Jun 20 2018 by eqmule
+- Updated for LIVE
+- They removed the heroic resists from iteminfo, so I did to.
+  I dont think anyone was using those anyway.
+
 Jun 19 2018 by eqmule
 - Updated for TEST
 
