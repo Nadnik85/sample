@@ -68,8 +68,6 @@ void MemCommand::execute() const {
 		if (auto cxWnd = (CXWnd*)pSpellBookWnd) {
 			cxWnd->Show(0, 0);
 		}
-		//pSpellBookWnd->dShow = false;
-		//Execute("/book");
 	}
 
 }
@@ -276,7 +274,11 @@ void AbilityCommand::execute() const {
 
 DiscCommand* DiscCommand::Create(const PCHAR ID, const std::list<const ImmediateCommand*> PreQueue, const std::list<const ImmediateCommand*> PostQueue) {
 	if (!ID) return nullptr;
-	return new DiscCommand(FindDiscID(ID), PreQueue, PostQueue);
+
+	auto returnCmd = new DiscCommand(FindDiscID(ID), PreQueue, PostQueue);
+	returnCmd->DiscCmd = FindEQCommand("/disc");
+
+	return returnCmd;
 }
 
 DWORD DiscCommand::FindDiscID(PCHAR ID) {
@@ -328,14 +330,13 @@ void DiscCommand::execute() const {
 	} else {
 		if (auto pSpell = GetSpellByID(SpellID)) {
 			if (GetDiscTimer(pSpell) < (DWORD)time(NULL)) {
-				CHAR szBuffer[MAX_STRING] = { 0 };
-				sprintf_s(szBuffer, "/disc %d", pSpell->ID);
-				if (DEBUGGING) { WriteChatf("Cast = %s : szBuffer %s -- /disc", GetCharInfo()->pSpawn, szBuffer); }
+				if (DEBUGGING) { WriteChatf("Cast = %d : Spell %s -- /disc", GetCharInfo()->pSpawn, pSpell->Name); }
 
 				CastingState::instance().setCurrentResult(CastResult::Casting);
 				BlechSpell(pSpell);
 
-				Execute(szBuffer);
+				// TODO: Is this by ID or name?
+				Execute(DiscCmd, "%d", pSpell->ID);
 			} else {
 				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[/disc]: Disc Not Ready.", MQGetTickCount64()); }
 				CastingState::instance().setCurrentResult(CastResult::NotReady);
@@ -353,8 +354,13 @@ void DiscCommand::execute() const {
 
 AltAbilityCommand* AltAbilityCommand::Create(const PCHAR ID, const std::list<const ImmediateCommand*> PreQueue, const std::list<const ImmediateCommand*> PostQueue) {
 	if (!ID) return nullptr;
+
 	auto idxPair = GetAAIndex(ID);
-	return new AltAbilityCommand(idxPair.first, idxPair.second, PreQueue, PostQueue);
+	auto returnCmd = new AltAbilityCommand(idxPair.first, idxPair.second, PreQueue, PostQueue);
+
+	returnCmd->AltCmd = FindEQCommand("/alt");
+
+	return returnCmd;
 }
 
 std::pair<DWORD, int> AltAbilityCommand::GetAAIndex(PCHAR ID) {
@@ -381,12 +387,9 @@ void AltAbilityCommand::execute() const {
 		if (auto pAbility = GetAAByIdWrapper(AAIndex, Level)) {
 			CastingState::instance().setCurrentID(pAbility->SpellID);
 			if (pAltAdvManager && pAltAdvManager->IsAbilityReady(pPCData, pAbility, 0)) {
-				CHAR szBuffer[MAX_STRING] = { 0 };
-				sprintf_s(szBuffer, "/alt act %d", pAbility->ID);
-				if (DEBUGGING) { WriteChatf("Cast = %s : szBuffer %s -- /alt act", GetCharInfo()->pSpawn, szBuffer); }
-
+				if (DEBUGGING) { WriteChatf("Cast = %s : id %d -- /alt act", GetCharInfo()->pSpawn, pAbility->ID); }
 				CastingState::instance().setCurrentResult(CastResult::Casting);
-				Execute(szBuffer);
+				Execute(AltCmd, "act %d", pAbility->ID);
 			} else {
 				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[/alt act]: AA Not Ready.", MQGetTickCount64()); }
 				CastingState::instance().setCurrentResult(CastResult::NotReady);
@@ -426,15 +429,18 @@ void ItemCommand::execute() const {
 		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Item]: Failed To Lookup Item.", MQGetTickCount64()); }
 		CastingState::instance().setCurrentResult(CastResult::Unknown);
 	} else if (PITEMINFO pItem = GetItemFromContents(Contents)) {
+		auto pMyChar = GetCharInfo();
+		if (!pMyChar) return;
+
 		CastingState::instance().setCurrentID(pItem->Clicky.SpellID);
 
 		CHAR szBuffer[MAX_STRING] = { 0 };
 		sprintf_s(szBuffer, "\"%s\"", pItem->Name); // we have the exact name, so use it (UseItemCommand() uses quotes for exact names)
-		auto f = std::bind(UseItemCmd, GetCharInfo()->pSpawn, szBuffer);
+		auto f = std::bind(UseItemCmd, pMyChar->pSpawn, szBuffer);
 
 		if (pItem->Clicky.TimerID != -1) { // there is a timer, so we know it's not instant click
 			if (GetItemTimer(Contents) == 0) { // the timer is 0, so it's clickable
-				if (DEBUGGING) { WriteChatf("Cast = %s : szBuffer %s -- UseItemCmd() Timer Ready.", GetCharInfo()->pSpawn, szBuffer); }
+				if (DEBUGGING) { WriteChatf("Cast = %s : szBuffer %s -- UseItemCmd() Timer Ready.", pMyChar->pSpawn, szBuffer); }
 				CastingState::instance().setCurrentResult(CastResult::Casting);
 				f();
 			} else {
@@ -442,7 +448,7 @@ void ItemCommand::execute() const {
 				CastingState::instance().setCurrentResult(CastResult::NotReady);
 			}
 		} else if (pItem->Clicky.SpellID != NOID) { // there was no timer, but if there's a spellID, it's instant
-			if (DEBUGGING) { WriteChatf("Cast = %s : szBuffer %s -- UseItemCmd() Instant Click.", GetCharInfo()->pSpawn, szBuffer); }
+			if (DEBUGGING) { WriteChatf("Cast = %s : szBuffer %s -- UseItemCmd() Instant Click.", pMyChar->pSpawn, szBuffer); }
 			CastingState::instance().setCurrentResult(CastResult::Casting);
 			f();
 		}

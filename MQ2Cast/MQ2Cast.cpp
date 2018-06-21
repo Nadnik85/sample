@@ -40,6 +40,10 @@ PreSetup("MQ2Cast");
 PLUGIN_VERSION(12.0);
 #endif
 
+#ifndef MAX_STRING
+#define MAX_STRING 2048
+#endif
+
 bool MQ2Cast::DEBUGGING = false;
 
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
@@ -99,7 +103,13 @@ void MQ2Cast::BlechSpell(PSPELL Cast) {
 	}
 }
 
-const std::string MQ2Cast::GetReturnString(CastResult Result) {
+#pragma endregion
+
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
+
+#pragma region Helper Functions
+
+const std::string MQ2Cast::GetReturnString(const CastResult Result) {
 	switch (Result) {
 	case CastResult::Success:      return std::string("CAST_SUCCESS");
 	case CastResult::Interrupted:  return std::string("CAST_INTERRUPTED");
@@ -126,57 +136,77 @@ const std::string MQ2Cast::GetReturnString(CastResult Result) {
 	}
 }
 
-#pragma endregion
-
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
-
-#pragma region Helper Functions
-
-long MQ2Cast::Evaluate(PCHAR zFormat, ...) {
-	char zOutput[MAX_STRING] = { 0 };
-	va_list vaList;
-	va_start(vaList, zFormat);
-	vsprintf_s(zOutput, zFormat, vaList);
-
-	if (!zOutput[0]) {
-		return 1;
-	}
-
-	ParseMacroData(zOutput, sizeof(zOutput));
-	return atoi(zOutput);
-}
-
-void MQ2Cast::Execute(PCHAR zFormat, ...) {
-	char zOutput[MAX_STRING] = { 0 };
-	va_list vaList;
-	va_start(vaList, zFormat);
-	vsprintf_s(zOutput, zFormat, vaList);
-
-	if (!zOutput[0]) {
-		return;
-	}
-
-	DoCommand(GetCharInfo()->pSpawn, zOutput);
-}
-
-
-void MQ2Cast::PluginCmd(PCHAR pluginName, PCHAR callName, PCHAR zFormat, ...) {
-	typedef VOID(__cdecl *PluginCALL) (PSPAWNINFO, PCHAR);
-
-	char zOutput[MAX_STRING];
-	va_list vaList;
-	va_start(vaList, zFormat);
-	vsprintf_s(zOutput, zFormat, vaList);
-
-	PMQPLUGIN pLook = pPlugins;
-	while (pLook && _strnicmp(pLook->szFilename, pluginName, strlen(pluginName))) {
-		pLook = pLook->pNext;
-	}
-
-	if (pLook && pLook->fpVersion > 0.9999 && pLook->RemoveSpawn) {
-		if (PluginCALL Request = (PluginCALL)GetProcAddress(pLook->hModule, callName)) {
-			Request(GetCharInfo()->pSpawn, zOutput);
+const PMQCOMMAND MQ2Cast::FindMQCommand(const PCHAR Command) {
+	auto pCheck = pCommands;
+	while (pCheck) {
+		if (!_stricmp(pCheck->Command, Command)) {
+			return pCheck;
 		}
+
+		pCheck = pCheck->pNext;
+	}
+
+	return nullptr;
+}
+
+const DWORD MQ2Cast::GetDWordMember(MQ2Type* Type, const PCHAR Member) {
+	// I hate that Type can't be const
+	if (!Type) return 0;
+
+	MQ2TYPEVAR MemberVar;
+	Type->GetMember(MemberVar.VarPtr, Member, "", MemberVar);
+
+	return MemberVar.DWord;
+}
+
+void MQ2Cast::SetEQInput(const DWORD Offset, const PCHAR Command, const char Value) {
+	auto iCommand = FindMappableCommand(Command);
+	if (pKeypressHandler && iCommand >= 0) {
+		pKeypressHandler->CommandState[iCommand] = Value;
+	}
+
+	auto pulCommand = (unsigned long *)FixOffset(Offset);
+	if (pulCommand) {
+		*pulCommand = (unsigned long)Value;
+	}
+}
+
+const fEQCommand MQ2Cast::FindEQCommand(const PCHAR Command) {
+	if (auto pCmdList = (PCMDLIST)EQADDR_CMDLIST) {
+		for (int iCmd = 0; pCmdList[iCmd].fAddress; ++iCmd) {
+			if (!_strnicmp(pCmdList[iCmd].szName, Command, strlen(Command))) {
+				return (fEQCommand)pCmdList[iCmd].fAddress;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+void MQ2Cast::Execute(const PCHAR Command, const PCHAR zFormat, ...) {
+	auto pMyChar = GetCharInfo();
+	if (!pMyChar) return;
+
+	if (auto fCommand = FindEQCommand(Command)) {
+		char zArgs[MAX_STRING] = { 0 };
+		va_list vaList;
+		va_start(vaList, zFormat);
+		vsprintf_s(zArgs, zFormat, vaList);
+
+		fCommand(pMyChar->pSpawn, zArgs);
+	}
+}
+
+void MQ2Cast::Execute(const fEQCommand Command, const PCHAR zFormat, ...) {
+	if (!Command) return;
+
+	if (auto pMyChar = GetCharInfo()) {
+		char zArgs[MAX_STRING] = { 0 };
+		va_list vaList;
+		va_start(vaList, zFormat);
+		vsprintf_s(zArgs, zFormat, vaList);
+
+		Command(pMyChar->pSpawn, zArgs);
 	}
 }
 
@@ -823,7 +853,8 @@ bool CastingState::isBard() {
 }
 
 bool CastingState::isTwisting() {
-	return FindMQ2DataType("Twist") && (bool)Evaluate("${If[${Twist.Twisting},1,0]}");
+	auto dtTwist = FindMQ2DataType("Twist");
+	return dtTwist && GetDWordMember(dtTwist, "Twisting");
 }
 
 // This function is used to check if there are any windows open that prevent casting

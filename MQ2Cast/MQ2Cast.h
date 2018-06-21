@@ -83,23 +83,25 @@ namespace MQ2Cast {
 #pragma region Helpers
 
 	void BlechSpell(PSPELL Cast);
-	const std::string GetReturnString(CastResult Result);
+	const std::string GetReturnString(const CastResult Result);
 
-	long Evaluate(PCHAR zFormat, ...);
-	void Execute(PCHAR zFormat, ...);
-	void PluginCmd(PCHAR pluginName, PCHAR callName, PCHAR zFormat, ...);
+	// this function grabs commands registered by other plugins (including MQ2Main)
+	const PMQCOMMAND FindMQCommand(const PCHAR Command);
 
-	template<typename... Args>
-	void Stick(PCHAR zFormat, Args... args) { PluginCmd("MQ2MoveUtils", "StickCommand", zFormat, args...); }
+	// this function only grabs the DWord result of the Type::Member
+	const DWORD GetDWordMember(MQ2Type* Type, const PCHAR Member);
 
-	template<typename... Args>
-	void Nav(PCHAR zFormat, Args... args) { PluginCmd("MQ2Nav", "NavigateCommand", zFormat, args...); }
+	// This is for direct keyboard/EQ command manipulation
+	void SetEQInput(const DWORD Offset, const PCHAR Command, const char Value);
 
-	template<typename... Args>
-	void FollowPath(PCHAR zFormat, Args... args) { PluginCmd("MQ2AdvPath", "MQFollowCommand", zFormat, args...); }
+	// and this is to get the actual EQ command
+	const fEQCommand FindEQCommand(const PCHAR Command);
 
-	template<typename... Args>
-	void Path(PCHAR zFormat, Args... args) { PluginCmd("MQ2AdvPath", "MQPlayCommand", zFormat, args...); }
+	// this is for one-off uses because it must loop through all commands and strcmp every time
+	void Execute(const PCHAR Command, const PCHAR zFormat, ...);
+
+	// this is more efficient since you can store off the command
+	void Execute(const fEQCommand Command, const PCHAR zFormat, ...);
 
 #pragma endregion
 
@@ -142,12 +144,14 @@ namespace MQ2Cast {
 	};
 
 	class BandolierCommand : public ImmediateCommand {
+	private:
+		fEQCommand BandolierCmd;
+
 	public:
 		const PCHAR Command;
 		const PCHAR Name;
 
-		BandolierCommand(const PCHAR Command, const PCHAR Name) :
-			ImmediateCommand(), Command(Command), Name(Name) {}
+		BandolierCommand(const PCHAR Command, const PCHAR Name);
 
 		bool execute() const;
 	};
@@ -163,7 +167,14 @@ namespace MQ2Cast {
 	};
 
 	class StopCastCommand : public ImmediateCommand {
+	private:
+		PMQCOMMAND StopTwistCmd;
+		fEQCommand StopSongCmd;
+		fEQCommand StopCastCmd;
+
 	public:
+		StopCastCommand();
+
 		bool execute() const;
 	};
 
@@ -261,6 +272,7 @@ namespace MQ2Cast {
 	class DiscCommand : public CastCommand {
 	private:
 		const DWORD SpellID;
+		fEQCommand DiscCmd;
 
 		DiscCommand(const DWORD SpellID, const std::list<const ImmediateCommand*> PreQueue, const std::list<const ImmediateCommand*> PostQueue) :
 			CastCommand(CastType::Discipline, PreQueue, PostQueue), SpellID(SpellID) {}
@@ -282,6 +294,7 @@ namespace MQ2Cast {
 	private:
 		const DWORD AAIndex;
 		const int Level;
+		fEQCommand AltCmd;
 
 		AltAbilityCommand(const DWORD AAIndex, const int Level, const std::list<const ImmediateCommand*> PreQueue, const std::list<const ImmediateCommand*> PostQueue) :
 			CastCommand(CastType::AltAbility, PreQueue, PostQueue), AAIndex(AAIndex), Level(Level) {}
