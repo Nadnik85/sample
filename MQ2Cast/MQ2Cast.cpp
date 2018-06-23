@@ -567,7 +567,7 @@ PLUGIN_API VOID MemoCommand(PSPAWNINFO pChar, PCHAR szLine) {
 PLUGIN_API VOID SpellSetDelete(PSPAWNINFO pChar, PCHAR Cmd) {
 	if (!gbInZone) {
 		return;
-	} else if (!Cmd[0]) {
+	} else if (!Cmd) {
 		MacroError("Usage: /ssd setname");
 	} else {
 		sprintf_s(INIFileName, "%s\\%s_%s.ini", gszINIPath, EQADDR_SERVERNAME, GetCharInfo()->Name);
@@ -587,7 +587,8 @@ PLUGIN_API VOID SpellSetList(PSPAWNINFO pChar, PCHAR Cmd) {
 	sprintf_s(INIFileName, "%s\\%s_%s.ini", gszINIPath, EQADDR_SERVERNAME, GetCharInfo()->Name);
 	WriteChatf("MQ2Cast:: SpellSet [\ay Listing... \ax].", Disp);
 	GetPrivateProfileString("MQ2Cast(SpellSet)", NULL, "", Keys, MAX_STRING * NUM_SPELL_GEMS, INIFileName);
-	while (pKeys[0]) {
+
+	while (pKeys) {
 		GetPrivateProfileString("MQ2Cast(SpellSet)", pKeys, "", Temp, MAX_STRING, INIFileName);
 		if (Temp[0]) {
 			if (!Disp)
@@ -595,6 +596,7 @@ PLUGIN_API VOID SpellSetList(PSPAWNINFO pChar, PCHAR Cmd) {
 			WriteChatf("\ay%s\ax", pKeys);
 			Disp++;
 		}
+
 		pKeys += strlen(pKeys) + 1;
 	}
 
@@ -607,7 +609,7 @@ PLUGIN_API VOID SpellSetMemorize(PSPAWNINFO pChar, PCHAR Cmd) {
 	if (!gbInZone) {
 		return;
 
-	} else if (!Cmd[0]) {
+	} else if (!Cmd) {
 		MacroError("Usage: /ssm setname");
 	} else {
 		char List[MAX_STRING];
@@ -615,6 +617,8 @@ PLUGIN_API VOID SpellSetMemorize(PSPAWNINFO pChar, PCHAR Cmd) {
 		GetPrivateProfileString("MQ2Cast(SpellSet)", Cmd, "", List, MAX_STRING, INIFileName);
 		if (List[0]) {
 			MemoCommand(GetCharInfo()->pSpawn, List);
+		} else {
+			MacroError("/ssm Could not find setname %s", Cmd);
 		}
 	}
 }
@@ -622,6 +626,11 @@ PLUGIN_API VOID SpellSetMemorize(PSPAWNINFO pChar, PCHAR Cmd) {
 PLUGIN_API VOID SpellSetSave(PSPAWNINFO pChar, PCHAR Cmd) {
 	if (!gbInZone)
 		return;
+
+	if (!Cmd) {
+		MacroError("Usage: /sss setname [gemlist]");
+		return;
+	}
 
 	auto pMyChar2 = GetCharInfo2();
 	if (!pMyChar2)
@@ -631,7 +640,7 @@ PLUGIN_API VOID SpellSetSave(PSPAWNINFO pChar, PCHAR Cmd) {
 	char zGem[MAX_STRING]; GetArg(zGem, Cmd, 2);
 
 	if (!zSet[0]) {
-		MacroError("Usage: /sss setname <gemlist>");
+		MacroError("Usage: /sss setname [gemlist]");
 		return;
 	}
 
