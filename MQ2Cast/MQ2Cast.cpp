@@ -28,6 +28,8 @@
 
 #include <functional>
 #include <limits>
+#include <string>
+#include <sstream>
 
 #include "MQ2Cast.h"
 
@@ -562,6 +564,112 @@ PLUGIN_API VOID MemoCommand(PSPAWNINFO pChar, PCHAR szLine) {
 	}
 }
 
+PLUGIN_API VOID SpellSetDelete(PSPAWNINFO pChar, PCHAR Cmd) {
+	if (!gbInZone) {
+		return;
+	} else if (!Cmd[0]) {
+		MacroError("Usage: /ssd setname");
+	} else {
+		sprintf_s(INIFileName, "%s\\%s_%s.ini", gszINIPath, EQADDR_SERVERNAME, GetCharInfo()->Name);
+		WritePrivateProfileString("MQ2Cast(SpellSet)", Cmd, NULL, INIFileName);
+	}
+}
+
+PLUGIN_API VOID SpellSetList(PSPAWNINFO pChar, PCHAR Cmd) {
+	if (!gbInZone)
+		return;
+
+	char Keys[MAX_STRING * NUM_SPELL_GEMS] = { 0 };
+	char Temp[MAX_STRING];
+	PCHAR pKeys = Keys;
+	long Disp = 0;
+
+	sprintf_s(INIFileName, "%s\\%s_%s.ini", gszINIPath, EQADDR_SERVERNAME, GetCharInfo()->Name);
+	WriteChatf("MQ2Cast:: SpellSet [\ay Listing... \ax].", Disp);
+	GetPrivateProfileString("MQ2Cast(SpellSet)", NULL, "", Keys, MAX_STRING * NUM_SPELL_GEMS, INIFileName);
+	while (pKeys[0]) {
+		GetPrivateProfileString("MQ2Cast(SpellSet)", pKeys, "", Temp, MAX_STRING, INIFileName);
+		if (Temp[0]) {
+			if (!Disp)
+				WriteChatf("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+			WriteChatf("\ay%s\ax", pKeys);
+			Disp++;
+		}
+		pKeys += strlen(pKeys) + 1;
+	}
+
+	if (Disp)
+		WriteChatf("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+	WriteChatf("MQ2Cast:: SpellSet [\ay %d Displayed\ax ].", Disp);
+}
+
+PLUGIN_API VOID SpellSetMemorize(PSPAWNINFO pChar, PCHAR Cmd) {
+	if (!gbInZone) {
+		return;
+
+	} else if (!Cmd[0]) {
+		MacroError("Usage: /ssm setname");
+	} else {
+		char List[MAX_STRING];
+		sprintf_s(INIFileName, "%s\\%s_%s.ini", gszINIPath, EQADDR_SERVERNAME, GetCharInfo()->Name);
+		GetPrivateProfileString("MQ2Cast(SpellSet)", Cmd, "", List, MAX_STRING, INIFileName);
+		if (List[0]) {
+			MemoCommand(GetCharInfo()->pSpawn, List);
+		}
+	}
+}
+
+PLUGIN_API VOID SpellSetSave(PSPAWNINFO pChar, PCHAR Cmd) {
+	if (!gbInZone)
+		return;
+
+	auto pMyChar2 = GetCharInfo2();
+	if (!pMyChar2)
+		return;
+
+	char zSet[MAX_STRING]; GetArg(zSet, Cmd, 1);
+	char zGem[MAX_STRING]; GetArg(zGem, Cmd, 2);
+
+	if (!zSet[0]) {
+		MacroError("Usage: /sss setname <gemlist>");
+		return;
+	}
+
+	// The basic conceit is that we can represent each gem with a single character in base-16. If we ever have more than 15 gem slots, this will break.
+	std::string sGemList;
+	if (!zGem[0]) {
+		std::stringstream ssGem;
+		for (int iGem = 1; iGem <= NUM_SPELL_GEMS; ++iGem)
+			ssGem << std::hex << iGem; // here's the limitation. If we have more than base-16, someone will have to write a custom stream manipulator, or redo this code.
+
+		sGemList = ssGem.str();
+	} else {
+		sGemList = std::string(zGem);
+	}
+
+	std::string sList;
+	for (char& cGemSlot : sGemList) {
+		int iGemSlot = strtol(std::string(1, cGemSlot).c_str(), NULL, 16); // this is tied to the limitation above. Luckily, we can just increase the last argument if we need to.
+
+		// if strtol gets a character it can't handle, it will return 0. Luckily for us, 0 is an invalid slot.
+		if (iGemSlot <= 0 || iGemSlot > NUM_SPELL_GEMS || (long)pMyChar2->MemorizedSpells[iGemSlot - 1] <= 0)
+			continue;
+
+		if (!sList.empty() && sList.back() != ' ') {
+			sList += ' ';
+		}
+
+		sList += std::to_string(pMyChar2->MemorizedSpells[iGemSlot - 1]);
+		sList += '|';
+		sList += std::to_string(iGemSlot);
+	}
+
+	if (!sList.empty()) {
+		sprintf_s(INIFileName, "%s\\%s_%s.ini", gszINIPath, EQADDR_SERVERNAME, GetCharInfo()->Name);
+		WritePrivateProfileString("MQ2Cast(SpellSet)", Cmd, sList.c_str(), INIFileName);
+	}
+}
+
 #pragma endregion
 
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
@@ -615,6 +723,10 @@ PLUGIN_API VOID InitializePlugin(VOID) {
 	AddCommand("/casting", CastingCommand);
 	AddCommand("/interrupt", DuckCommand);
 	AddCommand("/memorize", MemoCommand);
+	AddCommand("/ssd", SpellSetDelete);
+	AddCommand("/ssl", SpellSetList);
+	AddCommand("/ssm", SpellSetMemorize);
+	AddCommand("/sss", SpellSetSave);
 }
 
 PLUGIN_API VOID SetGameState(unsigned long ulGameState) {
@@ -630,6 +742,10 @@ PLUGIN_API VOID ShutdownPlugin(VOID) {
 	RemoveCommand("/casting");
 	RemoveCommand("/interrupt");
 	RemoveCommand("/memorize");
+	RemoveCommand("/ssd");
+	RemoveCommand("/ssl");
+	RemoveCommand("/ssm");
+	RemoveCommand("/sss");
 }
 
 PLUGIN_API VOID OnEndZone(VOID) {
