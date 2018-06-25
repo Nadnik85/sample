@@ -131,7 +131,7 @@ int SpellCommand::GetGem(LONG spellID) {
 					auto gemID = cb->GetMemorizedSpell(gemIdx);
 
 					if (gemID == spellID) {
-						if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Gem]: Got Gem %d with spellID %d.", MQGetTickCount64(), gemID, spellID); }
+						if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Gem]: Got Gem %d with spellID %d.", MQGetTickCount64(), gemIdx, spellID); }
 						return gemIdx;
 					}
 				}
@@ -276,7 +276,7 @@ void AbilityCommand::execute() const {
 		CHAR szBuffer[MAX_STRING] = { 0 };
 		sprintf_s(szBuffer, "%d", AbilityIndex);
 		if (DEBUGGING) { WriteChatf("Cast = %d : szBuffer %s -- DoAbility()", GetCharInfo()->pSpawn, szBuffer); }
-		if (pMyChar->vtable2) { pCharData1->UseSkill(AbilityIndex, (EQPlayer*)pCharData1); }
+		if (pMyChar->vtable2) { pCharData1->UseSkill((unsigned char)AbilityIndex, (EQPlayer*)pCharData1); }
 	} else {
 		CastingState::instance().setCurrentResult(CastResult::NotReady);
 	}

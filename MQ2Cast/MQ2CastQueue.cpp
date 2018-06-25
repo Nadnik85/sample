@@ -42,14 +42,17 @@ void CastingState::clearCmds() {
 }
 
 void CastingState::popCmd() {
-	if (!cmdQueue.empty()) {
+	// if we have an unexpected cast, we don't want to add things to the queue, but we still want this to clean up things
+	if (getCurrentID() != NOID) {
 		setLastID(getCurrentID());
 		setLastResult(getCurrentResult());
 
 		setOnTargetID(NOID);
 		setCurrentID(NOID);
 		setCurrentResult(CastResult::Idle);
+	}
 
+	if (!cmdQueue.empty()) {
 		auto cmd = cmdQueue.front();
 
 		if (cmd && !cmd->PostQueue.empty()) {

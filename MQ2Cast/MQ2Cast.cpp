@@ -770,9 +770,7 @@ PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color) {
 		if (CastingState::instance().getCurrentID() != NOID) {
 			Parsed = false;
 
-			if (DEBUGGING) {
-				WriteChatf("[%I64u] OnIncomingChat:: ChatLine: %s Color: %d", MQGetTickCount64(), szLine, Color);
-			}
+			//if (DEBUGGING) { WriteChatf("[%I64u] OnIncomingChat:: ChatLine: %s Color: %d", MQGetTickCount64(), szLine, Color); }
 
 			if (Color == 264) {
 				LIST264.Feed(szLine);
@@ -832,7 +830,9 @@ PLUGIN_API VOID OnPulse(VOID) {
 			BlechSpell(GetSpellByID(detectedID));
 		}
 
-		CastingState::instance().setCurrentResult(CastResult::Casting);
+		if (CastingState::instance().getCurrentResult() != CastResult::Casting) {
+			CastingState::instance().setCurrentResult(CastResult::Casting);
+		}
 
 		return; // we are casting, don't do anything else.
 	} else if (CastingState::instance().getCmdType() != CastType::None) {
@@ -842,7 +842,7 @@ PLUGIN_API VOID OnPulse(VOID) {
 			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Setting Target ID %d.", MQGetTickCount64(), CastingState::instance().getOnTargetID()); }
 		} else if (pTarget) {
 			auto targetID = ((PSPAWNINFO)pTarget)->SpawnID;
-			if (targetID != NOID) {
+			if (targetID != CastingState::instance().getOnTargetID()) {
 				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Wrong Target ID %d -> Set Target To ID %d.", MQGetTickCount64(), targetID, CastingState::instance().getOnTargetID()); }
 				// we need to target. Push a command and return.
 				CastingState::instance().pushImmediate(new TargetCommand(targetID));
@@ -862,22 +862,23 @@ PLUGIN_API VOID OnPulse(VOID) {
 				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Found Invis While CastWhileInvis=false.", MQGetTickCount64()); }
 				CastingState::instance().setCurrentResult(CastResult::Invisible);
 			} else if (PSPELL currentSpell = GetSpellByID(currentID)) {
-				// maybe we have the wrong thing targeted?
-				switch (currentSpell->TargetType) {
-				case 18: // Uber Dragons
-				case 17: // Uber Giants
-				case 16: // Plant
-				case 15: // Corpse
-				case 14: // Pet
-				case 11: // Summoned
-				case 10: // Undead
-				case  9: // Animal
-				case  5: // Single
-					if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Found No Target When Spell Requires Target.", MQGetTickCount64()); }
-					if (!pTarget) {
+				// maybe we have the nothing targeted?
+				if (!pTarget) {
+					switch (currentSpell->TargetType) {
+					case 18: // Uber Dragons
+					case 17: // Uber Giants
+					case 16: // Plant
+					case 15: // Corpse
+					case 14: // Pet
+					case 11: // Summoned
+					case 10: // Undead
+					case  9: // Animal
+					case  5: // Single
+						if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Found No Target When Spell Requires Target.", MQGetTickCount64()); }
 						CastingState::instance().setCurrentResult(CastResult::NoTarget);
+
+						break;
 					}
-					break;
 				}
 			}
 		}
@@ -905,11 +906,14 @@ PLUGIN_API VOID OnPulse(VOID) {
 
 			CastingState::instance().updateTimeout();
 		}
+	} else if (CastingState::instance().getCurrentID() != NOID) {
+		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: No Detected Spell or Command. Need To Clear Variables: %d.", MQGetTickCount64(), CastingState::instance().getCurrentID()); }
+		CastingState::instance().popCmd();
 	}
 
 	// if we are finished, pop the command (will save off the ID and result and get ready for the next one)
 	if (CastingState::instance().getCurrentResult() >= CastResult::Success) {
-		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Command Finished With Result %d.", MQGetTickCount64(), GetReturnString(CastingState::instance().getCurrentResult()).c_str()); }
+		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Command Finished With Result %s.", MQGetTickCount64(), GetReturnString(CastingState::instance().getCurrentResult()).c_str()); }
 		if (CastingState::instance().decRecast() > 0) {
 			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Command Recast? (%d).", MQGetTickCount64(), CastingState::instance().getRecast()); }
 			switch (CastingState::instance().getRecast().first) {
@@ -943,7 +947,7 @@ PLUGIN_API VOID OnPulse(VOID) {
 		CastingState::instance().pushImmediate(new RemobilizeCommand());
 
 		if (DEBUGGING) {
-			WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Casting Complete ID[%d] Result=[%d]", MQGetTickCount64(), CastingState::instance().getLastID(), GetReturnString(CastingState::instance().getLastResult()).c_str());
+			WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Casting Complete ID[%d] Result=[%s]", MQGetTickCount64(), CastingState::instance().getLastID(), GetReturnString(CastingState::instance().getLastResult()).c_str());
 		}
 	}
 }
@@ -1035,7 +1039,7 @@ bool CastingState::isWindowOpen() {
 
 bool CastingState::hasCastBar() {
 	if (!isBard() && pCastingWnd && ((PCSIDLWND)pCastingWnd)->dShow) {
-		if (DEBUGGING) { WriteChatf("MQ2Cast: pCastingWnd=TRUE"); }
+		// if (DEBUGGING) { WriteChatf("MQ2Cast: pCastingWnd=TRUE"); }
 		return true;
 	}
 
@@ -1198,7 +1202,7 @@ ULONGLONG CastingState::updateTimeout() {
 				Timeout = pMySpawn->TimeStamp - 100;
 			}
 		} else {
-			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Timeout]: No Spell Casting TimeStamp %d.", MQGetTickCount64(), pMySpawn->TimeStamp); }
+			// if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Timeout]: No Spell Casting TimeStamp %d.", MQGetTickCount64(), pMySpawn->TimeStamp); }
 			// -100 to guarantee its in the past
 			Timeout = pMySpawn->TimeStamp - 100;
 		}
@@ -1208,5 +1212,11 @@ ULONGLONG CastingState::updateTimeout() {
 }
 
 bool CastingState::shouldPulse() {
-	return GetCharInfo() && GetCharInfo()->pSpawn && GetCharInfo()->pSpawn->TimeStamp > LastTimestamp;
+	if (auto pMyChar = GetCharInfo()) {
+		if (auto pMySpawn = pMyChar->pSpawn) {
+			return pMySpawn->TimeStamp > LastTimestamp;
+		}
+	}
+
+	return true;
 }

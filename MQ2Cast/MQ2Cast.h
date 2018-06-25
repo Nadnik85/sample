@@ -451,11 +451,11 @@ namespace MQ2Cast {
 		void pushImmediate(const ImmediateCommand* cmd);
 		bool doImmediate();
 
-		DWORD setCurrentID(DWORD id) { CurrentID = id; return CurrentID; }
+		DWORD setCurrentID(DWORD id) { CurrentID = id; LastTimestamp = 0;  return CurrentID; }
 		DWORD getCurrentID() { return CurrentID; }
 
 		CastResult getCurrentResult() { return CurrentResult; }
-		CastResult setCurrentResult(CastResult result) { CurrentResult = result; return CurrentResult; }
+		CastResult setCurrentResult(CastResult result) { CurrentResult = result; LastTimestamp = 0; return CurrentResult; }
 
 		DWORD setLastID(DWORD id) { LastID = id; return LastID; }
 		DWORD getLastID() { return LastID; }
