@@ -73,7 +73,7 @@ void __stdcall CastEvent(unsigned int ID, void *pData, PBLECHVALUE pValues)
 	}
 
 	if (DEBUGGING) {
-		WriteChatf("[%I64u] MQ2Cast:[OnChat]: Result=[%s] Called=[%d].", MQGetTickCount64(), GetReturnString(CastingState::instance().getCurrentResult()), (long)pData);
+		WriteChatf("[%I64u] MQ2Cast:[OnChat]: Result=[%s] Called=[%d].", MQGetTickCount64(), GetReturnString(CastingState::instance().getCurrentResult()).c_str(), (long)pData);
 	}
 }
 
@@ -372,7 +372,7 @@ PLUGIN_API VOID CastingCommand(PSPAWNINFO pChar, PCHAR Cmd) {
 	if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Casting]: Command Start %d %s.", MQGetTickCount64(), pChar, Cmd); }
 	if (!gbInZone || CastingState::instance().isCasting() || CastingState::instance().hasCastBar() || CastingState::instance().isWindowOpen() || (pSpellBookWnd && ((PCSIDLWND)pSpellBookWnd)->dShow)) {
 		if (DEBUGGING) {
-			WriteChatf("[%I64u] MQ2Cast:[Casting]: Cannot Cast. [%d][%s%s%s%s]", MQGetTickCount64(), GetReturnString(CastingState::instance().getCurrentResult()),
+			WriteChatf("[%I64u] MQ2Cast:[Casting]: Cannot Cast. [%d][%s%s%s%s]", MQGetTickCount64(), GetReturnString(CastingState::instance().getCurrentResult()).c_str(),
 				gbInZone ? " ZONE " : "", 
 				CastingState::instance().isCasting() ? " isCasting " : "", 
 				CastingState::instance().hasCastBar() ? " hasCastBar " : "", 
@@ -458,6 +458,8 @@ PLUGIN_API VOID CastingCommand(PSPAWNINFO pChar, PCHAR Cmd) {
 			castType = CastType::Item;
 		} else if (!_strnicmp(castTypeInput, "disc", 4)) {
 			castType = CastType::Discipline;
+		} else if (!_strnicmp(castTypeInput, "abil", 4)) {
+			castType = CastType::Ability;
 		}
 	}
 
@@ -907,7 +909,7 @@ PLUGIN_API VOID OnPulse(VOID) {
 
 	// if we are finished, pop the command (will save off the ID and result and get ready for the next one)
 	if (CastingState::instance().getCurrentResult() >= CastResult::Success) {
-		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Command Finished With Result %d.", MQGetTickCount64(), GetReturnString(CastingState::instance().getCurrentResult())); }
+		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Command Finished With Result %d.", MQGetTickCount64(), GetReturnString(CastingState::instance().getCurrentResult()).c_str()); }
 		if (CastingState::instance().decRecast() > 0) {
 			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Command Recast? (%d).", MQGetTickCount64(), CastingState::instance().getRecast()); }
 			switch (CastingState::instance().getRecast().first) {
@@ -941,7 +943,7 @@ PLUGIN_API VOID OnPulse(VOID) {
 		CastingState::instance().pushImmediate(new RemobilizeCommand());
 
 		if (DEBUGGING) {
-			WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Casting Complete ID[%d] Result=[%d]", MQGetTickCount64(), CastingState::instance().getLastID(), GetReturnString(CastingState::instance().getLastResult()));
+			WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Casting Complete ID[%d] Result=[%d]", MQGetTickCount64(), CastingState::instance().getLastID(), GetReturnString(CastingState::instance().getLastResult()).c_str());
 		}
 	}
 }

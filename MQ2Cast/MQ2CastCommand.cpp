@@ -188,7 +188,7 @@ void SpellCommand::execute() const {
 			} else if (GetCooldown(GemSlot) <= 0) {
 				CHAR szBuffer[MAX_STRING] = { 0 };
 				sprintf_s(szBuffer, "%d", GemSlot);
-				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Cast = %s : szBuffer %s -- Cast()", MQGetTickCount64(), GetCharInfo()->pSpawn, szBuffer); }
+				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Cast = %d : szBuffer %s -- Cast()", MQGetTickCount64(), GetCharInfo()->pSpawn, szBuffer); }
 
 				CastingState::instance().setCurrentResult(CastResult::Casting);
 				BlechSpell(pSpell);
@@ -212,6 +212,7 @@ void SpellCommand::execute() const {
 
 AbilityCommand* AbilityCommand::Create(const PCHAR ID, const std::list<const ImmediateCommand*> PreQueue, const std::list<const ImmediateCommand*> PostQueue) {
 	if (!ID) return nullptr;
+
 	return new AbilityCommand(FindAbilityIndex(ID), PreQueue, PostQueue);
 }
 
@@ -232,11 +233,22 @@ DWORD AbilityCommand::FindAbilityIndex(PCHAR ID) {
 			}
 		}
 	} else {
-		for (DWORD abilityIdx = 0; szSkills[abilityIdx]; ++abilityIdx) {
-			if (!_stricmp(ID, szSkills[abilityIdx])) {
-				return abilityIdx;
+		PCHARINFO  pMyChar  = GetCharInfo();
+		PCHARINFO2 pMyChar2 = GetCharInfo2();
+
+		if (pSkillMgr && pMyChar && pMyChar2) {
+			for (unsigned char iAbility = 0; iAbility < 128; ++iAbility) {
+				if ((iAbility < NUM_SKILLS && (pSkillMgr->pSkill[iAbility])->Activated) ||
+					(iAbility > NUM_SKILLS && pMyChar2->InnateSkill[iAbility - 100] != 0xFF)) {
+					if (!_stricmp(ID, szSkills[iAbility]) && pMyChar->vtable2 && ((CharacterZoneClient*)pCharData1)->HasSkill(iAbility)) {
+						// use in: if (pChar->vtable2) { pCharData1->UseSkill(iAbility, (EQPlayer*)pCharData1); }
+						return iAbility;
+					}
+				}
 			}
 		}
+
+		return NOID;
 	}
 
 	return NOID;
@@ -258,13 +270,15 @@ void AbilityCommand::execute() const {
 	} else if ((AbilityIndex == 105 || AbilityIndex == 107) && !LoH_HT_Ready()) {
 		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[DoAbility]: LoH/HT Not Ready.", MQGetTickCount64()); }
 		CastingState::instance().setCurrentResult(CastResult::NotReady);
-	} else {
+	} else if (auto pMyChar = GetCharInfo()) {
 		CastingState::instance().setCurrentResult(CastResult::Casting);
 
 		CHAR szBuffer[MAX_STRING] = { 0 };
 		sprintf_s(szBuffer, "%d", AbilityIndex);
-		if (DEBUGGING) { WriteChatf("Cast = %s : szBuffer %s -- DoAbility()", GetCharInfo()->pSpawn, szBuffer); }
-		DoAbility(GetCharInfo()->pSpawn, szBuffer); // TODO: can I get rid of this?
+		if (DEBUGGING) { WriteChatf("Cast = %d : szBuffer %s -- DoAbility()", GetCharInfo()->pSpawn, szBuffer); }
+		if (pMyChar->vtable2) { pCharData1->UseSkill(AbilityIndex, (EQPlayer*)pCharData1); }
+	} else {
+		CastingState::instance().setCurrentResult(CastResult::NotReady);
 	}
 }
 
