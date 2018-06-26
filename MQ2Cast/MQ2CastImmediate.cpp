@@ -134,6 +134,7 @@ bool TargetCommand::execute() const {
 		*(PSPAWNINFO*)ppTarget = target;
 	}
 
+	// TODO: This may be redundant
 	CastingState::instance().setOnTargetID(TargetID);
 
 	if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[TargetCommand]: Targeting ID %d.", MQGetTickCount64(), TargetID); }

@@ -370,13 +370,19 @@ PLUGIN_API VOID CastDebug(PSPAWNINFO pChar, PCHAR Cmd) {
 
 PLUGIN_API VOID CastingCommand(PSPAWNINFO pChar, PCHAR Cmd) {
 	if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Casting]: Command Start %d %s.", MQGetTickCount64(), pChar, Cmd); }
-	if (!gbInZone || CastingState::instance().isCasting() || CastingState::instance().hasCastBar() || CastingState::instance().isWindowOpen() || (pSpellBookWnd && ((PCSIDLWND)pSpellBookWnd)->dShow)) {
+	if (!gbInZone || 
+		CastingState::instance().isCasting() || 
+		CastingState::instance().hasCastBar() || 
+		CastingState::instance().isWindowOpen() || 
+		CastingState::instance().getCmdType() != CastType::None ||
+		(pSpellBookWnd && ((PCSIDLWND)pSpellBookWnd)->dShow)) {
 		if (DEBUGGING) {
 			WriteChatf("[%I64u] MQ2Cast:[Casting]: Cannot Cast. [%d][%s%s%s%s]", MQGetTickCount64(), GetReturnString(CastingState::instance().getCurrentResult()).c_str(),
 				gbInZone ? " ZONE " : "", 
 				CastingState::instance().isCasting() ? " isCasting " : "", 
 				CastingState::instance().hasCastBar() ? " hasCastBar " : "", 
 				CastingState::instance().isWindowOpen() ? " isWindowOpen " : "", 
+				CastingState::instance().getCmdType() != CastType::None ? " hasCommandQueued " : "", 
 				(pSpellBookWnd && ((PCSIDLWND)pSpellBookWnd)->dShow) ? " SHOW " : ""
 			);
 		}
@@ -810,8 +816,6 @@ PLUGIN_API VOID OnPulse(VOID) {
 		return;
 	}
 
-	CastingState::instance().updateTimeout();
-
 	// are we casting something right now?
 	auto detectedID = CastingState::instance().detectSpellCast();
 	if (detectedID != NOID) {
@@ -836,7 +840,12 @@ PLUGIN_API VOID OnPulse(VOID) {
 
 		return; // we are casting, don't do anything else.
 	} else if (CastingState::instance().getCmdType() != CastType::None) {
-		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Nothing Casting With Queue Size %d -> Executing Command Type %d.", MQGetTickCount64(), CastingState::instance().getCmdSize(), CastingState::instance().getCmdType()); }
+		// we should be casting, let's see if we actually can and then do it
+		if (DEBUGGING) { 
+			WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Nothing Casting With Queue Size %d -> Executing Command Type %d.", MQGetTickCount64(), CastingState::instance().getCmdSize(), CastingState::instance().getCmdType());
+		}
+
+		// do target checks. If we didn't set the target ID from the command, assume we want to target our current target.
 		if (CastingState::instance().getOnTargetID() == NOID) {
 			CastingState::instance().setOnTargetID(pTarget ? ((PSPAWNINFO)pTarget)->SpawnID : NOID);
 			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Setting Target ID %d.", MQGetTickCount64(), CastingState::instance().getOnTargetID()); }
@@ -845,7 +854,7 @@ PLUGIN_API VOID OnPulse(VOID) {
 			if (targetID != CastingState::instance().getOnTargetID()) {
 				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Wrong Target ID %d -> Set Target To ID %d.", MQGetTickCount64(), targetID, CastingState::instance().getOnTargetID()); }
 				// we need to target. Push a command and return.
-				CastingState::instance().pushImmediate(new TargetCommand(targetID));
+				CastingState::instance().pushImmediate(new TargetCommand(CastingState::instance().getOnTargetID()));
 				return;
 			}
 		}
@@ -857,8 +866,8 @@ PLUGIN_API VOID OnPulse(VOID) {
 				// can't do things while stunned!
 				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Found Stunned.", MQGetTickCount64()); }
 				CastingState::instance().setCurrentResult(CastResult::Stunned);
-			} else if (!CastingState::instance().getCastWhileInvis() && GetCharInfo()->pSpawn->HideMode) {
-				// we specified not to cast while invis
+			} else if (CastingState::instance().getCmdType != CastType::Memorize && !CastingState::instance().getCastWhileInvis() && GetCharInfo()->pSpawn->HideMode) {
+				// we specified not to cast while invis -- but we can mem all we want while invis
 				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Found Invis While CastWhileInvis=false.", MQGetTickCount64()); }
 				CastingState::instance().setCurrentResult(CastResult::Invisible);
 			} else if (PSPELL currentSpell = GetSpellByID(currentID)) {
@@ -903,8 +912,6 @@ PLUGIN_API VOID OnPulse(VOID) {
 				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Failed to find pMySpawn %d.", MQGetTickCount64(), pMySpawn); }
 				CastingState::instance().setCurrentResult(CastResult::Success);
 			}
-
-			CastingState::instance().updateTimeout();
 		}
 	} else if (CastingState::instance().getCurrentID() != NOID) {
 		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: No Detected Spell or Command. Need To Clear Variables: %d.", MQGetTickCount64(), CastingState::instance().getCurrentID()); }
