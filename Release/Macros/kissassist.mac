@@ -3394,7 +3394,7 @@ Sub Main
            /nomodkey /itemnotify "${PowerSource}" leftmouseup
            /delay 5s ${Cursor.ID}
            /if (${Cursor.Name.Equal[${PowerSource}]}) /destroy
-           /delay 5s ${Cursor.Equal[Null]}
+           /delay 5s ${Cursor.Name.Equal[Null]}
         }
         |--------- Change to add Zone.Outdoor TLO and specific Zone.Type to stop mount cast spam.
         /if (${MountOn} && !${Me.Mount.ID} && (${Zone.Outdoor} || ${Select[${Zone.Type},1,2,5]}) && ${Me.CombatState.NotEqual[COMBAT]}) /call CastMount
