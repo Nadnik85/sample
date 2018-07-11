@@ -1,3 +1,9 @@
+Jul 11 2018 by eqmule
+- Updated for TEST
+
+Jul 09 2018 by eqmule
+- Added support for MQ2Radar
+
 Jun 22 2018 by eqmule
 - Updated for TEST
 - Fixed a bug in mq2itemdisplay that would spam uierrors.txt
