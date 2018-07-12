@@ -51,7 +51,10 @@ bool MQ2Cast::DEBUGGING = false;
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
 bool         Parsed = false;            // BTree List Found Flags
 Blech         LIST013('#');            // BTree List for OnChat Message on Color  13
+Blech         LIST015('#');            // BTree List for OnChat Message on Color  15
 Blech         LIST264('#');            // BTree List for OnChat Message on Color 264
+Blech		  LIST271('#');			   // BTree List for OnChat Message on Color 271
+Blech		  LIST273('#');			   // BTree List for OnChat Message on Color 273
 Blech         LIST289('#');            // BTree List for OnChat Message on Color 289
 Blech         UNKNOWN('#');            // BTree List for OnChat Message on UNKNOWN Yet Color
 Blech         SUCCESS('#');            // BTree List for OnChat Message on SUCCESS Detection
@@ -152,13 +155,13 @@ const PMQCOMMAND MQ2Cast::FindMQCommand(const PCHAR Command) {
 }
 
 const DWORD MQ2Cast::GetDWordMember(MQ2Type* Type, const PCHAR Member) {
-	// I hate that Type can't be const
-	if (!Type) return 0;
+// I hate that Type can't be const
+if (!Type) return 0;
 
-	MQ2TYPEVAR MemberVar;
-	Type->GetMember(MemberVar.VarPtr, Member, "", MemberVar);
+MQ2TYPEVAR MemberVar;
+Type->GetMember(MemberVar.VarPtr, Member, "", MemberVar);
 
-	return MemberVar.DWord;
+return MemberVar.DWord;
 }
 
 void MQ2Cast::SetEQInput(const DWORD Offset, const PCHAR Command, const char Value) {
@@ -212,6 +215,134 @@ void MQ2Cast::Execute(const fEQCommand Command, const PCHAR zFormat, ...) {
 	}
 }
 
+
+bool MQ2Cast::IsValidTarget(const PSPELL pSpell, const PSPAWNINFO pSpellTarget) {
+	// self is not a valid target for cases 5,7-23,27,28,30,34,35,38,39,43,46,47,50
+	switch ((CastTarget)pSpell->TargetType) {
+	case CastTarget::FreeTargetAE:
+		if (pSpellTarget) {
+			return IsInRange(pSpell, pSpellTarget);
+		} // else check for range of click
+		break;
+	/* These are checked in the client before sending to the server, so are probably not really necessary to check again since we can check chat as a sort of return. */
+	/* We can go as far as actually checking the body types and stuff, but not really worth it. */
+	case CastTarget::Aimed:
+	case CastTarget::Bolt:
+	case CastTarget::Single:
+	case CastTarget::TargetedAE:
+	case CastTarget::Animal:
+	case CastTarget::Undead:
+	case CastTarget::Summoned:
+	case CastTarget::Flyer:
+	case CastTarget::Lifetap:
+	case CastTarget::Corpse:
+	case CastTarget::Plant:
+	case CastTarget::VeliousGiant:
+	case CastTarget::VeliousDragon: // why not Coldain? -- because there is no spell with the Coldain target type
+	case CastTarget::GroupLifetap:
+	case CastTarget::TargetedAEUndead:
+	case CastTarget::TargetedAESummoned:
+	case CastTarget::TargetedAEAnimal:
+	case CastTarget::Insect:
+	case CastTarget::TargetedAEInsect:
+	case CastTarget::Object:
+	case CastTarget::Muramite:
+	case CastTarget::SinglePCOnly:
+	case CastTarget::SingleGroupMember:
+	case CastTarget::PetsOwner:
+	case CastTarget::TargetedAEEnemies:
+		return (pSpellTarget && IsInRange(pSpell, pSpellTarget));
+	/* End client redundancy. */
+	default:
+		return true;
+	}
+}
+
+bool MQ2Cast::IsInRange(const PSPELL pSpell, FLOAT Y, FLOAT X, FLOAT Z, BOOL doFocus) {
+	auto pMyChar = GetCharInfo();
+	if (!pMyChar || !pMyChar->pSpawn) {
+		return false;
+	}
+
+	FLOAT range = pSpell->Range;
+	if (doFocus) {
+		// we need to grab the focusrangemod
+		FLOAT rangeMod = (FLOAT)GetFocusRangeModifier((EQ_Spell*)pSpell, 0); // AFAICT, the equipment variable is always null in the client
+		range = min(range + rangeMod, range * 5.0f); // this is the calculation from the client everytime we grab the focus mod
+	}
+
+	// the client does a 3D check, so we will too
+	FLOAT dist = Distance3DToPoint(pMyChar->pSpawn, X, Y, Z);
+
+	// the client does this in squared distances because it doesn't calculate sqrt for the distance calculation, but this should be the same and I CBA to write a new dist function
+	return dist >= pSpell->MinRange && dist <= range;
+}
+
+bool MQ2Cast::IsInRange(const PSPELL pSpell, const PSPAWNINFO pSpellTarget) {
+	if (!pSpellTarget) return false;
+
+	return IsInRange(pSpell, pSpellTarget->Y, pSpellTarget->X, pSpellTarget->Z, pSpellTarget->Type == SPAWN_PLAYER || pSpellTarget->Mercenary);
+}
+
+const std::string MQ2Cast::GetTargetTypeName(const CastTarget TargetType) {
+	switch (TargetType) {
+		case CastTarget::Aimed:					return std::string("Aimed");
+		case CastTarget::Bolt:					return std::string("Bolt");
+		case CastTarget::Area:					return std::string("Area");
+		case CastTarget::CasterGroup:			return std::string("Caster Group");
+		case CastTarget::PBAE:					return std::string("PB AE");
+		case CastTarget::Single:				return std::string("Single");
+		case CastTarget::Self:					return std::string("Self");
+		case CastTarget::HeldItem:				return std::string("Held Item");
+		case CastTarget::TargetedAE:			return std::string("Targeted AE");
+		case CastTarget::Animal:				return std::string("Animal");
+		case CastTarget::Undead:				return std::string("Undead");
+		case CastTarget::Summoned:				return std::string("Summoned");
+		case CastTarget::Flyer:					return std::string("Flyer");
+		case CastTarget::Lifetap:				return std::string("Lifetap");
+		case CastTarget::Pet:					return std::string("Pet");
+		case CastTarget::Corpse:				return std::string("Corpse");
+		case CastTarget::Plant:					return std::string("Plant");
+		case CastTarget::VeliousGiant:			return std::string("Velious Giant");
+		case CastTarget::VeliousDragon:			return std::string("Velious Dragon");
+		case CastTarget::Coldain:				return std::string("Coldain");
+		case CastTarget::GroupLifetap:			return std::string("Group Lifetap");
+		case CastTarget::TargetedAEUndead:		return std::string("Targeted AE (Undead)");
+		case CastTarget::TargetedAESummoned:	return std::string("Targeted AE (Summoned)");
+		case CastTarget::TargetedAEAnimal:		return std::string("Targeted AE (Animal)");
+		case CastTarget::PBAEUndead:			return std::string("PB AE (Undead)");
+		case CastTarget::PBAESummoned:			return std::string("PB AE (Summoned)");
+		case CastTarget::PBAEAnimal:			return std::string("PB AE (Animal)");
+		case CastTarget::Insect:				return std::string("Insect");
+		case CastTarget::TargetedAEInsect:		return std::string("Targeted AE (Insect)");
+		case CastTarget::PBAEInsect:			return std::string("PB AE (Insect)");
+		case CastTarget::TargetedAEPlant:		return std::string("Targeted AE (Plant)");
+		case CastTarget::PBAEPlant:				return std::string("PB AE (Plant)");
+		case CastTarget::HatelistPBAE:			return std::string("Hatelist PB AE");
+		case CastTarget::Hatelist:				return std::string("Hatelist");
+		case CastTarget::Object:				return std::string("Object");
+		case CastTarget::Muramite:				return std::string("Muramite");
+		case CastTarget::PBAEPlayersOnly:		return std::string("PB AE (Players Only)");
+		case CastTarget::PBAENPCsOnly:			return std::string("PB AE (NPCs Only)");
+		case CastTarget::SummonedPet:			return std::string("Summoned Pet");
+		case CastTarget::SinglePCOnly:			return std::string("Single (PC Only)");
+		case CastTarget::PBAEFriendly:			return std::string("PB AE (Friendly)");
+		case CastTarget::TargetGroup: 			return std::string("Target Group");
+		case CastTarget::DirectionalAE:			return std::string("Directional AE");
+		case CastTarget::SingleGroupMember:		return std::string("Single (Group Member)");
+		case CastTarget::Beam:					return std::string("Beam");
+		case CastTarget::FreeTargetAE:			return std::string("Free Target AE");
+		case CastTarget::SingleTargetsTarget:	return std::string("Single Target's Target");
+		case CastTarget::PetsOwner:				return std::string("Pet's Owner");
+		case CastTarget::PBAEEnemies:			return std::string("PB AE (Enemies)");
+		case CastTarget::RealEstate:			return std::string("Real Estate");
+		case CastTarget::TargetedAEEnemies:		return std::string("Targeted AE (Enemies)");
+		default:								return std::string("Unknown");
+	}
+
+	return std::string("Unknown");
+}
+
 #pragma endregion
 
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
@@ -234,6 +365,7 @@ public:
 		Timing = 7,
 		Taken = 8,
 		Ready = 9,
+		Test = 10,
 	};
 
 	MQ2CastType() : MQ2Type("Cast") {
@@ -246,6 +378,7 @@ public:
 		TypeMember(Timing);
 		TypeMember(Taken);
 		TypeMember(Ready);
+		TypeMember(Test);
 	}
 
 	bool GetMember(MQ2VARPTR VarPtr, PCHAR Member, PCHAR Index, MQ2TYPEVAR &Dest) {
@@ -313,6 +446,26 @@ public:
 			case Taken:
 				Dest.DWord = CastingState::instance().getLastResult() == CastResult::TakeHold;
 				Dest.Type = pBoolType;
+				return true;
+			case Test:
+				Dest.Type = pStringType;
+				std::string returnStr;
+				PSPAWNINFO pCheckTarget;
+				if (pTarget) {
+					returnStr += "Target: ";
+					pCheckTarget = reinterpret_cast<PSPAWNINFO>(pTarget);
+				}
+				PSPELL pSpell;
+				// not sure what all this checks, but the client calls this in their cast function -- let's get it out of the way early
+				pSpellMgr->DoesMeetRequirement((PlayerZoneClient *)pCheckTarget, pSpell->SpellReqAssociationID);
+				if (pCharData && pCharData1) {
+					//pCharData1->CastSpell();
+				}
+				if (Index[0]) {
+
+				}
+				const char *retPChar = returnStr.c_str();
+				Dest.Ptr = &retPChar;
 				return true;
 			}
 		}
@@ -734,6 +887,45 @@ PLUGIN_API VOID InitializePlugin(VOID) {
 	aCastEvent(LIST289, CastResult::TakeHold, "You need to be in a more open area to summon a mount#*#");
 	aCastEvent(LIST289, CastResult::TakeHold, "You can only summon a mount on dry land#*#");
 	aCastEvent(LIST289, CastResult::TakeHold, "This pet may not be made invisible#*#");
+	// from here down: evaluate the return type, I've added a lot of new things here.
+	aCastEvent(LIST271, CastResult::Distracted, "You are already using a discipline!#*#");
+	aCastEvent(LIST289, CastResult::Distracted, "You are too distracted to use a skill.#*#");
+	aCastEvent(LIST289, CastResult::Distracted, "You are too distracted to cast a spell now!#*#");
+	aCastEvent(LIST289, CastResult::NotReady, "You are already casting a spell!#*#");
+	aCastEvent(LIST289, CastResult::Unknown, "You are not high enough level to cast this spell!#*#");
+	aCastEvent(LIST015, CastResult::Distracted, "Warning, you have many items waiting on your cursor.  Please place these items before summoning more.#*#");
+	aCastEvent(LIST289, CastResult::NoTarget, "You must hold an item to cast the spell upon.#*#");
+	aCastEvent(LIST289, CastResult::OutOfRange, "You are too close to your target. Get farther away.#*#");
+	aCastEvent(LIST289, CastResult::OutOfRange, "Your target is out of range, get closer!#*#");
+	aCastEvent(LIST289, CastResult::Distracted, "Casting #*# would result in your death!#*#");
+	aCastEvent(LIST289, CastResult::Distracted, "You can not cast this spell while in combat.#*#");
+	aCastEvent(LIST289, CastResult::Distracted, "You can not use this ability while in combat.#*#");
+	aCastEvent(LIST289, CastResult::Distracted, "You can not cast this spell while out of combat.#*#");
+	aCastEvent(LIST289, CastResult::Distracted, "You can not use this ability while out of combat.#*#");
+	aCastEvent(LIST289, CastResult::Distracted, "You can only cast this spell while in a resting state.#*#");
+	aCastEvent(LIST289, CastResult::Distracted, "You can only use this ability while in a resting state.#*#");
+	aCastEvent(LIST013, CastResult::Components, "You cannot use this item unless it is equipped.#*#");
+	aCastEvent(LIST289, CastResult::Standing, "You need to at least be conscious to sing!#*#");
+	aCastEvent(LIST289, CastResult::Standing, "You must stand upright and still in order to cast!#*#");
+	aCastEvent(LIST289, CastResult::NoTarget, "This spell only works on other PCs.#*#");
+	aCastEvent(LIST289, CastResult::NoTarget, "This spell only works on NPCs.#*#");
+	aCastEvent(LIST289, CastResult::NoTarget, "You must first target a living group member whose corpse you wish to summon.#*#");
+	aCastEvent(LIST289, CastResult::NoTarget, "You do not have a pet.#*#");
+	aCastEvent(LIST289, CastResult::NoTarget, "This effect only works with summoned pets.#*#");
+	aCastEvent(LIST289, CastResult::NoTarget, "You must first select a target for this ability!#*#");
+	aCastEvent(LIST289, CastResult::NoTarget, "You must first select a target for this spell!#*#");
+	aCastEvent(LIST289, CastResult::NoTarget, "Your target does not meet the spell requirements.#*#");
+	aCastEvent(LIST289, CastResult::NoTarget, "You can't drain yourself!#*#");
+	aCastEvent(LIST289, CastResult::NoTarget, "That spell can not affect this target PC.#*#");
+	aCastEvent(LIST289, CastResult::NoTarget, "You must first target a group member.#*#");
+	aCastEvent(LIST289, CastResult::OutOfMana, "Insufficient Endurance to activate this ability!#*#");
+	aCastEvent(LIST289, CastResult::TakeHold, "You cannot seem to develop an affinity for this place. Try a city.#*#");
+	aCastEvent(LIST273, CastResult::Components, "Item is out of charges.#*#");
+	aCastEvent(LIST013, CastResult::Components, "You cannot use this item unless it is attuned.#*#");
+	aCastEvent(LIST013, CastResult::Components, "You are not sufficient level to use this item.#*#");
+	aCastEvent(LIST289, CastResult::NotReady, "You can not use this ability because you have not been hidden for long enough.#*#");
+	aCastEvent(LIST289, CastResult::Stunned, "You cannot use a skill while stunned!#*#");
+	aCastEvent(LIST289, CastResult::Distracted, "You do not have control of yourself right now.#*#");
 	pCastType = new MQ2CastType;
 	AddMQ2Data("Cast", dataCast);
 	AddCommand("/castdebug", CastDebug);
@@ -781,10 +973,16 @@ PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color) {
 			if (Color == 264) {
 				LIST264.Feed(szLine);
 				SUCCESS.Feed(szLine);
+			}  else if (Color == 271) {
+				LIST271.Feed(szLine);
+			}  else if (Color == 273) {
+				LIST273.Feed(szLine);
 			} else if (Color == 289) {
 				LIST289.Feed(szLine);
 			} else if (Color == 13) {
 				LIST013.Feed(szLine);
+			} else if (Color == 15) {
+				LIST015.Feed(szLine);
 			}
 
 			if (!Parsed) {
@@ -866,28 +1064,15 @@ PLUGIN_API VOID OnPulse(VOID) {
 				// can't do things while stunned!
 				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Found Stunned.", MQGetTickCount64()); }
 				CastingState::instance().setCurrentResult(CastResult::Stunned);
-			} else if (CastingState::instance().getCmdType != CastType::Memorize && !CastingState::instance().getCastWhileInvis() && GetCharInfo()->pSpawn->HideMode) {
+			} else if (CastingState::instance().getCmdType() != CastType::Memorize && !CastingState::instance().getCastWhileInvis() && GetCharInfo()->pSpawn->HideMode) {
 				// we specified not to cast while invis -- but we can mem all we want while invis
 				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Found Invis While CastWhileInvis=false.", MQGetTickCount64()); }
 				CastingState::instance().setCurrentResult(CastResult::Invisible);
 			} else if (PSPELL currentSpell = GetSpellByID(currentID)) {
 				// maybe we have the nothing targeted?
-				if (!pTarget) {
-					switch (currentSpell->TargetType) {
-					case 18: // Uber Dragons
-					case 17: // Uber Giants
-					case 16: // Plant
-					case 15: // Corpse
-					case 14: // Pet
-					case 11: // Summoned
-					case 10: // Undead
-					case  9: // Animal
-					case  5: // Single
-						if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Found No Target When Spell Requires Target.", MQGetTickCount64()); }
-						CastingState::instance().setCurrentResult(CastResult::NoTarget);
-
-						break;
-					}
+				if (!IsValidTarget(currentSpell, reinterpret_cast<PSPAWNINFO>(pTarget))) {
+					if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Found No Target When Spell Requires Target.", MQGetTickCount64()); }
+					CastingState::instance().setCurrentResult(CastResult::NoTarget);
 				}
 			}
 		}
@@ -1043,6 +1228,40 @@ bool CastingState::isWindowOpen() {
 
 	return false;
 }
+
+// CEverQuest::IsOkToTransact() ? -- this would be useful to test if any windows are open
+//bool sub_5C1F90() {
+//	if (((PSPAWNINFO)pLocalPlayer)->Vehicle) {
+//		if (((PSPAWNINFO)pLocalPlayer)->Vehicle->pRaceGenderInfo) {
+//			// return pRaceGenderInfo->0x2C
+//		}
+//	} else if (((PSPAWNINFO)pLocalPlayer)->RespawnTimer != 0 || dword_E68B00 != 0 || dword_F075D4 > 0 || dword_F075D0 > 0) {
+//		return false;
+//	} else if (pContainerMgr && pContainerMgr->0xAC != 0) {
+//		return false;
+//	} else if (pSpellBookWnd && pSpellBookWnd->bActive) {
+//		return false;
+//	} else if (pTrainWnd && pTrainWnd->bActive) {
+//		return false;
+//	} else if (pBazaarWnd && pBazaarWnd->bActive) {
+//		return false;
+//	} else if (pBarterWnd && pBarterWnd->bActive) {
+//		return false;
+//	} else if (pTradeWnd && pTradeWnd->bActive) {
+//		return false;
+//	} else if (pBankWnd && pBankWnd->bActive) {
+//		return false;
+//	} else if (pMerchantWnd && pMerchantWnd->bActive) {
+//		return false;
+//	} else if (pLootWnd && pLootWnd->bActive) {
+//		return false;
+//	} else if (pBarterMerchantWnd && pBarterMerchantWnd->bActive) {
+//		return false;
+//	} else if (dword_1019E80 && dword_1019E80->bActive) {
+//		return false;
+//	}
+//	return true;
+//}
 
 bool CastingState::hasCastBar() {
 	if (!isBard() && pCastingWnd && ((PCSIDLWND)pCastingWnd)->dShow) {

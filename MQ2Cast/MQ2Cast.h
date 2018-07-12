@@ -2,6 +2,7 @@
 #define MQ2CAST_H_
 
 #include "../MQ2Plugin.h"
+#include "MQ2CastSPA.h"
 
 // this is the ID that CastingData.SpellID returns if we aren't casting anything
 #define NOID		-1
@@ -64,6 +65,63 @@ namespace MQ2Cast {
 		NTimes
 	};
 
+	// These are explicitly enumerated to match the numbers in the client. There are only 3 cases where the numbers
+	// are ambiguous, noted in comments after the definition here.
+	enum class CastTarget {
+		Unknown				= -1, // Convenience member, this is the default case in the client, but no spells currently defined are outside the range 0-50
+		Aimed				=  0, // "Bolt" in the spell inspection window (same as 1) -- used for exactly three spells -- 2 NPC and one vanity item effect -- that require LOS (probably errors, should be 1)
+		Bolt				=  1,
+		Area				=  2, // "PB AE" in the spell inspection window (same as 4) -- This seems mostly to be used for secondary effects (like the mod rod AA), can affect any target
+		CasterGroup			=  3,
+		PBAE				=  4,
+		Single				=  5,
+		Self				=  6,
+		HeldItem			=  7,
+		TargetedAE			=  8,
+		Animal				=  9,
+		Undead				= 10,
+		Summoned			= 11,
+		Flyer				= 12,
+		Lifetap				= 13,
+		Pet					= 14,
+		Corpse				= 15,
+		Plant				= 16,
+		VeliousGiant		= 17,
+		VeliousDragon		= 18,
+		Coldain				= 19,
+		GroupLifetap		= 20,
+		TargetedAEUndead	= 21,
+		TargetedAESummoned	= 22,
+		TargetedAEAnimal	= 23,
+		PBAEUndead			= 24,
+		PBAESummoned		= 25,
+		PBAEAnimal			= 26,
+		Insect				= 27,
+		TargetedAEInsect	= 28,
+		PBAEInsect			= 29,
+		TargetedAEPlant		= 30,
+		PBAEPlant			= 31,
+		HatelistPBAE		= 32,
+		Hatelist			= 33,
+		Object				= 34,
+		Muramite			= 35,
+		PBAEPlayersOnly		= 36,
+		PBAENPCsOnly		= 37,
+		SummonedPet			= 38,
+		SinglePCOnly		= 39,
+		PBAEFriendly		= 40,
+		TargetGroup			= 41, // "Group" in the spell inspection window (same as 3) -- /tgb-able group spells
+		DirectionalAE		= 42,
+		SingleGroupMember	= 43,
+		Beam				= 44,
+		FreeTargetAE		= 45,
+		SingleTargetsTarget = 46,
+		PetsOwner			= 47,
+		PBAEEnemies			= 48,
+		RealEstate			= 49,
+		TargetedAEEnemies	= 50
+	};
+
 #pragma endregion
 
 	/* v12.0 -- Here's how this plugin works.
@@ -102,6 +160,16 @@ namespace MQ2Cast {
 
 	// this is more efficient since you can store off the command
 	void Execute(const fEQCommand Command, const PCHAR zFormat, ...);
+
+	const CastResult ClientCastChecks(const PSPELL pSpell);
+
+	bool IsValidTarget(const PSPELL pSpell, const PSPAWNINFO pSpellTarget);
+
+	bool IsInRange(const PSPELL pSpell, FLOAT Y, FLOAT X, FLOAT Z, BOOL doFocus = false);
+
+	bool IsInRange(const PSPELL pSpell, const PSPAWNINFO pSpellTarget);
+
+	const std::string GetTargetTypeName(const CastTarget TargetType);
 
 #pragma endregion
 
@@ -244,6 +312,7 @@ namespace MQ2Cast {
 
 		static long GetCooldown(int GemSlot);
 		static int GetGem(LONG spellID);
+		const PSPELL Validate(const PSPELL pSpell) const;
 		static int GetGem(PCHAR ID);
 
 		void execute() const;

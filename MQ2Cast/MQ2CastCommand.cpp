@@ -143,6 +143,36 @@ int SpellCommand::GetGem(LONG spellID) {
 	return -1;
 }
 
+const PSPELL SpellCommand::Validate(const PSPELL pSpell) const {
+	PCHARINFO2 pChar2 = GetCharInfo2();
+	if (!pChar2 || !pSpell) {
+		return nullptr;
+	}
+
+	PSPELL pCastSpell = nullptr;
+
+	for (DWORD nSpell = 0; nSpell < NUM_BOOK_SLOTS; nSpell++) {
+		if (pChar2->SpellBook[nSpell] != 0xFFFFFFFF) {
+			PSPELL pFoundSpell = GetSpellByID(pChar2->SpellBook[nSpell]);
+			if (!pFoundSpell) {
+				continue;
+			}
+
+			if (pSpell->SpellGroup == 0) {
+				if (pFoundSpell->ID == pSpell->ID) {
+					return pFoundSpell;
+				}
+			} else if (pFoundSpell->SpellGroup == pSpell->SpellGroup &&
+				pFoundSpell->SpellSubGroup == pSpell->SpellSubGroup &&
+				(!pCastSpell || pFoundSpell->SpellRank > pCastSpell->SpellRank)) {
+				pCastSpell = pFoundSpell;
+			}
+		}
+	}
+
+	return pCastSpell;
+}
+
 int SpellCommand::GetGem(PCHAR ID) {
 	if (strlen(ID) >= 3 && !_strnicmp(ID, "gem", 3)) {
 		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Gem]: Parsing Gem As A String \"%s\".", MQGetTickCount64(), ID); }

@@ -121,6 +121,7 @@
   <ItemGroup>
     <ClInclude Include="..\MQ2Plugin.h" />
     <ClInclude Include="MQ2Cast.h" />
+    <ClInclude Include="MQ2CastSPA.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
