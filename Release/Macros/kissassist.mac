@@ -1,4 +1,4 @@
-| - kissassist.mac v10.2.6 by Maskoi 05/9/2018.
+| - kissassist.mac v10.2.6 by Maskoi 05/28/2018.
 | - Contributions by anonymoushero, crystane, eqmule, thenomadman, william12.
 | - ChainPull, Debuffs and combat rewrites by ctaylor22.
 | - PetTank, PullerPetTank & HunterPetTank roles developed by TreeHuginDruid
@@ -1856,6 +1856,9 @@ Sub Main
                     }
                 }
                 /if (${Spawn[${MyTargetID}].Type.Equal[Corpse]} || !${Spawn[${MyTargetID}].ID} || ${Me.Feigning}) /break
+                /if (${Defined[ParseDPS]}) {
+                    /if (!${ParseDPS}) /break
+                }
             }
         } else /if (${Spawn[${MyTargetID}].PctHPs}<=${PetAssistAt} && (${Spawn[${MyTargetID}].Distance}<${CombatRadius} || (${Math.Distance[${CampYLoc},${CampXLoc}:${Spawn[=${MainAssist}].Y},${Spawn[=${MainAssist}].X}]}<=${CombatRadius} && ${Math.Distance[${Target.Y},${Target.X}:${Spawn[=${MainAssist}].Y},${Spawn[=${MainAssist}].X}]}<=${CampRadius}))) {
             /if (${PetOn} && ${PetCombatOn} && !${PetAttack} && !${DPSPaused}) /call CombatPet
@@ -2956,6 +2959,7 @@ Sub Main
                                     /nav stop
                                     /return
                                 }
+                                /if (!${Me.Mount.ID} && ${Me.Sitting}) /stand
                                 /nav locxyz ${CampXLoc} ${CampYLoc} ${CampZLoc}
                                 /if (${Me.Mount.ID} && ${Math.Distance[${CampYLoc},${CampXLoc}]} <= 75 ) {
                                     /echo MQ2Nav does not work well with mounts. Dismounting.
@@ -2993,6 +2997,7 @@ Sub Main
                     |---------------------------------------------- MQ2AdvPath ---------------------------------------------------------------------|
                     } else /if (${PullPathWpCount} && ${PullMoveUse.Equal[advpath]}) {
                         /if (${MoveTo.Moving}) /moveto off
+                        /if (!${Me.Mount.ID} && ${Me.Sitting}) /stand
                         /play ${PullPath} reverse nodoor smart
                         /if (${DebugMove}) /echo \atDEBUG DoWeMove: /play ${PullPath} reverse nodoor smart \agLine#: ${Macro.CurLine}
                         /while (1) {
@@ -3274,7 +3279,7 @@ Sub Main
                         /call DoWeMove 0 DoWeMed
                     }
                     /if (${MountOn} && !${Me.Mount.ID} && (${Zone.Outdoor} || ${Select[${Zone.Type},1,2,5]})) /call CastMount
-                    /if (!${Me.Mount.ID} && ${Me.Standing}) /sit
+                    /if (!${Me.Mount.ID} && !${Me.Moving} && ${Me.Standing}) /sit
                     /if (${Debug}) /echo \atDEBUG ${MedStat} ${MedStat1} ${MedStat2} \agLine#: ${Macro.CurLine}
                     /delay 10
                     /if (!${MedCombat} || ${MedCombat}==2) {
@@ -3316,12 +3321,12 @@ Sub Main
             }
             /if (${Select[${Role},pullerpettank,puller,hunter,hunterpettank]} && ${Me.PctHPs}<=50) {
                 /echo Medding to 100% health
-                /if (!${Me.Mount.ID} && !${Me.Sitting}) /sit
+                /if (!${Me.Mount.ID} && !${Me.Moving} && !${Me.Sitting}) /sit
                 :WaitFor100
                 /while (1) {
                     /doevents
                     /if (${ReturnToCamp} && ${Math.Distance[${CampYLoc},${CampXLoc}]} > 15) {
-                        /if (!${Me.Mount.ID} && ${Me.Sitting}) /stand
+                        |/if (!${Me.Mount.ID} && ${Me.Sitting}) /stand
                         /call DoWeMove 0 dowemed
                     }
                     /delay 5
@@ -3394,7 +3399,7 @@ Sub Main
            /nomodkey /itemnotify "${PowerSource}" leftmouseup
            /delay 5s ${Cursor.ID}
            /if (${Cursor.Name.Equal[${PowerSource}]}) /destroy
-           /delay 5s ${Cursor.Name.Equal[Null]}
+           /delay 5s ${Cursor.Equal[Null]}
         }
         |--------- Change to add Zone.Outdoor TLO and specific Zone.Type to stop mount cast spam.
         /if (${MountOn} && !${Me.Mount.ID} && (${Zone.Outdoor} || ${Select[${Zone.Type},1,2,5]}) && ${Me.CombatState.NotEqual[COMBAT]}) /call CastMount
@@ -3609,26 +3614,37 @@ Sub Main
                                 /doevents flush Worn_off
                                 /varset WriteBuffsTimer 0
                                 /call WriteBuffs
+                            } else /if (${Macro.Return.Equal[CAST_COMPONENTS]}) {
+                                /echo You are missing components. Turning off ${SpellToCast}.
+                                /varset Buffs[${i}] NULL
+                                /varset FullText NULL
+                                /continue
                             }
                         /next j
                     } else /if (${Select[${2ndPart},MA,Melee,Caster,DualMA,DualMelee,DualCaster]}==0) {
                         /if (${Cursor.ID}) /call CheckCursor CheckBuffs4
                         /call CastWhat "${SpellToCast}" ${Me.ID} Buffs-nomem 0
+                        /if (${Macro.Return.Equal[CAST_COMPONENTS]}) {
+                            /echo You are missing components. Turning off ${SpellToCast}.
+                            /varset Buffs[${i}] NULL
+                            /varset FullText NULL
+                            /continue
+                        } else /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
+                            /echo Casting ${SpellToCast} on me.
+                        }
                     }
                 | If Target.Type=self then buff self
                 } else /if ((!${FindItem[=${SpellToCast}].ID} && ${BookSpellTT.Find[0]} && ${Spell[${SpellToCast}].TargetType.Find[self]}) || ${BookSpellTT.Find[self]}) {
                     /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs Self Buff \agLine#: ${Macro.CurLine}
                         /call CastWhat "${SpellToCast}" ${Me.ID} Buffs-nomem 0
-                    /if (${Macro.Return.Equal[CAST_COMPONENTS]}) {
-                        /echo You are missing components. Turning off ${SpellToCast}.
-                        /varset Buffs[${i}] NULL
-                        /varset FullText NULL
-                        /delay 10
-                        /continue
-                    } else /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
-                        /echo Casting ${SpellToCast} on me.
-                        /delay 10
-                    }
+                        /if (${Macro.Return.Equal[CAST_COMPONENTS]}) {
+                            /echo You are missing components. Turning off ${SpellToCast}.
+                            /varset Buffs[${i}] NULL
+                            /varset FullText NULL
+                            /continue
+                        } else /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
+                            /echo Casting ${SpellToCast} on me.
+                        }
                 | Check if buff needs pet as target ie Mage's Symbiosis line of mana buffs
                 } else /if (${Me.Pet.ID} && (${BookSpellTT.Find[0]} && ${Spell[${SpellToCast}].TargetType.Find[pet]} || ${Select[${Spell[${Spell[${SpellToCast}].ID}].Name.Arg[2,]},Symbiosis,Siphon,Simulacrum]})) {
                     /if (${DebugBuffs}) /echo \atDEBUGBUFFS CheckBuffs Self Buff that targets pet ie mage mana buff line \agLine#: ${Macro.CurLine}
@@ -4754,7 +4770,7 @@ Sub Main
     Sub CheckHealth
         /if (!${HealsOn}) /return
         /if (${Me.Invis} && !${AggroTargetID}) /return
-        /if (${Medding} && ${MedCombat}) /return
+        /if (${Medding} && ${MedCombat}==1) /return
         /if (${DebugHeal}) /echo \amDEBUGHEALS CheckHealth Enter \agLine#: ${Macro.CurLine}
         /declare i                  int         local       0
         |/declare j                  int         local       0
@@ -6771,7 +6787,7 @@ Sub Main
         /call GroupWatch
         /if (${PullHold}) /return 0
         /if (${PullFlag}) {
-            /echo Looking for Close Range Mobs
+            /if (!${FailCounter}) /echo Looking for Close Range Mobs
         } else {
             /if (!${SpamTimer}) {
                 /echo Checking for Close Range Mobs 
@@ -7049,16 +7065,18 @@ Sub Main
         /if (${DebugPull}) /echo PullDelay ${TimerAmount} Enter \agLine#: ${Macro.CurLine}
         /declare PDTimer timer local ${TimerAmount}s
         /varset Pulling 0
-        /if (${MedOn} && !${Me.Mount.ID}) /sit 
+        /if (${MedOn} && !${Me.Moving} && !${Me.Mount.ID}) /sit 
         /while (${PDTimer} && !${AggroTargetID}) {
             /doevents
             /delay 2
         }
         |/if (${Me.Sitting}) /stand
-        /if (${DPSOn} || ${MeleeOn}) {
-            /call CheckForCombat 0 PullDelay1
-        } else {
-            /call CheckForCombat 1 PullDelay2
+        /if (${AggroTargetID}) {
+            /if (${DPSOn} || ${MeleeOn}) {
+                /call CheckForCombat 0 PullDelay1
+            } else {
+                /call CheckForCombat 1 PullDelay2
+            }
         }
         /if (${DebugPull}) /echo PullDelay Leave \agLine#: ${Macro.CurLine}
     /return
@@ -7976,8 +7994,8 @@ Sub Main
         :wait_for_resume
             /doevents
             /if (${ReturnToCamp} && ${Math.Distance[${CampYLoc},${CampXLoc}]} > 15 ) {
-                /if (!${Me.Mount.ID} && ${Me.Sitting}) /stand
-                /call DoWeMove 0 checkstats
+                |/if (!${Me.Mount.ID} && ${Me.Sitting}) /stand
+                /call DoWeMove 1 checkstats
                 /delay 100 ${MoveTo.Stopped}
             }
             /delay 10
@@ -9400,7 +9418,7 @@ Sub Main
 | SUB: WaitSubs - bunch of crap to call while medding standing around etc
 | ----------------------------------------------------------------------------
     Sub WaitSubs
-        /if (!${Me.Mount.ID} && !${Me.Sitting}) /sit
+        /if (!${Me.Mount.ID} && !${Me.Moving} && !${Me.Sitting}) /sit
         /if (${HealsOn}) /call CheckHealth
         /call WriteDebuffs
         /if (${CuresOn}) /call CheckCures
