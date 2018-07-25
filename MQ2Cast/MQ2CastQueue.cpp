@@ -10,6 +10,7 @@ void CastingState::pushCmd(const CastCommand* cmd) {
 
 	// if we have no commands on the queue, we need to push the pre-command actions here
 	if (cmdQueue.empty()) {
+		setCurrentID(cmd->getID());
 		for (auto iter = cmd->PreQueue.begin(); iter != cmd->PreQueue.end(); ++iter) {
 			pushImmediate(*iter);
 		}
@@ -68,6 +69,7 @@ void CastingState::popCmd() {
 	// if we have another command, push the pre-command actions here
 	if (!cmdQueue.empty()) {
 		if (auto cmd = cmdQueue.front()) {
+			setCurrentID(cmd->getID());
 			for (auto iter = cmd->PreQueue.begin(); iter != cmd->PreQueue.end(); ++iter) {
 				pushImmediate(*iter);
 			}

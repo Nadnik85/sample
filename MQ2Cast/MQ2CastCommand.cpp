@@ -85,26 +85,28 @@ SpellCommand* SpellCommand::Create(const PCHAR ID, const int GemSlot, const bool
 	};
 
 	// let's exploit the fact that GetSpellByName() will find the ID or the name
-	if (auto pSpell = GetSpellByName(ID)) {
-		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Found Spell: %s.", MQGetTickCount64(), pSpell->Name); }
-		int gemIdx = GetGem(pSpell->ID);
-		if (gemIdx != -1) {
-			// we have the spell memorized
-			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Found Spell In Slot %d.", MQGetTickCount64(), gemIdx); }
-			return createCommand(gemIdx + 1, pSpell->ID, Wait);
-		} else if (GemSlot != -1) {
-			// okay, it's not memmed, let's try to mem it first
-			// push the mem command (queues are FIFO)
-			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Memming Spell In Slot %d.", MQGetTickCount64(), GemSlot); }
-			CastingState::instance().pushCmd(MemCommand::Create(pSpell->Name, GemSlot));
+	if (auto pFoundSpell = GetSpellByName(ID)) {
+		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Found Spell: \"%s\".", MQGetTickCount64(), pFoundSpell->Name); }
+		if (auto pSpell = CastingState::instance().findMyRank(pFoundSpell, CastType::Spell)) {
+			int gemIdx = GetGem(pSpell->ID);
+			if (gemIdx != -1) {
+				// we have the spell memorized
+				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Found Spell In Slot %d.", MQGetTickCount64(), gemIdx); }
+				return createCommand(gemIdx + 1, pSpell->ID, Wait);
+			} else if (GemSlot != -1) {
+				// okay, it's not memmed, let's try to mem it first
+				// push the mem command (queues are FIFO)
+				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Memming Spell In Slot %d.", MQGetTickCount64(), GemSlot); }
+				CastingState::instance().pushCmd(MemCommand::Create(pSpell->Name, GemSlot));
 
-			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Then Cast Command Generated.", MQGetTickCount64()); }
-			// then return the function that will get pushed to the queue after the mem
-			return createCommand(GemSlot, pSpell->ID, true);
-		} else {
-			// we don't have it memmed and we don't want to mem it, this will result in a NotReady
-			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Unmemmed Spell -- Not Casting.", MQGetTickCount64()); }
-			return createCommand(-1, pSpell->ID, Wait);
+				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Then Cast Command Generated.", MQGetTickCount64()); }
+				// then return the function that will get pushed to the queue after the mem
+				return createCommand(GemSlot, pSpell->ID, true);
+			} else {
+				// we don't have it memmed and we don't want to mem it, this will result in a NotReady
+				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Unmemmed Spell -- Not Casting.", MQGetTickCount64()); }
+				return createCommand(-1, pSpell->ID, Wait);
+			}
 		}
 	}
 
@@ -331,15 +333,9 @@ DWORD DiscCommand::FindDiscID(PCHAR ID) {
 		if (caIdx >= 0 && caIdx < NUM_COMBAT_ABILITIES && pCombatSkillsSelectWnd->ShouldDisplayThisSkill(caIdx)) {
 			return pPCData->GetCombatAbility(caIdx);
 		}
-	} else {
-		for (int caIdx = 0; caIdx < NUM_COMBAT_ABILITIES; ++caIdx) {
-			if (pCombatSkillsSelectWnd->ShouldDisplayThisSkill(caIdx)) {
-				if (auto pSpell = GetSpellByID(pPCData->GetCombatAbility(caIdx))) {
-					if (!_stricmp(ID, pSpell->Name)) {
-						return pSpell->ID;
-					}
-				}
-			}
+	} else if (const PSPELL pFoundSpell = GetSpellByName(ID)) {
+		if (const PSPELL pMySpell = CastingState::instance().findMyRank(pFoundSpell, CastType::Discipline)) {
+			return pMySpell->ID;
 		}
 	}
 

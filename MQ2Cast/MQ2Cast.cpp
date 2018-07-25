@@ -116,6 +116,9 @@ void MQ2Cast::BlechSpell(PSPELL Cast) {
 
 const std::string MQ2Cast::GetReturnString(const CastResult Result) {
 	switch (Result) {
+	case CastResult::Idle:		   return std::string("CAST_IDLE");
+	case CastResult::Memorizing:   return std::string("CAST_MEMORIZING");
+	case CastResult::Casting:	   return std::string("CAST_CASTING");
 	case CastResult::Success:      return std::string("CAST_SUCCESS");
 	case CastResult::Interrupted:  return std::string("CAST_INTERRUPTED");
 	case CastResult::Resist:       return std::string("CAST_RESIST");
@@ -217,13 +220,14 @@ void MQ2Cast::Execute(const fEQCommand Command, const PCHAR zFormat, ...) {
 
 
 bool MQ2Cast::IsValidTarget(const PSPELL pSpell, const PSPAWNINFO pSpellTarget) {
+	if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[IsValidTarget]: Entry [%d] Target [%d] TargetType: %d.", MQGetTickCount64(), pSpell, pSpellTarget, pSpell->TargetType); }
 	// self is not a valid target for cases 5,7-23,27,28,30,34,35,38,39,43,46,47,50
 	switch ((CastTarget)pSpell->TargetType) {
 	case CastTarget::FreeTargetAE:
 		if (pSpellTarget) {
 			return IsInRange(pSpell, pSpellTarget);
 		} // else check for range of click
-		break;
+		return true;
 	/* These are checked in the client before sending to the server, so are probably not really necessary to check again since we can check chat as a sort of return. */
 	/* We can go as far as actually checking the body types and stuff, but not really worth it. */
 	case CastTarget::Aimed:
@@ -251,14 +255,17 @@ bool MQ2Cast::IsValidTarget(const PSPELL pSpell, const PSPAWNINFO pSpellTarget) 
 	case CastTarget::SingleGroupMember:
 	case CastTarget::PetsOwner:
 	case CastTarget::TargetedAEEnemies:
+		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[IsValidTarget]: TargetType: %s.", MQGetTickCount64(), GetTargetTypeName((CastTarget)pSpell->TargetType).c_str()); }
 		return (pSpellTarget && IsInRange(pSpell, pSpellTarget));
 	/* End client redundancy. */
 	default:
+		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[IsValidTarget]: (default)TargetType: %s.", MQGetTickCount64(), GetTargetTypeName((CastTarget)pSpell->TargetType).c_str()); }
 		return true;
 	}
 }
 
 bool MQ2Cast::IsInRange(const PSPELL pSpell, FLOAT Y, FLOAT X, FLOAT Z, BOOL doFocus) {
+	if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[IsInRange]: Entry [%d] Y: %f X: %f Z: %f doFocus: %d.", MQGetTickCount64(), pSpell, Y, X, Z, doFocus); }
 	auto pMyChar = GetCharInfo();
 	if (!pMyChar || !pMyChar->pSpawn) {
 		return false;
@@ -267,18 +274,22 @@ bool MQ2Cast::IsInRange(const PSPELL pSpell, FLOAT Y, FLOAT X, FLOAT Z, BOOL doF
 	FLOAT range = pSpell->Range;
 	if (doFocus) {
 		// we need to grab the focusrangemod
-		FLOAT rangeMod = (FLOAT)GetFocusRangeModifier((EQ_Spell*)pSpell, 0); // AFAICT, the equipment variable is always null in the client
+		DWORD n = 0;
+		FLOAT rangeMod = (FLOAT)GetFocusRangeModifier((EQ_Spell*)pSpell, (EQ_Equipment**)&n);
+		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[IsInRange]: RangeModCheck range: %f rangeMod: %f.", MQGetTickCount64(), range, rangeMod); }
 		range = min(range + rangeMod, range * 5.0f); // this is the calculation from the client everytime we grab the focus mod
 	}
 
 	// the client does a 3D check, so we will too
 	FLOAT dist = Distance3DToPoint(pMyChar->pSpawn, X, Y, Z);
+	if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[IsInRange]: DistCalc -- %f MinRange: %f range: %f.", MQGetTickCount64(), dist, pSpell->MinRange, range); }
 
 	// the client does this in squared distances because it doesn't calculate sqrt for the distance calculation, but this should be the same and I CBA to write a new dist function
 	return dist >= pSpell->MinRange && dist <= range;
 }
 
 bool MQ2Cast::IsInRange(const PSPELL pSpell, const PSPAWNINFO pSpellTarget) {
+	if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[IsInRange]: Entry [%d] target [%d].", MQGetTickCount64(), pSpell, pSpellTarget); }
 	if (!pSpellTarget) return false;
 
 	return IsInRange(pSpell, pSpellTarget->Y, pSpellTarget->X, pSpellTarget->Z, pSpellTarget->Type == SPAWN_PLAYER || pSpellTarget->Mercenary);
@@ -1003,10 +1014,11 @@ PLUGIN_API VOID OnPulse(VOID) {
 		return;
 	}
 
-	if (!CastingState::instance().shouldPulse()) {
-		return;
-	}
-
+	// TODO: Decide if we want to be extra fast -- maybe create a static delay instead of using the server-sent time stamps.
+	//if (!CastingState::instance().shouldPulse()) {
+	//	return;
+	//}
+	
 	// execute the front of the immediate queue
 	if (!CastingState::instance().doImmediate()) {
 		// if it's still executing, no need to worry about anything else
@@ -1033,11 +1045,12 @@ PLUGIN_API VOID OnPulse(VOID) {
 		}
 
 		if (CastingState::instance().getCurrentResult() != CastResult::Casting) {
+			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Casting State Incorrect -> Setting Variables.", MQGetTickCount64()); }
 			CastingState::instance().setCurrentResult(CastResult::Casting);
 		}
 
 		return; // we are casting, don't do anything else.
-	} else if (CastingState::instance().getCmdType() != CastType::None) {
+	} else if (CastingState::instance().getCmdType() != CastType::None && CastingState::instance().getCurrentResult() < CastResult::Success) {
 		// we should be casting, let's see if we actually can and then do it
 		if (DEBUGGING) { 
 			WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Nothing Casting With Queue Size %d -> Executing Command Type %d.", MQGetTickCount64(), CastingState::instance().getCmdSize(), CastingState::instance().getCmdType());
@@ -1057,14 +1070,15 @@ PLUGIN_API VOID OnPulse(VOID) {
 			}
 		}
 
-		// these are "universal" checks, so don't include them in the individual command functions
+		// these are "universal" checks, so don't include them in the individual command functions -- only check first time (assume Idle implies first time)
 		auto currentID = CastingState::instance().getCurrentID();
-		if (currentID != NOID) {
-			if (GetCharInfo()->Stunned) {
+		if (currentID != NOID && CastingState::instance().getCurrentResult() == CastResult::Idle) {
+			auto pMyChar = GetCharInfo();
+			if (pMyChar && pMyChar->Stunned) {
 				// can't do things while stunned!
 				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Found Stunned.", MQGetTickCount64()); }
 				CastingState::instance().setCurrentResult(CastResult::Stunned);
-			} else if (CastingState::instance().getCmdType() != CastType::Memorize && !CastingState::instance().getCastWhileInvis() && GetCharInfo()->pSpawn->HideMode) {
+			} else if (CastingState::instance().getCmdType() != CastType::Memorize && !CastingState::instance().getCastWhileInvis() && pMyChar && pMyChar->pSpawn && pMyChar->pSpawn->HideMode) {
 				// we specified not to cast while invis -- but we can mem all we want while invis
 				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Found Invis While CastWhileInvis=false.", MQGetTickCount64()); }
 				CastingState::instance().setCurrentResult(CastResult::Invisible);
@@ -1078,6 +1092,7 @@ PLUGIN_API VOID OnPulse(VOID) {
 		}
 
 		// if we aren't done with the command, then execute it. If we are, don't do anything.
+		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Check Status %s.", MQGetTickCount64(), GetReturnString(CastingState::instance().getCurrentResult()).c_str()); }
 		if (CastingState::instance().getCurrentResult() < CastResult::Success && GetCharInfo()) {
 			auto pMySpawn = GetCharInfo()->pSpawn;
 			// check the timeout first. We know we aren't actually casting anything right now
@@ -1104,6 +1119,7 @@ PLUGIN_API VOID OnPulse(VOID) {
 	}
 
 	// if we are finished, pop the command (will save off the ID and result and get ready for the next one)
+	if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Check Result %s.", MQGetTickCount64(), GetReturnString(CastingState::instance().getCurrentResult()).c_str()); }
 	if (CastingState::instance().getCurrentResult() >= CastResult::Success) {
 		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Command Finished With Result %s.", MQGetTickCount64(), GetReturnString(CastingState::instance().getCurrentResult()).c_str()); }
 		if (CastingState::instance().decRecast() > 0) {
@@ -1134,6 +1150,7 @@ PLUGIN_API VOID OnPulse(VOID) {
 		}
 	}
 	
+	if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Pop Command %s.", MQGetTickCount64(), GetReturnString(CastingState::instance().getCurrentResult()).c_str()); }
 	if (CastingState::instance().getCurrentResult() >= CastResult::Success) {
 		CastingState::instance().popCmd();
 		CastingState::instance().pushImmediate(new RemobilizeCommand());
@@ -1273,8 +1290,10 @@ bool CastingState::hasCastBar() {
 }
 
 DWORD CastingState::detectSpellCast() {
-	if (GetCharInfo() && GetCharInfo()->pSpawn) {
-		return GetCharInfo()->pSpawn->CastingData.SpellID;
+	if (auto pMyChar = GetCharInfo()) {
+		if (auto pMySpawn = pMyChar->pSpawn) {
+			return pMySpawn->CastingData.SpellID;
+		}
 	}
 
 	return NOID;
@@ -1303,11 +1322,14 @@ CastType CastingState::findCastableType(PCHAR ID) {
 		} else if ((PSPAWNINFO)pLocalPlayer && GetAAByIdWrapper(GetAAIndexByName(ID), ((PSPAWNINFO)pLocalPlayer)->Level)) {
 			return CastType::AltAbility;
 		} else {
-			for (int caIdx = 0; caIdx < NUM_COMBAT_ABILITIES; ++caIdx) {
-				if (pCombatSkillsSelectWnd->ShouldDisplayThisSkill(caIdx)) {
-					if (auto pSpell = GetSpellByID(pPCData->GetCombatAbility(caIdx))) {
-						if (!_stricmp(ID, pSpell->Name)) {
-							return CastType::Discipline;
+			const PSPELL pFoundSpell = GetSpellByName(ID);
+			if (pFoundSpell) {
+				for (int caIdx = 0; caIdx < NUM_COMBAT_ABILITIES; ++caIdx) {
+					if (pCombatSkillsSelectWnd->ShouldDisplayThisSkill(caIdx)) {
+						if (auto pSpell = GetSpellByID(pPCData->GetCombatAbility(caIdx))) {
+							if (pFoundSpell->SpellGroup == pSpell->SpellGroup && pFoundSpell->SpellSubGroup == pSpell->SpellSubGroup) {
+								return CastType::Discipline;
+							}
 						}
 					}
 				}
@@ -1319,7 +1341,7 @@ CastType CastingState::findCastableType(PCHAR ID) {
 				}
 			}
 
-			if (GetSpellByName(ID)) {
+			if (pFoundSpell) {
 				return CastType::Spell;
 			}
 		}
@@ -1389,6 +1411,47 @@ bool CastingState::isCastableReady(PCHAR ID) {
 	return isCastableReady(ID, findCastableType(ID));
 }
 
+const PSPELL CastingState::findMyRank(const PSPELL pSpell, const CastType cType) {
+	if (cType == CastType::AltAbility || (cType == CastType::None && GetAAIndexByName(pSpell->Name) > 0)) {
+		return pSpell;
+	}
+
+	std::vector<PSPELL> spellsInGroup;
+
+	if (cType == CastType::None || cType == CastType::Discipline) {
+		for (int caIdx = 0; caIdx < NUM_COMBAT_ABILITIES; ++caIdx) {
+			if (pCombatSkillsSelectWnd->ShouldDisplayThisSkill(caIdx)) {
+				PSPELL pCASpell = GetSpellByID(pPCData->GetCombatAbility(caIdx));
+				if (pCASpell && pCASpell->SpellGroup == pSpell->SpellGroup && pCASpell->SpellSubGroup == pSpell->SpellSubGroup) {
+					spellsInGroup.push_back(pCASpell);
+				}
+			}
+		}
+	}
+
+	if (cType == CastType::None || cType == CastType::Spell) {
+		if (auto pMyChar2 = GetCharInfo2()) {
+			for (DWORD spellIdx = 0; spellIdx < NUM_BOOK_SLOTS; ++spellIdx) {
+				PSPELL pBookSpell = GetSpellByID(pMyChar2->SpellBook[spellIdx]);
+				if (pBookSpell && pBookSpell->SpellGroup == pSpell->SpellGroup && pBookSpell->SpellSubGroup == pSpell->SpellSubGroup) {
+					spellsInGroup.push_back(pBookSpell);
+				}
+			}
+		}
+	}
+
+	if (spellsInGroup.empty()) {
+		return nullptr;
+	}
+
+	auto pMySpell = std::max_element(spellsInGroup.begin(), spellsInGroup.end(), [](const PSPELL a, const PSPELL b) -> bool {
+		return a && b && a->SpellRank < b->SpellRank;
+	});
+
+
+	return *pMySpell;
+}
+
 #pragma endregion
 
 long CastingState::castTimeRemaining() {
@@ -1402,11 +1465,12 @@ long CastingState::castTimeRemaining() {
 }
 
 ULONGLONG CastingState::updateTimeout() {
-	if (!GetCharInfo()) {
+	auto pMyChar = GetCharInfo();
+	if (!pMyChar) {
 		return Timeout;
 	}
 
-	if (auto pMySpawn = GetCharInfo()->pSpawn) {
+	if (auto pMySpawn = pMyChar->pSpawn) {
 		LastTimestamp = pMySpawn->TimeStamp;
 
 		if (pMySpawn->CastingData.SpellETA > 0) {
@@ -1440,7 +1504,12 @@ ULONGLONG CastingState::updateTimeout() {
 bool CastingState::shouldPulse() {
 	if (auto pMyChar = GetCharInfo()) {
 		if (auto pMySpawn = pMyChar->pSpawn) {
-			return pMySpawn->TimeStamp > LastTimestamp;
+			if (pMySpawn->TimeStamp > LastTimestamp) {
+				LastTimestamp = pMySpawn->TimeStamp;
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 

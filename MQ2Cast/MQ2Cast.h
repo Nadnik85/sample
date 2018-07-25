@@ -264,6 +264,9 @@ namespace MQ2Cast {
 		// immediate actions to run after running the command -- not objects because we will use copy ctors to create the objects
 		const std::list<const ImmediateCommand*> PostQueue;
 
+		// this is a std::function<DWORD()> so we can set the ID from the queue
+		virtual DWORD getID() const = 0;
+
 		// this is a std::function<void()> that will do all the things like set cast results and spell id's
 		virtual void execute() const = 0;
 	};
@@ -283,6 +286,8 @@ namespace MQ2Cast {
 			const std::list<const ImmediateCommand*> PreQueue = std::list<const ImmediateCommand*>(),
 			const std::list<const ImmediateCommand*> PostQueue = std::list<const ImmediateCommand*>()
 		);
+
+		DWORD getID() const { return GemSlot; }
 
 		void execute() const;
 	};
@@ -315,6 +320,8 @@ namespace MQ2Cast {
 		const PSPELL Validate(const PSPELL pSpell) const;
 		static int GetGem(PCHAR ID);
 
+		DWORD getID() const { return SpellID; }
+
 		void execute() const;
 	};
 
@@ -333,6 +340,8 @@ namespace MQ2Cast {
 		);
 
 		static DWORD FindAbilityIndex(PCHAR ID);
+
+		DWORD getID() const { return AbilityIndex; }
 
 		void execute() const;
 	};
@@ -355,6 +364,8 @@ namespace MQ2Cast {
 		static DWORD FindDiscID(PCHAR ID);
 		static ULONG GetDiscTimer(PSPELL pSpell);
 
+		DWORD getID() const { return SpellID; }
+
 		void execute() const;
 	};
 
@@ -376,6 +387,8 @@ namespace MQ2Cast {
 
 		static std::pair<DWORD, int> GetAAIndex(PCHAR ID);
 
+		DWORD getID() const { return NOID; } // This will get updated in execute
+
 		void execute() const;
 	};
 
@@ -394,6 +407,8 @@ namespace MQ2Cast {
 		);
 
 		static PCONTENTS GetContents(PCHAR ID);
+
+		DWORD getID() const { return NOID; } // the will get updated in execute
 
 		void execute() const;
 	};
@@ -494,6 +509,8 @@ namespace MQ2Cast {
 		CastType findCastableType(PCHAR ID);
 		bool isCastableReady(PCHAR ID, CastType cType);
 		bool isCastableReady(PCHAR ID);
+
+		const PSPELL findMyRank(const PSPELL pSpell, const CastType cType = CastType::None);
 
 		void addPauseMask(PauseCommand pCmd) { PauseMask |= (UINT)pCmd; }
 		bool isPaused() { return PauseMask != 0x00; }
