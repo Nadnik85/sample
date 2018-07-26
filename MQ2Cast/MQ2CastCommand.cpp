@@ -8,6 +8,7 @@ using namespace MQ2Cast;
 
 MemCommand* MemCommand::Create(const PCHAR ID, const int GemSlot, const std::list<const ImmediateCommand*> PreQueue, const std::list<const ImmediateCommand*> PostQueue) {
 	if (!ID) return nullptr;
+	
 	return new MemCommand(GemSlot, GetSpellByName(ID), PreQueue, PostQueue);
 }
 
@@ -34,7 +35,7 @@ void MemCommand::execute() const {
 
 					CHAR szBuffer[MAX_STRING] = { 0 };
 					sprintf_s(szBuffer, "%d \"%s\"", GemSlot, Spell->Name);
-					if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Memorize]: Cast = %s : szBuffer %s -- MemSpell()", MQGetTickCount64(), GetCharInfo()->pSpawn, szBuffer); }
+					if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Memorize]: Cast = %d : szBuffer %s -- MemSpell()", MQGetTickCount64(), GetCharInfo()->pSpawn, szBuffer); }
 
 					// set up a spellset that is all empty but the one we want
 					SPELLFAVORITE CastSpellFavorite;
@@ -88,6 +89,7 @@ SpellCommand* SpellCommand::Create(const PCHAR ID, const int GemSlot, const bool
 	if (auto pFoundSpell = GetSpellByName(ID)) {
 		if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Found Spell: \"%s\".", MQGetTickCount64(), pFoundSpell->Name); }
 		if (auto pSpell = CastingState::instance().findMyRank(pFoundSpell, CastType::Spell)) {
+			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Cast]: Found Rank: \"%s\".", MQGetTickCount64(), pSpell->Name); }
 			int gemIdx = GetGem(pSpell->ID);
 			if (gemIdx != -1) {
 				// we have the spell memorized

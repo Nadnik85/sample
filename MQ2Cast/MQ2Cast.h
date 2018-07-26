@@ -287,7 +287,7 @@ namespace MQ2Cast {
 			const std::list<const ImmediateCommand*> PostQueue = std::list<const ImmediateCommand*>()
 		);
 
-		DWORD getID() const { return GemSlot; }
+		DWORD getID() const { return NOID; }
 
 		void execute() const;
 	};

@@ -1097,11 +1097,12 @@ PLUGIN_API VOID OnPulse(VOID) {
 			auto pMySpawn = GetCharInfo()->pSpawn;
 			// check the timeout first. We know we aren't actually casting anything right now
 			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Command Executing.", MQGetTickCount64()); }
-			if ((pMySpawn && pMySpawn->TimeStamp < CastingState::instance().getTimeout()) || (CastingState::instance().getCurrentID() == NOID && CastingState::instance().getCmdSize() > 0)) {
+			if ((pMySpawn && pMySpawn->TimeStamp < CastingState::instance().getTimeout()) || (CastingState::instance().getCurrentResult() == CastResult::Idle && CastingState::instance().getCmdSize() > 0)) {
 				// we should be doing something right now, so let's do it.
 				if (auto cmd = CastingState::instance().getCmd()) {
 					if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[OnPulse]: Running Command Function.", MQGetTickCount64()); }
 					cmd->execute(); // do the function
+					CastingState::instance().updateTimeout();
 				}
 			} else if (!pMySpawn || pMySpawn->TimeStamp > CastingState::instance().getTimeout()) {
 				// the assumption here is that we had sufficient time to cast the spell, so we probably actually cast it
@@ -1412,7 +1413,7 @@ bool CastingState::isCastableReady(PCHAR ID) {
 }
 
 const PSPELL CastingState::findMyRank(const PSPELL pSpell, const CastType cType) {
-	if (cType == CastType::AltAbility || (cType == CastType::None && GetAAIndexByName(pSpell->Name) > 0)) {
+	if (cType == CastType::AltAbility || (cType == CastType::None && GetAAIndexByName(pSpell->Name) > 0) || pSpell->SpellGroup == 0) {
 		return pSpell;
 	}
 
@@ -1473,26 +1474,27 @@ ULONGLONG CastingState::updateTimeout() {
 	if (auto pMySpawn = pMyChar->pSpawn) {
 		LastTimestamp = pMySpawn->TimeStamp;
 
+		// TODO: Add in lag buffer to a configurable variable and make more extensive use of it
 		if (pMySpawn->CastingData.SpellETA > 0) {
 			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Timeout]: Found Spell ETA %d -> TimeStamp %d.", MQGetTickCount64(), pMySpawn->CastingData.SpellETA, pMySpawn->TimeStamp); }
 			// TODO: potentially account for lag here (+ MQGetTickCount64() + 450 + (pConnection->Last) * 4;)
-			Timeout = pMySpawn->TimeStamp + pMySpawn->CastingData.SpellETA;
+			Timeout = pMySpawn->TimeStamp + pMySpawn->CastingData.SpellETA + 1000;
 		} else if (getCurrentID() != NOID) {
 			if (auto pSpell = GetSpellByID(getCurrentID())) {
 				if (getCmdType() == CastType::Memorize) {
 					if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Timeout]: Memming TimeStamp %d.", MQGetTickCount64(), pMySpawn->TimeStamp); }
-					// TODO: Can I get a memorization time? -- as long as we don't LD (timestamp stays more frequent than 1s), we will recheck this every pulse
-					Timeout = pMySpawn->TimeStamp + 1000;
+					// TODO: Can I get a memorization time?
+					Timeout = pMySpawn->TimeStamp + 5000;
 				} else {
 					if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Timeout]: Casting Time %d TimeStamp %d.", MQGetTickCount64(), pSpell->CastTime, pMySpawn->TimeStamp); }
-					Timeout = pMySpawn->TimeStamp + pSpell->CastTime;
+					Timeout = pMySpawn->TimeStamp + pSpell->CastTime + 1000;
 				}
 			} else {
 				if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Timeout]: No Spell Detected TimeStamp %d.", MQGetTickCount64(), pMySpawn->TimeStamp); }
 				Timeout = pMySpawn->TimeStamp - 100;
 			}
 		} else {
-			// if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Timeout]: No Spell Casting TimeStamp %d.", MQGetTickCount64(), pMySpawn->TimeStamp); }
+			if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Timeout]: No Spell Casting TimeStamp %d.", MQGetTickCount64(), pMySpawn->TimeStamp); }
 			// -100 to guarantee its in the past
 			Timeout = pMySpawn->TimeStamp - 100;
 		}

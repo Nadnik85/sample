@@ -19,7 +19,6 @@ void CastingState::pushCmd(const CastCommand* cmd) {
 	// last I heard, MSVC didn't do emplace very well, so just use push
 	if (DEBUGGING) { WriteChatf("[%I64u] MQ2Cast:[Queue]: Pushing a Command of Type %d to the Queue.", MQGetTickCount64(), cmd->Type); }
 	cmdQueue.push(cmd);
-	updateTimeout();
 }
 
 const CastCommand* CastingState::getCmd() {
