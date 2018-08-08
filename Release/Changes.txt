@@ -1,3 +1,6 @@
+Aug 09 2018 by eqmule
+- Updated for TEST
+
 Jul 20 2018 by eqmule
 - Updated for TEST
 - MQ2 contains NO active hacks, you can't warp and you can't "gank" etc.
