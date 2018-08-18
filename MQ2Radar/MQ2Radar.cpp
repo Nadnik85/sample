@@ -746,7 +746,14 @@ PLUGIN_API VOID InitializePlugin()
 	if (InitializeDS()) {
 		WriteChatColor("MQ2Radar (July 5/2007) by Odessa (eqplugins@gmail.com)", CONCOLOR_YELLOW);
 		// Check if we have a proper DSurface version
-		if (atof(DSGetVersion()) >= 0.110) {
+		//CHAR szVersion[2048] = { 0 };
+		//fesetround(
+		//char* vers = DSGetVersion();
+		//std::string vers = DSGetVersion();
+		//strcpy_s(szVersion, vers.c_str());
+		double fver = 0.127;//the atof crashes us, i dont know why, so will hardcode it for now.
+
+		if (fver >= 0.110) {
 			//EQhWnd = *(HWND*)EQADDR_HWND;
 			igSurface = DSCreateSurface(); // get our Surface
 			DebugSpewAlways("MQ2Radar::Got Surface - %d", igSurface);
@@ -841,4 +848,3 @@ PLUGIN_API VOID OnEndZone(VOID)
 		LoadMap(GetShortZone(GetCharInfo()->pSpawn->Zone));
 	}
 }
-

@@ -1,3 +1,12 @@
+Aug 18 2018 by eqmule
+- Updated for TEST
+
+Aug 15 2018 by eqmule
+- Updated for LIVE
+
+Aug 09 2018 by eqmule
+- Updated for TEST
+
 Jul 20 2018 by redguides
 - *NEW PLUGIN* MQ2WorstHurt (alynel, idea from toots) find the worst hurt member, xtarg or pet. It's incredibly fast, supercharge your heal macros.
 - *NEW PLUGIN* MQ2SpawnSort (alynel) find a spawn quickly, searchable by several members (level, PctHP, radius etc.)
