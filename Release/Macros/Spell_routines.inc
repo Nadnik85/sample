@@ -178,7 +178,7 @@
 		/declare spellNotHold int outer
 		/delay 5
 	|---- Spell Gem Slots
-		/for i 1 to 12
+		/for i 1 to 13
 			/declare spellRecastTime${i} timer outer
 			/if (${Me.SpellReady[${i}]}) {
 				/varset spellRecastTime${i} 0
@@ -255,7 +255,7 @@
 	/call WaitCast ${mySub} ${spellID}
 	/if (${moveBack}) {
 		/keypress back hold
-		/delay 4
+		/delay 6
 		/keypress back
 		/delay 15 !${Me.Moving}
 	}
@@ -450,7 +450,6 @@
 | SUB: Interrupt
 | --------------------------------------------------------------------------------------------
 	Sub Interrupt
-	/if (${Me.Mount.ID}) /dismount
 	/stopcast
 	/if (${Defined[castReturn]}) /varset castReturn CAST_CANCELLED
 	/return ${castReturn}

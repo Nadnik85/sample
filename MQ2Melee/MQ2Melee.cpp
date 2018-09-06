@@ -173,8 +173,6 @@ assault16      = { 56324  ,3 },        // disc: Fellstrike Lv 110 rog RoS
 assault17      = { 56325  ,3 },        // disc: Fellstrike Rk. II
 assault18      = { 56326  ,3 },        // disc: Fellstrike Rk. III
 
-banestrike     = { 15073  ,4 },        // aa: Banestrike
-
 bladesrng1     = { 40105  ,3 },        // disc: storm of blades rk i
 bladesrng2     = { 40106  ,3 },        // disc: storm of blades rk ii
 bladesrng3     = { 40107  ,3 },        // disc: storm of blades rk iii
@@ -1123,7 +1121,6 @@ DECLARE_ABILITY_OPTION(pAGGRS, "aggrosec", "[ID] Offhand (Aggro)?", "0", "${If[$
 DECLARE_ABILITY_OPTION(pARROW, "arrow", "[ID] item?", "0", "${If[${meleemvi[plugin]} && (${Me.Skill[archery]} || ${Me.Skill[throwing]}),1,0]}");
 DECLARE_ABILITY_OPTION(pASSAS, "assassinate", "Sneak/Hide/Behind/Strike/Stab [ON/OFF]?", "${If[${Me.Skill[backstab]},1,0]}", "${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${meleemvi[backstab]},1,0]}");
 DECLARE_ABILITY_OPTION(pASSLT, "assault", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Assault]} || ${Me.CombatAbility[Assault Rk. II]} || ${Me.CombatAbility[Assault Rk. III]} || ${Me.CombatAbility[Battery]} || ${Me.CombatAbility[Battery Rk. II]} || ${Me.CombatAbility[Battery Rk. III]} || ${Me.CombatAbility[Onslaught]} || ${Me.CombatAbility[Onslaught Rk. II]} || ${Me.CombatAbility[Onslaught Rk. III]} || ${Me.CombatAbility[Incursion]} || ${Me.CombatAbility[Incursion Rk. II]} || ${Me.CombatAbility[Incursion Rk. III]} || ${Me.CombatAbility[Barrage]} || ${Me.CombatAbility[Barrage Rk. II]} || ${Me.CombatAbility[Barrage Rk. III]} || ${Me.CombatAbility[Fellstrike]} || ${Me.CombatAbility[Fellstrike Rk. II]} || ${Me.CombatAbility[Fellstrike Rk. III]},60,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Assault]} || ${Me.CombatAbility[Assault Rk. II]} || ${Me.CombatAbility[Assault Rk. III]} || ${Me.CombatAbility[Battery]} || ${Me.CombatAbility[Battery Rk. II]} || ${Me.CombatAbility[Battery Rk. III]} || ${Me.CombatAbility[Onslaught]} || ${Me.CombatAbility[Onslaught Rk. II]} || ${Me.CombatAbility[Onslaught Rk. III]} || ${Me.CombatAbility[Incursion]} || ${Me.CombatAbility[Incursion Rk. II]} || ${Me.CombatAbility[Incursion Rk. III]} || ${Me.CombatAbility[Barrage]} || ${Me.CombatAbility[Barrage Rk. II]} || ${Me.CombatAbility[Barrage Rk. III]} || ${Me.CombatAbility[Fellstrike]} || ${Me.CombatAbility[Fellstrike Rk. II]} || ${Me.CombatAbility[Fellstrike Rk. III]}),1,0]}");
-DECLARE_ABILITY_OPTION(pBANST, "banestrike", "[ON/OFF]?", "${If[${Me.AltAbility[Banestrike]},1,0]}", "${If[${meleemvi[plugin]} && ${Me.AltAbility[Banestrike]},1,0]}");
 DECLARE_ABILITY_OPTION(pBASHS, "bash", "[#] Bash 0=0ff", "${If[${Me.Skill[bash]},1,0]}", "${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.Skill[bash]},1,0]}");
 DECLARE_ABILITY_OPTION(pBBLOW, "boastful", "[ON/OFF]?", "${If[${Me.AltAbility[boastful bellow]},0,0]}", "${If[${meleemvi[plugin]} && ${Me.AltAbility[boastful bellow]},1,0]}");
 DECLARE_ABILITY_OPTION(pBGING, "begging", "[ON/OFF]?", "0", "${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.Skill[begging]},1,0]}");
@@ -2358,7 +2355,6 @@ doASSASSINATE,
 doASSAULT,
 doBACKOFF,
 doBACKSTAB,
-doBANESTRIKE,
 doBASH,
 doBATTLELEAP,
 doBEGGING,
@@ -2478,7 +2474,6 @@ elSHIELD;
 string    ifASP,
 ifASSAULT,
 ifBACKSTAB,
-ifBANESTRIKE,
 ifBASH,
 ifBATTLELEAP,
 ifBEGGING,
@@ -2569,7 +2564,6 @@ DOWNSHITIF;
 Ability  idASP,
 idASSAULT,
 idBACKSTAB,
-idBANESTRIKE,
 idBASH,
 idBATTLELEAP,
 idBEGGING,
@@ -3073,7 +3067,6 @@ void Configure() {
     idASP.Setup(0, 0);
     idASSAULT.Setup(0, 0);
     idBACKSTAB.Setup(0, 0);
-    idBANESTRIKE.Setup(0, 0);
     idBASH.Setup(0, 0);
     idBATTLELEAP.Setup(0, 0);
     idBEGGING.Setup(0, 0);
@@ -3163,7 +3156,6 @@ void Configure() {
 
     AbilityFind(&idBACKSTAB, &sbkstab, 0);
     AbilityFind(&idBASH, &sbash, 0);
-    AbilityFind(&idBANESTRIKE, &banestrike, 0);
     AbilityFind(&idBEGGING, &sbegging, 0);
     AbilityFind(&idDISARM, &sdisarm, 0);
     AbilityFind(&idFORAGE, &sforage, 0);
@@ -4528,7 +4520,6 @@ void MeleeHandle()
         // ON/OFF switch
         if (doBATTLELEAP             && idBATTLELEAP.Ready(ifBATTLELEAP))                    idBATTLELEAP.Press();
         if (doASP                    && idASP.Ready(ifASP))                                  idASP.Press();
-        if (doBANESTRIKE             && idBANESTRIKE.Ready(ifBANESTRIKE))                    idBANESTRIKE.Press();
         if (doBOASTFUL               && idBOASTFUL.Ready(ifBOASTFUL))                        idBOASTFUL.Press();
         if (doHARMTOUCH              && idHARMTOUCH.Ready(ifHARMTOUCH))                      idHARMTOUCH.Press();
         if (doTHROATJAB              && idTHROATJAB.Ready(ifTHROATJAB))                      idTHROATJAB.Press();
@@ -4761,7 +4752,6 @@ PLUGIN_API void InitializePlugin()
     REGISTER_ABILITY_OPTION(pARROW, NULL, &elARROWS);
     REGISTER_ABILITY_OPTION(pASSLT, NULL, &doASSAULT);
     REGISTER_ABILITY_OPTION(pASSAS, NULL, &doASSASSINATE);
-    REGISTER_ABILITY_OPTION(pBANST, NULL, &doBANESTRIKE);
     REGISTER_ABILITY_OPTION(pBASHS, NULL, &doBASH);
     REGISTER_ABILITY_OPTION(pBBLOW, NULL, &doBOASTFUL);
     REGISTER_ABILITY_OPTION(pBGING, NULL, &doBEGGING);
@@ -5003,7 +4993,6 @@ PLUGIN_API void InitializePlugin()
     IniListe.clear();
     MapInsert(&IniListe, Option("assaultif", "", "", "", NULL, &ifASSAULT));
     MapInsert(&IniListe, Option("backstabif", "", "", "", NULL, &ifBACKSTAB));
-    MapInsert(&IniListe, Option("banestrikeif", "", "", "", NULL, &ifBANESTRIKE));
     MapInsert(&IniListe, Option("bashif", "", "", "", NULL, &ifBASH));
     MapInsert(&IniListe, Option("beggingif", "", "", "", NULL, &ifBEGGING));
     MapInsert(&IniListe, Option("aspif", "", "", "", NULL, &ifASP));
@@ -5215,7 +5204,6 @@ PLUGIN_API void InitializePlugin()
     VarListe.clear();
     MapInsert(&VarListe, Option("idassault", "", "", "", NULL, &idASSAULT));
     MapInsert(&VarListe, Option("idbackstab", "", "", "", NULL, &idBACKSTAB));
-    MapInsert(&VarListe, Option("idbanestrike", "", "", "", NULL, &idBANESTRIKE));
     MapInsert(&VarListe, Option("idbash", "", "", "", NULL, &idBASH));
     MapInsert(&VarListe, Option("idbattleleap", "", "", "", NULL, &idBATTLELEAP));
     MapInsert(&VarListe, Option("idbvivi", "", "", "", NULL, &idBVIVI));
