@@ -54,6 +54,10 @@ typedef struct _DISPLAYITEMSTRINGS
 	std::string ItemAdvancedLoreText;
 	std::string ItemMadeByText;
 	std::string ItemInformationText;//Item Information: Placing this augment into blah blah, this armor can only be used in blah blah
+	bool bCollected;
+	bool bCollectedRecieved;
+	bool bScribed;
+	bool bScribedRecieved;
 } DISPLAYITEMSTRINGS,*PDISPLAYITEMSTRINGS;
 
 extern "C" {
@@ -74,8 +78,12 @@ public:
 		WindowTitle = 2,
 		AdvancedLore = 3,
 		MadeBy = 4,
-		Information = 5,
-		DisplayIndex = 6
+		CollectedRecieved = 5,
+		Collected = 6,
+		ScribedRecieved = 7,
+		Scribed = 8,
+		Information = 9,
+		DisplayIndex = 10
 	};
 	enum DisplayItemMethods
 	{
@@ -86,8 +94,13 @@ public:
 		TypeMember(WindowTitle);
 		TypeMember(AdvancedLore);
 		TypeMember(MadeBy);
+		TypeMember(CollectedRecieved);
+		TypeMember(Collected);
+		TypeMember(ScribedRecieved);
+		TypeMember(Scribed);
 		TypeMember(Information);
 		TypeMember(DisplayIndex);
+
 		TypeMethod(AddLootFilter);
 	}
 	bool MQ2DisplayItemType::GETMEMBER() {
@@ -148,6 +161,22 @@ public:
 				strcpy_s(DataTypeTemp, contentsitemstrings[index].ItemMadeByText.c_str());
 				Dest.Ptr = &DataTypeTemp[0];
 				Dest.Type = pStringType;
+				return true;
+			case Collected:
+				Dest.DWord = contentsitemstrings[index].bCollected;
+				Dest.Type = pBoolType;
+				return true;
+			case CollectedRecieved:
+				Dest.DWord = contentsitemstrings[index].bCollectedRecieved;
+				Dest.Type = pBoolType;
+				return true;
+			case Scribed:
+				Dest.DWord = contentsitemstrings[index].bScribed;
+				Dest.Type = pBoolType;
+				return true;
+			case ScribedRecieved:
+				Dest.DWord = contentsitemstrings[index].bScribedRecieved;
+				Dest.Type = pBoolType;
 				return true;
 			case Information:
 				strcpy_s(DataTypeTemp, contentsitemstrings[index].ItemInformationText.c_str());
@@ -884,6 +913,26 @@ public:
 			} else {
 				contentsitemstrings[index].ItemInfo.clear();
 			}
+			if (This->bCollectedReceived)
+			{
+				contentsitemstrings[index].bCollectedRecieved = true;
+				contentsitemstrings[index].bCollected = This->bCollected;
+			}
+			else
+			{
+				contentsitemstrings[index].bCollectedRecieved = false;
+				contentsitemstrings[index].bCollected = false;
+			}
+			if (This->bScribedReceived)
+			{
+				contentsitemstrings[index].bScribedRecieved = true;
+				contentsitemstrings[index].bScribed = This->bScribed;
+			}
+			else
+			{
+				contentsitemstrings[index].bScribedRecieved = false;
+				contentsitemstrings[index].bScribed = false;
+			}
 			if (This->ItemMadeByText) {
 				GetCXStr(This->ItemMadeByText, temp);
 				CXStr szin = temp;
@@ -937,7 +986,11 @@ public:
             sprintf_s(temp,"Icon ID: %d<br>", Item->IconNumber); 
             strcat_s(out, temp); 
         }
-
+		//work in progress i have been told this can be done.
+		/*if ( Item->Collected > 0 ) { 
+            sprintf_s(temp,"Collected<br>"); 
+            strcat_s(out, temp); 
+        }*/
 #ifndef ISXEQ
 		// Dewey 2461 - user defined score 12-22-2012
 		AddGearScores((PCONTENTS)This->pItem,Item,out,"<BR>");
@@ -2000,7 +2053,22 @@ void RemoveAug(PSPAWNINFO pChar, PCHAR szLine)
 						if (ptheAug) {
 							ItemIndex ii = { 0 };
 							PCONTENTS contout = 0;
-							PCONTENTS *pContsolv = ((PcZoneClient*)pPCData)->GetItemByID(&contout, ptheAug->SolventItemID, &ii);
+							PCONTENTS *pContsolv = 0;
+							int realID = 0;
+							//we need to check for all distillers
+							int minreqid = ptheAug->SolventItemID;
+							if (pDistillerInfo)
+							{
+								for (int i = minreqid; i <= 21; i++)
+								{
+									realID = pDistillerInfo->GetIDFromRecordNum(i, 0);
+									pContsolv = ((PcZoneClient*)pPCData)->GetItemByID(&contout, realID, &ii);
+									if (contout) {
+										//found a distiller that will work...
+										break;
+									}
+								}
+							}
 							if (!contout) {
 								pContsolv = ((PcZoneClient*)pPCData)->GetItemByItemClass(&contout, 64/*Universal Augment Solvent... aka perfect distiller...*/, &ii);
 							}

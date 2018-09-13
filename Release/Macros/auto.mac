@@ -1,17 +1,12 @@
+|------------------------------|
+|------Auto by Noobhaxor-------|
+|--------Version 1.0.0 --------|
+|------ 12-28-2017 Update -----|
+
+
 Sub Main
-/declare myclass string outer ${Me.Class}
-/delay 1
-/if (${myclass.Equal[Cleric]}) {
-	/target id ${Spawn[group tank].ID}
-	/delay 5 ${Target.ID}==${Spawn[group tank].ID}
-	/mac Autocleric
-} else /if (${myclass.Equal[Warrior]}) {
-	/mac Autowarrior
-} else /if (${myclass.Equal[Bard]}) {
-	/mac Autobard
-} else {
-	/target id ${Spawn[group tank].ID}
-	/delay 5 ${Target.ID}==${Spawn[group tank].ID}
-	/mac Kissassist
-}
+
 /return
+
+:OnExit
+    /macro auto_${Me.Class.ShortName}.mac
