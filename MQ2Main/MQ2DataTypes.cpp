@@ -4613,7 +4613,7 @@ bool MQ2CharacterType::GETMEMBER()
 							if (pSpawn->Type == SPAWN_NPC) {
 								DWORD aggropct = pAggroInfo->aggroData[AD_xTarget1 + i].AggroPct;
 								//WriteChatf("Checking aggro on %s its %d",xta->pXTargetData[i].Name,agropct);
-								if (aggropct <= AggroPct) {
+								if (aggropct < AggroPct) {
 									Dest.DWord++;
 								}
 							}
@@ -5482,7 +5482,7 @@ bool MQ2CharacterType::GETMEMBER()
 		Dest.DWord = 8;
 		if (pCastSpellWnd) {
 			CHAR szWnd[32] = { 0 };
-			for (int i = 8; i < 12; i++) {
+			for (int i = 8; i < NUM_SPELL_GEMS; i++) {
 				sprintf_s(szWnd, "CSPW_Spell%d", i);
 				if (CXWnd *wnd = (CXWnd *)pCastSpellWnd->GetChildItem(szWnd)) {
 					if (wnd->dShow==1) {
@@ -6416,6 +6416,10 @@ bool MQ2SpellType::GETMEMBER()
 		Dest.DWord = pSpell->DurationCap;
 		Dest.Type = pIntType;
 		return true;
+	case StacksWithDiscs:
+		Dest.DWord = pSpell->bStacksWithDiscs;
+		Dest.Type = pBoolType;
+		return true;
 	case IllusionOkWhenMounted:
 		Dest.DWord = true;
 		Dest.Type = pBoolType;
@@ -6739,11 +6743,13 @@ bool MQ2ItemType::GETMEMBER()
 		return true;
 	#endif
 	case Item:
+	{
+		PCONTENTS pCont = (PCONTENTS)pItem;
 		if (GetItemFromContents(pItem)->Type == ITEMTYPE_PACK && ISNUMBER())
 		{
 			unsigned long N = GETNUMBER();
 			N--;
-			if (N<GetItemFromContents(pItem)->Slots)
+			if (N < GetItemFromContents(pItem)->Slots)
 			{
 				if (pItem->Contents.ContainedItems.pItems)
 					if (Dest.Ptr = pItem->GetContent(N))
@@ -6784,6 +6790,7 @@ bool MQ2ItemType::GETMEMBER()
 				return true;
 		}
 		return false;
+	}
 	case Stackable:
 		Dest.DWord = ((EQ_Item*)pItem)->IsStackable();
 		Dest.Type = pBoolType;
@@ -7773,6 +7780,7 @@ bool MQ2ItemType::GETMEMBER()
 			Dest.DWord = GetItemFromContents(pItem)->HeroicCHA;
 		Dest.Type = pIntType;
 		return true;
+#if defined(EMU)
 	case HeroicSvMagic:
 		if (GetItemFromContents(pItem)->Type != ITEMTYPE_NORMAL)
 			Dest.DWord = 0;
@@ -7815,6 +7823,7 @@ bool MQ2ItemType::GETMEMBER()
 			Dest.DWord = GetItemFromContents(pItem)->HeroicSvCorruption;
 		Dest.Type = pIntType;
 		return true;
+#endif
 	case EnduranceRegen:
 		if (GetItemFromContents(pItem)->Type != ITEMTYPE_NORMAL)
 			Dest.DWord = 0;
@@ -10523,7 +10532,7 @@ bool MQ2InvSlotType::GETMEMBER()
 		return true;
 	case Item:
 		if (PCHARINFO2 pChar2 = GetCharInfo2()) {
-			if (pChar2->pInventoryArray && nInvSlot) {
+			if (pChar2->pInventoryArray && nInvSlot >= 0) {
 				if (nInvSlot < NUM_INV_SLOTS)
 				{
 					if (Dest.Ptr = pChar2->pInventoryArray->InventoryArray[nInvSlot])
@@ -14060,6 +14069,10 @@ bool MQ2AlertListType::GETMEMBER()
 					return true;
 				case bMerchant:
 					Dest.DWord = (*si).bMerchant;
+					Dest.Type = pBoolType;
+					return true;
+				case bBanker:
+					Dest.DWord = (*si).bBanker;
 					Dest.Type = pBoolType;
 					return true;
 				case bTributeMaster:

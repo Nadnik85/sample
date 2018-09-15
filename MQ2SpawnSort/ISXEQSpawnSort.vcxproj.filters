@@ -2,34 +2,26 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{7919992d-761a-4b6e-9195-154f4d452890}</UniqueIdentifier>
+      <UniqueIdentifier>{16ebce65-0a96-444d-a81c-f75c26a5d7d8}</UniqueIdentifier>
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
     </Filter>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{5b446a35-1fb8-473a-b696-a8434ab48b66}</UniqueIdentifier>
+      <UniqueIdentifier>{5702cb0f-000c-4267-8726-705b373ef28e}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc</Extensions>
     </Filter>
     <Filter Include="Resource Files">
-      <UniqueIdentifier>{87782a9d-3dd7-4a76-bb4f-4e14458e5909}</UniqueIdentifier>
+      <UniqueIdentifier>{1122bb5b-396b-4bc9-83cc-90d90da54b46}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MQ2ItemDisplay.cpp">
+    <ClCompile Include="ISXEQSpawnSort.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\MQ2Plugin.h">
+    <ClInclude Include="ISXEQSpawnSort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="MQ2ItemDisplay.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
   </ItemGroup>
 </Project>

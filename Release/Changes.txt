@@ -1,3 +1,68 @@
+Sep 12 2018 by SwiftyMUSE
+- Added Banker for searches.
+- Fixed .NumGems so it will give up to 14 based on your spellbar.
+
+Sep 12 2018 by eqmule
+- Updated for TEST
+- Fixed /removeaug
+- Added support for RewardSelectionWnd through the /notify command -Plure
+- Added .StacksWithDiscs to the Spell TLO its a true/false
+  I don't know if it works, its untested.
+- Advloot giveto now works for raid members as well.
+- Added .Collected and .CollectedRecieved and .Scribed and .ScribedRecieved to the DisplayItem TLO they return true/false
+
+Sep 05 2018 by eqmule
+- Updated for TEST
+
+Aug 18 2018 by eqmule
+- Updated for TEST
+
+Aug 15 2018 by eqmule
+- Updated for LIVE
+
+Aug 09 2018 by eqmule
+- Updated for TEST
+
+Jul 20 2018 by eqmule
+- Updated for TEST
+- MQ2 contains NO active hacks, you can't warp and you can't "gank" etc.
+  Now, I bring this up since there is a thread on the official forum right now about cheat programs.
+  They are NOT talking about mq2, but another program which I will NOT link to or promote in any way, in fact we condemn it.
+
+Jul 19 2018 by eqmule
+- Updated for LIVE
+
+Jul 14 2018 by eqmule
+- Updated for TEST
+
+Jul 11 2018 by eqmule
+- Updated for TEST
+
+Jul 09 2018 by eqmule
+- Added support for MQ2Radar
+
+Jun 22 2018 by eqmule
+- Updated for TEST
+- Fixed a bug in mq2itemdisplay that would spam uierrors.txt
+
+Jun 20 2018 by eqmule
+- Updated for LIVE
+- They removed the heroic resists from iteminfo, so I did to.
+  I dont think anyone was using those anyway.
+
+Jun 19 2018 by eqmule
+- Updated for TEST
+
+Jun 18 2018 by eqmule
+- Added support for emu mq2labels plugin
+
+Jun 16 2018 by eqmule
+- Fixed a bug for TEST
+
+Jun 13 2018 by eqmule
+- Fixed ITEMINFO for TEST
+- Fixed invslot charm
+
 Jun 13 2018 by eqmule
 - Updated for TEST
 
