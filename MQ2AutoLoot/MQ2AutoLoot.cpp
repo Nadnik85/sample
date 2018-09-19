@@ -6,7 +6,7 @@
 // and Shutdown for setup and cleanup, do NOT do it in DllMain.
 
 #define PLUGIN_NAME					"MQ2AutoLoot"                // Plugin Name
-#define VERSION						1.10
+#define VERSION						1.11
    
 #define PERSONALBANKER_CLASS		40
 #define MERCHANT_CLASS				41
@@ -577,15 +577,19 @@ bool HandleSharedLoot(bool ItemOnCursor, PCHARINFO pChar, PCHARINFO2 pChar2, PEQ
 		//If I don't have a masterlooter set and I am leader I will set myself master looter
 		if (pRaid && pRaid->RaidMemberCount > 0) // Ok we're in a raid, lets see who should handle loot
 		{
-			for (int i = 0; i < 72; i++)
+			int ml = 0;
+			for (ml = 0; ml < 72; ml++)
 			{
-				if (pRaid->RaidMemberUsed[i] && pRaid->RaidMember[i].MasterLooter)
+				if (pRaid->RaidMemberUsed[ml] && pRaid->RaidMember[ml].MasterLooter)
 				{
-					MasterLooter = true;
+					if (!_stricmp(pChar->Name, pRaid->RaidMember[ml].Name))
+					{
+						MasterLooter = true;
+					}
 					break;
 				}
 			}
-			if (!MasterLooter)
+			if (ml == 72)
 			{
 				if (!_stricmp(pChar->Name, pRaid->RaidLeaderName))
 				{
@@ -1417,16 +1421,19 @@ DWORD __stdcall PassOutLoot(PVOID pData)
 			}
 			if (pRaid && pRaid->RaidMemberCount > 0) // Ok we're in a raid, lets see who should handle loot
 			{
-				for (int nMember = 1; nMember < 72; nMember++) // Lets start at 1, since I am in position 0
+				for (int nMember = 0; nMember < 72; nMember++)
 				{
 					if (pRaid->RaidMemberUsed[nMember]) // Ok this raid slot has a character in it 
 					{
-						if (GetSpawnByName(pRaid->RaidMember[nMember].Name)) // The character is in the zone
+						if (_stricmp(pChar->Name, pRaid->RaidMember[nMember].Name)) // The character isn't me
 						{
-							if (DistributeLoot(pRaid->RaidMember[nMember].Name, pShareItem))
+							if (GetSpawnByName(pRaid->RaidMember[nMember].Name)) // The character is in the zone
 							{
-								LootTimer = pluginclock::now();
-								return 0;
+								if (DistributeLoot(pRaid->RaidMember[nMember].Name, pShareItem))
+								{
+									LootTimer = pluginclock::now();
+									return 0;
+								}
 							}
 						}
 					}
