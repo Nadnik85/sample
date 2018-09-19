@@ -111,6 +111,7 @@ ULONGLONG    StopM = 0;                 // Stop Event Mark
 
 long         MoveA = FLAG_COMPLETE;     // Move Event AdvPath? 
 long         MoveS = FLAG_COMPLETE;     // Move Event Stick? 
+long         MoveN = FLAG_COMPLETE;     // Move Event Nav?
 long         MoveF = FLAG_COMPLETE;     // Move Event MQ2AdvPath Following?
 long         MoveP = FLAG_COMPLETE;     // Move Event MQ2AdvPath Pathing?
 
@@ -318,6 +319,7 @@ bool Flags()
 	if (MoveF != FLAG_COMPLETE) { if (DEBUGGING) WriteChatf("MQ2Cast: MoveF!=FLAG_COMPLETE"); return true; }
 	if (MoveP != FLAG_COMPLETE) { if (DEBUGGING) WriteChatf("MQ2Cast: MoveP!=FLAG_COMPLETE"); return true; }
 	if (MoveA != FLAG_COMPLETE) { if (DEBUGGING) WriteChatf("MQ2Cast: MoveA!=FLAG_COMPLETE"); return true; }
+	if (MoveN != FLAG_COMPLETE) { if (DEBUGGING) WriteChatf("MQ2Cast: MoveN!=FLAG_COMPLETE"); return true; }
 	return false;
 }
 
@@ -462,6 +464,7 @@ void Reset() {
 	StopF = FLAG_COMPLETE;     // Stop Event Flag Progress? 
 	StopE = DONE_SUCCESS;      // Stop Event Exit Value 
 	MoveA = FLAG_COMPLETE;     // Stop Event AdvPath? 
+    MoveN = FLAG_COMPLETE;     // Stop Event Nav?
 	MoveS = FLAG_COMPLETE;     // Stop Event Stick? 
 	MoveF = FLAG_COMPLETE;     // Stop Event MQ2AdvPath Following?
 	MoveP = FLAG_COMPLETE;     // Stop Event MQ2AdvPath Pathing?
@@ -779,6 +782,7 @@ public:
 				}
 				if (StopF != FLAG_COMPLETE) strcat_s(Temps, "S");
 				if (MoveA != FLAG_COMPLETE) strcat_s(Temps, "A");
+				if (MoveN != FLAG_COMPLETE) strcat_s(Temps, "N");
 				if (MoveS != FLAG_COMPLETE) strcat_s(Temps, "F");
 				if (MoveF != FLAG_COMPLETE) strcat_s(Temps, "P");
 				if (MoveP != FLAG_COMPLETE) strcat_s(Temps, "P");
@@ -875,6 +879,13 @@ void StopEnding()
 		Execute("/varcalc PauseFlag 0");
 		MoveA = FLAG_COMPLETE;
 	}
+    if (MoveN != FLAG_COMPLETE) {
+		if (DEBUGGING) {
+			WriteChatf("[%I64u] MQ2Cast:[Immobilize]: MQ2Nav UnPause Request.", GetTickCount642());
+		}
+        Execute("/nav pause");
+        MoveN = FLAG_COMPLETE;
+    }
 	if (MoveF != FLAG_COMPLETE) {
 		if (DEBUGGING) {
 			WriteChatf("[%I64u] MQ2Cast:[Immobilize]: MQ2AdvPath UnPause Request.", GetTickCount642());
@@ -918,6 +929,18 @@ void StopHandle()
 			MoveA = FLAG_PROGRESS1;
 		}
 	}
+    if (auto dtNavigation = FindMQ2DataType("Navigation")) {
+        MQ2TYPEVAR Active, Paused;
+        dtNavigation->GetMember(Active.VarPtr, "Active", "", Active);
+        dtNavigation->GetMember(Paused.VarPtr, "Paused", "", Paused);
+        if (Active.DWord && !Paused.DWord) {
+            if (DEBUGGING) {
+                WriteChatf("[%I64u] MQ2Cast:[Immobilize]: MQ2Nav Pause Request.", GetTickCount642());
+            }
+            Execute("/nav pause");
+            MoveN = FLAG_PROGRESS1;
+        }
+    }
 	if (FindMQ2DataType("AdvPath")) {
 		if (Evaluate("${If[${AdvPath.Following} && !${AdvPath.Paused},1,0]}")) {
 			if (DEBUGGING) {
