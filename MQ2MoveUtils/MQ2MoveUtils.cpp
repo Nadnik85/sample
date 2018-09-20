@@ -8000,7 +8000,7 @@ unsigned long GetDWordAt(unsigned long ulAddress, unsigned long ulNumBytes)
 
 inline unsigned char FindPointers()
 {
-#ifdef EMU
+#if defined(ROF2EMU) || defined(UFEMU)
    if ((addrTurnRight   = FindPattern(FixOffset(0x420000), 0x200000, patternTurnRight, maskTurnRight)) == 0)     return 1;
    if ((pulTurnRight    = (unsigned long*)GetDWordAt(addrTurnRight, 1)) == 0)                         return 2;
    if ((pulStrafeLeft   = (unsigned long*)GetDWordAt(addrTurnRight, 7)) == 0)                         return 3;

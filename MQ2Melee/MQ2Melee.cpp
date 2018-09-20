@@ -2119,7 +2119,7 @@ public:
             if ((EFFECT->ReuseTimerIndex || EFFECT->ReuseTimerIndex == -1) && TYPE != AA)
             {
                 //DebugSpew("EFFECT->ReuseTimerIndex Name: %s  ID: %d Type: %dVal: %d", NAME, ID, TYPE, EFFECT->ReuseTimerIndex);
-                #ifndef EMU
+                #if !defined(ROF2EMU) && !defined(UFEMU)
                 if (((unsigned long)pPCData->GetCombatAbilityTimer(EFFECT->ReuseTimerIndex, EFFECT->SpellGroup) - (unsigned long)time(NULL)) < 0) return 0x16; // dicipline timer not ready
                 #else
                 if (((unsigned long)pPCData->GetCombatAbilityTimer(EFFECT->ReuseTimerIndex) - (unsigned long)time(NULL)) < 0) return 0x16; // dicipline timer not ready

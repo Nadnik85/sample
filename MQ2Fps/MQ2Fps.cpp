@@ -29,7 +29,7 @@ VOID FPSColorCommand(PSPAWNINFO pChar, PCHAR szLine);
 
 #define FPS_ABSOLUTE  0
 #define FPS_CALCULATE 1
-#ifndef EMU
+#if !defined(ROF2EMU) && !defined(UFEMU)
 //10098170 in EQGraphicsDX9.dll that was patched at the same time as eqgame dated Dec 08 2015 -eqmule
 //4BF177 mov eax, [edx+0ACh] in eqgame dated Dec 08 2015 -eqmule
 #define VTABLE_OFFSET 0xAC/4

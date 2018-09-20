@@ -699,6 +699,8 @@ void Radar(PSPAWNINFO pChar, PCHAR szLine)
 
 PLUGIN_API VOID InitializePlugin()
 {
+	if (gBuild == 4 || gBuild == 5)//no support for emu yet
+		return;
 	DebugSpewAlways("MQ2Radar:: Starting.");
 	//MessageBox(NULL, "inject", "", MB_SYSTEMMODAL | MB_OK);
 	HMODULE hMQ2Radar = 0;
@@ -799,6 +801,8 @@ PLUGIN_API VOID InitializePlugin()
 PLUGIN_API VOID ShutdownPlugin(VOID)
 {
 	DebugSpewAlways("MQ2Radar:: Shutting Down.");
+	if (gBuild == 4 || gBuild == 5)
+		return;
 	if (!bgPluginInactive) {
 		RemoveCommand("/radar");
 		if (vCEverQuest__LeftClickedOnPlayer != 0)
