@@ -243,11 +243,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2PlatTracker", "MQ2PlatTr
 		{2A0A06A4-E9C6-4229-82EE-BD2D4E0A7221} = {2A0A06A4-E9C6-4229-82EE-BD2D4E0A7221}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2Posse", "MQ2Posse\MQ2Posse.vcxproj", "{147FFD01-1A0A-F502-BB24-3710A8F2F641}"
-	ProjectSection(ProjectDependencies) = postProject
-		{2A0A06A4-E9C6-4229-82EE-BD2D4E0A7221} = {2A0A06A4-E9C6-4229-82EE-BD2D4E0A7221}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2PvPAlert", "MQ2PvPAlert\MQ2PvPAlert.vcxproj", "{E85CE11A-595D-ACA9-7622-49D96B9037E3}"
 	ProjectSection(ProjectDependencies) = postProject
 		{2A0A06A4-E9C6-4229-82EE-BD2D4E0A7221} = {2A0A06A4-E9C6-4229-82EE-BD2D4E0A7221}
@@ -982,17 +977,6 @@ Global
 		{4954BA09-DA27-0726-53F3-0DB2BC5D860A}.xDebug|x64.ActiveCfg = Release|Win32
 		{4954BA09-DA27-0726-53F3-0DB2BC5D860A}.xDebug|x64.Build.0 = Release|Win32
 		{4954BA09-DA27-0726-53F3-0DB2BC5D860A}.xDebug|x64.Deploy.0 = Release|Win32
-		{147FFD01-1A0A-F502-BB24-3710A8F2F641}.Debug|Win32.ActiveCfg = Debug|Win32
-		{147FFD01-1A0A-F502-BB24-3710A8F2F641}.Debug|Win32.Build.0 = Debug|Win32
-		{147FFD01-1A0A-F502-BB24-3710A8F2F641}.Debug|x64.ActiveCfg = Debug|Win32
-		{147FFD01-1A0A-F502-BB24-3710A8F2F641}.Release|Win32.ActiveCfg = Release|Win32
-		{147FFD01-1A0A-F502-BB24-3710A8F2F641}.Release|Win32.Build.0 = Release|Win32
-		{147FFD01-1A0A-F502-BB24-3710A8F2F641}.Release|x64.ActiveCfg = Release|Win32
-		{147FFD01-1A0A-F502-BB24-3710A8F2F641}.xDebug|Win32.ActiveCfg = Debug|Win32
-		{147FFD01-1A0A-F502-BB24-3710A8F2F641}.xDebug|Win32.Build.0 = Debug|Win32
-		{147FFD01-1A0A-F502-BB24-3710A8F2F641}.xDebug|x64.ActiveCfg = Release|Win32
-		{147FFD01-1A0A-F502-BB24-3710A8F2F641}.xDebug|x64.Build.0 = Release|Win32
-		{147FFD01-1A0A-F502-BB24-3710A8F2F641}.xDebug|x64.Deploy.0 = Release|Win32
 		{E85CE11A-595D-ACA9-7622-49D96B9037E3}.Debug|Win32.ActiveCfg = Debug|Win32
 		{E85CE11A-595D-ACA9-7622-49D96B9037E3}.Debug|Win32.Build.0 = Debug|Win32
 		{E85CE11A-595D-ACA9-7622-49D96B9037E3}.Debug|x64.ActiveCfg = Debug|Win32
@@ -1238,5 +1222,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {18B48D3E-C5C1-42EC-A9A2-9723AD94BF54}
 	EndGlobalSection
 EndGlobal

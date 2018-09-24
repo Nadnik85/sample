@@ -1,15 +1,15 @@
 # Introduction
-Our goal is to create and maintain "Very Vanilla Live", a ban-safe and reliable version of MacroQuest2 made with Redguides' community plugins, modifications, and macros.
+Our goal is to maintain "Very Vanilla", a safe version of the open source project MacroQuest2 with Redguides' community plugins and modifications. We do not allow active hacks, cheats, or any mechanic that's otherwise impossible in-game.
 
-We're currently supporting the Test client in this gitlab, but all plugins and macros will be merged with our Live and RoF (emu) versions.
+We're currently supporting the Test client in this gitlab, but changes are regularly merged with our Live and Emu versions.
 
-# Getting Started
-Information about installing Very Vanilla can be found on RedGuides.com:
+# Not a developer?
+If you're not a developer, you'll find our pre-compiled versions on RedGuides.com much easier to use:
 
-https://www.redguides.com/forums/threads/26389-MacroQuest2-Beginner-s-Guide-(start-here)
+https://www.redguides.com/community/resources/very-vanilla-mq2-live-servers.61/
 
-# Build and Test Very Vanilla
-1) Install Visual Studio 2017 (free edition)
+# How to Build and Test Very Vanilla
+1) Install Visual Studio 2017 (community edition is free!)
 
 2) Team -> Manage Connections
 
@@ -20,7 +20,7 @@ Specify a local folder to place the files, and click "Clone". If it's your first
 
 5) Go to the cloned folder. Run MQ2auth.exe and save.
 
-6) Open RG_Vanilla.sln
+6) Open VanillaDIY.sln
 
 7) Retarget projects? Click OK
 
@@ -34,47 +34,66 @@ Specify a local folder to place the files, and click "Clone". If it's your first
 
 12) You did it! You'll find the goodies in the release directory. If you want MQ2Nav it needs to be compiled on its own, see brainiac's instructions on github.
 
-If you're new to compiling, you can find more detailed instructions here:
-
-http://www.macroquest2.com/wiki/index.php/MacroQuest2:Compiling
-
-
 # Contribute
-We love contributors! If you're testing changes that might break things, create or request a new branch for your project. Otherwise feel free to commit to the master branch.
+We love contributors. 
 
-Make sure you add your plugins to the Plugin List, and your macro to the Macro List on RedGuides.com to attract more users.
+Not everything has to be MQ2 related, we've hosted many other programs for EverQuest. Feel free to add them here in their own folder, see "EQBackupRestore" for an example.
 
-Not everything has to be MQ2 related, we've hosted many other programs for EverQuest in the past and we want to see them here.
+If you want to make a private/paid contribution to the project, please contact Redbot. Otherwise you agree to the DCO:
+
+Developer Certificate of Origin
+Version 1.1
+
+Copyright (C) 2004, 2006 The Linux Foundation and its contributors.
+1 Letterman Drive
+Suite D4700
+San Francisco, CA, 94129
+
+Everyone is permitted to copy and distribute verbatim copies of this
+license document, but changing it is not allowed.
+
+
+Developer's Certificate of Origin 1.1
+
+By making a contribution to this project, I certify that:
+
+(a) The contribution was created in whole or in part by me and I
+    have the right to submit it under the open source license
+    indicated in the file; or
+
+(b) The contribution is based upon previous work that, to the best
+    of my knowledge, is covered under an appropriate open source
+    license and I have the right under that license to submit that
+    work with modifications, whether created in whole or in part
+    by me, under the same open source license (unless I am
+    permitted to submit under a different license), as indicated
+    in the file; or
+
+(c) The contribution was provided directly to me by some other
+    person who certified (a), (b) or (c) and I have not modified
+    it.
+
+(d) I understand and agree that this project and the contribution
+    are public and that a record of the contribution (including all
+    personal information I submit with it, including my sign-off) is
+    maintained indefinitely and may be redistributed consistent with
+    this project or the open source license(s) involved.
+
+Full license details can be found in LICENSE.md
 
 ## Git Guide
-If you're working on a single macro by yourself, you don't have to learn anything. You can edit the macro directly on gitlab.com - no programs required.
-
-
-To add or update a macro, it's as simple as this:
-
-1) Go to https://gitlab.com/redguides/VeryVanilla/tree/master/Release/Macros
-
-2) click "+" then "upload file"
-
-
-If you're working with others, or with several files, it's best to use software to avoid conflicting edits.
 
 We have a guide on using Git with Visual Studio here:
-https://www.redguides.com/forums/threads/55499-Using-git-with-Visual-Studio-2017-absolute-beginners
+https://www.redguides.com/community/threads/using-git-with-visual-studio-2017-absolute-beginners.55499/
 
 If you want more detail, GitHub has a nice little tutorial:
 https://help.github.com/articles/set-up-git/
 
-You can even use their "GitHub Desktop" client with our Gitlab repository, as Redguides member erfg12 shows here:
-https://newagesoldier.com/how-to-use-github-windows-client-with-gitlab-reposaccounts/
-
-Most developers in the MQ2 scene use Visual Studio Community Edition to connect to git, which is also free.
-
 # Access
 
-If you'd like to keep your work private, a special plugin for example, or if you need access to code not shown here, send a PM to Redbot. 
+If you'd like to keep your work private or if you need access to code not shown here, send a PM to Redbot. 
 
-If there are plugins you don't see here that you'd like to work on, please PM Redbot. test
+Plugin you need to work on that we don't include here? PM Redbot.
 
 
 
