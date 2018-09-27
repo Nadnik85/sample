@@ -2520,12 +2520,12 @@ VOID Cast(PSPAWNINFO pChar, PCHAR szLine)
 		else {
 			if (PCONTENTS pItem = FindItemByName(szArg2, true))
 			{
-				if (pItem->GlobalIndex.Index.Slot1 < NUM_INV_SLOTS)
+				if (pItem->GetGlobalIndex().Index.Slot1 < NUM_INV_SLOTS)
 				{
 					if (GetItemFromContents(pItem)->Clicky.SpellID > 0 && GetItemFromContents(pItem)->Clicky.SpellID != -1)
 					{
 						if (pInvSlotMgr) {
-							if (CInvSlot *pSlot = pInvSlotMgr->FindInvSlot(pItem->GlobalIndex.Index.Slot1))
+							if (CInvSlot *pSlot = pInvSlotMgr->FindInvSlot(pItem->GetGlobalIndex().Index.Slot1))
 							{
 								CXPoint p; p.X = 0; p.Y = 0;
 								pSlot->HandleRButtonUp(&p);
@@ -3368,7 +3368,7 @@ VOID UseItemCmd(PSPAWNINFO pChar, PCHAR szLine)
 #endif
 				if (!bKeyring) {
 					CHAR szTemp[32] = { 0 };
-					sprintf_s(szTemp, "%d %d", pItem->GlobalIndex.Index.Slot1, pItem->GlobalIndex.Index.Slot2);
+					sprintf_s(szTemp, "%d %d", pItem->GetGlobalIndex().Index.Slot1, pItem->GetGlobalIndex().Index.Slot2);
 					cmdUseItem(pChar, szTemp);
 					RETURN(0);
 				}
@@ -4221,21 +4221,31 @@ VOID AdvLootCmd(PSPAWNINFO pChar, PCHAR szLine)
 									CHAR szQty[MAX_STRING] = { 0 };
 									GetArg(szQty, szLine, 5);
 									CHAR szOut[MAX_STRING] = { 0 };
-									WriteChatf("DEBUG: Giveto Entity %s  Qty %s", szEntity, szQty);
+									//WriteChatf("DEBUG: Giveto Entity %s  Qty %s", szEntity, szQty);
 									if (szEntity[0] != '\0') {
 										if (PCHARINFO pCI = GetCharInfo()) {
 											if (pCI->pGroupInfo) {
 												for (int i = 0; i < 6; i++) {
 													if (pCI->pGroupInfo->pMember[i] && pCI->pGroupInfo->pMember[i]->Mercenary == 0 && pCI->pGroupInfo->pMember[i]->pName) {
 														GetCXStr(pCI->pGroupInfo->pMember[i]->pName, szOut, MAX_STRING);
+														if (!_stricmp(szOut, szEntity))
+														{
+															break;
+														}
+														else {
+															szOut[0] = '\0';
+														}
 													}
 												}
 											}
-											if (pRaid) {
-												for (DWORD nMember = 0; nMember < 72; nMember++) {
-													if (pRaid->RaidMemberUsed[nMember] && !_stricmp(pRaid->RaidMember[nMember].Name, szEntity)) {
-														strcpy_s(szOut, pRaid->RaidMember[nMember].Name);
-														nMember = 72;
+											//not found? check raid
+											if (!szOut[0]) {
+												if (pRaid && pRaid->RaidID) {
+													for (DWORD nMember = 0; nMember < 72; nMember++) {
+														if (pRaid->RaidMemberUsed[nMember] && !_stricmp(pRaid->RaidMember[nMember].Name, szEntity)) {
+															strcpy_s(szOut, pRaid->RaidMember[nMember].Name);
+															break;
+														}
 													}
 												}
 											}

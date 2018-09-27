@@ -1,6 +1,13 @@
+Sep 25 2018 by eqmule
+- Updated for TEST
+
+Sep 21 2018 by eqmule
+- Updated for LIVE
+
 Sep 19 2018 by eqmule
 - Updated for LIVE
-- Cleaned up and completed the _EQCASTSPELLGEM struct, we have been using it wrong for years it seem.
+- Fixed a bug with /advloot giveto
+- Cleaned up and completed the _EQCASTSPELLGEM struct, we have been using it wrong for years it seems.
 - TimeStamp in the EQCASTSPELLGEM has been removed and is now (correctly) part of the CBUTTONWND struct
   it is named (correctly) CoolDownBeginTime there.
 

@@ -546,10 +546,10 @@ bool ItemSearch(PCHAR szItemName, long B, long E)
 		pItem = FindItemByName(szItemName, 1);
 	}
 	if (pItem) {
-		fSLOT = pItem->GlobalIndex.Index.Slot1;
+		fSLOT = pItem->GetGlobalIndex().Index.Slot1;
 		fITEM = pItem;
 		fPACK = NULL;
-		if (PCONTENTS pPack = FindItemBySlot(pItem->GlobalIndex.Index.Slot1)) {
+		if (PCONTENTS pPack = FindItemBySlot(pItem->GetGlobalIndex().Index.Slot1)) {
 			if (GetItemFromContents(pPack)->Type == ITEMTYPE_PACK) {
 				fPACK = pPack;
 			}
