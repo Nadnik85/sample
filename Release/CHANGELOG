@@ -1,6 +1,803 @@
-14 Sep 2017 by redguides
+Sep 25 2018 by eqmule
+- Updated for TEST
+
+Sep 21 2018 by eqmule
+- Updated for LIVE
+
+Sep 20 2018 by RedGuides
+- MQ2AASpend (eqmule) fixed purchasing issues introduced by patch. 
+
+Sep 19 2018 by RedGuides
+- New Plugin: MQ2DanNet (dannuic) a serverless peer network
+- MQ2AutoLoot (plure) Fixed two issues with raid looting. Thanks Dreamflux for pointing them out. 
+  1. Resolved issue when the master looter was set causing everyone to act as if they were the master looter. 
+  2. Fixed issue with passing out loot in a raid.
+- MQ2Cast (dannuic) Added Nav pauses to mobility checks.
+- MQ2AFNuke / MQ2Heals (jimbob) Updated Magician spell spelling to fix a nuke. Changed Ranger from /attack to /autofire on.
+  Updated Mage for Firebound Orb and removed Banestrike.
+
+Sep 19 2018 by eqmule
+- Updated for LIVE
+- Cleaned up and completed the _EQCASTSPELLGEM struct, we have been using it wrong for years it seem.
+- TimeStamp in the EQCASTSPELLGEM has been removed and is now (correctly) part of the CBUTTONWND struct
+  it is named (correctly) CoolDownBeginTime there.
+
+- RecastTime in the EQCASTSPELLGEM has been removed and is now (correctly) part of the CBUTTONWND struct
+  it is named (correctly) CoolDownDuration there.
+
+- The 2 above changes means plugins might need to be edited if they used the old struct.
+  Here is an example of how to fix this:
+  change:
+  return g->TimeStamp + g->RecastTime - EQGetTime();
+  to:
+  return g->Wnd.CoolDownBeginTime + g->Wnd.CoolDownDuration - EQGetTime();
+- Started on adding support for the UF emu client, no eta for when it will build.
+- The EMU #define has been renamed to ROF2EMU
+- Added a #define for UFEMU
+  This means if you plugin was previously using #if defined(EMU) !defined or #ifdef or #ifndef
+  it need to to properly add in defined(ROF2EMU) && defined(UFEMU) or the !defined in the proper places
+
+Sep 12 2018 by RedGuides
+- Auto* macros (noobhaxor) Very Vanilla versions now up to date. Run auto.mac
+
+Sep 12 2018 by SwiftyMUSE
+- Added Banker for searches.
+- Fixed .NumGems so it will give up to 14 based on your spellbar.
+
+Sep 12 2018 by eqmule
+- Updated for TEST
+- Fixed /removeaug
+- Added support for RewardSelectionWnd through the /notify command -Plure
+- Added .StacksWithDiscs to the Spell TLO its a true/false
+  I don't know if it works, its untested.
+- Advloot giveto now works for raid members as well.
+- Added .Collected and .CollectedRecieved and .Scribed and .ScribedRecieved to the DisplayItem TLO they return true/false
+
+Sep 05 2018 by RedGuides
+- MQ2Melee (saar) - Banestrike removed
+- Spell_routines.inc (saar) - Fixed issues with mounts, updated for 13 gem slots
+
+Sep 05 2018 by eqmule
+- Updated for TEST
+
+Aug 18 2018 by eqmule
+- Updated for TEST
+
+Aug 15 2018 by eqmule
+- Updated for LIVE
+
+Aug 09 2018 by eqmule
+- Updated for TEST
+
+Jul 20 2018 by RedGuides
+- *NEW PLUGIN* MQ2WorstHurt (alynel, idea from toots) find the worst hurt member, xtarg or pet. It's incredibly fast, supercharge your heal macros.
+- *NEW PLUGIN* MQ2SpawnSort (alynel) find a spawn quickly, searchable by several members (level, PctHP, radius etc.)
+
+Jul 20 2018 by eqmule
+- Updated for TEST
+- MQ2 contains NO active hacks, you can't warp and you can't "gank" etc.
+  Now, I bring this up since there is a thread on the official forum right now about cheat programs.
+  They are NOT talking about mq2, but another program which I will NOT link to or promote in any way, in fact we condemn it.
+
+Jul 19 2018 by eqmule
+- Updated for LIVE
+
+Jul 14 2018 by eqmule
+- Updated for TEST
+
+Jul 11 2018 by eqmule
+- Updated for TEST
+
+Jul 09 2018 by RedGuides
+KissAssist (ChatWithThisName) fixed error on line 3397 dealing with Cursor.Equal error when an item is on the cursor.
+
+Jul 09 2018 by eqmule
+Added support for MQ2Radar
+
+Jun 22 2018 by eqmule
+- Updated for TEST
+- Fixed a bug in mq2itemdisplay that would spam uierrors.txt
+
+Jun 21 2018 by RedGuides
+- mq2itemdisplay (eqmule) fixed a uierror that causes lag
+
+Jun 20 2018 by eqmule
+- Updated for LIVE
+- They removed the heroic resists from iteminfo, so I did to.
+  I dont think anyone was using those anyway.
+
+Jun 19 2018 by eqmule
+- Updated for TEST
+
+Jun 18 2018 by eqmule
+- Added support for emu mq2labels plugin
+
+Jun 16 2018 by eqmule
+- Fixed a bug for TEST
+
+Jun 14 2018 by eqmule
+- Fixed ITEMINFO for TEST
+- Fixed invslot charm
+
+Jun 13 2018 by RedGuides
+- LazyLobbyRez.mac (chatwiththisname) Added soulstone for level 106-110.
+
+Jun 13 2018 by eqmule
+- Updated for TEST
+
+Jun 08 2018 by eqmule
+- Added ActorDef to the spawn tlo it returns the name of the actor as a string
+
+Jun 07 2018 by eqmule
+- Fixed a crash in mq2linkdb
+- Fixed multiple potential null ptr crashes in core
+- synced some rof2 emu code to latest live
+
+June 5 2018
+MQ2AutoAccept (eqmule) Fixed a null ptr crash and added a check for a rez message so it wont accept that, its not this plugins job to accept rezzes.
+
+June 2 2018 by RedGuides
+A small updated to prepare for a new plugin ;)
+
+May 30 2018 by RedGuides
+MQ2EQBC (Redbot) added toggle "nameannounce" to show names on connect/disconnect. Defaults to on. /bccmd set nameannounce off
+
+May 30 2018 by eqmule
+- Fixed a bug in .FirstFreeSlot it returned 0 if all slots in a container was empty, but it should return 1 as in slot 1 is the first empty slot
+- Added support for the InvSlot TLO to return .Item (as a ItemType) for worldcontainers
+  Example: /echo ${InvSlot[enviro].Item.FirstFreeSlot}
+  it will echo the first free slot in the currently open worldcontainer (forge,loom etc)
+
+May 29 2018 by RedGuides
+- MQ2AutoGroup & MQ2EasyFind also fixed (eqmule)
+- EQBCS.exe (jimbob) Fixed channels issue. Filtered some debug messages for debug mode. Fixed some compile and debug issues
+
+May 29 2018 by eqmule
+- Fixed ${InvSlot[tradex].Item} where x is 1-16 for trading with players and 1-4 for NPCs
+- Fixed a crash in .IsNamed when Cmd was NULL
+- Fixed a potential NULL pointer crash in mq2hud
+- Fixed a potential NULL pointer crash in mq2chathook
+- Fixed a potential NULL pointer crash in mq2moveutils
+- Fixed a rare invalid pointer crash in mq2targetinfo
+- Fixed several crashes in MQ2SpellHotkeys
+- Fixed a WriteChatf crash in MQ2AutoLoot
+- Fixed a WriteChatf crash in MQ2Camera
+
+May 25 2018 by eqmule
+- Added .Trigger and .HasSPA to the Spell TLO
+  .Trigger[x] returns a SpellType.
+  .HasSPA[x] returns true or false
+  Usage:
+  Sub Main
+	/declare i int local
+	/if (${Spell[Livio's Malosenia].HasSPA[470]}==TRUE) {
+		/for i 1 to ${Spell[Livio's Malosenia].NumEffects}
+			/if (${Spell[Livio's Malosenia].Attrib[${i}]}==470) {
+				/echo the spell Livio's Malosenia triggers ${Spell[Livio's Malosenia].Trigger[${i}].Name}
+			}
+		/next i	
+	}
+  /return
+
+May 25 2018 by RedGuides
+- MQ2Nav (brianiac, eqmule) fixed a crash with easyfind
+- MQ2Discord (alynel) fixed colour characters & item links, unescaped commands from discord
+- Scribe.mac (gse7en) Updated scribe.mac to allow macro to be called by another macro (e.g. GoTrain.mac)
+- New plugin! (MQ2MYButtons) Add an extra hotbutton bar, because why not?
+
+May 24 2018 by RedGuides
+- MQ2EasyFind (eqmule) can now take door ID as a parameter in the ini file for locations
+  Example: Fortress Mecanotus is a click door but the loc for it in find is in mid air, kinda where it catapults u so 
+  without the door ID easyfind won’t know where to go and where to click
+  Now I just made it Fortress Mecanotus=door:6 1234 4321 123
+- New Macro! ShrinkEm (sl968) Shrinks all members of your group.
+- New Utility! EQBCI (jimbob) gives eqbcs a beautiful GUI, check the utilities folder.
+- Alternate EQBCS applications added: EQBCS2.exe and EQBCS-eqmule.exe. They each have their pros and cons, none is perfect ...yet.
+
+May 22 2018 by eqmule
+-Fixed PCHARINFONEW
+
+May 21 2018 by SwiftyMUSE
+- Corrected stacking for changes to spa 148
+- Corrected display of spa 148 to use new data format
+
+May 18 2018 by eqmule
+- Updated for TEST
+- Added .Next and .Prev to the grounditem type. - cred Alynel
+  Usage: /declare NextItem ground local
+		 /echo ${Ground[thing i'm looking for].Next.ID}
+- Fixed Me.XTAggroCount
+
+May 17 2018 by RedGuides
+- New plugin! MQ2Clipboard (alynel) copies text, commands or output from MQ2 to your clipboard.
+- MQ2Autoloot (plure) Fixed issue with /autoloot sell. It was trying to sell before the merchant was done with the previous sale, 
+  which caused it to act all buggy. It wasn't a pretty fix, I really need to figure out when a merchant is done being busy 
+  with the previous sale. Fixed a feature with items marked destroy.
+
+May 16 2018 by RedGuides
+- KissAssist (ctaylor22, maskoi) updated to 10.2.6! Gmail features, CastMount, and multi rez options. 
+  Check the kissassist forum for the full changelog.
+- kissassist1004e15 aka eqmuleAssist updated to the latest version.
+
+May 16 2018 by eqmule
+- Updated for LIVE
+- Updated for TEST
+
+May 13 2018 by SwiftyMUSE
+- Added MQ2SoundControl to global build.
+- Removed patterns from MQ2Camera, MQ2Moveutils, MQ2SoundControl
+- Fixed keybinds, you can no longer bind to the 22 additional keybind names
+- Changed ${Me} and ${Buff} TLO's
+  Added DiseaseCounters, PoisonCounters, CurseCounters, CorruptionCounters
+  Changed Counters to TotalCounters
+  Updated all counters to correctly pull the spelldata values
+
+May 08 2018 by eqmule
+- Updated or TEST
+
+May 07 2018 by eqmule
+- ${FindItem} and ${FindBankItem} and ${FindItemCount} now takes item ids as well
+  Example: /echo ${FindItemCount[12345]} will find how many items with the id 12345 you have.
+- /itemnotify now takes item ids as well.
+  Example: /itemnotify #12345 leftmouseup will pick up an item with the id 12345 if one exist.
+  NOTE: the hash (#) IS mandatory when using it this way.
+
+Apr 27 2018 by eqmule
+- Added .Solvent to the Augslot TLO it returns a SolvenType and if empty just the Name :cred and nagging for weeks: maskoi
+  SolventType has 4 members: Name which is a string type, ID as int, Item as itemtype and Count as int.
+  Example 1: /echo ${FindItem[Cloth Cap].AugSlot[0].Solvent.Name}
+  Output: Class I Augmentation Distiller
+  Example 2: /echo ${FindItem[Cloth Cap].AugSlot[0].Solvent.ID}
+  Output: 47001
+  //if you dont have the solvent in your inventory:
+  Example 3: /echo ${FindItem[Cloth Cap].AugSlot[0].Solvent.Item.Name}
+  Output: NULL
+  Example 4: /echo ${FindItem[Cloth Cap].AugSlot[0].Solvent.Count}
+  Output: 0
+
+Apr 24 2018 by eqmule
+- Updated for TEST
+
+Apr 24 3018 by RedGuides
+- included other changes from (late) on April 23rd. $MacroQuest.Version and itemnotify fix.
+
+Apr 23 2018 by eqmule
+- Fixed Me.XTAggroCount and Me.XTHaterCount
+- Added ${MacroQuest.Version} it will grab whatever version is set in the resource for fileversion for mq2main.dll
+- Added ${MacroQuest.InternalName} it will grab whatever internal name is set in resource for the internalname for mq2main.dll
+- Fixed a crash in /itemnotify
+
+Apr 21 2018 by eqmule
+- Updated for LIVE
+- .Replace can once again take an empty second argument example ${Target.Name.Replace[mule,]} output Eq if targets name is Eqmule
+
+Apr 20 2018 by eqmule
+- Bugfixes.
+- Fixed a null pointer crash in MQ2FPS thanks to almar for the report and dump file.
+
+Apr 20 2018 by RedGuides
+- Happy earth day! (ok I jumped the gun, apparently it's some other holiday about trees)
+- MQ2EasyFind (eqmule) fix for run stopping/stuttering
+
+Apr 19 2018 by eqmule
+- Fixed a bug in _SPELLBUFF, it had the wrong size and members
+  this will fix any problems with casting spells etc.
+
+Apr 19 2018 by RedGuides
+- MQ2Discord (alynel) added. Allows you to control MQ2 via Discord! See the plugin section for instructions.
+
+Apr 19 2018 by eqmule
+- Fixed a bug in _SPELLBUFF, it had the wrong size and members
+  this will fix any problems with casting spells etc.
+
+Apr 18 2018 by RedGuides
+- MQ2EasyFind has command line support and can find paths without mq2nav mesh loaded. 
+  meshes will give far better performance, but this is a nice fallback.
+  example: /easyfind "West Freeport"
+  MQ2EasyFind.ini can be used to fix issues with mesh-less navigation
+  new TLO's:
+  ${EasyFind.Item[blah].X.Y.Z} and also .Name
+  ${EasyFind.Items} returns how many are in the list
+- KissAssist 10.2.5 (ctaylor22, Maskoi) now included
+- EQBCS.exe (Jimbob) lots of fixes, now works with multiple PCs
+- MQ2EQBC (ChatWithThisName) Made it so TLO EQBC.Names is updated anytime someone connects or disconnects. 
+- MQ2MoveUtils, MQ2Camera (eqmule) fixed for new compile
+- MQ2AutoLoot (plure) 
+  Fixed issue Chatwiththisname brought up that would cause it to spam loot actions over and over again.  
+  Added the ability to do looting during raid.  /AutoLoot raidloot [on|off] -> Toggle raid looting on and off, the default is off.
+  Rewrote item actions such as /autoloot barter/sell/deposit to make the code cleaner (at least in my own opinion).
+- MQ2Melee (ChatWithThisName) Change as per EQMule convo in discord. 
+
+Apr 18 2018 by eqmule and swiftymuse
+- Updated for LIVE
+- You should remove DataCompare, FindOffsets and GetDWordAt from your plugins, they exist as inlines from now on in core.
+
+
+Apr 17 2018 by eqmule and swiftymuse
+- Updated for TEST
+
+Mar 19 2018 by RedGuides
+- fixed a plugin loading issue
+
+Mar 19 2018 by RedGuides
+- MQ2Ic (eqmule) fix for crash some were having
+
+Mar 17 2018 by RedGuides
+- MQ2Melee (ChatWIthThisName) - bracketing issue fixed for Berserkers. 
+
+Mar 17 2018 by eqmule
+- Added .Path to the MacroQuest TLO
+  Usage /echo ${MacroQuest.Path}
+  returns the path to the folder mq2main.dll is in
+- Added Name, Level and Count to the CharSelectList mermber of the EverQuest TLO
+  Usage: /echo ${EverQuest.CharSelectList[1].Name}
+  Usage: /echo ${EverQuest.CharSelectList[1].Count} yes I know it should be ${EverQuest.CharSelectList.Count} but just work with it like that.
+  it returns the actual count of the characters in the list.
+- Fixed the ITEMINFO Struct so stacksize and so on works again
+
+Mar 16 2018 by eqmule
+- Updated for LIVE and TEST Fixed the ITEMINFO struct so things like StackSize works again.
+
+Mar 14 2018 by eqmule
+- Updated for LIVE
+
+Mar 11 2018 by SwiftyMUSE
+- Updated hotkey processing. You are now able to use any/all of the allowed modifiers win/alt/ctrl/shift keys.
+  hotkey processing will allow characters `/~, 0-9, A-Z, NUMPAD0-9 as the keycode. For example, you might want
+  win+ctrl+~ to be a valid hotkey.
+  F12 is RESERVED for the debugger and can not be used as a hotkey. You can use F12 with a modifier.
+- Updated XTAggroCount to return a value when only 1 mob is on xtarget.
+- Added XTHaterCount as the number of mob on xtarget with AUTO-HATER.
+
+Mar 11 2018 by eqmule
+-Fixed another crash on TEST -brainiac
+
+Mar 10 2018 by RedGuides
+- MQ2ToolDamageParser (eqmule) fixed a bug
+- MQ2ToolTip (eqmule) fixed a bug
+
+Mar 10 2018 by eqmule
+- Updated the TEST build. If you crash use REBUILD on mq2main then build the rest again.
+- mapcrash fixed - brainiac
+
+Mar 09 2018 by eqmule
+- Updated for TEST
+
+Feb 27 2018 by eqmule
+- Updated for TEST
+
+Feb 22 2018 by RedGuides
+- MQ2MoveUtils (RedGuides version) fixed.
+
+Feb 22 2018 by swiftymuse
+- Updated for LIVE
+- Updated for TEST
+- Fixed a crash that would occur in plugins that use the __msgTokenTextParam_x offset which was wrong. -eqmule
+  If you unloaded a plugin and that stopped the crashing, you can now safely load it again.
+  
+Feb 22 2018 by RedGuides
+- MQ2AFNuke (jimbob) Fixed targeting bug
+- Bazaar.mac (ChatWithThisName) Update to include colors in the repricing echo.
+- MQ2MoveUtils is broken, so we're using the generic macroquest2 one. If you can help fix
+it, please contact Redbot.
+
+Feb 21 2018 by eqmule
+- Updated the TEST build.
+- Updated the LIVE build.
+  Look, we don't know for sure which plugins work and which don't after todays patch
+  there was just too many things that changed but i can say that I know mq2cast needed an update here:
+  from:
+  [code]
+  if (Cast->CastOnYou[0]) {
+	sprintf_s(Temps, "%s#*#", Cast->CastOnYou);
+  [/code]
+  changed to
+  [code]
+		/*CastByMe,CastByOther,CastOnYou,CastOnAnother,WearOff*/
+		if (char*str = GetSpellString(Cast->ID,2)) { 
+			sprintf_s(Temps, "%s#*#", str);
+  [/code]
+  So from now on if you need the strings from spell use GetSpellString
+- Updated mq2moveutils in the builder with new patterns
+
+Feb 13 2018 by eqmule
+- Added MQ2TargetInfo plugin to core
+  It adds 3 features to the target window:
+  1. Distance to target
+  2. Can See
+  3. PH - if the mob you target is a place holder for a named, it will show info on the named when clicked.
+
+Jan 31 2018 by eqmule
+- Added a toggle to the item display window to add/remove loot filter
+- Moved the button so its always paralell to the modified label
+- Fixed a crash when typing % in chat - cred: jimbob
+
+Jan 24 2018 by eqmule
+- Attempted to fix the empty char select list bug that pops up a window and says "Loading Characters" by going back to serverselect.
+  I cant tell if the fix works or not since the bug is so rare.
+- The itemdisplay window has a new button for looking up the item on lucy.
+- New command: /itemdisplay
+- Usage: /itemdisplay LootButton off/on if not specified its a toggle
+- Usage: /itemdisplay LucytButton off/on if not specified its a toggle
+-
+- The following APIs where incorrectly named and has been changed to their correct names:
+- CHtmlWnd__OpenUrl_x is now  CWebManager__CreateHtmlWnd_x
+- CHtmlComponent__CheckUrl_x has is now CHtmlComponentWnd__ValidateUri_x
+- pWebBrowser is now pCWebManager
+- pinstCHtmlWnd_x is now pinstCWebManager_x
+- All instances of CCharacterSelect are now CCharacterListWnd
+
+Jan 23 2018 by eqmule
+- Updated for TEST
+
+Jan 19 2018 by RedGuides
+- MQ2Melee (saar) added the rest of the RoS abilities
+- MQ2Heals & MQ2AFNuke (jimbob) Updated heals and afnuke...
+- Bazaar.mac (ChatWithThisName) Reduced the amount of Spam generated by the macro.
+
+Jan 19 2018 by eqmule
+- Updated for LIVE Go build it at www.macroquest2.com/builder
+
+Jan 17 2018 by eqmule
+- Updated for LIVE Go build it at www.macroquest2.com/builder
+- Added a "Add to loot filters" button on the itemdisplay window.
+  Usage: click it and it will add the item as always greed and roll.
+  This feature is only present if you have the mq2itemdisplay plugin loaded.
+
+Jan 17 2018 by SwiftyMUSE
+- Fix for tunare deity
+
+Jan 16 2018 by RedGuides
+- fix for xtarg on progression servers
+- bazaar.mac (ChatWithThisName) Fix for /mac bazaar makeini
+
+Jan 15 2018 by RedGuides
+- scribe.mac (ChatWithThisName) corrected not memorizing spells in top level inventory slot
+- while.mac (ChatWithThisName) I believed the intent was to show usage of a while loop. Produced for loop standalone, while loop standalone, while loop nested in a for loop test cases. 
+- scribe.mac (ChatWithThisName) Missing snipping to open the inventory window added. (required for /itemnotify pack${Bag} rightmouseup to scribe TopLevel slot spells
+- kissassist1004e15.mac (eqmule) eqmule's kissassist fork updated.
+
+Jan 15 2018 by eqmule
+- Added /AddLootFilter syntax:  /AddLootFilter <itemID> <ItemIconID> \"Item Name\"
+  Example: /AddLootFilter ${Cursor.ID} ${Cursor.IconID} "${Cursor.Name}"
+  will add whateveris on your cursor to the advloot filters as always greed and roll.
+- Added a AddLootFilter method to the DisplayItem TLO.
+- Usage: /invoke ${DisplayItem.AddLootFilter} or ${DisplayItem[x].AddLootFilter} where x is 1 to 6
+- this will add whatever item is in the DisplayItem to advloot filters as AG and Roll
+-
+- Added a new TLO MQ2ItemSpellType as pItemSpellType:
+- Added some new pItemType members:
+	Clicky,Proc,Worn,Focus,Scroll,Focus2,Mount,Illusion and Familiar
+	they all return the new pItemSpellType
+	which has the following members:
+	SpellID,RequiredLevel,EffectType,EffectiveCasterLevel,
+	MaxCharges,CastTime,TimerID,RecastType,
+	ProcRate,OtherName,OtherID and Spell (Spell returns a spelltype)
+- Added the .CanUse member to the itemtype.
+  Usage: /echo ${Cursor.CanUse} or ${FindItem[whatever].CanUse} or ${DsiplayItem.CanUse}
+  returns true or false if u can use the item on your cursor.
+  NOTE: if your item does NOT have a class set, i.e. None/None it will return FALSE.
+  I am just calling the original eq function so dont blame me for anomolies.
+  
+Jan 10 2018 by RedGuides
+- kissassist (ctaylor22) 10.2.3 Added more Bard Fixes and a few other little mods. Fixed the issue in Bind_BackOff and uploaded. Fixed the EQBC Spam when EQBC not loaded.
+- MQ2Nav (brainiac) 1.2.1 
+**Improvements - MQ2Nav**
+Updated source to latest version of MQ2 core
+Destination zone name on switches (for example, pok stones) is now available to debug tools and will eventually be introduced into other features.
+D3DX9_43.dll is now included in the build to avoid requiring DX9 runtime installer.
+**Bug Fixes**
+Zones.ini: Add new zones for Ring of Scale expansion
+Fixed a crash when trying to load a mesh that had been created with an incorrect zone name.
+Fixed a typo in log message complaining about not finding a starting point.
+- Bazaar.mac (ChatWithThisName) Updated to 3.3, will no longer sell items for less than vendor value, polished the text, various fixes.
+- Ninjadvloot.inc (ChatWithThisName) multiple /next in a single /for statement in various locations corrected. /next changed to /continue where appropriate.
+- NEW MACRO! Skills.mac (ChatWithThisName) modified to add in mediating for classes that can cast. Classes that can't cast skip both the meditation and casting routine. 
+- MQ2Autoloot (plure) Fixed TLO ${AutoLoot.DepositActive}.  Cleaned up the depositing items to your guild banker.  Removed some redundant code now that FindItemByID and FindBankItemByID can now find augs on items.
+
+Jan 10 2018 by eqmule
+- Updated for TEST Go build it at www.macroquest2.com/builder
+
+Jan 07 2018 by SwiftyMUSE
+- Corrected ${Me.Rooted}, credit Plure.
+- Updated spell SPA displays with new SPA's.
+- Added ${Me.MercAAPoints}, ${Me.MercAAPointsSpent}
+- Corrected ${Me.CursorKrono}
+
+Jan 07 2018 by brainiac
+- Updated solution and project files to use latest Visual Studio 2017.
+  If you're not using VS2017 yet, go download community edition for free: 
+  https://www.visualstudio.com/downloads/
+  
+Jan 05 2018 by eqmule
+- Updated for LIVE
+
+Jan 4 2018 by RedGuides
+- MQ2Melee (eqmule) updated
+- MQ2AutoLoot (plure) Fixed issue with not being able to loot no drop items.
+
+Jan 04 2018 by eqmule
+Updated for TEST 
+
+Dec 31 2017 by RedGuides
+- KissAssist (ctaylor22, maskoi) updated to 10.2.2: Return of Dawn of the Bard
+- MQNuke, MQ2Heals (jimbob) updated for RoS, as well as various fixes
+
+Dec 23 2017 by RedGuides
+- KissAssist (maskoi, ctaylor22) updated to 10.1.4. Bug fixes & new features found in release thread
+in the KissAssist forum.
+
+Dec 19 2017 by RedGuides
+- MQ2AFNuke (jimbob) Fixed Fury of the Gods typo
+- MQ2AutoLoot (plure) Updated so you can set permissions to "public, public if usable, and view only" 
+for items being deposited into your guild bank.
+
+Dec 19 2017 by eqmule
+- Updated for LIVE
+
+Dec 15 2017 by RedGuides
+- New Plugin! MQ2DamageParser. Details and guide to come soon.
+- MQ2Exchange (sifun) WinEQ alt-key lock bug fixed.
+
+Dec 12 2017 by eqmule
+- xtarget fix for TLP
+
+Dec 12 2017 by eqmule
+- Updated for LIVE 
+
+Dec 06 2017 by eqmule
+- Fixed /loginchar server:charname it should once again work.
+
+Dec 04 2017 by rswiders
+- Added new TLO member XTAggroCount to ${Me}
+  Usage: /echo ${Me.XTAggroCount} or ${Me.XTAggroCount[100]}
+  it returns the number of AUTO-HATER mobs on the extended
+  target window where your aggro is less than the optional
+  parameter N. N must be between 1-100 inclusive or it will be
+  set to 100 (the default value).
+  So, ${Me.XTAggroCount} and ${Me.XTAggroCount[100]} are identical.
+
+Dec 01 2017 by eqmule
+- Added new TLO member BardSongPlaying to ${Me}
+  Usage: /echo ${Me.BardSongPlaying}
+  it returns true if a bard song is playing and false if not.
+- Fixed ${Me.SpellReady} to take bard songs playing into account properly so it returns true even if a song is playing.
+- Added Category and Subcategory to the SpellDisplay Window.
+
+Nov 28 2017 by rswiders credit plure
+- Updated all FindItem code to allow partial matches and consistently check
+  your cursor, inventory (including bags), keyrings for the item. Will now
+  allow partial and exact match checks for all.
+- Update to consistently check bank/shared bank slots/bags and to allow
+  partial and exact match checks for all.
+
+Nov 21 2017 by RedGuides
+- Fixes for TLP servers, xtarget (eqmule)
+
+Nov 21 2017 by eqmule
+- Updated for LIVE
+- Updated for BETA
+
+Nov 15 2017 by RedGuides
+- MQ2AutoGroup (plure) Changed how we handle merc's. /autogroup handlemerc [on/off] -> Toggle suspending/summoning merc's if your in a group Default is on, 
+it will only suspend/summon merc's if you are in a group.
+
+Nov 15 2017 by eqmule
+- Updated for BETA
+- Updated for LIVE
+
+Nov 08 2017 by eqmule
+Updated for TEST
+Added a new command: /usercamera - feature request by Bogreaper
+  You can use it to set the current camera as well as save/load settings for user camera 1
+  NOTE: "User Camera 1" is actually camera number 3 in the client...
+  Cameras are defined as follows:
+  0 = First Person Cam
+  1 = Overhead Cam
+  2 = Chase Cam
+  3 = User Cam 1
+  4 = User Cam 2
+  5 = Tether Cam
+  6 = Zoom Cam
+  7 = Internal Cam (don't ask, it just is ok. It is used for things like when you edit the facial features of your character etc.)
+
+  Just type /usercamera without any arguments to see help for it.
+  It will display the current active camera in the Selector Window titlebar, this can be toggled with /usercamera on/off default is on.
+  Example: switch to camrea 3 by doing /usercamera 3
+           Then, adjust it how you like it, type /usercamera save
+		   Ok, that's it, next time u want to get back to that EXACT camera position, you just do /usercamera load
+		   You can create hotkey(s) as well.
+		   Optional: you can do /usercamera save eqmule and it will save it for eqmule (or whatever your chanracter name is), same thing with load.
+		   if you omit the character name, it just saves is as a global camera.
+
+Nov 03 2017 by eqmule
+- Updated for BETA
+- Merchant Window TLO Fixed.
+
+Nob 1 2017 by RedGuides
+- New Plugin! MQ2EasyFind (RedGuides community) added to official compile. Congrats and thank you to all the donors! Rewards shipping this week.
+- bazaar.mac (Tone & GerGuy) unofficial fixes pending review by maskoi
+- auto macros (Noobhaxor) 4.0 released! auto.mac, autobard.mac, autocleric.mac, and autowarrior.mac with more changes than I can list, please read the Auto Macros Megathread in the "macro mania" forum.
+- bas.mac aka barter auto seller (ctaylor22, kaen01) unofficial fixes pending review by ctaylor22
+- MQ2AFNuke (jimbob) Updated for some AA changes
+- giveitems.mac (Sym, kaen01) Fixed the macro so it now works. Added the ability to just sit to end the macro when you done giving things.
+
+Oct 24 2017 by demonstar55
+Added ${Target.MyBuffDuration} it returns your buffs duration on the target.
+
+Oct 21 2017 by RedGuides
+- MQ2Posse (plure) Fixed "feature" in mq2posse when you turned it off and on people that were on the list before you turned it off weren't being recognized as friend/strangers.
+
+Oct 21 2017 by eqmule
+- Updated for BETA
+- Updated for TEST
+- We are currently testing the new build server for LIVE builds, pm me for an invite.
+
+Oct 18 2017 by eqmule
+- Updated for LIVE
+
+Oct 13 2017 by RedGuides
+- MQ2Netbots (woobs, eqmule, et. al) updated! This was in the Oct 11th update but I forgot to mention it.
+- MQ2EQBC, MQ2MoveUtils had EQ_CHAT_HISTORY_OFFSET removed, let me know if there are any issues.
+
+Oct 13 2017 by eqmule
+- Updated for TEST
+- MQ2Auth.exe now produces truly unique hashes, everyone needs to rerun it.
+- You can now see what your MQ@Auth is by clicking the Show MQ2Auth menu item on the trayicon.
+  this also optionally let you copy it to the clipboard.
+- EQ_CHAT_HISTORY_OFFSET has been removed it was a pita to keep updated
+	From now on do :
+	OutputBox->MaxLines = 0x190;
+	instead of
+    (DWORD*)&(((PCHAR)OutputBox)[EQ_CHAT_HISTORY_OFFSET])=0x190; 
+
+Oct 12 2017 by eqmule
+- Updated for TEST
+- Updated for TEST #2
+
+Oct 11 2017 by RedGuides
+- New Utility! EQBCS.exe (jimbob) a huge upgrade to the old mq2eqbcs.exe, runs multiple characters with no lag or errors. Stress tested. One-click to add a windows service, and many more features.
+- New Utility! EQBackupRestore.exe (rephaite) backup and restore your EverQuest & character settings. Check your /release/utilities folder. (Source available on our gitlab. )
+- MQ2AFNuke (jimbob) - Several features broken by spell casting changes a week or 2 before. Still working, but need a commit before I break it further. :) Fixed some more issues.
+- MQ2Heals (jimbob) - Fixed % bugs in ShowHelp (changed to %% to display % sign, instead of look for parameter).
+- cskillup (maskoi) - updated for #warning
+
+Oct 11 2017 by eqmule
+- Updated for TEST
+
+Oct 03 2017 by eqmule
+- /removebuff now takes parameters: -pet and -both | cred MacQ
+  /removebuff -pet buffname removes the buff from your pet ( same functionality as /removepetbuff buffname)
+  /removebuff -both buffname removes the buff from both you and your pet.
+
+Sep 28 2017 by eqmule
+- Added MQ2FamKiller
+- Added MQ2Bandolier
+- Fixed MQ2Cursor
+- Removed the voice "help" in group for mq2rez.
+
+Sep 26 2017 by RedGuides
+- KissAssist (maskoi, ctaylor22) updated to v10.0.6.4
+- Ninjadvloot (eqmule) updated
+plugins changed: (redbot)
+MQ2SpellSearch
+MQ2Heals
+
+Sep 26 2017 by eqmule
+- Updated the SPELL struct:
+- CARecastTimerID has been renamed to ReuseTimerIndex
+- Mana has been renamed to ManaCost
+- FizzleTime has been renamed to RecoveryTime
+- ReagentId has been renamed to ReagentID
+- DescriptionNumber has been renamed to DescriptionIndex
+- SubSpellGroup has been renamed to SpellSubGroup
+- Location has been renamed to ZoneType
+- DurationValue1 has been renamed to DurationCap
+plugins changed:
+MQ2NetBots
+MQ2NetHeal
+MQ2Debuffs
+MQ2Cast
+MQ2Melee
+
+Sep 25 2017
+- KissAssist (Maskoi & ctaylor22) - bug fixes
+
+Sep 23 2017 by RedGuides
+- MQ2AutoAccept, MQ2AutoGroup, MQ2AutoLoot (eqmule) bugs fixed
+- Ninjadvloot (Maskoi) Lagcount var removed not used #warnings. v6.08
+
+Sep 23 2017 by eqmule
+- Updated for TEST
+
+Sep 22 2017 by RedGuides
+- Ninjadvloot (Maskoi, eqmule) - bug fixes for warnings
+
+Sep 22 2017 by RedGuides
+- KissAssist 10.0.6.1 & Ninjadvloot (Maskoi, ctaylor22) - bug fixes. No thanks to Hurricane Irma.
+- Auto Macros (Noobhaxor) - Fix aliases such as /camphere, revamp of Load INI / Set INI Subs to not use second variable
+- MQ2CpuLoad (plure) - updated to handle 16 cores and 36 clients. If you need more just ask.
+- MQ2Rez (eqmule) - major bug fixes
+
+Sep 21 2017 by eqmule
+- Added ${Spell[x].IllusionOkWhenMounted} it returns true if the illusion spell will land when you are on a mount
+  you can call this using any spell, but it will always return true if the spell is NOT an illusion spell.
+  in fact it wont even evaluate it further if its not a illusion spell
+- Fixed the pinstCTimeLeftWnd_x offset
+
+Sep 20 2017 by RedGuides
 - Please report broken macros in the macro forum, this update will break many.
 - New Plugin! MQ2FindItem (Sym) - type "/finditem name" with a merchant window open, and it will select that item.
+- KissAssist 10.0.6(Maskoi, TreeHuginDruid, ctaylor22) - Updated for new bind/warning changes
+
+Sep 20 2017 by eqmule
+- Updated for LIVE
+
+There will be no more public mq2 updates until I catch the guy that released the mq2 for agnarr.
+
+send me a pm or skype text: eq.mule
+if you have information. you can be anonymous.
+
+longtime friends and loyal users here that I know and trust will be given the updates by me only from now on. (at no charge of course.) mq2 is still open source and free, its just that equistructs.h eqgame.h and eqdata.h wont be distributed or updated by me anymore. those change every patch and everything prior to this day is under gpl and can of course be requested or downloaded, but from now on until this crap is resolved, I have my own NEW includes that are NOT under the gpl.
+
+I'm sick of having my hard work being taken and passed of by some leech on a server that I specifically requested we stay away from. I wont tolerate it.
+
+mq2 is free and staying off of truebox was the only price people had to pay, cant do that? no mq2 for anyone anymore.
+
+wanna step in and update it? lol go for it, it must be "easy" if eqmule can do it in a couple hours... pfft... yeah right...
+
+/eqmule (yeah I'm bitter)
+
+19 Sep 2017 by rswiders
+- Modified Math.Clamp to use the parameter list of (N, Min, Max). ie, will clamp the value N between Min and Max.
+- Added ${Group.AvgHPs} guess what it returns? - eqmule
+
+18 Sep 2017 by eqmule
+- Fixed an infinite loop bug and a variable parse bug in Eval functions. -cred bug report: creamo
+- Eval functions that take multiple arguments MUST separate those with comma(s) from now on
+  Example: (run with a cleric, war or shaman)
+  [code]
+  Sub Main
+	/declare c_argueString string outer shm clr war
+	/declare ChatSender string local ${Me} 
+
+	/if (!${checkbot["shm war clr", ${ChatSender}]}) { <-NOTE the COMMA
+		/echo ${Time} Only Func3: FALSE, this should be TRUE
+	} else {
+		/echo ${Time} Only Func3: TRUE, this should be TRUE
+	}
+  /return
+
+  Sub checkbot(selectedBots, chatSender)
+    /declare botSelected bool local FALSE
+	/echo ${Time} in Sub checkbot selectedBots=${selectedBots} chatSender=${chatSender}
+    /if (${Select[${Me.Class.ShortName},${selectedBots}]}) /varset botSelected TRUE
+  /return ${botSelected}
+  [/code]
+
+17 Sep 2017 by eqmule
+- Fixed ${Me.GukEarned}, ${Me.MMEarned}, ${Me.RujEarned}, ${Me.TakEarned}, ${Me.MirEarned} and ${Me.LDoNPoints}
+- Added a new TLO PointMercant it only have one member : Item which is a pPointMerchantItemType.
+  The pPointMerchantitemType has the following members: Name, ItemID, Price, ThemeID, IsStackable, IsLore, RaceMask, ClassMask, bCanUse
+  Usage:
+  /echo ${PointMercant} returns true if the LDON Mercant window is open and FALSE if not.
+  /echo ${PointMercant.Item[1].Price} OR /echo ${PointMercant.Item[Ebon Hammer].Price}
+  returns the Price for index 1 or whatever index Ebon Hammer is in if you do it by name.
+  etc.
+
+15 Sep 2017 starring rswiders as "the captain", eqmule as "crew member number 6" and special guest star: eqholic
+- Updated to handle the new SPA's
+- Fixed a bug in /next not taking its argument into account for nested for loops.
+- Fix for labels
+- Fixed the CSIDLWND struct (the SIDL define...) so since we have never had this right it was time, but note that
+  if your plugin uses stuff like: pwnd->SidlText and its NOT an actual CSidlScreenWnd then you need to change it to whatever window it actually is.
+  I guess questions about this should be directed to me (eqmule)
+
+plugins changed outside of core are attached here:
+http://www.macroquest2.com/phpBB3/viewtopic.php?f=29&t=11451&p=174467#p174467
+MQ2AutoAccept,MQ2Rez
+
+14 Sep 2017 by RedGuides
 - KissAssist 10.0.5 (Maskoi, TreeHuginDruid, ctaylor22) - Updated for new bind/warning changes
 - Ninjadvloot 6.0.7 (Maskoi) - Updated for new bind/warning changes
 
@@ -148,7 +945,7 @@ Sub Main
 /return
   [/code]
   
-30 Aug 2017 by redguides
+30 Aug 2017 by RedGuides
 - MQ2AFNuke (jimbob) Added basic 105 Ranger DPS support to MQ2AFNuke. Requires update to MQ2Heals as well. Will add more.
  Updated Ranger code in MQ2AFNuke... It's still a little experimental, but a previous commit broke so...
 - MQ2EQBC (eqmule) fixed a crash for /bcaa //tar %t
@@ -156,12 +953,12 @@ Sub Main
 - KeepToonBuffed.mac (treehugindruid) minor bug fix and enhanced logic to target selections.
 - MQ2AutoLoot (plure, eqholic) Added TLO ${AutoLoot.SaveBagSlots} and ${AutoLoot.FreeBagSlots}
 
-22 Aug 2017 by redguides
+22 Aug 2017 by RedGuides
 - New Plugin! MQ2FearRunner (Sym) - Runs you back to where you started when feared.
 - Crowdfunding plugin: MQ2EasyFind. Site-wide funding goal reached! We all get MQ2EasyFind for a month. See front page tomorrow for more info.
 - KissAssist updated with more aura fixes (TreeHuginDruid)
 
-19 Aug 2017 by redguides
+19 Aug 2017 by RedGuides
 - AutoCleric (noobhaxor) fix for Auras
 - KissAssist (ctaylor22) fix for Auras
 - including remove_alias.mac in the compile by default, a maintenance/customer support tool for kissassist.
@@ -169,7 +966,7 @@ Sub Main
 18 Aug 2017 by eqmule
 Updated for TEST
 
-17 Aug 2017 by redguides
+17 Aug 2017 by RedGuides
 - keeptoonbuffed.mac (TreeHuginDruid) - bug fixes / cleanup
 
 17 Aug 2017 by eqmule
@@ -183,7 +980,7 @@ Updated for TEST
   Methods: Remove
 - Me.Aura[] now accept partial matches
 
-16 Aug 2017 by redguides
+16 Aug 2017 by RedGuides
 - MQ2AFNuke (jimbob): Added support for Mage Chaotic Fire spell from EoK. Typo fix for enchanter "Calculated Insanity"... should fix chanter burns. 
  Added Mage burn AAs and spells. Go mages!
 - MQ2AutoGroup (plure): Added the ability to set group members to anyone connected to your eqbc server in the zone with a leader in mq2autogroup.   
@@ -198,7 +995,7 @@ Updated for TEST
 16 Aug 2017 by eqmule
 - Updated for LIVE
 
-11 Aug 2017 by redguides
+11 Aug 2017 by RedGuides
 MQ2NoNagWindows - Added on/off for Hero's Journey window (default on) - Thanks Sym
 MQ2AutoAccept - Added wizard translocate and druid zephyr casts to translocate toggle. Previously it was translocate to bind only. - Thanks Sym
 MQ2AutoLoot - Added the command "/autoloot buy "item name" #", it will buy up to # of the item specified on the merchant you have opened. 
@@ -241,6 +1038,20 @@ MQ2AutoLoot - Added the command "/autoloot buy "item name" #", it will buy up to
   Just to make this perfectly clear: ALWAYS specify the radius keyword AFTER your loc keyword, and you will
   be fine no matter if you feed it 2 or 3 args.
   Makes sense? yeah... right...
+ 
+29 jul 2017 by RedGuides
+- MQ2Posse updated by Sym: Added Posse.StrangerNames TLO. Space separated list of current strangers.
+ Cleaned up anchor port code, added selfanchor option. Updated logic.
+ 
+28 jul 2017 by RedGuides
+- MQ2Nav now works for the emulator build. Rejoice!
+- NEW Plugin: MQ2Speaker by eqholic, which provides an interface to the Microsoft Speech Synthesizer. 
+ The selection of voices is trough the windows control panel 
+ (Control Panel -> Ease of Access -> Speech Recognition -> Text to Speech)
+- New Utility: MQ2AutoLootSort by eqholic. LootSort.exe is a utility that will alphabeticaly sort each section
+ in your Loot.ini file from the MQ2AutoLoot plugin. You'll find it in your Macros directory.
+- New Utilities: EQBackup and EQRestore. Copy them to your Everquest directory, and it will create a backup
+ of your configurations. Great for transferring between PCs. Thanks TreeHuginDruid!
 
 27 Jul 2017 by eqmule
 - Polished up the window manager a bit, it was overdue.
@@ -263,6 +1074,12 @@ MQ2AutoLoot - Added the command "/autoloot buy "item name" #", it will buy up to
 - IsGroupMember returns true for mercenaries as well now.
 - Fixed a buffer overflow in mq2chatwindow
 
+23 Jul 2017 by RedGuides
+- kissassist updated. thanks ctaylor & THD.
+- MQ2Nav updated to allow water navigation. Thanks Ctaylor
+- MQ2AdvPath updated
+- MQ2AutoAccept, added specific anchor name checking and addanchor/delanchor commands. Thanks Sym
+
 23 Jul 2017 by eqmule
 - Updated for LIVE
 - Updated for TEST
@@ -272,6 +1089,15 @@ MQ2AutoLoot - Added the command "/autoloot buy "item name" #", it will buy up to
   This means its looks very natural and smooth now.
   Please don't use /face fast anymore, it looks "bottish"
   and there is no good reason to use it.
+  
+19 Jul 2017 by RedGuides
+- NEW PLUGIN! MQ2AutoGroup by plure. Automatically creates groups, sets group roles, and then runs a command.
+- MQ2Cursor updated by Sym, "Removed forced 1 count for non-stackable keep counts and added notification when removing an entry"
+- MQ2EQBC updated by Sym, "added SaveConnectByChar setting to autoconnect to different servers/ports per character"
+- MQ2AFNuke updated by jimbob, "Added some Drood burn stuff... Black Wolf/Group BW..."
+- MQ2MoveUtils updated by CTaylor22 for underwater movement, "now lets you /moveto loc y x z uw"
+- KissAssist and KeepToonBuffed updated. Thanks TreeHuginDruid, CTaylor22, gse7en
+- MQ2Autoloot fixed issue with timing out when you are depositing/selling items.  Also fixed issue that will sometimes cause people to be skipped when passing out items. Thanks plure!
 
 19 Jul 2017 by eqmule
 - Updated for LIVE
@@ -295,6 +1121,10 @@ MQ2AutoLoot - Added the command "/autoloot buy "item name" #", it will buy up to
 10 Jul 2017 by rswiders
 - added optional <z> parameter to /face loc
 
+21 Jun 2017 by RedGuides
+KeepToonBuffed.mac - Update 1.9.5 - thanks treehugindruid!
+MQ2AutoLoot - Fixed a crash when you had nothing in a shared bank - thanks plure!
+
 21 Jun 2017 by eqmule
 - Updated for TEST
 - Updated for LIVE
@@ -310,6 +1140,10 @@ MQ2AutoLoot - Added the command "/autoloot buy "item name" #", it will buy up to
 
 15 Jun 2017 by eqmule
 - Updated for TEST
+
+14 Jun 2017 by RedGuides
+- bug fixes for kissassist, keeptoonbuffed, mq2autoloot - thanks plure, treehugindruid, ctaylor
+- other plugins may now detect if someone is connected to your eqbc server - thanks plure
 
 14 Jun 2017 by eqmule
 - Changed ${Switch.Distance} and  ${Switch.Distance3D} so they report distance to the switch outer bounds, not its center.
@@ -327,6 +1161,15 @@ MQ2AutoLoot - Added the command "/autoloot buy "item name" #", it will buy up to
 18 May 2017 by rswiders
 - Updated faction names
 
+17 May 2017 by RedGuides
+Some nice surprises from Level 3 Creators this month:
+NEW PLUGIN: MQ2AutoLoot - handles loot from within the advanced loot window. thanks Plure
+NEW PLUGIN: MQ2KillTracker - Tracks kills over time and can autoreport every X minutes. Sym rules!
+NEW MACRO: KeepToonBuffed.mac - Great for powerleveling. Run on any toon to keep others, even out-of-group, buffed. Thanks TreeHuginDruid
+MQ2Posse fixed - thanks Sym
+MQ2IRC added timestamps - thanks Sym
+updated ninjadvloot.inc - thanks hoosierbilly
+
 17 May 2017 by The Undertaker
 - Updated for LIVE
 
@@ -336,6 +1179,29 @@ MQ2AutoLoot - Added the command "/autoloot buy "item name" #", it will buy up to
 
 10 May 2017 by The Undertaker
 - Updated for TEST
+
+06 May 2017 by RedGuides
+fixed a jailbreak issue, thanks Warmonger for the report
+
+02 May 2017 by RedGuides
+KissAssist 9.2.4 by ctaylor22, treehugindruid, maskoi
+FIXED:
+Corrected an issue that was allowing for mount buff spamming when not in an outdoor dungoen/city/zone, this is based on eqmule's TLO of Zone.Outdoor and Zone.Type.
+Corrected a coding issue that was preventing Gmail feature from properly parsing states and sending emails / texts to you via the GmailIniParse sub function, now working as intended.
+Fixed invis being broke when casting regen.
+Fixed spell book getting stuck open when memorizing spells. 
+Fixed GOM event not casting spells because of global cooldown.
+Fixed the Healers not healing if MeleeOn and DPSOn are both turned off.
+
+ADDED:
+Added ScatterOn to ini file to control use of random camp locations.
+Added code to fix executing stuck code after death.
+Added /zoneinfo command to display the zone information in the Kissassist_info.ini 
+Added IF/NOTIF/IFME/NOTIFME logic to the combatcast routine.
+IF and NOTIF checks current target for Buff Name1
+DPS1=Spell Name1|95|IF|Buff Name1
+Added IFME and NOTIFME logic so it will check caster for Buff Name1
+DPS2=Spell Name1|95|IFME|Buff Name1
 
 01 May 2017 by The Undertaker
 - Fixed a bug in the new noparse ini thingy
@@ -442,6 +1308,10 @@ Sub Main
 21 Apr 2017 by The Undertaker
 - Updated for TEST
 - Fixed a couple offsets that where wrong for LIVE.
+
+19 Apr 2017 by RedGuides
+update all auto* macros - thanks noobhaxor!
+updated mq2camera - thanks brainiac!
 
 19 Apr 2017 by Dr. Sneerstell
 - Updated for LIVE
@@ -606,6 +1476,9 @@ Sub Main
 - Updated for TEST
 - Made some changes to MacroQuest2.exe to deal with it not detecting eqgame version correctly sometimes.
 
+03 Feb 2017 by RedGuides
+MQ2EQBC now includes extended information for the EQBC Interface. Thanks jimbob!
+
 03 Feb 2017 by eqmule
 - Updated for TEST, yes there was a new patch.
 - Fixed a issue that would hang the client and sometimes even crash it.
@@ -622,6 +1495,10 @@ Sub Main
 30 Jan 2017 by eqmule
 - Added ${MacroQuest.Build} it returns an int where LIVE = 1 TEST = 2 BETA = 3 and EMU = 4
 - Added Start EQBC Server to the tray icon menu.
+
+29 Jan 2017 by RedGuides
+Ninjadvloot.inc updated to 6.04 (thanks hoosierbilly)
+Kissassist.mac updated to 9.2.1 (thanks Maskoi & ctaylor)
 
 29 Jan 2017 by eqmule
 - I finally had time to sit down and look at the crash reporting
@@ -650,6 +1527,13 @@ Sub Main
 - Updated for LIVE
 - Bunch of other stuff, thanks Brainiac for the arrayclass mod
 - Exp has been changed to a __int64, because, well it is, and has been for a few years...
+
+16 Jan 2017
+KissAssist patched, showstopping bug in AE section. Thanks to Maskoi & ctaylor
+Auto, AutoBard, AutoWarrior added to the default macros, and AutoCleric updated to 3.0 beta. Huge thanks to Noobhaxor!
+
+15 Jan 2017 by RedGuides
+Kissassist updated to 9.1.9
 
 14 Jan 2017 by rswiders
 - Corrected potential crashes in the following routines: GetAdjustedSkill, GetBaseSkill, GetModCap, 
@@ -751,6 +1635,12 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
 - Updated for TEST
 - ZonePoint in the DOORS struct has been renamed to SpellID
 
+07 Jan 2017 by RedGuides
+- KissAssist updated to 9.1.8
+- Ninjadvloot updated to 6.04 (thanks hoosier!)
+- MQ2Heals & MQ2AFNuke are working again, thanks Jimbob
+- All macros are now formatted properly. Thanks joojoobee!
+
 06 Jan 2017 by rswiders
 - Updated spell effects display
 - Updated buff stacking testing
@@ -790,6 +1680,15 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
 		 /echo ${Me.BoundLocation[1].ID} returns the zone id of your second bind point
 - Changed pChar2->ZoneBoundX it's now pChar2->BoundLocations[0].ZoneBoundX; 
           as well as all the other ->ZoneBo****** members.
+		  
+24 Dec 2016 by RedGuides
+Too much eggnog during previous update. Fixed.
+
+24 Dec 2016 by RedGuides
+MQ2Nav updated - brainiac
+MQ2Heals updated - jimbob
+MQ2AFNuke updated - jimbob
+Kissassist updated - maskoi, ctaylor
 
 20 Dec 2016 by eqmule
 - Updated for TEST
@@ -818,6 +1717,9 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
 - Fixed a bug in FindItem and its derivatives where it needed signed parameters.
 - Fixed the EQINVSLOTWND struct, it was off by a few bytes.
   Yes that means .InvSlot will once again "work" (dont effing use it. in your macros, use ItemSlot and ItemSlot2)
+  
+14 Dec 2016 by RedGuides
+KissAssist updated to 9.1.5
 
 14 Dec 2016 by eqmule
 - GuildID in SPAWNINFO is a __int64 now... not by my design, it just is
@@ -871,6 +1773,13 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
 
 06 Dec 2016 by rswiders
 - Fixed up the new SPA descriptions in spell display
+
+29 Nov 2016 by RedGuides
+- Kissassist updated to 9.1.4
+- Added EoK zones to MQ2Nav Zones.ini
+- Fixed MQ2Tooltip
+- Fixed MQ2AASpend issues
+- Fixed MQ2Melee issues with Demolishing Frenzy
 
 28 Nov 2016 by eqmule
 - Fixed ${Me.ManaRegen}
@@ -996,6 +1905,10 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
 29 Oct 2016 by eqmule
 - Updated for BETA
 
+28 Oct 2016 by RedGuides
+AutoCleric updated to 2.1 (thanks Noobhaxor)
+MQ2Cast updated with snare immune event
+
 28 Oct 2016 by eqmule
 - Updated for BETA
 - ChatWindow is now top dog at charselect and will no longer go awol there.
@@ -1018,6 +1931,10 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
 21 Oct 2016 by eqmule
 - Updated for BETA
 
+20 Oct 2016 by RedGuides
+- MQ2Nav updated (thanks brainiac!)
+- Ninjadvloot updated to fix forage spam. (thanks hoosierbilly!)
+
 19 Oct 2016 by eqmule
 - Updated for LIVE
 - Updated for BETA
@@ -1031,6 +1948,11 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
 13 Oct 2016 by eqmule
 - Updated for BETA
 - Updated for TEST
+
+12 Oct 2016 by RedGuides
+- MQ2Autoforage fixed (thanks Maxranor, drcrimzon)
+- cskillup updated (thanks drcrimzon)
+- ninjadvloot updated (thanks hoosierbilly)
 
 12 Oct 2016 by eqmule
 - Updated for BETA
@@ -1075,6 +1997,11 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
   if it finds it, it will launch eq and log in that character.
 - The ~ key should now be able to cycle full screen windows and in order - rswiders
 
+16 Sep 2016 by RedGuides
+MQ2CPULoad added - thanks Dewey
+Kissassist updated - thanks Maskoi & Ctaylor
+The following plugins have been updated: MQ2Cast, MQ2Melee, and MQ2Nav (thanks brainiac)
+
 21 Sep 2016 by eqmule
 - Updated for LIVE
 
@@ -1110,6 +2037,11 @@ Sunday is funday... so here is some fluff:
   but if you are the paranoid type, id hold off a couple more days
   until we can figure out a way to load it...
 
+16 Sep 2016 by RedGuides
+MQ2CPULoad added - thanks Dewey
+Kissassist updated - thanks Maskoi & Ctaylor
+The following plugins have been updated: MQ2Cast, MQ2Melee, and MQ2Nav (thanks brainiac)
+
 15 Sep 2016 by eqmule
 - Updated for TEST
 - The injector now detects if a profile is loaded or not and reinjects if needed if clicked,
@@ -1139,6 +2071,11 @@ Sunday is funday... so here is some fluff:
   MQ2Twist, MQ2SpawnMaster, MQ2LinkDB, MQ2EQBC I should post them on the forum.
   NavigationType.cpp MQ2Netheal.cpp MQ2SpawnMaster.cpp MQ2Twist.cpp
 
+02 Sep 2016 by RedGuides
+Ninjadvloot updated to 6.2 (Thanks hoosierbilly!)
+kissassist updated to 9.1 (Thanks ctaylor and maskoi!)
+MQ2AFNuke & MQ2Heals updated (Thanks jimbob!)
+MQ2AASpend, MQ2Cast, MQ2Melee all updated
 
 02 Sep 2016 by eqmule
 - Reverted a "fix" to the /while command that instead of fixing it made it worse
@@ -1171,6 +2108,14 @@ Sunday is funday... so here is some fluff:
 - CTargetWnd__UpdateBuffs is now CTargetWnd__RefreshTargetBuffs (cause it is)
 - Bunch of other stuff
 
+17 Aug 2016 by RedGuides
+KissAssist 9.0 Released - Thanks Maskoi & ctaylor!
+MQ2AFNuke Updated - Thanks Jimbob!
+MQ2AdvPath Updated
+MQ2Dpsadv updated
+MQ2Navigation removed (use MQ2Nav instead)
+MQ2Pop removed (use MQ2SpawnMaster instead)
+
 17 Aug 2016 by eqmule
 - Updated for LIVE
 - TRUEBOX nerfed.
@@ -1197,6 +2142,9 @@ Sunday is funday... so here is some fluff:
   it returns TRUE if a layoutcopy is in progress and FALSE if not.
 - Fixed a couple buffer overflow bugs.
 - Misc stuff.
+
+8 Aug 2016 by RedGuides
+All plugins updated and tested, thank you Maskoi, ctaylor & Jimbob.
 
 8 Aug 2016 by eqmule
 - The integrity checker is now 714% faster (or something).
@@ -1249,6 +2197,11 @@ Sunday is funday... so here is some fluff:
 - pMQ2Blech is no longer an export, create your own Blechs, cause hooking into that one is no longer an option.
   (this means mq2moveutils need to be updated see above link for updated plugins.)
 
+13 Jul 2016
+RedGuides:
+MQ2Gmail added - receive an email/text if your toons die.
+MQ2AFNuke & MQ2Heals updated (thanks jimbob!)
+  
 13 Jul 2016
 - Updated for LIVE
 - Updated for TRUEBOX
