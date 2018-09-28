@@ -1864,6 +1864,7 @@ EQLIB_OBJECT static char * CDIMap::mKeymapShiftArray;
 EQLIB_OBJECT void CDIMap::LoadMappingFromFile(char *);
 };
 
+class CVector3;
 class CDisplay
 {
 public:
@@ -1876,7 +1877,7 @@ EQLIB_OBJECT char * CDisplay::GetIniRaceName(int);
 EQLIB_OBJECT class EQPlayer * CDisplay::GetNearestPlayerInView(float,bool);
 EQLIB_OBJECT float CDisplay::FindZoneTopZ(float,float,float);
 EQLIB_OBJECT float CDisplay::FixHeading(float);
-EQLIB_OBJECT float CDisplay::GetFloorHeight(float,float,float);
+EQLIB_OBJECT float CDisplay::GetFloorHeight(float fx,float fy,float fz,float radius,CVector3& rCollidedSurfaceNormal,CActorApplicationData* pApplicationData,EActorType EActorType,float zOffset);
 EQLIB_OBJECT float CDisplay::HeadingDiff(float,float,float *);
 EQLIB_OBJECT float CDisplay::PlayerDistance(class EQPlayer *,class EQPlayer *,float);
 EQLIB_OBJECT float CDisplay::PlayerSimpleDistance(class EQPlayer *,class EQPlayer *,float);
@@ -3942,7 +3943,7 @@ EQLIB_OBJECT void CMapViewWnd::DeactivateAutoMapping(void);
 //EQLIB_OBJECT void CMapViewWnd::SetCurrentZone(EQZoneIndex,struct T3D_XYZ *,struct T3D_XYZ *);
 // virtual
 EQLIB_OBJECT CMapViewWnd::~CMapViewWnd(void);
-EQLIB_OBJECT int CMapViewWnd::HandleLButtonDown(class CXPoint,unsigned __int32);
+EQLIB_OBJECT int CMapViewWnd::HandleLButtonDown(class CXPoint&,unsigned __int32);
 EQLIB_OBJECT int CMapViewWnd::HandleLButtonHeld(class CXPoint,unsigned __int32);
 EQLIB_OBJECT int CMapViewWnd::HandleLButtonUp(class CXPoint,unsigned __int32);
 EQLIB_OBJECT int CMapViewWnd::HandleLButtonUpAfterHeld(class CXPoint,unsigned __int32);
@@ -3955,6 +3956,7 @@ EQLIB_OBJECT int CMapViewWnd::WndNotification(class CXWnd *,unsigned __int32,voi
 EQLIB_OBJECT void CMapViewWnd::Deactivate(void);
 EQLIB_OBJECT void CMapViewWnd::LoadIniInfo(void);
 EQLIB_OBJECT void CMapViewWnd::StoreIniInfo(void);
+EQLIB_OBJECT void CMapViewWnd::GetWorldCoordinates(float*);
 // private
 EQLIB_OBJECT void CMapViewWnd::Init(void);
 };
@@ -6259,6 +6261,8 @@ EQLIB_OBJECT CTreeView::~CTreeView(void);
 class CVector3
 {
 public:
+EQLIB_OBJECT CVector3::CVector3(float x, float y, float z) : X(x), Y(y), Z(z) {}
+EQLIB_OBJECT CVector3::CVector3() {}
 //EQLIB_OBJECT float CVector3::GetLength(void)const;
 EQLIB_OBJECT float CVector3::NormalizeAndReturnLength(void);
 EQLIB_OBJECT void CVector3::Normalize(void);

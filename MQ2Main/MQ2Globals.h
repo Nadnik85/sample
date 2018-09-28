@@ -1140,6 +1140,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD CDisplay__WriteTextHD2;
 	EQLIB_VAR DWORD CDisplay__TrueDistance;
 	EQLIB_VAR DWORD CDisplay__SetViewActor;
+    EQLIB_VAR DWORD CDisplay__GetFloorHeight;
 	
 	EQLIB_VAR DWORD CEditBaseWnd__SetSel;
 
@@ -1284,6 +1285,8 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD CListWnd__ToggleSel;
 
 	EQLIB_VAR DWORD CMapViewWnd__CMapViewWnd;
+    EQLIB_VAR DWORD CMapViewWnd__GetWorldCoordinates;
+    EQLIB_VAR DWORD CMapViewWnd__HandleLButtonDown;
 
 	EQLIB_VAR DWORD CMerchantWnd__DisplayBuyOrSellPrice;
 	EQLIB_VAR DWORD CMerchantWnd__RequestBuyItem;
