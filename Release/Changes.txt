@@ -1,3 +1,6 @@
+Oct 01 2018 by eqmule
+- Fixed a bug in SpawnMatchesSearch which *could* cause group members to look like they gone offline.
+
 Sep 25 2018 by eqmule
 - Updated for TEST
 
