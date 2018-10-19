@@ -1,3 +1,90 @@
+Oct 19 2018 by RedGuides
+- MQ2Posse updated with several fixes
+- MQ2KissTemplate added (ChatWithThisName) formats your .ini's for easy distribution. Will be used with our upcoming Kiss .ini library
+- Update.exe (Redbot) should now load faster and launch MQ2 after updates.
+
+Oct 19 2018 by eqmule
+- mq2melee.cpp has been updated for Me->AAList changes in the builder go click the file and diff it to the old one to see what changed.
+- MQ2TargetInfo has been updated.
+- Added Distance to group members next to their name in the groupwindow.
+- Added a button to the group window called "Come to Me"
+	If you have mq2eqbc, mq2nav and mq2advpath and a proper mq2nav mesh loaded
+	the button will work and will make your whole group come running to you.
+-
+- Added a button called "Follow Me" to the group window.
+	If you have mq2eqbc andd mq2advpath loaded the button will work and will
+	make your whole group follow you around.
+-
+- Added a new character TLO member: Bandolier it has 4 members: Index,Active,Name,Item
+    it has one method: Activate
+	Usage: (assuming you have a bandoiler saved as "1HB")
+	| check if its active:
+	[code]
+	/if (!${Me.Bandolier[${Bandolier[1HB].Active}) {
+		/echo [${Time}] player want us to activate Bandolier: 1HB.
+		/invoke ${Me.Bandolier[1HB].Activate}
+	}
+	/echo I have a ${Me.Bandolier[1HB].Item[1].Name} in my primary bandoilier slot
+	Output: I have a Snowreaver in my primary bandoilier slot
+	Item returns a bandolieritemtype which has 4 members: Index,ID,IconID,Name
+	[/code]
+-
+- Made some adjustments to the ${Ground} TLO and added .First and .Last members to it.
+	  /echo ${Ground} will now return the FIRST item in the list if you DO NOT done a /itemtarget
+	  in which case it will return that item.
+	  Prior to this change ${Ground} would just return NULL if an /itemtarget had not been performed.
+	- Fixed a bug in ${Ground} which prevented it from be used as a type
+	  Example:
+	  [code]
+	  |a Macro to show how to use /vardata
+	|/vardata does NOT work like /varset
+	|Opening and closing the dataportion must NOT use ${}
+
+	#turbo 120
+
+	Sub Main
+		/declare MyGroundItem		ground		local
+		/declare Count			int		local
+	
+		|Start by just setting it to the first entry found in the grounditems list:
+		| NOTE that I DO NOT USE ${Ground.First}, but Ground.First that's just how /vardata works, so accept it.
+		/vardata MyGroundItem Ground.First
+
+		/for Count 1 to ${GroundItemCount}
+			/echo \a-w${Count}. \awID: \at${MyGroundItem.ID} \awDist: \ay${MyGroundItem.Distance} \ag${MyGroundItem.DisplayName}
+        		|move to next:
+			/if (${Bool[${MyGroundItem.Next}]}) {
+				/vardata MyGroundItem MyGroundItem.Next
+			} else {
+				/break
+			}
+		/next Count
+	/return
+	[/code]
+-
+- Fixed AAPointsAssigned in the CHARINFO2 struct, it is actually an array.
+	Prior to this fix we used it like this: pChar2->AAPointsAssigned;
+	Now we use it like this: pChar2->AAPointsAssigned[0];
+	It contains points spent in each aa category. the first one is just total...
+
+Oct 10 2018 by eqmule
+- Updated for TEST
+
+Oct 01 2018 by redguides
+- MQ2EQWire (eqmule) no longer tied to the HUD, added more commands.
+
+Oct 01 2018 by eqmule
+- Fixed a bug in SpawnMatchesSearch which *could* cause group members to look like they gone offline.
+- Added click to nav on map - dannuic
+  Usage: hold down atl + leftclick anywhere on the mapwindow and nav will run u there if its loaded.
+
+Sep 29 2018 by RedGuides
+- MQ2EQWire (eqmule) this version will now cut an additional 50% per cpu session over the last EQWire version.
+- MQ2DanNet(dannuic) v0.51 stability, peer count and channel rejoin fixes
+
+Sep 26 2018 by RedGuides
+- MQ2DanNet(dannuic) v0.5 added handlers for thread exits that are not normally handled to ensure proper shutdown.
+
 Sep 25 2018 by eqmule
 - Updated for TEST
 

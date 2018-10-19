@@ -1556,24 +1556,45 @@ unsigned long AACheck(unsigned long id) {
     if (PSPAWNINFO pMe = (PSPAWNINFO)pLocalPlayer) {
         level = pMe->Level;
     }
-    if (pAltAdvManager)
-        if (PCHARINFO2 Me = GetCharInfo2())
-            if (_AALIST* AAList = Me->AAList)
-                if (id)
-                    for (unsigned long nAbility = 0; nAbility < AA_CHAR_MAX_REAL; nAbility++)
-                        if (long AAIndex = AAList[nAbility].AAIndex)
-                            if (PALTABILITY ability = GetAAByIdWrapper(AAIndex, level))
-                                if (ability->ID == id) return AAIndex;
+	if (pAltAdvManager)
+	{
+		if (PCHARINFO2 Me = GetCharInfo2())
+		{
+			if (id)
+			{
+				for (unsigned long nAbility = 0; nAbility < AA_CHAR_MAX_REAL; nAbility++)
+				{
+					if (long AAIndex = Me->AAList[nAbility].AAIndex)
+					{
+						if (PALTABILITY ability = GetAAByIdWrapper(AAIndex, level))
+						{
+							if (ability->ID == id)
+							{
+								return AAIndex;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
     return false;
 }
 
 unsigned long AAPoint(unsigned long index) {
-    if (PCHARINFO2 Me = GetCharInfo2())
-        if (_AALIST* AAList = Me->AAList)
-            if (index)
-                for (unsigned long nAbility = 0; nAbility < AA_CHAR_MAX_REAL; nAbility++)
-                    if (index == AAList[nAbility].AAIndex)
-                        return  AAList[nAbility].PointsSpent;
+	if (index)
+	{
+		if (PCHARINFO2 Me = GetCharInfo2())
+		{
+			for (unsigned long nAbility = 0; nAbility < AA_CHAR_MAX_REAL; nAbility++)
+			{
+				if (index == Me->AAList[nAbility].AAIndex)
+				{
+					return Me->AAList[nAbility].PointsSpent;
+				}
+			}
+		}
+	}
     return 0;
 }
 
@@ -1627,11 +1648,19 @@ DOUBLE AngularHeading(PSPAWNINFO t, PSPAWNINFO s) {
 
 int CACheck(unsigned long id) {
     if (PCHARINFO2 Me = GetCharInfo2())
-        if (unsigned long* CombatAbilities = Me->CombatAbilities)
-            if (id)
-                for (unsigned long nCombat = 0; nCombat < NUM_COMBAT_ABILITIES; nCombat++)
-                    if (pCombatSkillsSelectWnd->ShouldDisplayThisSkill(nCombat))
-                        if (id == CombatAbilities[nCombat]) return true;
+		if (id)
+		{
+			for (unsigned long nCombat = 0; nCombat < NUM_COMBAT_ABILITIES; nCombat++)
+			{
+				if (pCombatSkillsSelectWnd->ShouldDisplayThisSkill(nCombat))
+				{
+					if (id == Me->CombatAbilities[nCombat])
+					{
+						return true;
+					}
+				}
+			}
+		}
     return false;
 }
 
