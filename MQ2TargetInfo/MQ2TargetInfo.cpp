@@ -21,15 +21,25 @@ CHAR szNavToolTip[128] = { "ALL will Nav to Me" };
 CHAR szNav[128] = { "Come to Me" };
 CHAR szFollowMeToolTip[128] = { "Follow Me around." };
 CHAR szFollowMe[128] = { "Follow Me" };
+CHAR szMimicMeToolTip[128] = { "Everyone does what I do, I target something, they do as well, I hail, they hail, etc." };
+CHAR szMimicMe[128] = { "Mimic Me" };
 
 HANDLE hLockphmap = 0;
+
 CLabelWnd*InfoLabel = 0;
 CLabelWnd*DistanceLabel = 0;
 CLabelWnd*CanSeeLabel = 0;
+
 CButtonWnd*PHButton = 0;
 CButtonWnd*NavButton = 0;
 CButtonWnd*FollowMeButton = 0;
+CButtonWnd*MimicMeButton = 0;
+
+CHotButton*GroupHotButton = 0;
+
 bool gbFollowme = false;
+bool gbMimicme = false;
+
 CSidlScreenWnd*Target_BuffWindow = 0;
 CLabelWnd*Target_AggroPctPlayerLabel = 0;
 CLabelWnd*Target_AggroNameSecondaryLabel = 0;
@@ -158,9 +168,9 @@ bool CreateDistLabel(CGroupWnd*pGwnd,CControlTemplate *DistLabelTemplate,CLabelW
 	if (*labelwnd = (CLabelWnd *)pSidlMgr->CreateXWndFromTemplate((CXWnd*)pGwnd, DistLabelTemplate)) {
 		(*labelwnd)->dShow = true;
 		(*labelwnd)->TopOffset = top;
-		(*labelwnd)->BottomOffset = bottom;
-		(*labelwnd)->LeftOffset = 50;
-		(*labelwnd)->RightOffset = right;
+		(*labelwnd)->BottomOffset = top+12;
+		(*labelwnd)->LeftOffset = 70;
+		(*labelwnd)->RightOffset = 0;
 		(*labelwnd)->CRNormal = 0xFF00FF00;//green
 		(*labelwnd)->BGColor = 0xFFFFFFFF;
 		SetCXStr(&(*labelwnd)->Tooltip, szGroupDistance);
@@ -170,6 +180,8 @@ bool CreateDistLabel(CGroupWnd*pGwnd,CControlTemplate *DistLabelTemplate,CLabelW
 }
 int navmenuid = 0;
 int separatorid = 0;
+int groundmenuid = 0;
+int doormenuid = 0;
 
 void CreateAButton(CGroupWnd*pGwnd,CControlTemplate *Template,CButtonWnd **button,char*label,char*labelscreen, int fontsize, int top, int bottom, int left, int right, COLORREF color, COLORREF bgcolor, char*tooltip, char*text)
 {
@@ -189,6 +201,46 @@ void CreateAButton(CGroupWnd*pGwnd,CControlTemplate *Template,CButtonWnd **butto
 		SetCXStr(&(*button)->Tooltip, tooltip);
 	}
 }
+void AddOurMenu(CGroupWnd*pGwnd)
+{
+	if (pGwnd->GroupContextMenu && !doormenuid)
+	{
+		pContextMenuManager->Flush();
+		if (pGwnd->RoleSelectMenuID)
+		{
+			pGwnd->GroupContextMenu->RemoveMenuItem(pGwnd->RoleSelectMenuID);
+			pGwnd->GroupContextMenu->RemoveMenuItem(pGwnd->RoleSeparatorID);
+			pGwnd->RoleSelectMenuID = 0;
+			pGwnd->RoleSeparatorID = 0;
+		}
+		separatorid = pGwnd->GroupContextMenu->AddSeparator();
+		navmenuid = pGwnd->GroupContextMenu->AddMenuItem("Nav to Me", 54);
+		groundmenuid = pGwnd->GroupContextMenu->AddMenuItem("Pick Up Nearest Ground Item", 55);
+		doormenuid = pGwnd->GroupContextMenu->AddMenuItem("CLick Nearest Door", 56);
+	}
+}
+void RemoveOurMenu(CGroupWnd*pGwnd)
+{
+	if (pGwnd->GroupContextMenu && separatorid)
+	{
+		pContextMenuManager->Flush();
+		if (pGwnd->RoleSelectMenuID)
+		{
+			pGwnd->GroupContextMenu->RemoveMenuItem(pGwnd->RoleSelectMenuID);
+			pGwnd->GroupContextMenu->RemoveMenuItem(pGwnd->RoleSeparatorID);
+			pGwnd->RoleSelectMenuID = 0;
+			pGwnd->RoleSeparatorID = 0;
+		}
+		pGwnd->GroupContextMenu->RemoveMenuItem(doormenuid);
+		pGwnd->GroupContextMenu->RemoveMenuItem(groundmenuid);
+		pGwnd->GroupContextMenu->RemoveMenuItem(navmenuid);
+		pGwnd->GroupContextMenu->RemoveMenuItem(separatorid);
+		doormenuid = 0;
+		groundmenuid = 0;
+		navmenuid = 0;
+		separatorid = 0;
+	}
+}
 void Initialize()
 {
 	if (!DistanceLabel && GetGameState() == GAMESTATE_INGAME)
@@ -197,18 +249,21 @@ void Initialize()
 		if (CGroupWnd*pGwnd = (CGroupWnd*)pGroupWnd) {
 			if (pGwnd->GroupContextMenu)
 			{
-				//separatorid = pGwnd->GroupContextMenu->AddSeparator();
-				navmenuid = pGwnd->GroupContextMenu->AddMenuItem("Nav to Me", 200);
-				((CListWnd*)pGwnd->GroupContextMenu)->CalculateVSBRange();
+				pGwnd->GroupContextMenu->CRNormal = 0xFF000000;
+				pGwnd->GroupContextMenu->DisabledBackground = 0xFF000000;
+				pGwnd->GroupContextMenu->BGColor = 0xFF000000;
 			}
+			//AddOurMenu(pGwnd);
 			GW_Gauge1 = (CGaugeWnd*)((CXWnd*)pGwnd)->GetChildItem("GW_Gauge1");
 			GW_Gauge2 = (CGaugeWnd*)((CXWnd*)pGwnd)->GetChildItem("GW_Gauge2");
 			GW_Gauge3 = (CGaugeWnd*)((CXWnd*)pGwnd)->GetChildItem("GW_Gauge3");
 			GW_Gauge4 = (CGaugeWnd*)((CXWnd*)pGwnd)->GetChildItem("GW_Gauge4");
 			GW_Gauge5 = (CGaugeWnd*)((CXWnd*)pGwnd)->GetChildItem("GW_Gauge5");
+
 			//
 			CControlTemplate *DistLabelTemplate = (CControlTemplate*)pSidlMgr->FindScreenPieceTemplate("Target_AggroPctSecondaryLabel");
 			CControlTemplate *NavButtonTemplate = (CControlTemplate*)pSidlMgr->FindScreenPieceTemplate("GW_InviteButton");//borrowing this...
+			CControlTemplate *HBButtonTemplate = (CControlTemplate*)pSidlMgr->FindScreenPieceTemplate("HB_Button1");
 			//
 			if (GW_Gauge1 && DistLabelTemplate) {
 
@@ -225,9 +280,40 @@ void Initialize()
 				if (NavButtonTemplate)
 				{
 					CButtonWnd*Butt = (CButtonWnd*)((CXWnd*)pGwnd)->GetChildItem("GW_InviteButton");
-					CreateAButton(pGwnd, NavButtonTemplate,&NavButton,"GW_NavButton","NavButton", 1, Butt->TopOffset + 40, Butt->BottomOffset + 25, 6, 46, 0xFF00FFFF, 0xFFFFFFFF, szNavToolTip, szNav);
-					CreateAButton(pGwnd, NavButtonTemplate,&FollowMeButton,"GW_FollowMeButton","FollowMeButton", 1, Butt->TopOffset + 40, Butt->BottomOffset + 25, 50, 90, 0xFF00FFFF, 0xFFFFFFFF, szFollowMeToolTip, szFollowMe);
-					
+					CreateAButton(pGwnd, NavButtonTemplate,&NavButton,"GW_NavButton","NavButton", 1, Butt->TopOffset + 39, Butt->BottomOffset + 26, 6, 44, 0xFF00FFFF, 0xFFFFFFFF, szNavToolTip, szNav);
+					CreateAButton(pGwnd, NavButtonTemplate,&FollowMeButton,"GW_FollowMeButton","FollowMeButton", 1, Butt->TopOffset + 39, Butt->BottomOffset + 26, 48, 88, 0xFF00FFFF, 0xFFFFFFFF, szFollowMeToolTip, szFollowMe);
+					CreateAButton(pGwnd, NavButtonTemplate,&MimicMeButton,"GW_MimicMeButton","MimicMeButton", 1, Butt->TopOffset + 77, Butt->BottomOffset + 64, 6, 44, 0xFFFFFF64, 0xFFFFFFFF, szMimicMeToolTip, szMimicMe);
+					//
+					GroupHotButton = (CHotButton *)pSidlMgr->CreateHotButtonWnd((CXWnd*)pGwnd, HBButtonTemplate);
+					GroupHotButton->BarIndex = 9;
+					GroupHotButton->ButtonIndex = 0;
+					GroupHotButton->SetButtonSize(100, true);
+					GroupHotButton->dShow = true;
+					GroupHotButton->bUseInLayoutVertical = true;
+					//WSF_AUTOSTRETCHH		0x00400000
+					//WSF_TRANSPARENT		0x00000400
+					//WSF_AUTOSTRETCHV		0x00000100
+					//WSF_RELATIVERECT	    0x00000080
+					GroupHotButton->WindowStyle = 0x00400580;
+					GroupHotButton->bClipToParent = true;
+					GroupHotButton->bUseInLayoutHorizontal = true;
+					//GroupHotButton->bResizableMask = 0;
+					GroupHotButton->bLeftAnchoredToLeft = Butt->bLeftAnchoredToLeft;
+					GroupHotButton->bRightAnchoredToLeft = Butt->bRightAnchoredToLeft;
+					GroupHotButton->bTopAnchoredToTop = Butt->bTopAnchoredToTop;
+					GroupHotButton->bBottomAnchoredToTop = Butt->bBottomAnchoredToTop;
+										
+					GroupHotButton->TopOffset = Butt->TopOffset + 39;
+					GroupHotButton->BottomOffset = Butt->BottomOffset + 2;
+					GroupHotButton->LeftOffset = 92;
+					GroupHotButton->RightOffset = 132;
+
+					GroupHotButton->CRNormal = 0xFF00FFFF;
+					GroupHotButton->BGColor = 0xFFFFFFFF; 
+					/*GroupHotButton->Location.bottom = 120;
+					GroupHotButton->Location.left = 0;
+					GroupHotButton->Location.right = 60;
+					GroupHotButton->Location.top = 0;*/
 					//
 					//now set the template values back
 					SetCXStr(&NavButtonTemplate->Name, "GW_InviteButton");
@@ -345,41 +431,39 @@ void Initialize()
 		}
 	}
 }
-bool CXWnd::IsType(EWndRuntimeType eType) const
+void DoCommandf(PCHAR szFormat,...)
 {
-	int Types = RuntimeTypes.GetLength();
-	for (int i = 0; i < Types; i++)
-	{
-		if (RuntimeTypes[i] == (UINT)eType)
-		{
-			return true;
-		}
+	va_list vaList;
+	va_start(vaList, szFormat);
+	int len = _vscprintf(szFormat, vaList) + 1;// _vscprintf doesn't count // terminating '\0'  
+	if (char *szOutput = (char *)LocalAlloc(LPTR, len + 32)) {
+		vsprintf_s(szOutput, len, szFormat, vaList);
+		HideDoCommand((PSPAWNINFO)pLocalPlayer,szOutput,false);
+		LocalFree(szOutput);
 	}
-	return false;
 }
 int rightclickindex = -1;
-void StopMovement()
+void StopMovement(bool bChange = true)
 {
-	FollowMeButton->Checked = false;
-	gbFollowme = false;
-	CHAR szMe[MAX_STRING] = { 0 };
 	if (GetModuleHandle("mq2advpath"))
 	{
-		sprintf_s(szMe, "/squelch /bcg //squelch /afollow off");
-		DoCommand((PSPAWNINFO)pLocalPlayer, szMe);
+		DoCommandf("/squelch /bcg //squelch /afollow off");
 	}
 	if (GetModuleHandle("mq2moveutils"))
 	{
-		sprintf_s(szMe, "/squelch /bcg //squelch /stick off");
-		DoCommand((PSPAWNINFO)pLocalPlayer, szMe);
+		DoCommandf("/squelch /bcg //squelch /stick off");
 	}
 	if (GetModuleHandle("mq2nav"))
 	{
-		sprintf_s(szMe, "/squelch /bcg //squelch /nav stop");
-		DoCommand((PSPAWNINFO)pLocalPlayer, szMe);
+		DoCommandf("/squelch /bcg //squelch /nav stop");
 	}
-	WriteChatf("\ayMQ2TargetInfo\ax : Stopped Following.");
+	if (bChange)
+	{
+		FollowMeButton->Checked = false;
+		gbFollowme = false;
+	}
 }
+
 class CGroupWnd2
 {
 public:
@@ -411,50 +495,119 @@ public:
 		{
 			if (CGroupClient *group = (CGroupClient *)pChar->pGroupInfo)
 			{
-				for (int i = 0; i < 6; i++)
-				{
-					if (   pWnd == ((CGroupWnd*)this)->HPGauge[i]
+				//index = group->GroupSelectID;
+				for (int i = 1;i < 5; i++)
+				{ 
+					
+					if (pWnd == ((CGroupWnd*)this)->HPGauge[i]
 						|| pWnd == ((CGroupWnd*)this)->PetGauge[i]
 						|| pWnd == ((CGroupWnd*)this)->ManaGauge[i]
 						|| pWnd == ((CGroupWnd*)this)->EnduranceGauge[i]
-						|| lab  == ((CGroupWnd*)this)->HPLabel[i]
-						|| lab  == ((CGroupWnd*)this)->HPPercLabel[i]
-						|| lab  == ((CGroupWnd*)this)->ManaLabel[i]
-						|| lab  == ((CGroupWnd*)this)->ManaPercLabel[i]
-						|| lab  == ((CGroupWnd*)this)->EnduranceLabel[i]
-						|| lab  == ((CGroupWnd*)this)->EndurancePercLabel[i]
-						|| lab  == ((CGroupWnd*)this)->EnduranceLabel[i]
+						|| lab == ((CGroupWnd*)this)->HPLabel[i]
+						|| lab == ((CGroupWnd*)this)->HPPercLabel[i]
+						|| lab == ((CGroupWnd*)this)->ManaLabel[i]
+						|| lab == ((CGroupWnd*)this)->ManaPercLabel[i]
+						|| lab == ((CGroupWnd*)this)->EnduranceLabel[i]
+						|| lab == ((CGroupWnd*)this)->EndurancePercLabel[i]
+						|| lab == ((CGroupWnd*)this)->EnduranceLabel[i]
 						|| pWnd == ((CGroupWnd*)this)->GroupTankButton[i]
 						|| pWnd == ((CGroupWnd*)this)->GroupAssistButton[i]
 						|| pWnd == ((CGroupWnd*)this)->GroupPullerButton[i]
 						|| pWnd == ((CGroupWnd*)this)->GroupMarkNPCButton[i]
-						|| lab  == ((CGroupWnd*)this)->AggroPercLabel[i]
+						|| lab == ((CGroupWnd*)this)->AggroPercLabel[i]
 						)
 					{
-						index = i;
-						break;
+						if (group->pMembers[i] && group->pMembers[i]->pSpawn && group->pMembers[i]->Type == 0)
+						{
+							return i;
+						}
 					}
 				}
 			}
 		}
 		return index;
 	}
-	
+	PSPAWNINFO GetSpawnFromRightClickIndex()
+	{
+		CHAR szMe[MAX_STRING] = { 0 };
+		PSPAWNINFO pSpawn = 0;
+		if (PCHARINFO pChar = GetCharInfo())
+		{
+			if (CGroupClient *group = (CGroupClient *)pChar->pGroupInfo)
+			{
+				int ind = rightclickindex;// group->GroupSelectID;
+				if (ind != -1 && ind < 6)
+				{
+					if (group->pMembers[ind] && group->pMembers[ind]->pSpawn && group->pMembers[ind]->Type != 1)
+					{
+						pSpawn = group->pMembers[ind]->pSpawn;
+					}
+				}
+			}
+		}
+		return pSpawn;
+	}
+
+	bool UpdateOurMenu(int index)
+	{
+		if (CGroupWnd*pGwnd = (CGroupWnd*)this)
+		{
+			if (pGwnd->GroupContextMenu)
+			{
+				if (index != -1)
+				{
+					//WriteChatf("User Rightclicked group member number %d", index);
+					AddOurMenu(pGwnd);
+					return true;
+				}
+				RemoveOurMenu(pGwnd);
+			}
+		}
+		return false;
+	}
 	int WndNotification_Trampoline(CXWnd*, unsigned __int32, void*);
 	int WndNotification_Detour(CXWnd* pWnd, unsigned __int32 Message, void* pData)
 	{
-		if (Message == XWM_RCLICK || Message == XWM_RSELITEM_DOWN)
+		if (Message==XWN_OUTPUT_TEXT)
 		{
-			rightclickindex = this->GetSelectedGroupIndex(pWnd);
-			//if (rightclickindex != -1)
-			//{
-			//	WriteChatf("User Rightclicked group member number %d", rightclickindex);
-			//}
+			if (pWnd && (pWnd->pParentWindow == (PCSIDLWND)GroupHotButton
+				|| pWnd == (CXWnd*)GroupHotButton
+				|| pWnd == (CXWnd*)NavButton
+				|| pWnd == (CXWnd*)MimicMeButton
+				|| pWnd == (CXWnd*)FollowMeButton))
+			{
+				//we dont want to show the menu here.
+				pContextMenuManager->Flush();
+			}
+		}
+		else if (Message == XWM_RCLICK || Message == XWM_RSELITEM_DOWN)
+		{
+			
+			
 			//return 1;
+			if (pWnd && (pWnd->pParentWindow == (PCSIDLWND)GroupHotButton
+				|| pWnd == (CXWnd*)GroupHotButton
+				|| pWnd == (CXWnd*)NavButton
+				|| pWnd == (CXWnd*)MimicMeButton
+				|| pWnd == (CXWnd*)FollowMeButton))
+			{
+				//we dont want to show the menu here.
+				pContextMenuManager->Flush();
+				return 1;
+			}
+			rightclickindex = this->GetSelectedGroupIndex(pWnd);
+			UpdateOurMenu(rightclickindex);
 		}
 		else if (Message == XWM_LCLICK)
 		{
-			if (pWnd == NavButton)
+
+			if (pWnd == MimicMeButton)
+			{
+				gbMimicme ^= true;
+				MimicMeButton->Checked = gbMimicme;
+				return 1;
+			}
+			else if (pWnd == NavButton)
 			{
 				StopMovement();
 				CHAR szMe[MAX_STRING] = { 0 };
@@ -463,6 +616,8 @@ public:
 				return 1;
 			} else if (pWnd == FollowMeButton)
 			{
+				if(!FollowMeButton->Checked)
+					StopMovement(false);
 				gbFollowme ^= true;
 				FollowMeButton->Checked = gbFollowme;
 				CHAR szMe[MAX_STRING] = { 0 };
@@ -485,58 +640,105 @@ public:
 				}
 				else
 				{
+					WriteChatf("\ayMQ2TargetInfo\ax : Group stopped following you.");
 					StopMovement();
 					return 1;
 				}
+				WriteChatf("\ayMQ2TargetInfo\ax : Group now follow you around.");
 				DoCommand((PSPAWNINFO)pLocalPlayer, szMe);
 				return 1;
 			}
 		}
 		else if (Message == XWM_MENUSELECT)
 		{
-			if ((int)pData == 200)//our nav menu id
+			
+			switch ((int)pData)
 			{
-				CHAR szMe[MAX_STRING] = { 0 };
-				//Beep(1000, 100);
-				PSPAWNINFO pSpawn = 0;
-				if (PCHARINFO pChar = GetCharInfo())
+				case 54://our nav menu id
 				{
-					if (CGroupClient *group = (CGroupClient *)pChar->pGroupInfo)
+					PSPAWNINFO pSpawn = GetSpawnFromRightClickIndex();
+					if (pSpawn)
 					{
-						int ind = rightclickindex;// group->GroupSelectID;
-						if (ind!=-1 && ind < 6)
-						{
-							if (group->pMembers[ind] && group->pMembers[ind]->pSpawn && group->pMembers[ind]->Type!=1)
-							{
-								pSpawn = group->pMembers[ind]->pSpawn;
-							}
-						}
+						StopMovement(gbFollowme);
+						DoCommandf("/bct %s //nav id %d", pSpawn->Name, ((PSPAWNINFO)pLocalPlayer)->SpawnID);
 					}
+					return 1;//we dont need to call the tramp, its our message...
 				}
-				if (pSpawn)
+				case 55://ground
 				{
-					if (gbFollowme)
+					PSPAWNINFO pSpawn = GetSpawnFromRightClickIndex();
+					if (pSpawn)
 					{
-						FollowMeButton->Checked = false;
-						gbFollowme = false;
+						DoCommandf("/bct %s //itemtarget", pSpawn->Name);
+						DoCommandf("/bct %s //click left item", pSpawn->Name);
 					}
-					StopMovement();
-					sprintf_s(szMe, "/bct %s //nav id %d",pSpawn->Name, ((PSPAWNINFO)pLocalPlayer)->SpawnID);
-					DoCommand((PSPAWNINFO)pLocalPlayer, szMe);
+					return 1;
 				}
-				return 1;//we dont need to call the tramp, its our message...
+				case 56://door
+				{
+					PSPAWNINFO pSpawn = GetSpawnFromRightClickIndex();
+					if (pSpawn)
+					{
+						DoCommandf("/bct %s //doortarget", pSpawn->Name);
+						DoCommandf("/bct %s //click left door", pSpawn->Name);
+					}
+					return 1;
+				}
 			}
 		}
 		return WndNotification_Trampoline(pWnd, Message, pData);
 	}
+	CXWnd* CSidlManager_CreateHotButtonWnd_Tramp(CXWnd*, CControlTemplate*);
+	CXWnd* CSidlManager_CreateHotButtonWnd_Detour(CXWnd* pwndParent, CControlTemplate* pControl)
+	{
+		CHotButton* ret = (CHotButton*)CSidlManager_CreateHotButtonWnd_Tramp(pwndParent,pControl);
+		
+		Sleep(0);
+		return (CXWnd*)ret;
+	}
 };
+DETOUR_TRAMPOLINE_EMPTY(CXWnd* CGroupWnd2::CSidlManager_CreateHotButtonWnd_Tramp(CXWnd*, CControlTemplate*));
 DETOUR_TRAMPOLINE_EMPTY(int CGroupWnd2::WndNotification_Trampoline(CXWnd*, unsigned __int32, void*));
 DETOUR_TRAMPOLINE_EMPTY(void CGroupWnd2::UpdateDisplay_Tramp(int, PSPAWNINFO, COLORREF, UINT));
-// Called once, when the plugin is to initialize
+
+void CMD_Mimic(PSPAWNINFO pPlayer, char* szLine)
+{
+	/*gbMimicme ^= true;
+	if (gbMimicme)
+	{
+		CHAR szArg[MAX_STRING] = { 0 };
+		GetArg(szArg, szLine, 1);
+		if (szArg[0])
+		{
+			if (!_stricmp(szArg, "id"))
+			{
+				GetArg(szArg, szLine, 2);
+				gMimicmeID = atoi(szArg);
+				if (PSPAWNINFO pSpawn = (PSPAWNINFO)GetSpawnByID(gMimicmeID))
+				{
+					WriteChatf("Now mimicing %s", pSpawn->Name);
+				}
+			}
+		}
+	}
+	else {
+		if (gMimicmeID)
+		{
+			if (PSPAWNINFO pSpawn = (PSPAWNINFO)GetSpawnByID(gMimicmeID))
+			{
+				WriteChatf("No longer mimicing %s", pSpawn->Name);
+			}
+			gMimicmeID = 0;
+		}
+	}*/
+}
 PLUGIN_API VOID InitializePlugin(VOID)
 {
 	if (!hLockphmap)
 		hLockphmap = CreateMutex(NULL, FALSE, NULL);
+	AddCommand("/mimicme", CMD_Mimic);
+
+	EzDetourwName(CSidlManager__CreateHotButtonWnd, &CGroupWnd2::CSidlManager_CreateHotButtonWnd_Detour, &CGroupWnd2::CSidlManager_CreateHotButtonWnd_Tramp, "CHB");
 	EzDetourwName(CGroupWnd__UpdateDisplay, &CGroupWnd2::UpdateDisplay_Detour, &CGroupWnd2::UpdateDisplay_Tramp, "GUD");
 	EzDetourwName(CGroupWnd__WndNotification, &CGroupWnd2::WndNotification_Detour, &CGroupWnd2::WndNotification_Trampoline, "GWW");
 	HMODULE hMe = 0;
@@ -583,12 +785,9 @@ PLUGIN_API VOID InitializePlugin(VOID)
 void CleanUp(bool bUnload)
 {
 	if (CGroupWnd*pGwnd = (CGroupWnd*)pGroupWnd) {
-		if (pGwnd->GroupContextMenu && navmenuid)
+		if (pGwnd->GroupContextMenu && separatorid)
 		{
-			//pGwnd->GroupContextMenu->RemoveMenuItem(separatorid);
-			pGwnd->GroupContextMenu->RemoveMenuItem(navmenuid);//54
-			navmenuid = 0;
-			Sleep(0);
+			RemoveOurMenu(pGwnd);
 		}
 	}
 	if (GroupDistLabel1) {
@@ -635,6 +834,14 @@ void CleanUp(bool bUnload)
 		((CButtonWnd*)FollowMeButton)->Destroy();
 		FollowMeButton = 0;
 	}
+	if (MimicMeButton) {
+		((CButtonWnd*)MimicMeButton)->Destroy();
+		MimicMeButton = 0;
+	}
+	if (GroupHotButton) {
+		((CXWnd*)GroupHotButton)->Destroy();
+		GroupHotButton = 0;
+	}
 	
 	if (GetGameState() == GAMESTATE_INGAME) {
 		if (bUnload) {
@@ -669,8 +876,11 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
 		CloseHandle(hLockphmap);
 		hLockphmap = 0;
 	}
+	RemoveCommand("/mimicme");
 	RemoveDetour(CGroupWnd__WndNotification);
 	RemoveDetour(CGroupWnd__UpdateDisplay);
+	RemoveDetour(CSidlManager__CreateHotButtonWnd);
+	
 }
 
 // Called after entering a new zone
@@ -751,6 +961,88 @@ void UpdateGroupDist(PCHARINFO pChar, int index)
 		}
 	}
 }
+
+DWORD LastTargetID = 0;
+void DidTargetChange()
+{
+	if (pTarget && ((PSPAWNINFO)pTarget)->SpawnID != LastTargetID)
+	{
+		//yes it changed
+		LastTargetID = ((PSPAWNINFO)pTarget)->SpawnID;
+		//DoCommandf((PSPAWNINFO)pLocalPlayer, "/squelch /bcg //target id %d",LastTargetID);
+		DoCommandf("/bcg //target id %d",LastTargetID);
+		WriteChatf("Letting group know target changed");
+	}
+}
+void MimicMeFunc()
+{
+	PSPAWNINFO pSpawn = (PSPAWNINFO)pLocalPlayer;
+	DidTargetChange();
+
+	if (pSpawn->AssistName[0])
+	{
+		pSpawn->GroupAssistNPC;
+		Sleep(0);
+	}
+	Sleep(0);
+}
+PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color)
+{
+	if (gbMimicme)
+	{
+		int linelen = strlen(Line);
+		PCHAR szLine = (PCHAR)LocalAlloc(LPTR, linelen + 32);
+		PCHAR szLineOrg = szLine;
+		strcpy_s(szLine, linelen + 32, Line);
+		if (!_strnicmp(szLine, "You say, '",10))
+		{
+			szLine += 10;
+			if (char*pDest = strrchr(szLine, '\''))
+			{
+				pDest[0] = '\0';
+			}
+			DoCommandf("/bcg //say %s", szLine);
+		}
+		LocalFree(szLineOrg);
+		OutputDebugString("OnIncomingChat: ");
+		OutputDebugString(Line);
+		OutputDebugString("\n");
+	}
+	return 0;
+}
+PLUGIN_API DWORD OnWriteChatColor(PCHAR Line, DWORD Color, DWORD Filter)
+{
+	if (gbMimicme)
+	{
+		//MQ2EasyFind: Going to (Group) -> Annera
+		int linelen = strlen(Line);
+		PCHAR szLine = (PCHAR)LocalAlloc(LPTR, linelen + 32);
+		PCHAR szLineOrg = szLine;
+		strcpy_s(szLine, linelen + 32, Line);
+		if (!_strnicmp(szLine, "MQ2EasyFind: Going to ",22))
+		{
+			//szLine += 22;
+			if (char*pDest = strstr(szLine, "-> "))
+			{
+				szLine = pDest;
+				szLine += 3;
+			}
+			if (char*pDest = strchr(szLine, '('))
+			{
+				pDest--;
+				pDest[0] = '\0';
+				
+			}
+			StopMovement();
+			DoCommandf("/bcg //easyfind \"%s\"", szLine);
+		}
+		LocalFree(szLineOrg);
+		OutputDebugString("OnWriteChatColor: ");
+		OutputDebugString(Line);
+		OutputDebugString("\n");
+	}
+	return 0;
+}
 PLUGIN_API VOID OnPulse(VOID)
 {
 	// DONT leave in this debugspew, even if you leave in all the others
@@ -760,6 +1052,11 @@ PLUGIN_API VOID OnPulse(VOID)
 		looper = 0;
 		if (GetGameState() == GAMESTATE_INGAME) {
 			Initialize();
+			//
+			if (gbMimicme)
+			{
+				MimicMeFunc();
+			}
 			//
 			if (CGroupWnd *pGwnd = (CGroupWnd*)pGroupWnd) {
 				if (GroupDistLabel1 && GroupDistLabel2 && GroupDistLabel3 && GroupDistLabel4 && GroupDistLabel5)

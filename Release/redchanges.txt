@@ -1,5 +1,19 @@
+Oct 22 2018 by eqmule
+- Added some more good stuff to mq2targetinfo
+- Fixed clicking playername in group window.
+- Added a button called "Mimic Me" to the group window.
+	If you have mq2eqbc loaded the button will work and will
+	make your whole group do what you do, if u target someone they will all target your target.
+	if you say something they will all repeat what you say.
+	This is great for tasks etc.
+- Added "Pick up nearest ground item" to the rightclick menu in the groupwindow.
+    This makes the character you selected the menu on pick up the nearest grounditem to him/her
+- Added "Click nearest door" to the rightclick menu in the groupwindow.
+   This makes the character you selected the menu on click the nearest door to him/her
+- Added a real Hotbutton to the groupwindow, you can now put a custom hotbutton there that does whatever you like.
+
 Oct 19 2018 by RedGuides
-- MQ2Posse updated with several fixes
+- MQ2Posse (eqmule, Sym) updated to 1.08 with several fixes
 - MQ2KissTemplate added (ChatWithThisName) formats your .ini's for easy distribution. Will be used with our upcoming Kiss .ini library
 - Update.exe (Redbot) should now load faster and launch MQ2 after updates.
 

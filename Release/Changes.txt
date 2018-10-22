@@ -1,3 +1,17 @@
+Oct 22 2018 by eqmule
+- Added some more good stuff to mq2targetinfo
+- Fixed clicking playername in group window.
+- Added a button called "Mimic Me" to the group window.
+	If you have mq2eqbc loaded the button will work and will
+	make your whole group do what you do, if u target someone they will all target your target.
+	if you say something they will all repeat what you say.
+	This is great for tasks etc.
+- Added "Pick up nearest ground item" to the rightclick menu in the groupwindow.
+    This makes the character you selected the menu on pick up the nearest grounditem to him/her
+- Added "Click nearest door" to the rightclick menu in the groupwindow.
+   This makes the character you selected the menu on click the nearest door to him/her
+- Added a real Hotbutton to the groupwindow, you can now put a custom hotbutton there that does whatever you like.
+
 Oct 19 2018 by eqmule
 - mq2melee.cpp has been updated for Me->AAList changes in the builder go click the file and diff it to the old one to see what changed.
 - MQ2TargetInfo has been updated.
@@ -7,7 +21,7 @@ Oct 19 2018 by eqmule
 	the button will work and will make your whole group come running to you.
 -
 - Added a button called "Follow Me" to the group window.
-	If you have mq2eqbc andd mq2advpath loaded the button will work and will
+	If you have mq2eqbc and mq2advpath loaded the button will work and will
 	make your whole group follow you around.
 -
 - Added a new character TLO member: Bandolier it has 4 members: Index,Active,Name,Item
