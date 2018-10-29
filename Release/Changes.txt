@@ -1,3 +1,43 @@
+Oct 29 2018 by eqmule
+- Updated for TEST (and LIVE)
+- If you have been crashing I strongly recommend you update to this version.
+- Fixed IsStackBlocked call that would corrupt the stack and lead to crashes in mq2melee etc - thanks htw for help looking into it.
+- Fixed multiple problems with CHARINFO and CHARINFO2 that would cause a rare crash.
+
+Oct 27 2018 by eqmule
+- Added ${EverQuest.HWND} returns the everquest window handle.
+- Added /foreground command it puts eq in the foreground.
+  Usage: /bct <toon> //foreground
+- Added a "Switch to..." menu item to the groupwindow rightclick menu, It will switch over to another group member easily.
+  This menu only exist if mq2targetinfo is loaded.
+- Fixed a ${Merchant.SelectItem[=blah blah]} bug, it should work properly now.
+
+Oct 26 2018 by eqmule
+- Previously Added: ${Merchant.ItemsReceived} its true if the merchants itemlist has been filled in.
+-
+- Fixed a issue that prevented isboxer from launching eqgame processes without them crashing.
+- Added a /groupinfo command to hide/show buttons on the group window
+  Usage: /groupinfo help
+- GroupWindow Button locations are now configurable in mq2targetinfo.ini
+  plugin unload and reload is needed if you change button locations.
+
+Oct 25 2018 by eqmule && Chatwiththisname
+- Updated for LIVE
+- Fixed /selectitem it selects items in your inventory when you have a merchant open.
+  Usage: /selectitem "bottle of" will select a "bottle of vinegar" you can also do "=bottle of vinegar" to match EXACT name (its not case sensitive though)
+- Added Methods to the Merchant TLO: .SelectItem .Buy .Sell .OpenWindow
+  Usage:
+  /invoke ${Merchant.OpenWindow} //will open the merchant closest to you, or if you have a merchant target, that mrchant
+  /invoke ${Merchant.Selectitem[bottle of]} for a partial match OR ${Merchant.Selectitem[=bottle of vinegar]} if you need the name to match EXACTLY (its not case sensitive though)
+  /invoke ${Merchant.Buy[100]} //buys 100 of whatever is selected with Merchant.SelectItem[blah]
+  /invoke ${Merchant.Sell[100]} //sells 100 of whatever is selected with /selectitem
+- Fixed /caption anon - Chatwiththisname
+- Added Anon Caption string to ini file - Chatwiththisname
+- Added command /caption reload to reread the ini on the fly - Chatwiththisname
+
+Oct 23 2018 by eqmule
+- MQ2TargetInfo is now part of Core.
+
 Oct 22 2018 by eqmule
 - Added some more good stuff to mq2targetinfo
 - Fixed clicking playername in group window.

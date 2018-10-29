@@ -51,7 +51,8 @@ LEGACY_API VOID Alias                               (PSPAWNINFO,PCHAR);
 LEGACY_API VOID AltAbility                          (PSPAWNINFO,PCHAR);
 LEGACY_API VOID BankList                            (PSPAWNINFO,PCHAR);
 LEGACY_API VOID Breakin                             (PSPAWNINFO,PCHAR);
-LEGACY_API VOID BuyItem                             (PSPAWNINFO,PCHAR);
+LEGACY_API VOID BuyItem								(PSPAWNINFO, PCHAR);
+LEGACY_API VOID SelectItem							(PSPAWNINFO,PCHAR);
 LEGACY_API VOID CharInfo                            (PSPAWNINFO,PCHAR);
 LEGACY_API VOID Cast                                (PSPAWNINFO,PCHAR);
 LEGACY_API VOID Cleanup                             (PSPAWNINFO,PCHAR);
@@ -110,5 +111,6 @@ LEGACY_API VOID SetProcessPriority                  (PSPAWNINFO,PCHAR);
 LEGACY_API VOID ScreenModeCmd                       (PSPAWNINFO,PCHAR);
 LEGACY_API VOID UserCameraCmd                       (PSPAWNINFO,PCHAR);
 LEGACY_API VOID MapZoomCmd                          (PSPAWNINFO,PCHAR);
+LEGACY_API VOID ForeGroundCmd                       (PSPAWNINFO,PCHAR);
 LEGACY_API VOID PluginCmdSort                       (VOID);
 #endif

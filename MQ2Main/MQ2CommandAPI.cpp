@@ -625,7 +625,8 @@ void InitializeMQ2Commands()
         {"/where",      Where,1,1},
         {"/skills",     Skills,1,1},
         {"/unload",     Unload,1,0},
-        {"/buyitem",    BuyItem,1,1},
+		{ "/selectitem",SelectItem,1,1 },
+		{"/buyitem",    BuyItem,1,1},
         {"/sellitem",   SellItem,1,1},
         {"/memspell",   MemSpell,1,1},
         {"/loadspells", LoadSpells,1,1},
@@ -695,6 +696,7 @@ void InitializeMQ2Commands()
 		{"/screenmode", ScreenModeCmd,1,0},
 		{"/usercamera", UserCameraCmd,1,0},
 		{"/mapzoom",    MapZoomCmd,1,0},
+		{"/foreground", ForeGroundCmd,1,0},
 		
         {NULL,          NULL,0,1},
     };
