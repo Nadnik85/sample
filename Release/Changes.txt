@@ -1,3 +1,32 @@
+Nov 07 2018 by eqmule
+- Updated for BETA
+- FirstFreeSlot now returns 0 if there is no free slot found
+
+Nov 06 2018 by eqmule
+- Updated for BETA
+
+Nov 05 2018 by eqmule & SwiftyMUSE
+- Updated for BETA
+- Even More Stuff
+
+Nov 04 2018 by eqmule & SwiftyMUSE
+- Updated for BETA
+- More Stuff
+
+Nov 03 2018 by eqmule & SwiftyMUSE
+- Updated for BETA
+- Stuff
+
+Nov 02 2018 by SwiftyMUSE
+- Updated Charinfo structure to add luck.
+- Updated MQ2TargetInfo to remove compile warnings.
+
+Nov 02 2018 by eqmule
+- Updated for BETA
+
+Nov 01 2018 by eqmule
+- Updated for BETA
+
 Oct 29 2018 by eqmule
 - Updated for TEST (and LIVE)
 - If you have been crashing I strongly recommend you update to this version.
@@ -11,6 +40,12 @@ Oct 27 2018 by eqmule
 - Added a "Switch to..." menu item to the groupwindow rightclick menu, It will switch over to another group member easily.
   This menu only exist if mq2targetinfo is loaded.
 - Fixed a ${Merchant.SelectItem[=blah blah]} bug, it should work properly now.
+
+Oct 26 2018 by SwiftyMUSE
+- Added debugging logic for stacks.
+    Add BuffStackTestDebug=1 to your [MacroQuest] section of MacroQuest.ini
+    to allow debugging information to be put in the log file for review by
+    the developers.
 
 Oct 26 2018 by eqmule
 - Previously Added: ${Merchant.ItemsReceived} its true if the merchants itemlist has been filled in.

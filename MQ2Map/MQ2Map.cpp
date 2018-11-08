@@ -439,7 +439,7 @@ PLUGIN_API VOID OnPulse(VOID)
 
 	// Clear MapLocs on zone
 	if (PCHARINFO charInfo = GetCharInfo()) {
-		if (currentZoneId != charInfo->zoneId)
+		if (currentZoneId != (charInfo->zoneId & 0x7FFF))
 		{
 			for (map<string, PMAPLOC>::iterator it = LocationMap.begin(); it != LocationMap.end(); it++)
 			{
@@ -449,7 +449,7 @@ PLUGIN_API VOID OnPulse(VOID)
 				LocationMap.erase(it);
 			}
 			LocationMap.clear();
-			currentZoneId = charInfo->zoneId;
+			currentZoneId = (charInfo->zoneId & 0x7FFF);
 		}
 	}
 	CHAR szBuffer[MAX_STRING] = { 0 };
@@ -507,7 +507,7 @@ PLUGIN_API VOID OnAddSpawn(PSPAWNINFO pNewSpawn)
 	// your toon's spawn id changes and it's no longer zero to start
 	// don't added it all 
 	if (pNewSpawn) {
-		if (PCHARINFO pMe = (PCHARINFO)GetCharInfo()) {
+		if (PCHARINFO pMe = GetCharInfo()) {
 			if (Update && pNewSpawn->SpawnID != 0 && pMe->pSpawn != pNewSpawn) {
 				//DebugSpewAlways("MQ2Map::OnAddSpawn(%s) = %d", pNewSpawn->Name, pNewSpawn->SpawnID);
 				AddSpawn(pNewSpawn);

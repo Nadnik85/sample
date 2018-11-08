@@ -830,7 +830,7 @@ VOID SelectItem(PSPAWNINFO pChar, PCHAR szLine)
 			bExact = true;
 			pName++;
 		}
-		if (PCHARINFO pCharInfo = (PCHARINFO)GetCharInfo())
+		if (PCHARINFO pCharInfo = GetCharInfo())
 		{
 			if (CMerchantWnd * pmercho = (CMerchantWnd *)pMerchantWnd)
 			{
@@ -2344,7 +2344,11 @@ VOID DoAbility(PSPAWNINFO pChar, PCHAR szLine)
 						return;
 					}
 					if (PCHARINFO pChar = GetCharInfo()) {
+#ifdef NEWCHARINFO
+						if (pChar->PcClient_CharacterZoneClient_vfTable) {
+#else
 						if (pChar->vtable2) {
+#endif
 							pCharData1->UseSkill((unsigned char)Index, (EQPlayer*)pCharData1);
 						}
 					}
@@ -3017,7 +3021,13 @@ VOID BankList(PSPAWNINFO pChar, PCHAR szLine)
 	WriteChatColor("-------------------------", USERCOLOR_DEFAULT);
 	char Link[MAX_STRING] = { 0 };
 	for (int a = 0; a<NUM_BANK_SLOTS; a++) {
-		if (pCharInfo->pBankArray) pContainer = pCharInfo->pBankArray->Bank[a];
+#ifdef NEWCHARINFO
+		if (pCharInfo && pCharInfo->BankItems.Items.Size > (UINT)a)
+			pContainer = pCharInfo->BankItems.Items[a].pObject;
+#else
+		if (pCharInfo && pCharInfo->pBankArray)
+			pContainer = pCharInfo->pBankArray->Bank[a];
+#endif
 		if (pContainer) {
 			GetItemLink(pContainer, Link);
 			sprintf_s(szTemp, "Slot %d: %dx %s (%s)", a, pContainer->StackCount ? pContainer->StackCount : 1, Link, GetItemFromContents(pContainer)->LoreName);
@@ -3411,7 +3421,7 @@ VOID UseItemCmd(PSPAWNINFO pChar, PCHAR szLine)
 				bool bKeyring = false;
 #if !defined(ROF2EMU) && !defined(UFEMU)
 				if (PCHARINFO pCharInfo = GetCharInfo()) {
-					if (CharacterBase *cb = (CharacterBase *)&pCharInfo->pCharacterBase) {
+					if (CharacterBase *cb = (CharacterBase *)&pCharInfo->CharacterBase_vftable) {
 						ItemGlobalIndex location;
 						location.Location = (ItemContainerInstance)pItem->GlobalIndex.Location;
 						location.Index.Slot1 = pItem->GlobalIndex.Index.Slot1;

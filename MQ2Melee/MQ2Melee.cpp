@@ -1757,7 +1757,11 @@ int SKReady(unsigned long id) {
 
 int SKPress(unsigned long id) {
     if (PCHARINFO pChar = GetCharInfo()) {
-        if (pChar->vtable2) {
+#if defined(NEWCHARINFO) 
+		if (pChar->PcClient_CharacterZoneClient_vfTable) {
+#else
+		if (pChar->vtable2) {
+#endif
             pCharData1->UseSkill((unsigned char)id, (EQPlayer*)pCharData1);
             return true;
         }
