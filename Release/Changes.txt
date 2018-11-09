@@ -1,9 +1,25 @@
+Nov 08 2018 by eqmule
+- MQ2TargetInfo has been updated.
+  You can now set UsePerCharSettings=1 if you want that in MQ2TargetInfo.ini.
+  0 is default and means it reads settings from the [Default] section.
+  I realized that having per char settings is cumbersome if you have A LOT of chars.
+  The buttons on the groupwindow will only show when you are in a group now.
+  Except the Hotbutton which will always show unless you change its show/hide setting. see /groupinfo help for more info.
+- Added a tooltip for /groupinfo help on the main groupwindow.
+- Fixed a bug in mq2targetinfo which would cause the groupwindow hotbutton "hitbox" to overlap the disband button making it difficult to click.
+- Added CheckMenu items for showing/hiding the groupinfo buttons to the rightclick group window menu.
+-
+- Updated for TEST
+- Updated for BETA
+- GLOBAL gMacroPause is gone now. Use gMacroBlock->Paused instead.
+
 Nov 07 2018 by eqmule
 - Updated for BETA
 - FirstFreeSlot now returns 0 if there is no free slot found
 
-Nov 06 2018 by eqmule
+Nov 06 2018 by eqmule & SwiftyMUSE
 - Updated for BETA
+- Brought ROF2 client in sync with current source.
 
 Nov 05 2018 by eqmule & SwiftyMUSE
 - Updated for BETA
