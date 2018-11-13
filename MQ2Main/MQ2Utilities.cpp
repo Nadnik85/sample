@@ -4148,14 +4148,17 @@ PCHAR ShowSpellSlotInfo(PSPELL pSpell, PCHAR szBuffer, SIZE_T BufferSize)
 {
 	CHAR szTemp[MAX_STRING] = { 0 };
 	CHAR szBuff[MAX_STRING] = { 0 };
+	int count = 0;
 	for (int i = 0; i<GetSpellNumEffects(pSpell); i++)
 	{
 		szBuff[0] = szTemp[0] = '\0';
 		strcat_s(szBuff, ParseSpellEffect(pSpell, i, szTemp,sizeof(szTemp)));
-		if (strlen(szBuff)>0) {
+		size_t len = strlen(szBuff);
+		if (len > 0 && count + len < BufferSize) {
 			strcat_s(szBuffer,BufferSize, szBuff);
 			strcat_s(szBuffer,BufferSize, "<br>");
 		}
+		count += len + 4;
 	}
 	return szBuffer;
 }
@@ -4391,7 +4394,7 @@ int FindInvSlotForContents(PCONTENTS pContents)
 
 #if 1
 	PEQINVSLOTMGR pInvMgr = (PEQINVSLOTMGR)pInvSlotMgr;
-	for (unsigned long N = 0; N < 0x800; N++)
+	for (unsigned long N = 0; N < MAX_INV_SLOTS; N++)
 	{
 		class CInvSlot *pCIS = NULL;
 		struct _CONTENTS *pC = NULL;
@@ -4447,7 +4450,7 @@ int FindInvSlot(PCHAR pName, BOOL Exact)
 	_strlwr_s(Name);
 	CHAR szTemp[MAX_STRING] = { 0 };
 	PEQINVSLOTMGR pInvMgr = (PEQINVSLOTMGR)pInvSlotMgr;
-	for (unsigned long N = 0; N < 0x800; N++)
+	for (unsigned long N = 0; N < MAX_INV_SLOTS; N++)
 	{
 		if (pInvMgr->SlotArray[N])
 		{
@@ -4499,7 +4502,7 @@ int FindNextInvSlot(PCHAR pName, BOOL Exact)
 
 #if 0
 	PEQINVSLOTMGR pInvMgr = (PEQINVSLOTMGR)pInvSlotMgr;
-	for (unsigned long N = LastFoundInvSlot + 1; N < 0x800; N++)
+	for (unsigned long N = LastFoundInvSlot + 1; N < MAX_INV_SLOTS; N++)
 	{
 		if (pInvMgr->SlotArray[N])
 		{

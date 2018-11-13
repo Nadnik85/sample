@@ -1,3 +1,73 @@
+Nov 13 2018 by eqmule
+- Updated for BETA
+- Updated InvSlotMgr for TEST and BETA it has 0x900 slots now.
+  This means /itemnotify in <pack#> <slot#> rightmouseup will work again.
+- FirstFreeSlot now returns -1 if no freeslot is found.
+- FirstFreeSlot returns 0-whatever, it does NOT start counting on 1 anymore.
+  This means: if it return 0 the FIRST slot is in fact empty.
+  if it returns 1 the SECOND slot is in fact empty, etc.
+  We do this because in real life, from a coders perpective, arrays start at 0. not 1.
+  and, thats just the way it should be.
+
+Nov 12 2018 by eqmule
+- Updated for BETA
+- Added LoreEquipped, Luck, MinLuck and MaxLuck to the itemtype tlo for BETA
+- Added some more fixes to /caption anon for spawn corpses etc - chatwiththisname
+
+Nov 11 2018 by eqmule
+- Updated for BETA
+
+Nov 10 2018 by eqmule
+- Updated for BETA
+
+Nov 09 2018 by RedGuides
+- MQ2DanNet (dannuic) added auto raid and fixed "all" group issues.
+
+Nov 09 2018 by eqmule
+- Fixed a /endmacro crash in the LIVE build
+- Fixed a /endmacro crash in the TEST build
+- Fixed a /endmacro crash in the BETA build
+- Fixed ITEMINFO wrong size crash for TEST
+- Updated for BETA
+
+Nov 08 2018 by eqmule
+- MQ2TargetInfo has been updated.
+  You can now set UsePerCharSettings=1 if you want that in MQ2TargetInfo.ini.
+  0 is default and means it reads settings from the [Default] section.
+  I realized that having per char settings is cumbersome if you have A LOT of chars.
+  The buttons on the groupwindow will only show when you are in a group now.
+  Except the Hotbutton which will always show unless you change its show/hide setting. see /groupinfo help for more info.
+- Added a tooltip for /groupinfo help on the main groupwindow.
+- Fixed a bug in mq2targetinfo which would cause the groupwindow hotbutton "hitbox" to overlap the disband button making it difficult to click.
+- Added CheckMenu items for showing/hiding the groupinfo buttons to the rightclick group window menu.
+-
+- Updated for TEST
+- Updated for BETA
+- GLOBAL gMacroPause is gone now. Use gMacroBlock->Paused instead.
+
+Nov 07 2018 by RedGuides
+- MQ2DanNet (dannuic) updated with new groups feature & stability fix
+- Bazaar.mac (chatwiththisname) updated
+
+Nov 07 2018 by eqmule
+- Updated for BETA
+- FirstFreeSlot now returns 0 if there is no free slot found
+
+Nov 06 2018 by eqmule
+- Updated for BETA
+
+Nov 05 2018 by eqmule & SwiftyMUSE
+- Updated for BETA
+- Even More Stuff
+
+Nov 04 2018 by eqmule & SwiftyMUSE
+- Updated for BETA
+- More Stuff
+
+Nov 03 2018 by eqmule & SwiftyMUSE
+- Updated for BETA
+- Stuff
+
 Nov 02 2018 by eqmule
 - Updated for BETA
 

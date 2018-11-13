@@ -77,7 +77,7 @@ enum UIType
    UI_TopLevelWindowList=53,
    UI_HotButton=54,
 };
-
+#define MAX_INV_SLOTS 0x900
 // ***************************************************************************
 // Structures
 // ***************************************************************************
@@ -516,7 +516,7 @@ typedef struct _CONTENTSARRAY {
     struct _CONTENTDATA Array[1];
 } CONTENTSARRAY, *PCONTENTSARRAY;
 
-//Size is 80 see 6EDA59 in Aug  6 2018 Test -eqmule
+//Size is 81 see 6EE209 in Nov  6 2018 Test -eqmule
 enum ChatFilterEnum {
 	CHAT_FILTER_SAY,
 	CHAT_FILTER_TELL,
@@ -599,8 +599,9 @@ enum ChatFilterEnum {
 	CHAT_FILTER_SPELLS_DOTS_OTHERS,
 	CHAT_FILTER_SPELLS_SONGS,
 	CHAT_FILTER_SPELLS_DD_OTHERS,
+	CHAT_FILTER_ZERO_HEALS,
 };
-#define MAX_CHAT_FILTERS CHAT_FILTER_SPELLS_DD_OTHERS
+#define MAX_CHAT_FILTERS CHAT_FILTER_ZERO_HEALS
 enum eContextMenuFilterIDs
 {
 	CONTEXT_FILTER_SAY = 100,
@@ -806,17 +807,17 @@ typedef struct _EQINVSLOT {
 /*0x14*/    
 } EQINVSLOT, *PEQINVSLOT;
 
-// actual size 0x2014 10-12-2010
-// confirmed (size) 2013 dec 10 eqgame.exe at 497E7A -eqmule
-// confirmed 2014-03-31 - eqmule
+// Size 0x2418 see 534532 in Nov 06 2018 Test - eqmule
 typedef struct _EQINVSLOTMGR {
-/*0x0000*/    DWORD Unknown0x0000;
-/*0x0004*/    struct _EQINVSLOT *SlotArray[0x800];
-/*0x2004*/    DWORD TotalSlots;
-/*0x2008*/    DWORD Unknown0x2008;
-/*0x200c*/    struct _EQINVSLOT *pSelectedItem;
-/*0x2010*/    DWORD Unknown0x2010;
-/*0x2014*/
+/*0x0000*/    PVOID vfTable;
+/*0x0004*/    struct _EQINVSLOT *SlotArray[MAX_INV_SLOTS];//size 0x2400 //see 72E00F in Nov 06 2018 Test - eqmule
+/*0x2404*/    DWORD TotalSlots;
+/*0x2408*/    UINT LastUpdate;
+/*0x240c*/    struct _EQINVSLOT *pSelectedItem;//LastSelectedSlot
+/*0x2410*/    int  Unknown0x2410;
+/*0x2414*/    bool bToggleBagsOpen;
+/*0x2415*/    bool bToggleBankBagsOpen;
+/*0x2418*/
 } EQINVSLOTMGR, *PEQINVSLOTMGR;
 
 // onetimehero 09-17-03
