@@ -1,3 +1,43 @@
+Nov 19 2018 by eqmule
+- Updated for TEST
+
+Nov 19 2018 by eqmule
+- Updated for BETA
+- Added distance for targets on the Extended Target Window
+  You can control the feature by: /groupinfo show/hide extdistance
+  Because distance label needs a few pixels to display, u *might* need to make the window a bit wider,
+  it depends how many letters are in the mobs name that u fight.
+- MQ2TargetInfo.ini now lets you customize what commands, texts and tooltips are executed/displayed for the Follow Me and Come To Me buttons
+  Default entries are:
+  [code]
+	ComeToMeText=Come To Me
+	ComeToMeCommand=/bcg //nav id ${Me.ID}
+	ComeToMeToolTip=/bcg //nav id ${Me.ID}
+	FollowMeText=Follow Me
+	FollowMeCommand=/bcg //afollow spawn ${Me.ID}
+	FollowMeeToolTip=/bcg //afollow spawn ${Me.ID}
+  [/code]
+
+Nov 18 2018 by eqmule
+- Updated for BETA
+
+Nov 17 2018 by eqmule
+- Updated for BETA
+
+Nov 16 2018 by eqmule
+- Updated for BETA
+
+Nov 15 2018 by eqmule
+- Updated for BETA
+
+Nov 14 2018 by eqmule
+- Updated for LIVE
+- Updated for BETA
+
+Nov 13 2018 by SwiftyMUSE
+- Updated ROF2EMU build to bring to current.
+- Fixed a GetItemLinkHash crash on BETA.
+
 Nov 13 2018 by eqmule
 - Updated for BETA
 - Updated InvSlotMgr for TEST and BETA it has 0x900 slots now.
