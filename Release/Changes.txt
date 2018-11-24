@@ -1,3 +1,44 @@
+Nov 23 2018 by eqmule
+- Updated for BETA
+- Added MORE support for custom UI's to MQ2targetInfo
+  I don't know much about custom UI' as I have only used a couple of them
+  and my experience with them, well i was not impressed, the reason is that they are outdated
+  they dont show aggro percentages, they use hardcoded sizes and thus cant be resized, cant be moved, has no title, etc.
+  Honestly, its a mess, if u have a good UI that has all the same controls as default, you are lucky.
+  Now, to workaround these limitations, I have made some changes to MQ2targetInfo:
+  First of all if your group window is not resizable, ill change it so it is.
+  Second if it doesnt have proper .TopOffset I'll use Location.top instead and so on.
+  Suffice to say, I have done my best to make this work for everyone.
+  If this still isnt enough, you are going to have to actually edit either mq2targetinfo.ini
+  and set the button locations there, or edit your UI's XML files.
+  Well, or just unload mq2targetinfo...
+-
+  Bottomline is, the code I added now, should at a minimum not crash your custom UI
+  and there is a good chance it actually works for it as well, although u might have to resize the window
+  in order to see all buttons and distance etc.
+
+Nov 22 2018 by eqmule thanksgiving edition.
+- Updated for BETA
+- I now disable MQ2TargetInfo for incompatible UI's
+  I plan on fixing it but I dont have time today.
+-
+- Started the Task TLO overhaul, we are going to be able to access these things without having to have the window open.
+  This also means we can now add some new members to it, like the type of task, reward, npc to turn into etc.
+  More to come.
+
+Nov 21 2018 by eqmule
+- Updated for BETA
+- Moved Mimic Me default position to where old hotbutton was.
+- Moved old hotbutton to old Mimic Me default position to be more consistent because:
+- I Added 2 more hotbuttons to the group window. There was unused space next to hotbutton 1... - idea cred: sl968
+  Rightclick groupwindow and check or uncheck the menu for it to hide/show them.
+  or use /groupinfo help
+  There is no way to selectivly show only one or two, the show is either for all three or none.
+  Because, well it makes the most sense and I dont want to clutter up the menu with 3 settings for it.
+
+Nov 20 2018 by eqmule
+- Updated for BETA
+
 Nov 19 2018 by eqmule
 - Updated for TEST
 
