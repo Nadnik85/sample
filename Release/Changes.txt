@@ -1,3 +1,7 @@
+Nov 24 2018 by eqmule
+- Updated for BETA
+- Custom UI Extended Target Window crash fixed in MQ2TargetInfo.
+
 Nov 23 2018 by eqmule
 - Updated for BETA
 - Added MORE support for custom UI's to MQ2targetInfo
