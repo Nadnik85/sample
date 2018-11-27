@@ -1,6 +1,12 @@
+Nov 27 2018 by eqmule
+- Updated for BETA
+
 Nov 26 2018 by eqmule
 - Let's pretend yesterday's release didnt happen, mq2targetinfo was bugged, so we try again:
 - Updated for BETA, LIVE and TEST
+- Added /groupinfo reset if you have ANY problem at all with default UI, just run this command it will reset to WORKING ini.
+  Old settings will be saved in MQ2TargetInfo.bak
+-
 - Added /groupinfo reload
   you can use it to reload the ini when you make changes to button locations etc.
 - I made a lot of changes to how mq2targetinfo adds itself to the UI
