@@ -350,6 +350,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2Discord", "MQ2Discord\MQ
 		{2A0A06A4-E9C6-4229-82EE-BD2D4E0A7221} = {2A0A06A4-E9C6-4229-82EE-BD2D4E0A7221}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2SQLite", "MQ2SQLite\MQ2SQLite.vcxproj", "{27B32454-420C-4CDD-8321-62BCE309BF78}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2A0A06A4-E9C6-4229-82EE-BD2D4E0A7221} = {2A0A06A4-E9C6-4229-82EE-BD2D4E0A7221}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -1219,6 +1224,16 @@ Global
 		{0392F8A2-CC1D-4959-9EDA-71D4A8435168}.xDebug|Win32.Build.0 = Debug|Win32
 		{0392F8A2-CC1D-4959-9EDA-71D4A8435168}.xDebug|x64.ActiveCfg = Release|Win32
 		{0392F8A2-CC1D-4959-9EDA-71D4A8435168}.xDebug|x64.Build.0 = Release|Win32
+		{27B32454-420C-4CDD-8321-62BCE309BF78}.Debug|Win32.ActiveCfg = Debug|Win32
+		{27B32454-420C-4CDD-8321-62BCE309BF78}.Debug|Win32.Build.0 = Debug|Win32
+		{27B32454-420C-4CDD-8321-62BCE309BF78}.Debug|x64.ActiveCfg = Debug|Win32
+		{27B32454-420C-4CDD-8321-62BCE309BF78}.Release|Win32.ActiveCfg = Release|Win32
+		{27B32454-420C-4CDD-8321-62BCE309BF78}.Release|Win32.Build.0 = Release|Win32
+		{27B32454-420C-4CDD-8321-62BCE309BF78}.Release|x64.ActiveCfg = Release|Win32
+		{27B32454-420C-4CDD-8321-62BCE309BF78}.xDebug|Win32.ActiveCfg = Debug|Win32
+		{27B32454-420C-4CDD-8321-62BCE309BF78}.xDebug|Win32.Build.0 = Debug|Win32
+		{27B32454-420C-4CDD-8321-62BCE309BF78}.xDebug|x64.ActiveCfg = Release|Win32
+		{27B32454-420C-4CDD-8321-62BCE309BF78}.xDebug|x64.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
