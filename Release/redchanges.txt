@@ -1,3 +1,222 @@
+Nov 29 2018 by RedGuides
+- MQ2NetBots (woobs, SwiftyMuse) included some changes to help modbot buff correctly
+
+Nov 28 2018 by eqmule
+- Updated for BETA
+- Updated for LIVE
+- Added "Follow Me" to the rightclick menu for the groupwindow. - idea cred: sl968
+  For this to work yuo need to have mq2eqbc loaded as well as mq2advpath and mq2targetinfo.
+  It will issue a /bct <toon> //afollow command to the toon you rightclicked on.
+- MQ2HUD Tweaks - dannuic
+
+Nov 27 2018 by RedGuides
+- MQ2HUD (dannuic) speed increase for HUD updates
+
+Nov 26 2018 by RedGuides
+- New plugin! MQ2SQLite (Knightly) - Allows you to interact with a database via the SQLite API. Adds a TLO for viewing the results.
+
+Nov 26 2018 by eqmule
+- Let's pretend yesterday's release didnt happen, mq2targetinfo was bugged, so we try again:
+- Updated for BETA, LIVE and TEST
+- Added /groupinfo reset if you have ANY problem at all with default UI, just run this command it will reset to WORKING ini.
+  Old settings will be saved in MQ2TargetInfo.bak
+-
+- Added /groupinfo reload
+  you can use it to reload the ini when you make changes to button locations etc.
+- I made a lot of changes to how mq2targetinfo adds itself to the UI
+  Basically if you have a custom UI it will now save button locations and so on in it's own section of the ini file.
+  Example ini:
+  [code]
+	[Default]
+	UsePerCharSettings=0
+	ShowComeToMeButton=1
+	ShowFollowMeButton=1
+	ShowMimicMeButton=1
+	ShowHotButtons=1
+	ShowDistance=1
+	ShowExtDistance=1
+	ComeToMeText=Come To Me
+	ComeToMeCommand=/bcg //nav id ${Me.ID}
+	ComeToMeToolTip=/bcg //nav id ${Me.ID}
+	FollowMeText=Follow Me
+	FollowMeCommand=/bcg //afollow spawn ${Me.ID}
+	FollowMeeToolTip=/bcg //afollow spawn ${Me.ID}
+
+	[UI_default]
+	DynamicUI=1
+	GroupDistanceLoc=0,-20,70,0
+	ComeToMeLoc=61,27,6,46
+	FollowMeLoc=61,27,48,88
+	MimicMeLoc=61,27,90,130
+	HotButton0Loc=97,64,6,46
+	HotButton1Loc=97,64,49,89
+	HotButton2Loc=97,64,92,132
+	TargetInfoAnchoredToRight=0
+	TargetInfoLoc=34,48,0,40
+	TargetDistanceLoc=34,48,90,0
+	ExtDistanceLoc=0,-20,70,0
+
+	[UI_zliz]
+	DynamicUI=0
+	GroupDistanceLoc=0,-8,60,0
+	ComeToMeLoc=41,1,1,41
+	FollowMeLoc=41,1,42,82
+	MimicMeLoc=41,1,83,123
+	HotButton0Loc=76,36,2,42
+	HotButton1Loc=76,36,44,84
+	HotButton2Loc=76,36,86,126
+	TargetInfoAnchoredToRight=0
+	TargetInfoLoc=1,12,90,0
+	TargetDistanceLoc=14,26,140,180
+	ExtDistanceLoc=0,-20,70,0
+
+	[UI_Melee]
+	DynamicUI=0
+	GroupDistanceLoc=-3,-15,120,-70
+	ComeToMeLoc=36,2,4,44
+	FollowMeLoc=36,2,46,86
+	MimicMeLoc=36,2,88,128
+	HotButton0Loc=36,0,134,174
+	HotButton1Loc=36,0,174,214
+	HotButton2Loc=36,0,214,254
+	TargetInfoAnchoredToRight=0
+	TargetInfoLoc=1,13,90,60
+	TargetDistanceLoc=50,62,140,0
+	ExtDistanceLoc=0,-20,90,0
+
+	[UI_sars]
+	DynamicUI=0
+	GroupDistanceOffset=0
+	UseGroupLayoutBox=1
+	GroupDistanceLoc=0,12,70,-5
+	GroupDistanceElementPrefix=GW_Gauge
+	ComeToMeLoc=33,3,0,30
+	FollowMeLoc=33,3,32,62
+	MimicMeLoc=33,3,64,94
+	HotButton0Loc=69,39,2,32
+	HotButton1Loc=69,39,34,64
+	HotButton2Loc=69,39,66,96
+	TargetInfoAnchoredToRight=0
+	TargetInfoLoc=74,86,140,0
+	TargetDistanceLoc=112,124,0,230
+	UseExtLayoutBox=1
+	ExtDistanceLoc=0,12,30,-20
+  [/code]
+
+Nov 24 2018 by eqmule
+- Updated for BETA, LIVE and TEST
+- Added /groupinfo save
+  It will save groupwindow size and location to the ini.
+- Added /groupinfo reload
+  you can use it to reload the ini when you make changes to button locations etc.
+- I made a lot of changes to how mq2targetinfo adds itself to the UI
+  Basically if you have a custom UI it will now save button locations and so on in it's own section of the ini file.
+  Example ini:
+  [code]
+	[Default]
+	UsePerCharSettings=0
+	ShowMimicMeButton=1
+	ShowComeToMeButton=1
+	ShowFollowMeButton=1
+	ShowDistance=1
+	ShowExtDistance=1
+	ShowHotButtons=1
+
+	ComeToMeText=Come To Me
+	ComeToMeCommand=/bcg //nav id ${Me.ID}
+	ComeToMeToolTip=/bcg //nav id ${Me.ID}
+	FollowMeText=Follow Me
+	FollowMeCommand=/bcg //afollow spawn ${Me.ID}
+	FollowMeeToolTip=/bcg //afollow spawn ${Me.ID}
+
+
+	[UI_default]
+	TargetInfoLoc=2,160
+	GroupWindowLoc=135,438,953,1098
+	GroupDistanceLoc=0,-60
+	TargetDistanceLoc=36,32
+	ExtDistanceLoc=0,-80
+	ComeToMeLoc=61,27,6,46
+	FollowMeLoc=61,27,48,88
+	MimicMeLoc=61,27,90,130
+	HotButton0Loc=97,64,6,46
+	HotButton1Loc=97,64,49,89
+	HotButton2Loc=97,64,91,131
+
+
+	[UI_zliz]
+	TargetInfoLoc=1,160
+	GroupWindowLoc=110,397,776,909
+	GroupDistanceLoc=0,70
+	TargetDistanceLoc=36,32
+	ExtDistanceLoc=0,50
+	ComeToMeLoc=36,2,2,42
+	FollowMeLoc=36,2,44,84
+	MimicMeLoc=36,2,86,126
+	HotButton0Loc=75,35,2,42
+	HotButton1Loc=75,35,45,85
+	HotButton2Loc=75,35,87,127
+
+
+	[UI_melee]
+	TargetInfoLoc=1,210
+	GroupWindowLoc=126,427,834,1098
+	GroupDistanceLoc=-2,26
+	TargetDistanceLoc=50,32
+	ExtDistanceLoc=0,-80
+	ComeToMeLoc=36,2,2,42
+	FollowMeLoc=36,2,44,84
+	MimicMeLoc=36,2,86,126
+	HotButton0Loc=36,2,130,170
+	HotButton1Loc=36,2,172,212
+	HotButton2Loc=36,2,214,254
+  [/code]
+
+Nov 24 2018 by eqmule
+- Updated for BETA
+- Custom UI Extended Target Window crash fixed in MQ2TargetInfo.
+
+Nov 23 2018 by eqmule
+- Updated for BETA
+- Added MORE support for custom UI's to MQ2targetInfo
+  I don't know much about custom UI' as I have only used a couple of them
+  and my experience with them, well i was not impressed, the reason is that they are outdated
+  they dont show aggro percentages, they use hardcoded sizes and thus cant be resized, cant be moved, has no title, etc.
+  Honestly, its a mess, if u have a good UI that has all the same controls as default, you are lucky.
+  Now, to workaround these limitations, I have made some changes to MQ2targetInfo:
+  First of all if your group window is not resizable, ill change it so it is.
+  Second if it doesnt have proper .TopOffset I'll use Location.top instead and so on.
+  Suffice to say, I have done my best to make this work for everyone.
+  If this still isnt enough, you are going to have to actually edit either mq2targetinfo.ini
+  and set the button locations there, or edit your UI's XML files.
+  Well, or just unload mq2targetinfo...
+-
+  Bottomline is, the code I added now, should at a minimum not crash your custom UI
+  and there is a good chance it actually works for it as well, although u might have to resize the window
+  in order to see all buttons and distance etc.
+
+Nov 22 2018 by eqmule thanksgiving edition.
+- Updated for BETA
+- I now disable MQ2TargetInfo for incompatible UI's
+  I plan on fixing it but I dont have time today.
+-
+- Started the Task TLO overhaul, we are going to be able to access these things without having to have the window open.
+  This also means we can now add some new members to it, like the type of task, reward, npc to turn into etc.
+  More to come.
+
+Nov 21 2018 by eqmule
+- Updated for BETA
+- Moved Mimic Me default position to where old hotbutton was.
+- Moved old hotbutton to old Mimic Me default position to be more consistent because:
+- I Added 2 more hotbuttons to the group window. There was unused space next to hotbutton 1... - idea cred: sl968
+  Rightclick groupwindow and check or uncheck the menu for it to hide/show them.
+  or use /groupinfo help
+  There is no way to selectivly show only one or two, the show is either for all three or none.
+  Because, well it makes the most sense and I dont want to clutter up the menu with 3 settings for it.
+
+Nov 20 2018 by eqmule
+- Updated for BETA
+
 Nov 19 2018 by eqmule
 - Updated for TEST
 

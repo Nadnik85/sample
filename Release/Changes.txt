@@ -1,3 +1,23 @@
+Nov 30 2018 by eqmule
+- Updated for BETA
+
+Nov 29 2018 by eqmule
+- Updated for BETA
+- Fixed Mimic Me to do /keypress HAIL instead of /say Hail, blah
+  This should make hail repeating work for all NPCs.
+
+Nov 29 2018 by eqmule
+- Updated for BETA
+- Fixed a issue with MQ2Hud stuttering. - SwiftyMUSE
+
+Nov 28 2018 by eqmule
+- Updated for BETA
+- Updated for LIVE
+- Added "Follow Me" to the rightclick menu for the groupwindow. - idea cred: sl968
+  For this to work yuo need to have mq2eqbc loaded as well as mq2advpath and mq2targetinfo.
+  It will issue a /bct <toon> //afollow command to the toon you rightclicked on.
+- MQ2HUD Tweaks - dannuic
+
 Nov 27 2018 by eqmule
 - Updated for BETA
 
