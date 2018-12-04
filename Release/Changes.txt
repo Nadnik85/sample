@@ -1,3 +1,23 @@
+Dec 04 2018 by eqmule
+- Updated for BETA
+
+Dec 03 2018 by eqmule
+- Updated for BETA
+- Added /groupinfo mimicme on|off - it will do what the button does but from commandline
+- Added /groupinfo followme on|off - it will do what the button does but from commandline
+- Added /groupinfo cometome - it will do what the button does but from commandline
+- This means if you dont want those buttons on the group window, just rightclick
+  a group member and hide them, then create your own hotbuttons
+  and put them wherever you like to get the same functionallity.
+- Fixed a bug in mq2targetinfo that would change the alpha of the targetwindow/groupwindow/exttargetwindow
+  it had no buisness doing that, sorry.
+
+Dec 02 2018 by eqmule
+- Updated for BETA
+-
+Dec 01 2018 by eqmule
+- Updated for BETA
+-
 Nov 30 2018 by eqmule
 - Updated for BETA
 
