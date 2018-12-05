@@ -1,6 +1,7 @@
-Dec 04 2018 by eqmule
+Dec 04 2018 by eqmule & SwiftyMUSE
 - Updated for BETA
-
+- Updated for TEST
+-
 Dec 03 2018 by eqmule
 - Updated for BETA
 - Added /groupinfo mimicme on|off - it will do what the button does but from commandline
@@ -10,8 +11,8 @@ Dec 03 2018 by eqmule
   a group member and hide them, then create your own hotbuttons
   and put them wherever you like to get the same functionallity.
 - Fixed a bug in mq2targetinfo that would change the alpha of the targetwindow/groupwindow/exttargetwindow
-  it had no buisness doing that, sorry.
-
+  it had no business doing that, sorry.
+-
 Dec 02 2018 by eqmule
 - Updated for BETA
 -
