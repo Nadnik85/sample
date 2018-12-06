@@ -350,6 +350,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2Discord", "MQ2Discord\MQ
 		{2A0A06A4-E9C6-4229-82EE-BD2D4E0A7221} = {2A0A06A4-E9C6-4229-82EE-BD2D4E0A7221}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2Profiler", "MQ2Profiler\MQ2Profiler.vcxproj", "{638F65A6-E8B8-4C5B-84F0-75871492A181}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -1219,6 +1221,16 @@ Global
 		{0392F8A2-CC1D-4959-9EDA-71D4A8435168}.xDebug|Win32.Build.0 = Debug|Win32
 		{0392F8A2-CC1D-4959-9EDA-71D4A8435168}.xDebug|x64.ActiveCfg = Release|Win32
 		{0392F8A2-CC1D-4959-9EDA-71D4A8435168}.xDebug|x64.Build.0 = Release|Win32
+		{638F65A6-E8B8-4C5B-84F0-75871492A181}.Debug|Win32.ActiveCfg = Debug|Win32
+		{638F65A6-E8B8-4C5B-84F0-75871492A181}.Debug|Win32.Build.0 = Debug|Win32
+		{638F65A6-E8B8-4C5B-84F0-75871492A181}.Debug|x64.ActiveCfg = Debug|Win32
+		{638F65A6-E8B8-4C5B-84F0-75871492A181}.Release|Win32.ActiveCfg = Release|Win32
+		{638F65A6-E8B8-4C5B-84F0-75871492A181}.Release|Win32.Build.0 = Release|Win32
+		{638F65A6-E8B8-4C5B-84F0-75871492A181}.Release|x64.ActiveCfg = Release|Win32
+		{638F65A6-E8B8-4C5B-84F0-75871492A181}.xDebug|Win32.ActiveCfg = Debug|Win32
+		{638F65A6-E8B8-4C5B-84F0-75871492A181}.xDebug|Win32.Build.0 = Debug|Win32
+		{638F65A6-E8B8-4C5B-84F0-75871492A181}.xDebug|x64.ActiveCfg = Release|Win32
+		{638F65A6-E8B8-4C5B-84F0-75871492A181}.xDebug|x64.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
