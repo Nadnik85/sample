@@ -1,3 +1,53 @@
+Dec 07 2018 by eqmule
+- Updated for BETA
+- The following feature has been on my todo list forever and was brought to life by @Knightly, all hail Knightly!
+  Thanks for your support.
+- Added the ability to interact with menus - cred : Knightly
+  Example: /notify "open the door to the lobby" menuselect
+  It will search the currently open menu for the words "open the door" and click that menu item if it finds it.
+  the search is case insensitive and sub strings are fine
+  thus you could just do /notify "open the" menuselect and it would still find and click that item
+- 
+- Added a new TLO: MQ2MenuType it inherits the Window TLO.
+  It has 1 method:
+	.Select : It will select a menu item (click it)
+	usage: /invoke ${Menu.Select[open the door]}
+	Output: none, it just clicks that entry if it finds it.
+-
+  It has 6 members:
+	.Address : pIntType it returns the address of the currently open menu.
+	.NumVisibleMenus : pIntType it returns number of currently visible menus. Ordinarily this is going to be 1 if a menu is showing and 0 if not
+	.CurrMenu : pIntType it returns the index for the currently visible menu. Ordinarily this will be 0 if a menu is open and -1 if not
+	.Name : pStringType it returns the name of the menu or the first items name.
+	.NumItems = : pIntType it returns number of items in the currently open menu.
+	.Items : pStringType it returns the Itemname specified by Index
+--  Usage Examples:
+--	/echo ${Menu.Name}
+	Output: Shabby Lobby Door
+	/echo ${Menu.Open} (it inherits Window TLO, remember?)
+	Output: TRUE
+	/echo ${Menu.NumItems}
+	Output: 4
+	/echo ${Menu.Items[2]}
+	Output: Adjust Placement
+- Added some door defines.
+-
+Dec 06 2018 by eqmule
+- Updated to include all faction names - SwiftyMUSE
+- Updated for BETA
+- I made some changes to /itemtarget /items and the ground tlo
+  I don't want to say to much about it really there isn't much to say
+  from a users perspective everything works like before.
+  Basically the only difference should be that /items now display grounditems in guild halls as well.
+  if ${Ground} or /itemtarget or whatever does not work as before let me know.
+- Added /click right item
+  this is mostly useful for like grounditems like shabby lobby door and so on that pops up
+  a menu when you rightclick them.
+- Work in progress -> adding a method to click menu items in the currently open menu.
+
+Dec 05 2018 by eqmule & SwiftyMUSE
+- Updated for BETA
+
 Dec 04 2018 by eqmule & SwiftyMUSE
 - Updated for BETA
 - Updated for TEST

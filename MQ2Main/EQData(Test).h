@@ -104,6 +104,71 @@ static _ClassInfo ClassInfo[]=
 #define BI_TRAP                         4
 #define BI_TIMER                        8
 
+//door types
+#define EQSWITCH_STANDARD					0    
+#define EQSWITCH_STANDARD_METAL				1    
+#define EQSWITCH_STANDARD_STONE				2    
+#define EQSWITCH_STANDARD_CLOCKWISE			5
+#define EQSWITCH_STANDARD_CLOCKWISE_METAL	6
+#define EQSWITCH_STANDARD_CLOCKWISE_STONE	7
+#define EQSWITCH_STANDARD_STONE_COLLIDING	8
+//no idea what 9 is I couln't find one thats 9
+#define EQSWITCH_SMALL_SLIDING				10
+#define EQSWITCH_SMALL_SLIDING_METAL		11
+#define EQSWITCH_SMALL_SLIDING_STONE		12
+#define EQSWITCH_MEDIUM_SLIDING				15
+#define EQSWITCH_MEDIUM_SLIDING_METAL		16
+#define EQSWITCH_MEDIUM_SLIDING_STONE		17
+#define EQSWITCH_LARGE_SLIDING				20
+#define EQSWITCH_LARGE_SLIDING_METAL		21
+#define EQSWITCH_LARGE_SLIDING_STONE		22
+#define EQSWITCH_GIANT_SLIDING				25
+#define EQSWITCH_GIANT_SLIDING_METAL		26
+#define EQSWITCH_GIANT_SLIDING_STONE		27
+#define EQSWITCH_DRAWBRIDGE					30
+#define	EQSWITCH_TRAP						35
+#define	EQSWITCH_PULLTRAP					36
+#define EQSWITCH_LEVER						40
+#define	EQSWITCH_TOGGLE_BUTTON				45
+#define EQSWITCH_PRESSURE_PLATE				50 // if u step or touch this it keep the door open, move away and it closes.
+#define EQSWITCH_DAMAGE_PLATE				51 // if you stand on this it damages you.
+//no idea what 52,53,54,55 is
+#define EQSWITCH_GUILD_CHEST				56
+#define EQSWITCH_TELEPORTER					57
+#define EQSWITCH_KEY_TELEPORTER				58
+#define EQSWITCH_ELEVATOR					59
+#define EQSWITCH_SMALL_SLIDE_UPWARDS		60
+#define EQSWITCH_SMALL_SLIDE_UPWARDS_METAL	61
+#define EQSWITCH_SMALL_SLIDE_UPWARDS_STONE	62
+#define EQSWITCH_MEDIUM_SLIDE_UPWARDS		65
+#define EQSWITCH_MEDIUM_SLIDE_UPWARDS_METAL	66
+#define EQSWITCH_MEDIUM_SLIDE_UPWARDS_STONE	67
+//no idea what 68,69 is
+#define EQSWITCH_LARGE_SLIDE_UPWARDS		70
+#define EQSWITCH_LARGE_SLIDE_UPWARDS_METAL	71
+#define EQSWITCH_LARGE_SLIDE_UPWARDS_STONE	72
+#define EQSWITCH_GIANT_SLIDE_UPWARDS		75
+#define EQSWITCH_GIANT_SLIDE_UPWARDS_METAL	76
+#define EQSWITCH_GIANT_SLIDE_UPWARDS_STONE	77
+#define EQSWITCH_DIAGONAL_UP_RIGHT			78
+#define EQSWITCH_DIAGONAL_UP_LEFT			79
+#define EQSWITCH_DIAGONAL_DOWN_RIGHT		80
+#define EQSWITCH_DIAGONAL_DOWN_LEFT			81
+#define EQSWITCH_GIANT_UP_OR_DOWN			82
+#define EQSWITCH_GIANT_UP_OR_DOWN_METAL		83
+#define EQSWITCH_GIANT_UP_OR_DOWN_STONE		84
+//85-109 more doors?
+#define EQSWITCH_BUTTON						109
+//and more?
+#define EQSWITCH_TRADER_PLATFORM			153
+#define EQSWITCH_BARTER_PLATFORM			154
+#define EQSWITCH_BARTER_TRADER_PLATFORM		155
+//and even more...
+#define EQSWITCH_BOOK						158//opens bookwindow
+#define EQSWITCH_REALESTATE_NEIGHBORHOOD	159
+#define EQSWITCH_REALESTATE_PLOT			160
+#define EQSWITCH_REALESTATE_EXIT			161
+
 typedef struct _BodyInfo
 {
     PCHAR Name;
@@ -3996,6 +4061,20 @@ typedef struct _GROUNDITEM {
 /*0x7c*/ int   Weight;//-1 means it can't be picked up
 /*0x80*/
 } GROUNDITEM, *PGROUNDITEM;
+
+enum eGroundObject
+{
+	GO_None,
+	GO_GroundType,
+	GO_ObjectType
+};
+typedef struct _GROUNDOBJECT
+{
+	eGroundObject Type;
+	GROUNDITEM	GroundItem;//for conversion between switch and gorunditems
+	void *ObjPtr;// EQPlacedItem *
+	PGROUNDITEM	pGroundItem;
+} GROUNDOBJECT,*PGROUNDOBJECT;
 
 #define   MAX_ZONES                     0x3e8
 extern    PCHAR szZoneExpansionName[];     //defined in LibEQ_Utilities.cpp
