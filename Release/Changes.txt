@@ -1,3 +1,12 @@
+Dec 10 2018 by eqmule & SwiftyMUSE
+- Updated for BETA
+
+Dec 09 2018 by eqmule
+- Updated for BETA
+
+Dec 08 2018 by eqmule
+- Updated for BETA
+
 Dec 07 2018 by eqmule
 - Updated for BETA
 - The following feature has been on my todo list forever and was brought to life by @Knightly, all hail Knightly!
