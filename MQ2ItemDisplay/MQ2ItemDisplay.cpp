@@ -512,7 +512,7 @@ public:
         if (pSpell == NULL) {
             return;
         }
-        CHAR out[MAX_STRING] = {0};
+        CHAR out[MAX_STRING*2] = {0};
         CHAR temp[MAX_STRING] = {0};
         if (!bNoSpellTramp) {
 			#if defined(ROF2EMU) || defined(UFEMU)
@@ -706,7 +706,7 @@ public:
             return;
         }
 
-        CHAR out[MAX_STRING] = {0};
+        CHAR out[MAX_STRING*2] = {0};
         CHAR temp[MAX_STRING] = {0};
         if (!bNoSpellTramp) {
 			#if defined(ROF2EMU) || defined(UFEMU)
@@ -882,7 +882,7 @@ public:
 		}
         PCONTENTS item=(PCONTENTS)This->pItem;
         volatile PITEMINFO Item=GetItemFromContents(item);
-        CHAR out[MAX_STRING] = {0};
+        CHAR out[MAX_STRING*2] = {0};
         CHAR temp[MAX_STRING] = {0};
         PCHAR lore = NULL;
 
@@ -913,7 +913,7 @@ public:
 			} else {
 				contentsitemstrings[index].ItemInfo.clear();
 			}
-#if !defined(UFEMU)//uf
+#if !defined(ROF2EMU) && !defined(UFEMU)
 			if (This->bCollectedReceived)
 			{
 				contentsitemstrings[index].bCollectedRecieved = true;
@@ -924,8 +924,6 @@ public:
 				contentsitemstrings[index].bCollectedRecieved = false;
 				contentsitemstrings[index].bCollected = false;
 			}
-#endif
-#if !defined(ROF2EMU) && !defined(UFEMU)
 			if (This->bScribedReceived)
 			{
 				contentsitemstrings[index].bScribedRecieved = true;
@@ -2764,8 +2762,13 @@ int DoIHave(PITEMINFO Item)
 			{
 				PCHARINFO pCharInfo = GetCharInfo();
 				PCONTENTS pPack = NULL;
+#ifdef NEWCHARINFO
+				if (pCharInfo && pCharInfo->BankItems.Items.Size > nPack)
+					pPack = pCharInfo->BankItems.Items[nPack].pObject;
+#else
 				if (pCharInfo && pCharInfo->pBankArray)
 					pPack = pCharInfo->pBankArray->Bank[nPack];
+#endif
 				if (pPack)
 				{
 					if (GetItemFromContents(pPack)->ItemNumber == ID)
@@ -2800,8 +2803,13 @@ int DoIHave(PITEMINFO Item)
 			{
 				PCHARINFO pCharInfo = GetCharInfo();
 				PCONTENTS pPack = NULL;
+#ifdef NEWCHARINFO
+				if (pCharInfo && pCharInfo->SharedBankItems.Items.Size > nPack)
+					pPack = pCharInfo->SharedBankItems.Items[nPack].pObject;
+#else
 				if (pCharInfo && pCharInfo->pSharedBankArray)
 					pPack = pCharInfo->pSharedBankArray->SharedBank[nPack];
+#endif
 				if (pPack)
 				{
 					if (GetItemFromContents(pPack)->ItemNumber == ID)
@@ -3089,7 +3097,6 @@ PLUGIN_API VOID InitializePlugin(VOID)
 		ReadProfile(GetCharInfo()->Name, FALSE);
 		CreateCompareTipWnd();
 	}
-	
 }
 
 PLUGIN_API VOID SetGameState(DWORD GameState) 

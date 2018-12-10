@@ -1,3 +1,392 @@
+Dec 07 2018 by eqmule
+- Updated for BETA
+- The following feature has been on my todo list forever and was brought to life by @Knightly, all hail Knightly!
+  Thanks for your support.
+- Added the ability to interact with menus - cred : Knightly
+  Example: /notify "open the door to the lobby" menuselect
+  It will search the currently open menu for the words "open the door" and click that menu item if it finds it.
+  the search is case insensitive and sub strings are fine
+  thus you could just do /notify "open the" menuselect and it would still find and click that item
+- 
+- Added a new TLO: MQ2MenuType it inherits the Window TLO.
+  It has 1 method:
+	.Select : It will select a menu item (click it)
+	usage: /invoke ${Menu.Select[open the door]}
+	Output: none, it just clicks that entry if it finds it.
+-
+  It has 6 members:
+	.Address : pIntType it returns the address of the currently open menu.
+	.NumVisibleMenus : pIntType it returns number of currently visible menus. Ordinarily this is going to be 1 if a menu is showing and 0 if not
+	.CurrMenu : pIntType it returns the index for the currently visible menu. Ordinarily this will be 0 if a menu is open and -1 if not
+	.Name : pStringType it returns the name of the menu or the first items name.
+	.NumItems = : pIntType it returns number of items in the currently open menu.
+	.Items : pStringType it returns the Itemname specified by Index
+--  Usage Examples:
+--	/echo ${Menu.Name}
+	Output: Shabby Lobby Door
+	/echo ${Menu.Open} (it inherits Window TLO, remember?)
+	Output: TRUE
+	/echo ${Menu.NumItems}
+	Output: 4
+	/echo ${Menu.Items[2]}
+	Output: Adjust Placement
+- Added some door defines.
+-
+Dec 06 2018 by eqmule
+- Updated to include all faction names - SwiftyMUSE
+- Updated for BETA
+- I made some changes to /itemtarget /items and the ground tlo
+  I don't want to say to much about it really there isn't much to say
+  from a users perspective everything works like before.
+  Basically the only difference should be that /items now display grounditems in guild halls as well.
+  if ${Ground} or /itemtarget or whatever does not work as before let me know.
+- Added /click right item
+  this is mostly useful for like grounditems like shabby lobby door and so on that pops up
+  a menu when you rightclick them.
+- Work in progress -> adding a method to click menu items in the currently open menu.
+
+Dec 05 2018 by eqmule & SwiftyMUSE
+- Updated for BETA
+
+Dec 04 2018 by eqmule & SwiftyMUSE
+- Updated for BETA
+- Updated for TEST
+-
+Dec 03 2018 by eqmule
+- Updated for BETA
+- Added /groupinfo mimicme on|off - it will do what the button does but from commandline
+- Added /groupinfo followme on|off - it will do what the button does but from commandline
+- Added /groupinfo cometome - it will do what the button does but from commandline
+- This means if you dont want those buttons on the group window, just rightclick
+  a group member and hide them, then create your own hotbuttons
+  and put them wherever you like to get the same functionallity.
+- Fixed a bug in mq2targetinfo that would change the alpha of the targetwindow/groupwindow/exttargetwindow
+  it had no business doing that, sorry.
+-
+Dec 02 2018 by eqmule
+- Updated for BETA
+-
+Dec 01 2018 by eqmule
+- Updated for BETA
+-
+Nov 30 2018 by eqmule
+- Updated for BETA
+
+Nov 29 2018 by eqmule
+- Updated for BETA
+- Fixed Mimic Me to do /keypress HAIL instead of /say Hail, blah
+  This should make hail repeating work for all NPCs.
+
+Nov 29 2018 by eqmule
+- Updated for BETA
+- Fixed a issue with MQ2Hud stuttering. - SwiftyMUSE
+
+Nov 28 2018 by eqmule
+- Updated for BETA
+- Updated for LIVE
+- Added "Follow Me" to the rightclick menu for the groupwindow. - idea cred: sl968
+  For this to work yuo need to have mq2eqbc loaded as well as mq2advpath and mq2targetinfo.
+  It will issue a /bct <toon> //afollow command to the toon you rightclicked on.
+- MQ2HUD Tweaks - dannuic
+
+Nov 27 2018 by eqmule
+- Updated for BETA
+
+Nov 26 2018 by eqmule
+- Let's pretend yesterday's release didnt happen, mq2targetinfo was bugged, so we try again:
+- Updated for BETA, LIVE and TEST
+- Added /groupinfo reset if you have ANY problem at all with default UI, just run this command it will reset to WORKING ini.
+  Old settings will be saved in MQ2TargetInfo.bak
+-
+- Added /groupinfo reload
+  you can use it to reload the ini when you make changes to button locations etc.
+- I made a lot of changes to how mq2targetinfo adds itself to the UI
+  Basically if you have a custom UI it will now save button locations and so on in it's own section of the ini file.
+  Example ini:
+  [code]
+	[Default]
+	UsePerCharSettings=0
+	ShowComeToMeButton=1
+	ShowFollowMeButton=1
+	ShowMimicMeButton=1
+	ShowHotButtons=1
+	ShowDistance=1
+	ShowExtDistance=1
+	ComeToMeText=Come To Me
+	ComeToMeCommand=/bcg //nav id ${Me.ID}
+	ComeToMeToolTip=/bcg //nav id ${Me.ID}
+	FollowMeText=Follow Me
+	FollowMeCommand=/bcg //afollow spawn ${Me.ID}
+	FollowMeeToolTip=/bcg //afollow spawn ${Me.ID}
+
+	[UI_default]
+	DynamicUI=1
+	GroupDistanceLoc=0,-20,70,0
+	ComeToMeLoc=61,27,6,46
+	FollowMeLoc=61,27,48,88
+	MimicMeLoc=61,27,90,130
+	HotButton0Loc=97,64,6,46
+	HotButton1Loc=97,64,49,89
+	HotButton2Loc=97,64,92,132
+	TargetInfoAnchoredToRight=0
+	TargetInfoLoc=34,48,0,40
+	TargetDistanceLoc=34,48,90,0
+	ExtDistanceLoc=0,-20,70,0
+
+	[UI_zliz]
+	DynamicUI=0
+	GroupDistanceLoc=0,-8,60,0
+	ComeToMeLoc=41,1,1,41
+	FollowMeLoc=41,1,42,82
+	MimicMeLoc=41,1,83,123
+	HotButton0Loc=76,36,2,42
+	HotButton1Loc=76,36,44,84
+	HotButton2Loc=76,36,86,126
+	TargetInfoAnchoredToRight=0
+	TargetInfoLoc=1,12,90,0
+	TargetDistanceLoc=14,26,140,180
+	ExtDistanceLoc=0,-20,70,0
+
+	[UI_Melee]
+	DynamicUI=0
+	GroupDistanceLoc=-3,-15,120,-70
+	ComeToMeLoc=36,2,4,44
+	FollowMeLoc=36,2,46,86
+	MimicMeLoc=36,2,88,128
+	HotButton0Loc=36,0,134,174
+	HotButton1Loc=36,0,174,214
+	HotButton2Loc=36,0,214,254
+	TargetInfoAnchoredToRight=0
+	TargetInfoLoc=1,13,90,60
+	TargetDistanceLoc=50,62,140,0
+	ExtDistanceLoc=0,-20,90,0
+
+	[UI_sars]
+	DynamicUI=0
+	GroupDistanceOffset=0
+	UseGroupLayoutBox=1
+	GroupDistanceLoc=0,12,70,-5
+	GroupDistanceElementPrefix=GW_Gauge
+	ComeToMeLoc=33,3,0,30
+	FollowMeLoc=33,3,32,62
+	MimicMeLoc=33,3,64,94
+	HotButton0Loc=69,39,2,32
+	HotButton1Loc=69,39,34,64
+	HotButton2Loc=69,39,66,96
+	TargetInfoAnchoredToRight=0
+	TargetInfoLoc=74,86,140,0
+	TargetDistanceLoc=112,124,0,230
+	UseExtLayoutBox=1
+	ExtDistanceLoc=0,12,30,-20
+  [/code]
+
+
+
+Nov 24 2018 by eqmule
+- Updated for BETA
+- Custom UI Extended Target Window crash fixed in MQ2TargetInfo.
+
+Nov 23 2018 by eqmule
+- Updated for BETA
+- Added MORE support for custom UI's to MQ2targetInfo
+  I don't know much about custom UI' as I have only used a couple of them
+  and my experience with them, well i was not impressed, the reason is that they are outdated
+  they dont show aggro percentages, they use hardcoded sizes and thus cant be resized, cant be moved, has no title, etc.
+  Honestly, its a mess, if u have a good UI that has all the same controls as default, you are lucky.
+  Now, to workaround these limitations, I have made some changes to MQ2targetInfo:
+  First of all if your group window is not resizable, ill change it so it is.
+  Second if it doesnt have proper .TopOffset I'll use Location.top instead and so on.
+  Suffice to say, I have done my best to make this work for everyone.
+  If this still isnt enough, you are going to have to actually edit either mq2targetinfo.ini
+  and set the button locations there, or edit your UI's XML files.
+  Well, or just unload mq2targetinfo...
+-
+  Bottomline is, the code I added now, should at a minimum not crash your custom UI
+  and there is a good chance it actually works for it as well, although u might have to resize the window
+  in order to see all buttons and distance etc.
+
+Nov 22 2018 by eqmule thanksgiving edition.
+- Updated for BETA
+- I now disable MQ2TargetInfo for incompatible UI's
+  I plan on fixing it but I dont have time today.
+-
+- Started the Task TLO overhaul, we are going to be able to access these things without having to have the window open.
+  This also means we can now add some new members to it, like the type of task, reward, npc to turn into etc.
+  More to come.
+
+Nov 21 2018 by eqmule
+- Updated for BETA
+- Moved Mimic Me default position to where old hotbutton was.
+- Moved old hotbutton to old Mimic Me default position to be more consistent because:
+- I Added 2 more hotbuttons to the group window. There was unused space next to hotbutton 1... - idea cred: sl968
+  Rightclick groupwindow and check or uncheck the menu for it to hide/show them.
+  or use /groupinfo help
+  There is no way to selectivly show only one or two, the show is either for all three or none.
+  Because, well it makes the most sense and I dont want to clutter up the menu with 3 settings for it.
+
+Nov 20 2018 by eqmule
+- Updated for BETA
+
+Nov 19 2018 by eqmule
+- Updated for TEST
+
+Nov 19 2018 by eqmule
+- Updated for BETA
+- Added distance for targets on the Extended Target Window
+  You can control the feature by: /groupinfo show/hide extdistance
+  Because distance label needs a few pixels to display, u *might* need to make the window a bit wider,
+  it depends how many letters are in the mobs name that u fight.
+- MQ2TargetInfo.ini now lets you customize what commands, texts and tooltips are executed/displayed for the Follow Me and Come To Me buttons
+  Default entries are:
+  [code]
+	ComeToMeText=Come To Me
+	ComeToMeCommand=/bcg //nav id ${Me.ID}
+	ComeToMeToolTip=/bcg //nav id ${Me.ID}
+	FollowMeText=Follow Me
+	FollowMeCommand=/bcg //afollow spawn ${Me.ID}
+	FollowMeeToolTip=/bcg //afollow spawn ${Me.ID}
+  [/code]
+
+Nov 18 2018 by eqmule
+- Updated for BETA
+
+Nov 17 2018 by eqmule
+- Updated for BETA
+
+Nov 16 2018 by eqmule
+- Updated for BETA
+
+Nov 15 2018 by eqmule
+- Updated for BETA
+
+Nov 14 2018 by eqmule
+- Updated for LIVE
+- Updated for BETA
+
+Nov 13 2018 by SwiftyMUSE
+- Updated ROF2EMU build to bring to current.
+- Fixed a GetItemLinkHash crash on BETA.
+
+Nov 13 2018 by eqmule
+- Updated for BETA
+- Updated InvSlotMgr for TEST and BETA it has 0x900 slots now.
+  This means /itemnotify in <pack#> <slot#> rightmouseup will work again.
+- FirstFreeSlot now returns -1 if no freeslot is found.
+- FirstFreeSlot returns 0-whatever, it does NOT start counting on 1 anymore.
+  This means: if it return 0 the FIRST slot is in fact empty.
+  if it returns 1 the SECOND slot is in fact empty, etc.
+  We do this because in real life, from a coders perpective, arrays start at 0. not 1.
+  and, thats just the way it should be.
+
+Nov 12 2018 by eqmule
+- Updated for BETA
+- Added LoreEquipped, Luck, MinLuck and MaxLuck to the itemtype tlo for BETA
+- Added some more fixes to /caption anon for spawn corpses etc - chatwiththisname
+
+Nov 11 2018 by eqmule
+- Updated for BETA
+
+Nov 10 2018 by eqmule
+- Updated for BETA
+
+Nov 09 2018 by eqmule
+- Fixed a /endmacro crash in the LIVE build
+- Fixed a /endmacro crash in the TEST build
+- Fixed a /endmacro crash in the BETA build
+- Fixed ITEMINFO wrong size crash for TEST
+- Updated for BETA
+
+Nov 08 2018 by eqmule
+- MQ2TargetInfo has been updated.
+  You can now set UsePerCharSettings=1 if you want that in MQ2TargetInfo.ini.
+  0 is default and means it reads settings from the [Default] section.
+  I realized that having per char settings is cumbersome if you have A LOT of chars.
+  The buttons on the groupwindow will only show when you are in a group now.
+  Except the Hotbutton which will always show unless you change its show/hide setting. see /groupinfo help for more info.
+- Added a tooltip for /groupinfo help on the main groupwindow.
+- Fixed a bug in mq2targetinfo which would cause the groupwindow hotbutton "hitbox" to overlap the disband button making it difficult to click.
+- Added CheckMenu items for showing/hiding the groupinfo buttons to the rightclick group window menu.
+-
+- Updated for TEST
+- Updated for BETA
+- GLOBAL gMacroPause is gone now. Use gMacroBlock->Paused instead.
+
+Nov 07 2018 by eqmule
+- Updated for BETA
+- FirstFreeSlot now returns 0 if there is no free slot found
+
+Nov 06 2018 by eqmule & SwiftyMUSE
+- Updated for BETA
+- Brought ROF2 client in sync with current source.
+
+Nov 05 2018 by eqmule & SwiftyMUSE
+- Updated for BETA
+- Even More Stuff
+
+Nov 04 2018 by eqmule & SwiftyMUSE
+- Updated for BETA
+- More Stuff
+
+Nov 03 2018 by eqmule & SwiftyMUSE
+- Updated for BETA
+- Stuff
+
+Nov 02 2018 by SwiftyMUSE
+- Updated Charinfo structure to add luck.
+- Updated MQ2TargetInfo to remove compile warnings.
+
+Nov 02 2018 by eqmule
+- Updated for BETA
+
+Nov 01 2018 by eqmule
+- Updated for BETA
+
+Oct 29 2018 by eqmule
+- Updated for TEST (and LIVE)
+- If you have been crashing I strongly recommend you update to this version.
+- Fixed IsStackBlocked call that would corrupt the stack and lead to crashes in mq2melee etc - thanks htw for help looking into it.
+- Fixed multiple problems with CHARINFO and CHARINFO2 that would cause a rare crash.
+
+Oct 27 2018 by eqmule
+- Added ${EverQuest.HWND} returns the everquest window handle.
+- Added /foreground command it puts eq in the foreground.
+  Usage: /bct <toon> //foreground
+- Added a "Switch to..." menu item to the groupwindow rightclick menu, It will switch over to another group member easily.
+  This menu only exist if mq2targetinfo is loaded.
+- Fixed a ${Merchant.SelectItem[=blah blah]} bug, it should work properly now.
+
+Oct 26 2018 by SwiftyMUSE
+- Added debugging logic for stacks.
+    Add BuffStackTestDebug=1 to your [MacroQuest] section of MacroQuest.ini
+    to allow debugging information to be put in the log file for review by
+    the developers.
+
+Oct 26 2018 by eqmule
+- Previously Added: ${Merchant.ItemsReceived} its true if the merchants itemlist has been filled in.
+-
+- Fixed a issue that prevented isboxer from launching eqgame processes without them crashing.
+- Added a /groupinfo command to hide/show buttons on the group window
+  Usage: /groupinfo help
+- GroupWindow Button locations are now configurable in mq2targetinfo.ini
+  plugin unload and reload is needed if you change button locations.
+
+Oct 25 2018 by eqmule && Chatwiththisname
+- Updated for LIVE
+- Fixed /selectitem it selects items in your inventory when you have a merchant open.
+  Usage: /selectitem "bottle of" will select a "bottle of vinegar" you can also do "=bottle of vinegar" to match EXACT name (its not case sensitive though)
+- Added Methods to the Merchant TLO: .SelectItem .Buy .Sell .OpenWindow
+  Usage:
+  /invoke ${Merchant.OpenWindow} //will open the merchant closest to you, or if you have a merchant target, that mrchant
+  /invoke ${Merchant.Selectitem[bottle of]} for a partial match OR ${Merchant.Selectitem[=bottle of vinegar]} if you need the name to match EXACTLY (its not case sensitive though)
+  /invoke ${Merchant.Buy[100]} //buys 100 of whatever is selected with Merchant.SelectItem[blah]
+  /invoke ${Merchant.Sell[100]} //sells 100 of whatever is selected with /selectitem
+- Fixed /caption anon - Chatwiththisname
+- Added Anon Caption string to ini file - Chatwiththisname
+- Added command /caption reload to reread the ini on the fly - Chatwiththisname
+
+Oct 23 2018 by eqmule
+- MQ2TargetInfo is now part of Core.
+
 Oct 22 2018 by eqmule
 - Added some more good stuff to mq2targetinfo
 - Fixed clicking playername in group window.

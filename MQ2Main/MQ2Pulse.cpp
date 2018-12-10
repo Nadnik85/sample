@@ -47,7 +47,7 @@ int ci_find_substr( const T& str1, const char* charin, const std::locale& loc = 
     else return -1; // not found
 }
 
-BOOL DoNextCommand()
+BOOL DoNextCommand(PMACROBLOCK pBlock)
 {
 	if (!ppCharSpawn || !pCharSpawn) return FALSE;
 	PSPAWNINFO pCharOrMount = NULL;
@@ -74,63 +74,68 @@ BOOL DoNextCommand()
 			gDelay = 0;
 		}
 	}
-	if (!gDelay && !gMacroPause && (!gMQPauseOnChat || *EQADDR_NOTINCHATMODE) && gMacroBlock && gMacroStack) {
-		MACROLINE ml = gMacroBlock->Line[gMacroBlock->CurrIndex];
-		if (gMacroBlock->BindStackIndex == gMacroBlock->CurrIndex) {
-			//WriteChatf("Ending Bind @ %d %s",gMacroBlock->CurrIndex,ml.Command.c_str());
+	if (!gDelay && pBlock && !pBlock->Paused && (!gMQPauseOnChat || *EQADDR_NOTINCHATMODE) && gMacroStack) {
+		MACROLINE ml = pBlock->Line[pBlock->CurrIndex];
+		if (pBlock->BindStackIndex == pBlock->CurrIndex) {
+			//WriteChatf("Ending Bind @ %d %s",pBlock->CurrIndex,ml.Command.c_str());
 			gBindInProgress = false;
-			gMacroBlock->BindStackIndex = -1;
+			pBlock->BindStackIndex = -1;
 		}
-		gMacroStack->LocationIndex = gMacroBlock->CurrIndex;
+		gMacroStack->LocationIndex = pBlock->CurrIndex;
 #ifdef MQ2_PROFILING
 		LARGE_INTEGER BeforeCommand;
 		QueryPerformanceCounter(&BeforeCommand);
-		int ThisMacroBlock = gMacroBlock->CurrIndex;
+		int ThisMacroBlock = pBlock->CurrIndex;
 #endif
 		//CHAR szLine[MAX_STRING];
 		//sprintf_s(szLine, "/SetChatTitle MQ - MacroLine: %d", ml.LineNumber);
 		//EzCommand(szLine);
 		DoCommand(pChar, (PCHAR)ml.Command.c_str());
-		if (gMacroBlock) {
-			if (gMacroBlock->BindCmd.size() && gMacroBlock->BindStackIndex==-1) {
+		PMACROBLOCK pCurrentBlock = GetCurrentMacroBlock();
+		if (pCurrentBlock)
+		{
+			if (pCurrentBlock->BindCmd.size() && pCurrentBlock->BindStackIndex==-1) {
 				if (ci_find_substr(ml.Command, "/varset") == 0 || ci_find_substr(ml.Command, "/echo") == 0 || ci_find_substr(ml.Command, "Sub") == 0 || ci_find_substr(ml.Command, "/call") == 0) {
-					std::map<int, MACROLINE>::iterator i = gMacroBlock->Line.find(gMacroBlock->CurrIndex);
-					if (i != gMacroBlock->Line.end()) {
+					std::map<int, MACROLINE>::iterator i = pCurrentBlock->Line.find(pCurrentBlock->CurrIndex);
+					if (i != pCurrentBlock->Line.end()) {
 						i++;
-						if (i != gMacroBlock->Line.end()) {
-							//WriteChatf("Starting %s @ %d %s", gMacroBlock->BindCmd.c_str(), i->first, i->second.Command.c_str());
-							gMacroBlock->BindStackIndex = i->first;
+						if (i != pCurrentBlock->Line.end()) {
+							//WriteChatf("Starting %s @ %d %s", pBlock->BindCmd.c_str(), i->first, i->second.Command.c_str());
+							pCurrentBlock->BindStackIndex = i->first;
 						}
 						else {
 							FatalError("Reached end of macro.");
 						}
 					}
-					Call(pChar, (PCHAR)gMacroBlock->BindCmd.c_str());
-					gMacroBlock->BindCmd.clear();
+					Call(pChar, (PCHAR)pCurrentBlock->BindCmd.c_str());
+					pCurrentBlock->BindCmd.clear();
 				}
 			}
 #ifdef MQ2_PROFILING
 			LARGE_INTEGER AfterCommand;
 			QueryPerformanceCounter(&AfterCommand);
-			gMacroBlock->Line[ThisMacroBlock].ExecutionCount++;
-			gMacroBlock->Line[ThisMacroBlock].ExecutionTime += AfterCommand.QuadPart - BeforeCommand.QuadPart;
+			pCurrentBlock->Line[ThisMacroBlock].ExecutionCount++;
+			pCurrentBlock->Line[ThisMacroBlock].ExecutionTime += AfterCommand.QuadPart - BeforeCommand.QuadPart;
 #endif
-			int lastindex = gMacroBlock->Line.rbegin()->first;
-			if (gMacroBlock->CurrIndex>lastindex) {
+			int lastindex = pCurrentBlock->Line.rbegin()->first;
+			if (pCurrentBlock->CurrIndex>lastindex) {
 				FatalError("Reached end of macro.");
 			}
 			else {
-				std::map<int, MACROLINE>::iterator i = gMacroBlock->Line.find(gMacroBlock->CurrIndex);
-				if (i != gMacroBlock->Line.end()) {
+				std::map<int, MACROLINE>::iterator i = pCurrentBlock->Line.find(pCurrentBlock->CurrIndex);
+				if (i != pCurrentBlock->Line.end()) {
 					i++;
-					if (i != gMacroBlock->Line.end()) {
-						gMacroBlock->CurrIndex = i->first;
+					if (i != pCurrentBlock->Line.end()) {
+						pCurrentBlock->CurrIndex = i->first;
 					}
 				}
 				else {
 					FatalError("Reached end of macro.");
 				}
 			}
+		}
+		else {
+			return FALSE;
 		}
 		return TRUE;
 	}
@@ -197,7 +202,11 @@ void Pulse()
 {
 	if (!ppCharSpawn || !pCharSpawn) return;
 	PSPAWNINFO pCharOrMount = NULL;
+#ifndef NEWCHARINFO
+	PCHARINFONEW pCharInfoNew = (PCHARINFONEW)GetCharInfo();
+#endif
 	PCHARINFO pCharInfo = GetCharInfo();
+	PCHARINFO2 pCharInfo2 = GetCharInfo2();
 	PSPAWNINFO pChar = pCharOrMount = (PSPAWNINFO)pCharSpawn;
 	if (pCharInfo && pCharInfo->pSpawn) pChar = pCharInfo->pSpawn;
 
@@ -230,6 +239,7 @@ void Pulse()
 		LastMoveTick = MQGetTickCount64();
 		EnviroTarget.Name[0] = 0;
 		pGroundTarget = 0;
+		ZeroMemory(&GroundObject, sizeof(GroundObject));
 		DoorEnviroTarget.Name[0] = 0;
 		DoorEnviroTarget.DisplayedName[0] = 0;
 		pDoorTarget = 0;
@@ -264,7 +274,8 @@ void Pulse()
 	}
 	if (!pTarget)
 		gTargetbuffs = FALSE;
-
+	if (pMerchantWnd && pMerchantWnd->dShow==false)
+		gItemsReceived = FALSE;
 	if (gbDoAutoRun && pChar && pCharInfo) {
 		gbDoAutoRun = FALSE;
 #if !defined(ROF2EMU) && !defined(UFEMU)
@@ -438,8 +449,9 @@ int Heartbeat()
 		delete gDelayedCommands;
 		gDelayedCommands = pNext;
 	}
+	PMACROBLOCK pBlock = GetNextMacroBlock();
 	while (bRunNextCommand) {
-		if (!DoNextCommand())
+		if (!DoNextCommand(pBlock))
 			break;
 		if (gbUnload)
 			return 1;
@@ -542,6 +554,15 @@ public:
 		if (GameState == GAMESTATE_LOGGINGIN) {
 			RemoveLoginPulse();
 		}
+	}
+	VOID CMerchantWnd__PurchasePageHandler__UpdateList_Trampoline();
+	VOID CMerchantWnd__PurchasePageHandler__UpdateList_Detour()
+	{
+		CMerchantWnd*me = (CMerchantWnd*)this;
+		CMerchantWnd*me2 = (CMerchantWnd*)pMerchantWnd;
+		gItemsReceived = FALSE;
+		CMerchantWnd__PurchasePageHandler__UpdateList_Trampoline();
+		gItemsReceived = TRUE;
 	}
 	VOID CTargetWnd__RefreshTargetBuffs_Trampoline(PBYTE);
 	VOID CTargetWnd__RefreshTargetBuffs_Detour(PBYTE buffer)
@@ -651,6 +672,8 @@ DETOUR_TRAMPOLINE_EMPTY(void CEverQuestHook::LoginController__GiveTime_Tramp());
 DETOUR_TRAMPOLINE_EMPTY(VOID CEverQuestHook::EnterZone_Trampoline(PVOID));
 DETOUR_TRAMPOLINE_EMPTY(VOID CEverQuestHook::SetGameState_Trampoline(DWORD));
 DETOUR_TRAMPOLINE_EMPTY(VOID CEverQuestHook::CTargetWnd__RefreshTargetBuffs_Trampoline(PBYTE));
+DETOUR_TRAMPOLINE_EMPTY(VOID CEverQuestHook::CMerchantWnd__PurchasePageHandler__UpdateList_Trampoline());
+
 
 void InitializeMQ2Pulse()
 {
@@ -661,13 +684,16 @@ void InitializeMQ2Pulse()
 	EzDetourwName(ProcessGameEvents, Detour_ProcessGameEvents, Trampoline_ProcessGameEvents,"ProcessGameEvents");
 	EzDetourwName(CEverQuest__EnterZone, &CEverQuestHook::EnterZone_Detour, &CEverQuestHook::EnterZone_Trampoline,"CEverQuest__EnterZone");
 	EzDetourwName(CEverQuest__SetGameState, &CEverQuestHook::SetGameState_Detour, &CEverQuestHook::SetGameState_Trampoline,"CEverQuest__SetGameState");
-	EzDetourwName(CTargetWnd__RefreshTargetBuffs, &CEverQuestHook::CTargetWnd__RefreshTargetBuffs_Detour, &CEverQuestHook::CTargetWnd__RefreshTargetBuffs_Trampoline,"CTargetWnd__RefreshTargetBuffs");
+	EzDetourwName(CTargetWnd__RefreshTargetBuffs, &CEverQuestHook::CTargetWnd__RefreshTargetBuffs_Detour, &CEverQuestHook::CTargetWnd__RefreshTargetBuffs_Trampoline, "CTargetWnd__RefreshTargetBuffs");
+	EzDetourwName(CMerchantWnd__PurchasePageHandler__UpdateList, &CEverQuestHook::CMerchantWnd__PurchasePageHandler__UpdateList_Detour, &CEverQuestHook::CMerchantWnd__PurchasePageHandler__UpdateList_Trampoline,"CMerchantWnd__PurchasePageHandler__UpdateList");
+	
 	InitializeLoginPulse();
 }
 void ShutdownMQ2Pulse()
 {
 	EnterCriticalSection(&gPulseCS);
 	RemoveLoginPulse();
+	RemoveDetour(CMerchantWnd__PurchasePageHandler__UpdateList);
 	RemoveDetour((DWORD)CTargetWnd__RefreshTargetBuffs);
 	RemoveDetour((DWORD)ProcessGameEvents);
 	RemoveDetour(CEverQuest__EnterZone);

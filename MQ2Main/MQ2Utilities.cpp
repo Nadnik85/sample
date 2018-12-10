@@ -85,7 +85,7 @@ VOID DebugSpewAlways(PCHAR szFormat, ...)
 			FILE *fOut = NULL;
 			CHAR Filename[MAX_STRING] = { 0 };
 			sprintf_s(Filename, "%s\\DebugSpew.log", gszLogPath);
-			errno_t err = fopen_s(&fOut,Filename, "at");
+			errno_t err = fopen_s(&fOut, Filename, "at");
 			if (err)
 				return;
 #ifdef DBG_CHARNAME
@@ -101,6 +101,41 @@ VOID DebugSpewAlways(PCHAR szFormat, ...)
 #endif
 			fclose(fOut);
 		}
+		LocalFree(szOutput);
+	}
+}
+VOID DebugSpewAlwaysFile(PCHAR szFormat, ...)
+{
+	va_list vaList;
+	va_start(vaList, szFormat);
+	int len = _vscprintf(szFormat, vaList) + 1;// _vscprintf doesn't count // terminating '\0'  
+	int headerlen = strlen(DebugHeader) + 1;
+	size_t thelen = len + headerlen + 32;
+	if (char *szOutput = (char *)LocalAlloc(LPTR, thelen)) {
+		strcpy_s(szOutput, thelen, DebugHeader " ");
+		vsprintf_s(szOutput + headerlen, thelen - headerlen, szFormat, vaList);
+		strcat_s(szOutput, thelen, "\n");
+		OutputDebugString(szOutput);
+		//if (gSpewToFile) {
+			FILE *fOut = NULL;
+			CHAR Filename[MAX_STRING] = { 0 };
+			sprintf_s(Filename, "%s\\DebugSpew.log", gszLogPath);
+			errno_t err = fopen_s(&fOut, Filename, "at");
+			if (err)
+				return;
+#ifdef DBG_CHARNAME
+			CHAR Name[256] = "Unknown";
+			PCHARINFO pCharInfo = GetCharInfo();
+			if (pCharInfo)
+			{
+				strcpy_s(Name, pCharInfo->Name);
+			}
+			fprintf(fOut, "%s - %s\r\n", Name, szOutput);
+#else
+			fprintf(fOut, "%s\r\n", szOutput);
+#endif
+			fclose(fOut);
+		//}
 		LocalFree(szOutput);
 	}
 }
@@ -1500,21 +1535,30 @@ FLOAT FindSpeed(PSPAWNINFO pSpawn)
 	return fRunSpeed;
 }
 
-VOID GetItemLinkHash(PCONTENTS Item, PCHAR Buffer)
+VOID GetItemLinkHash(PCONTENTS Item, PCHAR Buffer, SIZE_T BufferSize)
 {
-	((EQ_Item*)Item)->CreateItemTagString(Buffer, 0x800);
+#if defined(EQBETA) || defined(TEST)
+	((EQ_Item*)Item)->CreateItemTagString(Buffer, BufferSize, true);
+#else
+	((EQ_Item*)Item)->CreateItemTagString(Buffer, BufferSize);
+#endif
 }
-//
+
 BOOL GetItemLink(PCONTENTS Item, PCHAR Buffer, SIZE_T BufferSize, BOOL Clickable)
 {
 	char hash[MAX_STRING] = { 0 };
 	bool retVal = FALSE;
+#if defined(EQBETA) || defined(TEST)
+	GetItemLinkHash(Item, hash);
+#else
 	((EQ_Item*)Item)->CreateItemTagString(hash, sizeof(hash));
-	if (hash[0]) {
-		if (Clickable)
+#endif
+	if (int len=strlen(hash)) {
+		if (Clickable) {
 			sprintf_s(Buffer, BufferSize, "%c0%s%s%c", 0x12, hash, GetItemFromContents(Item)->Name, 0x12);
-		else
+		} else {
 			sprintf_s(Buffer, BufferSize, "0%s%s", hash, GetItemFromContents(Item)->Name);
+		}
 		retVal = TRUE;
 	}
 	#ifdef _DEBUG
@@ -1928,7 +1972,7 @@ PCHAR GetSpellEffectName(LONG EffectID, PCHAR szBuffer, SIZE_T BufferSize)
 	return szBuffer;
 }
 
-template <unsigned int _Size> PCHAR GetResistTypeName(LONG ResistType, CHAR(&szBuffer)[_Size])
+TS PCHAR GetResistTypeName(LONG ResistType, CHAR(&szBuffer)[_Size])
 {
 	CHAR szTemp[MAX_STRING] = { 0 };
 	switch (ResistType)
@@ -2034,8 +2078,9 @@ TS PCHAR GetStatShortName(LONG StatType, CHAR(&szBuffer)[_Size])
 	return szBuffer;
 }
 
-TS PCHAR GetFactionName(LONG FactionType, CHAR(&szBuffer)[_Size])
+TS PCHAR GetFactionName(LONG FactionID, CHAR(&szBuffer)[_Size])
 {
+	/*
 	CHAR szTemp[MAX_STRING] = { 0 };
 	switch (FactionType)
 	{
@@ -2048,6 +2093,15 @@ TS PCHAR GetFactionName(LONG FactionType, CHAR(&szBuffer)[_Size])
 	default: 
 		sprintf_s(szTemp, "(Unknown[%d])", FactionType);
 		strcat_s(szBuffer, szTemp); break;
+	}
+	*/
+	if ((SIZE_T)FactionID < MAX_FACTIONNAMES) {
+		strcat_s(szBuffer, _Size, szFactionNames[FactionID]);
+	}
+	else {
+		CHAR szTemp[MAX_STRING] = { 0 };
+		sprintf_s(szTemp, "Unknown Faction[%d]", FactionID);
+		strcat_s(szBuffer, _Size, szTemp);
 	}
 	return szBuffer;
 }
@@ -4113,14 +4167,17 @@ PCHAR ShowSpellSlotInfo(PSPELL pSpell, PCHAR szBuffer, SIZE_T BufferSize)
 {
 	CHAR szTemp[MAX_STRING] = { 0 };
 	CHAR szBuff[MAX_STRING] = { 0 };
+	int count = 0;
 	for (int i = 0; i<GetSpellNumEffects(pSpell); i++)
 	{
 		szBuff[0] = szTemp[0] = '\0';
 		strcat_s(szBuff, ParseSpellEffect(pSpell, i, szTemp,sizeof(szTemp)));
-		if (strlen(szBuff)>0) {
+		size_t len = strlen(szBuff);
+		if (len > 0 && count + len < BufferSize) {
 			strcat_s(szBuffer,BufferSize, szBuff);
 			strcat_s(szBuffer,BufferSize, "<br>");
 		}
+		count += len + 4;
 	}
 	return szBuffer;
 }
@@ -4356,7 +4413,7 @@ int FindInvSlotForContents(PCONTENTS pContents)
 
 #if 1
 	PEQINVSLOTMGR pInvMgr = (PEQINVSLOTMGR)pInvSlotMgr;
-	for (unsigned long N = 0; N < 0x800; N++)
+	for (unsigned long N = 0; N < MAX_INV_SLOTS; N++)
 	{
 		class CInvSlot *pCIS = NULL;
 		struct _CONTENTS *pC = NULL;
@@ -4412,7 +4469,7 @@ int FindInvSlot(PCHAR pName, BOOL Exact)
 	_strlwr_s(Name);
 	CHAR szTemp[MAX_STRING] = { 0 };
 	PEQINVSLOTMGR pInvMgr = (PEQINVSLOTMGR)pInvSlotMgr;
-	for (unsigned long N = 0; N < 0x800; N++)
+	for (unsigned long N = 0; N < MAX_INV_SLOTS; N++)
 	{
 		if (pInvMgr->SlotArray[N])
 		{
@@ -4464,7 +4521,7 @@ int FindNextInvSlot(PCHAR pName, BOOL Exact)
 
 #if 0
 	PEQINVSLOTMGR pInvMgr = (PEQINVSLOTMGR)pInvSlotMgr;
-	for (unsigned long N = LastFoundInvSlot + 1; N < 0x800; N++)
+	for (unsigned long N = LastFoundInvSlot + 1; N < MAX_INV_SLOTS; N++)
 	{
 		if (pInvMgr->SlotArray[N])
 		{
@@ -4500,407 +4557,7 @@ int FindNextInvSlot(PCHAR pName, BOOL Exact)
 	LastFoundInvSlot = -1;
 	return -1;
 }
-/*
-BOOL ActualCalculate(PCHAR szFormula, DOUBLE &Result) {
-CHAR Buffer[MAX_STRING] = {0};
-DWORD i = 0, j=0, k=0;
-CHAR Arg[MAX_STRING][100] = {0};
-for (i=0;i<strlen(szFormula);i++) {
-if (szFormula[i] == '(')
-{
-BOOL Quote=false;
-PCHAR pStart=&szFormula[i+1];
-unsigned long nParens=1;
-while(nParens)
-{
-i++;
-if (szFormula[i]==0)
-{
-FatalError("Calculate encountered an unmatched parenthesis");
-return false;
-}
-if (szFormula[i]==')')
-{
-if (!Quote)
-nParens--;
-}
-else if (szFormula[i]=='(')
-{
-if (!Quote)
-nParens++;
-}
-else if (szFormula[i]=='\"')
-{
-Quote=!Quote;
-}
-}
-szFormula[i]=0;
-DOUBLE CalcResult;
-if (ActualCalculate(pStart,CalcResult))
-{
-szFormula[i]=')';
-j+=sprintf_s(&Buffer[j],"%f",CalcResult);
-}
-else
-{
-// error condition would have been reported by the calculate already, dont give another
-szFormula[i]=')';
-return false;
-}
-}
-else
-if (szFormula[i] != ' ')
-Buffer[j++]=szFormula[i];
-}
-Buffer[j]=0;
-j=0;
-k=0;
-for (i=0;Buffer[i];i++) {
-switch (Buffer[i]) {
-case '-':
-if (k==0) {
-Arg[j][k] = Buffer[i];
-k++;
-break;
-}
-case '+':
-case '*':
-case '\\':
-case '/':
-case '%':
-case '^':
-Arg[j+1][0]=Buffer[i];
-j+=2;
-k=0;
-break;
-case '&':
-if (Buffer[i+1]=='&')
-{
-Arg[j+1][0]='a';
-j+=2;
-k=0;
-i++;
-}
-else
-{
-Arg[j+1][0]='&';
-j+=2;
-k=0;
-}
-break;
-case '|':
-if (Buffer[i+1]=='|')
-{
-Arg[j+1][0]='o';
-j+=2;
-k=0;
-i++;
-}
-else
-{
-Arg[j+1][0]='|';
-j+=2;
-k=0;
-}
-break;
-case '!':
-if (Buffer[i+1]=='=')
-{
-Arg[j+1][0]='n';
-j+=2;
-k=0;
-i++;
-}
-else
-{
-Arg[j+1][0]='!';
-j+=2;
-k=0;
-}
-break;
-case '=':
-if (Buffer[i+1]=='=')
-{
-Arg[j+1][0]='=';
-j+=2;
-k=0;
-i++;
-}
-else
-{
-FatalError("Calculate encountered a bad = formation");
-return false;
-}
-break;
-case '>':
-if (Buffer[i+1]=='=')
-{
-Arg[j+1][0]=(char)0xf2;
-j+=2;
-k=0;
-i++;
-}
-else
-{
-Arg[j+1][0]='>';
-j+=2;
-k=0;
-}
-break;
-case '<':
-if (Buffer[i+1]=='=')
-{
-Arg[j+1][0]=(char)0xf3;
-j+=2;
-k=0;
-i++;
-}
-else
-{
-Arg[j+1][0]='<';
-j+=2;
-k=0;
-}
-break;
-case '0':
-case '1':
-case '2':
-case '3':
-case '4':
-case '5':
-case '6':
-case '7':
-case '8':
-case '9':
-case '.':
-Arg[j][k] = Buffer[i];
-k++;
-break;
-case ' ':
-case '²':
-//              GracefullyEndBadMacro(((PCHARINFO)pCharData)->pSpawn,gMacroBlock, "Calculate encountered a unparsed variable '%s'",&(Buffer[i]));
-return false;
-default:
-FatalError("Calculate encountered unparsable text '%s'",&Buffer[i]);
-return false;
-}
-}
-j++;
-//for (i=0;i<j;i++) DebugSpewNoFile("%d. %s",i,Arg[i]);
-for (i=0;i<j;i++) {
-switch (Arg[i][0]) {
-case '!':
-if (i+1==j) {
-FatalError("Calculate encountered a bad %c formation",Arg[i][0]);
-return false;
-}
-i--;
-if (atof(Arg[i+2])!=0.0f)
-{
-strcpy_s(Arg[i],"0");
-}
-else
-strcpy_s(Arg[i],"1");
-if (i==0)
-{
-for (k=i+1;k<j;k++)
-strcpy_s(Arg[k],Arg[k+2]);
-}
-else
-{
-for (k=i+1;k<j;k++)
-strcpy_s(Arg[k],Arg[k+2]);
-}
-j--;
-}
-}
-for (i=0;i<j;i++) {
-switch (Arg[i][0]) {
-case '^':
-if ((i==0) || (i+1==j)) {
-FatalError("Calculate encountered a bad %c formation",Arg[i][0]);
-return false;
-}
-i--;
-sprintf_s(Buffer,"%f",pow(atof(Arg[i]),atof(Arg[i+2])));
-strcpy_s(Arg[i],Buffer);
-j-=2;
-for (k=i+1;k<j;k++) strcpy_s(Arg[k],Arg[k+2]);
-}
-}
-for (i=0;i<j;i++) {
-switch (Arg[i][0]) {
-case '%':
-case '/':
-case '\\':
-case '*':
-if ((i==0) || (i+1==j)) {
-FatalError("Calculate encountered a bad %c formation",Arg[i][0]);
-return false;
-}
-i--;
-switch (Arg[i+1][0]) {
-case '%':
-if (atof(Arg[i+2])==0)
-{
-return false;
-}
-ltoa(atoi(Arg[i])%atol(Arg[i+2]),Buffer,10);
-break;
-case '\\':
-if (atof(Arg[i+2])==0)
-{
-return false;
-}
-ltoa((LONG)(atol(Arg[i])/atol(Arg[i+2])),Buffer,10);
-break;
-case '/':
-if (atof(Arg[i+2])==0)
-{
-return false;
-}
-sprintf_s(Buffer,"%f",(atof(Arg[i])/atof(Arg[i+2])));
-break;
-case '*':
-sprintf_s(Buffer,"%f",(atof(Arg[i])*atof(Arg[i+2])));
-break;
-}
-strcpy_s(Arg[i],Buffer);
-j-=2;
-for (k=i+1;k<j;k++) strcpy_s(Arg[k],Arg[k+2]);
-}
-}
-for (i=0;i<j;i++) {
-switch (Arg[i][0]) {
-case '-':
-if (Arg[i][1] != 0) break;
-case '+':
-if ((i==0) || (i+1==j)) {
-FatalError("Calculate encountered a bad %c formation",Arg[i][0]);
-return false;
-}
-i--;
-switch (Arg[i+1][0]) {
-case '+':
-sprintf_s(Buffer,"%f",(atof(Arg[i])+atof(Arg[i+2])));
-break;
-case '-':
-sprintf_s(Buffer,"%f",(atof(Arg[i])-atof(Arg[i+2])));
-break;
-}
-strcpy_s(Arg[i],Buffer);
-j-=2;
-for (k=i+1;k<j;k++) strcpy_s(Arg[k],Arg[k+2]);
-}
-}
-for (i=0;i<j;i++) {
-switch ((UCHAR)Arg[i][0]) {
-case 'n':
-case '<':
-case '>':
-case '=':
-case 0xf2:
-case 0xf3:
-if ((i==0) || (i+1==j)) {
-FatalError("Calculate encountered a bad %c formation",Arg[i][0]);
-return false;
-}
-i--;
-switch ((UCHAR)Arg[i+1][0]) {
-case '<':
-sprintf_s(Buffer,"%d",atof(Arg[i])<atof(Arg[i+2]));
-break;
-case '>':
-sprintf_s(Buffer,"%d",atof(Arg[i])>atof(Arg[i+2]));
-break;
-case 'n':
-sprintf_s(Buffer,"%d",atof(Arg[i])!=atof(Arg[i+2]));
-break;
-case '=':
-sprintf_s(Buffer,"%d",atof(Arg[i])==atof(Arg[i+2]));
-break;
-case 0xf2:
-sprintf_s(Buffer,"%d",atof(Arg[i])>=atof(Arg[i+2]));
-break;
-case 0xf3:
-sprintf_s(Buffer,"%d",atof(Arg[i])<=atof(Arg[i+2]));
-break;
-}
-strcpy_s(Arg[i],Buffer);
-j-=2;
-for (k=i+1;k<j;k++) strcpy_s(Arg[k],Arg[k+2]);
-}
-}
 
-for (i=0;i<j;i++) {
-switch (Arg[i][0]) {
-case '&':
-case '|':
-if ((i==0) || (i+1==j)) {
-FatalError("Calculate encountered a bad %c formation",Arg[i][0]);
-return false;
-}
-i--;
-switch (Arg[i+1][0]) {
-case '&':
-sprintf_s(Buffer,"%d",atol(Arg[i])&atol(Arg[i+2]));
-break;
-case '|':
-sprintf_s(Buffer,"%d",atol(Arg[i])|atol(Arg[i+2]));
-break;
-}
-strcpy_s(Arg[i],Buffer);
-j-=2;
-for (k=i+1;k<j;k++) strcpy_s(Arg[k],Arg[k+2]);
-}
-}
-
-for (i=0;i<j;i++) {
-switch (Arg[i][0]) {
-case 'a':
-case 'o':
-if ((i==0) || (i+1==j)) {
-FatalError("Calculate encountered a bad %c formation",Arg[i][0]);
-return false;
-}
-i--;
-switch (Arg[i+1][0]) {
-case 'a':
-{
-FLOAT A=(FLOAT)atof(Arg[i]);
-FLOAT B=(FLOAT)atof(Arg[i+2]);
-if ((A&&B)==0)
-{
-Result=0;
-return true;
-}
-strcpy_s(Buffer,"1"); // if its not zero ,it must be 1 ;)
-//                        sprintf_s(Buffer,"%d",atof(Arg[i])&&atof(Arg[i+2]));
-}
-break;
-case 'o':
-{
-FLOAT A=(FLOAT)atof(Arg[i]);
-FLOAT B=(FLOAT)atof(Arg[i+2]);
-if ((A||B)==1)
-{
-Result=1;
-return true;
-}
-strcpy_s(Buffer,"0"); // if its not 1,it must be 0!
-//                            sprintf_s(Buffer,"%d",atof(Arg[i])||atof(Arg[i+2]));
-}
-break;
-}
-strcpy_s(Arg[i],Buffer);
-j-=2;
-for (k=i+1;k<j;k++) strcpy_s(Arg[k],Arg[k+2]);
-}
-}
-Result=atof(Arg[0]);
-return true;
-}
-/**/
 #ifndef ISXEQ
 enum eCalcOp
 {
@@ -7114,6 +6771,8 @@ VOID RewriteSubstitutions(VOID)
 PCHAR GetFriendlyNameForGroundItem(PGROUNDITEM pItem, PCHAR szName, SIZE_T BufferSize)
 {
 	szName[0] = 0;
+	if (!pItem)
+		return &szName[0];
 	DWORD Item = atoi(pItem->Name + 2);
 	struct _actordefentry *ptr = MQ2Globals::ActorDefList;
 	while (ptr->Def) {
@@ -7432,17 +7091,17 @@ BOOL BuffStackTest(PSPELL aSpell, PSPELL bSpell, BOOL bIgnoreTriggeringEffects, 
 	if (aSpell->ID == bSpell->ID)
 		return true;
 
-	//CHAR szEcho[MAX_STRING] = { 0 };
-	//snprintf(szEcho, sizeof(szEcho), "aSpell->Name=%s(%d) bSpell->Name=%s(%d)", aSpell->Name, aSpell->ID, bSpell->Name, bSpell->ID);
-	//WriteChatColor(szEcho, USERCOLOR_CHAT_CHANNEL);
+	if (gStackingDebug) {
+		CHAR szStackingDebug[MAX_STRING] = { 0 };
+		snprintf(szStackingDebug, sizeof(szStackingDebug), "aSpell->Name=%s(%d) bSpell->Name=%s(%d)", aSpell->Name, aSpell->ID, bSpell->Name, bSpell->ID);
+		DebugSpewAlwaysFile("%s", szStackingDebug);
+		if (gStackingDebug == -1)
+			WriteChatColor(szStackingDebug, USERCOLOR_CHAT_CHANNEL);
+	}
 
 	EQ_Affect eff;
 	eff.ID = bSpell->ID;
-	#if !defined(ROF2EMU) && !defined(UFEMU) && !defined(TEST)
-	bool bItWillNotStack = ((CharacterZoneClient*)pCharData1)->IsStackBlocked((EQ_Spell*)aSpell, (CharacterZoneClient*)pCharData1, &eff, 1, false);
-	#else
 	bool bItWillNotStack = ((CharacterZoneClient*)pCharData1)->IsStackBlocked((EQ_Spell*)aSpell, (CharacterZoneClient*)pCharData1, &eff, 1);
-	#endif
 	if (bItWillNotStack) {
 		Sleep(0);
 		//WriteChatf("EQ Client says spell is BLOCKED");
@@ -7472,22 +7131,43 @@ BOOL BuffStackTest(PSPELL aSpell, PSPELL bSpell, BOOL bIgnoreTriggeringEffects, 
 			bBase = GetSpellBase(bSpell, i);
 			bBase2 = GetSpellBase2(bSpell, i);
 		}
-		//WriteChatf("Slot %d: bSpell->Attrib=%d, bSpell->Base=%d, bSpell->TargetType=%d, aSpell->Attrib=%d, aSpell->Base=%d, aSpell->TargetType=%d", i, bAttrib, bBase, bSpell->TargetType, aAttrib, aBase, aSpell->TargetType);
+		if (gStackingDebug) {
+			CHAR szStackingDebug[MAX_STRING] = { 0 };
+			snprintf(szStackingDebug, sizeof(szStackingDebug), "Slot %d: bSpell->Attrib=%d, bSpell->Base=%d, bSpell->TargetType=%d, aSpell->Attrib=%d, aSpell->Base=%d, aSpell->TargetType=%d", i, bAttrib, bBase, bSpell->TargetType, aAttrib, aBase, aSpell->TargetType);
+			DebugSpewAlwaysFile("%s", szStackingDebug);
+			if (gStackingDebug == -1)
+				WriteChatColor(szStackingDebug, USERCOLOR_CHAT_CHANNEL);
+		}
 		BOOL bTriggerA = TriggeringEffectSpell(aSpell, i);
 		BOOL bTriggerB = TriggeringEffectSpell(bSpell, i);
 		if (bTriggerA || bTriggerB) {
 			PSPELL pRetSpellA = GetSpellByID(bTriggerA ? (aAttrib == 374 ? aBase2 : aBase) : aSpell->ID);
 			PSPELL pRetSpellB = GetSpellByID(bTriggerB ? (bAttrib == 374 ? bBase2 : bBase) : bSpell->ID);
-			//if (!pRetSpellA || !pRetSpellB)
-			//	WriteChatf("BuffStackTest ERROR: aSpell[%d]:%s%s, bSpell[%d]:%s%s", aSpell->ID, aSpell->Name, pRetSpellA ? "" : "is null", bSpell->ID, bSpell->Name, pRetSpellB ? "" : "is null");
+			if (!pRetSpellA || !pRetSpellB)
+				if (gStackingDebug) {
+					CHAR szStackingDebug[MAX_STRING] = { 0 };
+					snprintf(szStackingDebug, sizeof(szStackingDebug), "BuffStackTest ERROR: aSpell[%d]:%s%s, bSpell[%d]:%s%s", aSpell->ID, aSpell->Name, pRetSpellA ? "" : "is null", bSpell->ID, bSpell->Name, pRetSpellB ? "" : "is null");
+					DebugSpewAlwaysFile("%s", szStackingDebug);
+					if (gStackingDebug == -1)
+						WriteChatColor(szStackingDebug, USERCOLOR_CHAT_CHANNEL);
+				}
 			if (!((bTriggerA && (aSpell->ID == pRetSpellA->ID)) || (bTriggerB && (bSpell->ID == pRetSpellB->ID)))) {
 				if (!BuffStackTest(pRetSpellA, pRetSpellB, bIgnoreTriggeringEffects, true)) {
+					if (gStackingDebug) {
+						DebugSpewAlwaysFile("returning FALSE #1");
+						if (gStackingDebug == -1)
+							WriteChatColor("returning FALSE #1", USERCOLOR_CHAT_CHANNEL);
+					}
 					return false;
 				}
 			}
 		}
 		if (bAttrib == aAttrib && !SpellEffectTest(aSpell, bSpell, i, bIgnoreTriggeringEffects, bTriggeredEffectCheck)) {
-			//WriteChatf("Inside IF");
+			if (gStackingDebug) {
+				DebugSpewAlwaysFile("Inside IF");
+				if (gStackingDebug == -1)
+					WriteChatColor("Inside IF", USERCOLOR_CHAT_CHANNEL);
+			}
 //			if (aAttrib == 55 && bAttrib == 55) {	//Mitigate Melee Damage
 //				return (aBase >= bBase);
 //			}
@@ -7500,7 +7180,11 @@ BOOL BuffStackTest(PSPELL aSpell, PSPELL bSpell, BOOL bIgnoreTriggeringEffects, 
 				(aAttrib == 0 && aBase < 0) ||
 				(bAttrib == 148 || bAttrib == 149) ||
 				(aAttrib == 148 || aAttrib == 149))) {
-				//WriteChatf("returning FALSE #1");
+				if (gStackingDebug) {
+					DebugSpewAlwaysFile("returning FALSE #2");
+					if (gStackingDebug == -1)
+						WriteChatColor("returning FALSE #2", USERCOLOR_CHAT_CHANNEL);
+				}
 				return false;
 			}
 		}
@@ -7512,16 +7196,30 @@ BOOL BuffStackTest(PSPELL aSpell, PSPELL bSpell, BOOL bIgnoreTriggeringEffects, 
 			int tmpSlot = (bAttrib == 148 ? bBase2 - 1 : GetSpellCalc(bSpell, i) - 200 - 1);
 			int tmpAttrib = bBase;
 			if (GetSpellNumEffects(aSpell) > tmpSlot) { // verify aSpell has that slot
-				//WriteChatf("aSpell->Attrib[%d]=%d, aSpell->Base[%d]=%d, tmpAttrib=%d, tmpVal=%d", tmpSlot, GetSpellAttrib(aSpell, tmpSlot), tmpSlot, GetSpellBase(aSpell, tmpSlot), tmpAttrib, abs(GetSpellMax(bSpell, i)));
+				if (gStackingDebug) {
+					CHAR szStackingDebug[MAX_STRING] = { 0 };
+					snprintf(szStackingDebug, sizeof(szStackingDebug), "aSpell->Attrib[%d]=%d, aSpell->Base[%d]=%d, tmpAttrib=%d, tmpVal=%d", tmpSlot, GetSpellAttrib(aSpell, tmpSlot), tmpSlot, GetSpellBase(aSpell, tmpSlot), tmpAttrib, abs(GetSpellMax(bSpell, i)));
+					DebugSpewAlwaysFile("%s", szStackingDebug);
+					if (gStackingDebug == -1)
+						WriteChatColor(szStackingDebug, USERCOLOR_CHAT_CHANNEL);
+				}
 				if (GetSpellMax(bSpell, i) > 0) {
 					int tmpVal = abs(GetSpellMax(bSpell, i));
 					if (GetSpellAttrib(aSpell, tmpSlot) == tmpAttrib && GetSpellBase(aSpell, tmpSlot) < tmpVal) {
-						//WriteChatf("returning FALSE #2");
+						if (gStackingDebug) {
+							DebugSpewAlwaysFile("returning FALSE #3");
+							if (gStackingDebug == -1)
+								WriteChatColor("returning FALSE #3", USERCOLOR_CHAT_CHANNEL);
+						}
 						return false;
 					}
 				}
 				else if (GetSpellAttrib(aSpell, tmpSlot) == tmpAttrib) {
-					//WriteChatf("returning FALSE #3");
+					if (gStackingDebug) {
+						DebugSpewAlwaysFile("returning FALSE #4");
+						if (gStackingDebug == -1)
+							WriteChatColor("returning FALSE #4", USERCOLOR_CHAT_CHANNEL);
+					}
 					return false;
 				}
 			}
@@ -7536,23 +7234,41 @@ BOOL BuffStackTest(PSPELL aSpell, PSPELL bSpell, BOOL bIgnoreTriggeringEffects, 
 			int tmpSlot = (aAttrib == 148 ? aBase2 - 1 : GetSpellCalc(aSpell, i) - 200 - 1);
 			int tmpAttrib = aBase;
 			if (GetSpellNumEffects(bSpell) > tmpSlot) { // verify bSpell has that slot
-				//WriteChatf("bSpell->Attrib[%d]=%d, bSpell->Base[%d]=%d, tmpAttrib=%d, tmpVal=%d", tmpSlot, GetSpellAttrib(bSpell, tmpSlot), tmpSlot, GetSpellBase(bSpell, tmpSlot), tmpAttrib, abs(GetSpellMax(aSpell, i)));
+				if (gStackingDebug) {
+					CHAR szStackingDebug[MAX_STRING] = { 0 };
+					snprintf(szStackingDebug, sizeof(szStackingDebug), "bSpell->Attrib[%d]=%d, bSpell->Base[%d]=%d, tmpAttrib=%d, tmpVal=%d", tmpSlot, GetSpellAttrib(bSpell, tmpSlot), tmpSlot, GetSpellBase(bSpell, tmpSlot), tmpAttrib, abs(GetSpellMax(aSpell, i)));
+					DebugSpewAlwaysFile("%s", szStackingDebug);
+					if (gStackingDebug == -1)
+						WriteChatColor(szStackingDebug, USERCOLOR_CHAT_CHANNEL);
+				}
 				if (GetSpellMax(aSpell, i) > 0) {
 					int tmpVal = abs(GetSpellMax(aSpell, i));
 					if (GetSpellAttrib(bSpell, tmpSlot) == tmpAttrib && GetSpellBase(bSpell, tmpSlot) < tmpVal) {
-						//WriteChatf("returning FALSE #4");
+						if (gStackingDebug) {
+							DebugSpewAlwaysFile("returning FALSE #5");
+							if (gStackingDebug == -1)
+								WriteChatColor("returning FALSE #5", USERCOLOR_CHAT_CHANNEL);
+						}
 						return false;
 					}
 				}
 				else if (GetSpellAttrib(bSpell, tmpSlot) == tmpAttrib) {
-					//WriteChatf("returning FALSE #5");
+					if (gStackingDebug) {
+						DebugSpewAlwaysFile("returning FALSE #6");
+						if (gStackingDebug == -1)
+							WriteChatColor("returning FALSE #6", USERCOLOR_CHAT_CHANNEL);
+					}
 					return false;
 				}
 			}
 		}
 		*/
 	}
-	//WriteChatf("returning TRUE");
+	if (gStackingDebug) {
+		DebugSpewAlwaysFile("returning TRUE");
+		if (gStackingDebug == -1)
+			WriteChatColor("returning TRUE", USERCOLOR_CHAT_CHANNEL);
+	}
 	return true;
 }
 
@@ -7645,7 +7361,7 @@ float GetMeleeRange(class EQPlayer *pSpawn1, class EQPlayer *pSpawn2)
 DWORD GetSpellGemTimer(DWORD nGem)
 {
 	_EQCASTSPELLGEM *g = ((PEQCASTSPELLWINDOW)pCastSpellWnd)->SpellSlots[nGem];
-#if !defined(UFEMU)//todo: check manually for uf
+#if !defined(UFEMU)//todo: check manually
 	if (g->Wnd.CoolDownBeginTime) {
 		return g->Wnd.CoolDownBeginTime + g->Wnd.CoolDownDuration - EQGetTime();
 	}
@@ -7814,9 +7530,15 @@ PCONTENTS FindItemBySlot(short InvSlot, short BagSlot, ItemContainerInstance loc
 	else if (location == eItemContainerBank) {
 		//check bank
 		PCHARINFO pChar = GetCharInfo();
+#ifdef NEWCHARINFO
+		if (pChar) {
+			for (unsigned long nSlot = 0; nSlot < pChar->BankItems.Items.Size; nSlot++) {
+				if (PCONTENTS pItem = pChar->BankItems.Items[nSlot].pObject) {
+#else
 		if (pChar && pChar->pBankArray && pChar->pBankArray->Bank) {
 			for (unsigned long nSlot = 0; nSlot < NUM_BANK_SLOTS; nSlot++) {
 				if (PCONTENTS pItem = pChar->pBankArray->Bank[nSlot]) {
+#endif
 					if (pItem->GetGlobalIndex().Index.Slot1 == InvSlot && pItem->GetGlobalIndex().Index.Slot2 == BagSlot) {
 						return pItem;
 					}
@@ -7824,9 +7546,15 @@ PCONTENTS FindItemBySlot(short InvSlot, short BagSlot, ItemContainerInstance loc
 			}
 		}
 		//not found? ok check inside bank bags
+#ifdef NEWCHARINFO
+		if (pChar) {
+			for (unsigned long nPack = 0; nPack < pChar->BankItems.Items.Size; nPack++) {
+				if (PCONTENTS pPack = pChar->BankItems.Items[nPack].pObject) {
+#else
 		if (pChar && pChar->pBankArray && pChar->pBankArray->Bank) {
 			for (unsigned long nPack = 0; nPack < NUM_BANK_SLOTS; nPack++) {
 				if (PCONTENTS pPack = pChar->pBankArray->Bank[nPack]) {
+#endif
 					if (GetItemFromContents(pPack)->Type == ITEMTYPE_PACK && pPack->Contents.ContainedItems.pItems) {
 						for (unsigned long nItem = 0; nItem < GetItemFromContents(pPack)->Slots; nItem++) {
 							if (PCONTENTS pItem = pPack->GetContent(nItem)) {
@@ -7843,9 +7571,15 @@ PCONTENTS FindItemBySlot(short InvSlot, short BagSlot, ItemContainerInstance loc
 	else if (location == eItemContainerSharedBank) {
 		PCHARINFO pChar = GetCharInfo();
 		//what? still not found? ok fine, check shared bank
+#ifdef NEWCHARINFO
+		if (pChar) {
+			for (unsigned long nSlot = 0; nSlot < pChar->SharedBankItems.Items.Size; nSlot++) {
+				if (PCONTENTS pItem = pChar->SharedBankItems.Items[nSlot].pObject) {
+#else
 		if (pChar && pChar->pSharedBankArray && pChar->pSharedBankArray->SharedBank) {
 			for (unsigned long nSlot = 0; nSlot < NUM_SHAREDBANK_SLOTS; nSlot++) {
 				if (PCONTENTS pItem = pChar->pSharedBankArray->SharedBank[nSlot]) {
+#endif
 					if (pItem->GetGlobalIndex().Index.Slot1 == InvSlot && pItem->GetGlobalIndex().Index.Slot2 == BagSlot) {
 						return pItem;
 					}
@@ -7853,9 +7587,15 @@ PCONTENTS FindItemBySlot(short InvSlot, short BagSlot, ItemContainerInstance loc
 			}
 		}
 		//not found? ok check inside sharedbank bags
+#ifdef NEWCHARINFO
+		if (pChar) {
+			for (unsigned long nPack = 0; nPack < pChar->SharedBankItems.Items.Size; nPack++) {
+				if (PCONTENTS pPack = pChar->SharedBankItems.Items[nPack].pObject) {
+#else
 		if (pChar && pChar->pSharedBankArray && pChar->pSharedBankArray->SharedBank) {
 			for (unsigned long nPack = 0; nPack < NUM_SHAREDBANK_SLOTS; nPack++) {
 				if (PCONTENTS pPack = pChar->pSharedBankArray->SharedBank[nPack]) {
+#endif
 					if (GetItemFromContents(pPack)->Type == ITEMTYPE_PACK && pPack->Contents.ContainedItems.pItems) {
 						for (unsigned long nItem = 0; nItem < GetItemFromContents(pPack)->Slots; nItem++) {
 							if (PCONTENTS pItem = pPack->GetContent(nItem)) {
@@ -8051,9 +7791,15 @@ PCONTENTS FindItemByName(PCHAR pName, BOOL bExact)
 #if !defined(ROF2EMU) && !defined(UFEMU)
 	//still not found? fine... check mount keyring
 	PCHARINFO pChar = GetCharInfo();
+#ifdef NEWCHARINFO
+	if (pChar) {
+		for (unsigned long nSlot = 0; nSlot < pChar->MountKeyRingItems.Items.Size; nSlot++) {
+			if (PCONTENTS pItem = pChar->MountKeyRingItems.Items[nSlot].pObject) {
+#else
 	if (pChar && pChar->pMountsArray && pChar->pMountsArray->Mounts) {
 		for (unsigned long nSlot = 0; nSlot < MAX_KEYRINGITEMS; nSlot++) {
 			if (PCONTENTS pItem = pChar->pMountsArray->Mounts[nSlot]) {
+#endif
 				if (bExact) {
 					if (!_stricmp(Name, GetItemFromContents(pItem)->Name)) {
 						return pItem;
@@ -8071,9 +7817,15 @@ PCONTENTS FindItemByName(PCHAR pName, BOOL bExact)
 	}
 
 	//still not found? fine... check illusions keyring
+#ifdef NEWCHARINFO
+	if (pChar) {
+		for (unsigned long nSlot = 0; nSlot < pChar->IllusionKeyRingItems.Items.Size; nSlot++) {
+			if (PCONTENTS pItem = pChar->IllusionKeyRingItems.Items[nSlot].pObject) {
+#else
 	if (pChar && pChar->pIllusionsArray && pChar->pIllusionsArray->Illusions) {
 		for (unsigned long nSlot = 0; nSlot < MAX_KEYRINGITEMS; nSlot++) {
 			if (PCONTENTS pItem = pChar->pIllusionsArray->Illusions[nSlot]) {
+#endif
 				if (bExact) {
 					if (!_stricmp(Name, GetItemFromContents(pItem)->Name)) {
 						return pItem;
@@ -8091,9 +7843,15 @@ PCONTENTS FindItemByName(PCHAR pName, BOOL bExact)
 	}
 
 	//still not found? fine... check familiars keyring
+#ifdef NEWCHARINFO
+	if (pChar) {
+		for (unsigned long nSlot = 0; nSlot < pChar->FamiliarKeyRingItems.Items.Size; nSlot++) {
+			if (PCONTENTS pItem = pChar->FamiliarKeyRingItems.Items[nSlot].pObject) {
+#else
 	if (pChar && pChar->pFamiliarArray && pChar->pFamiliarArray->Familiars) {
 		for (unsigned long nSlot = 0; nSlot < MAX_KEYRINGITEMS; nSlot++) {
 			if (PCONTENTS pItem = pChar->pFamiliarArray->Familiars[nSlot]) {
+#endif
 				if (bExact) {
 					if (!_stricmp(Name, GetItemFromContents(pItem)->Name)) {
 						return pItem;
@@ -8207,9 +7965,15 @@ PCONTENTS FindItemByID(int ItemID)
 #if !defined(ROF2EMU) && !defined(UFEMU)
 	PCHARINFO pChar = GetCharInfo();
 	//still not found? fine... check mount keyring
+#ifdef NEWCHARINFO
+	if (pChar) {
+		for (unsigned long nSlot = 0; nSlot < pChar->MountKeyRingItems.Items.Size; nSlot++) {
+			if (PCONTENTS pItem = pChar->MountKeyRingItems.Items[nSlot].pObject) {
+#else
 	if (pChar && pChar->pMountsArray && pChar->pMountsArray->Mounts) {
 		for (unsigned long nSlot = 0; nSlot < MAX_KEYRINGITEMS; nSlot++) {
 			if (PCONTENTS pItem = pChar->pMountsArray->Mounts[nSlot]) {
+#endif
 				if (ItemID == GetItemFromContents(pItem)->ItemNumber) {
 					return pItem;
 				}
@@ -8218,9 +7982,15 @@ PCONTENTS FindItemByID(int ItemID)
 	}
 
 	//still not found? fine... check illusions keyring
+#ifdef NEWCHARINFO
+	if (pChar) {
+		for (unsigned long nSlot = 0; nSlot < pChar->IllusionKeyRingItems.Items.Size; nSlot++) {
+			if (PCONTENTS pItem = pChar->IllusionKeyRingItems.Items[nSlot].pObject) {
+#else
 	if (pChar && pChar->pIllusionsArray && pChar->pIllusionsArray->Illusions) {
 		for (unsigned long nSlot = 0; nSlot < MAX_KEYRINGITEMS; nSlot++) {
 			if (PCONTENTS pItem = pChar->pIllusionsArray->Illusions[nSlot]) {
+#endif
 				if (ItemID == GetItemFromContents(pItem)->ItemNumber) {
 					return pItem;
 				}
@@ -8229,9 +7999,15 @@ PCONTENTS FindItemByID(int ItemID)
 	}
 
 	//still not found? fine... check familiars keyring
+#ifdef NEWCHARINFO
+	if (pChar) {
+		for (unsigned long nSlot = 0; nSlot < pChar->FamiliarKeyRingItems.Items.Size; nSlot++) {
+			if (PCONTENTS pItem = pChar->FamiliarKeyRingItems.Items[nSlot].pObject) {
+#else
 	if (pChar && pChar->pFamiliarArray && pChar->pFamiliarArray->Familiars) {
 		for (unsigned long nSlot = 0; nSlot < MAX_KEYRINGITEMS; nSlot++) {
 			if (PCONTENTS pItem = pChar->pFamiliarArray->Familiars[nSlot]) {
+#endif
 				if (ItemID == GetItemFromContents(pItem)->ItemNumber) {
 					return pItem;
 				}
@@ -8462,9 +8238,15 @@ DWORD FindItemCountByName(PCHAR pName, BOOL bExact)
 #if !defined(ROF2EMU) && !defined(UFEMU)
 	//still not found? fine... check mount keyring
 	PCHARINFO pChar = GetCharInfo();
+#ifdef NEWCHARINFO
+	if (pChar) {
+		for (unsigned long nSlot = 0; nSlot < pChar->MountKeyRingItems.Items.Size; nSlot++) {
+			if (PCONTENTS pItem = pChar->MountKeyRingItems.Items[nSlot].pObject) {
+#else
 	if (pChar && pChar->pMountsArray && pChar->pMountsArray->Mounts) {
 		for (unsigned long nSlot = 0; nSlot < MAX_KEYRINGITEMS; nSlot++) {
 			if (PCONTENTS pItem = pChar->pMountsArray->Mounts[nSlot]) {
+#endif
 				if (bExact) {
 					if (!_stricmp(Name, GetItemFromContents(pItem)->Name)) {
 						if ((GetItemFromContents(pItem)->Type != ITEMTYPE_NORMAL) || (((EQ_Item*)pItem)->IsStackable() != 1)) {
@@ -8492,9 +8274,15 @@ DWORD FindItemCountByName(PCHAR pName, BOOL bExact)
 	}
 
 	//still not found? fine... check illusions keyring
+#ifdef NEWCHARINFO
+	if (pChar) {
+		for (unsigned long nSlot = 0; nSlot < pChar->IllusionKeyRingItems.Items.Size; nSlot++) {
+			if (PCONTENTS pItem = pChar->IllusionKeyRingItems.Items[nSlot].pObject) {
+#else
 	if (pChar && pChar->pIllusionsArray && pChar->pIllusionsArray->Illusions) {
 		for (unsigned long nSlot = 0; nSlot < MAX_KEYRINGITEMS; nSlot++) {
 			if (PCONTENTS pItem = pChar->pIllusionsArray->Illusions[nSlot]) {
+#endif
 				if (bExact) {
 					if (!_stricmp(Name, GetItemFromContents(pItem)->Name)) {
 						if ((GetItemFromContents(pItem)->Type != ITEMTYPE_NORMAL) || (((EQ_Item*)pItem)->IsStackable() != 1)) {
@@ -8522,9 +8310,15 @@ DWORD FindItemCountByName(PCHAR pName, BOOL bExact)
 	}
 
 	//still not found? fine... check familiars keyring
+#ifdef NEWCHARINFO
+	if (pChar) {
+		for (unsigned long nSlot = 0; nSlot < pChar->FamiliarKeyRingItems.Items.Size; nSlot++) {
+			if (PCONTENTS pItem = pChar->FamiliarKeyRingItems.Items[nSlot].pObject) {
+#else
 	if (pChar && pChar->pFamiliarArray && pChar->pFamiliarArray->Familiars) {
 		for (unsigned long nSlot = 0; nSlot < MAX_KEYRINGITEMS; nSlot++) {
 			if (PCONTENTS pItem = pChar->pFamiliarArray->Familiars[nSlot]) {
+#endif
 				if (bExact) {
 					if (!_stricmp(Name, GetItemFromContents(pItem)->Name)) {
 						if ((GetItemFromContents(pItem)->Type != ITEMTYPE_NORMAL) || (((EQ_Item*)pItem)->IsStackable() != 1)) {
@@ -8681,9 +8475,15 @@ DWORD FindItemCountByID(int ItemID)
 #if !defined(ROF2EMU) && !defined(UFEMU)
 	//still not found? fine... check mount keyring
 	PCHARINFO pChar = GetCharInfo();
+#ifdef NEWCHARINFO
+	if (pChar) {
+		for (unsigned long nSlot = 0; nSlot < pChar->MountKeyRingItems.Items.Size; nSlot++) {
+			if (PCONTENTS pItem = pChar->MountKeyRingItems.Items[nSlot].pObject) {
+#else
 	if (pChar && pChar->pMountsArray && pChar->pMountsArray->Mounts) {
 		for (unsigned long nSlot = 0; nSlot < MAX_KEYRINGITEMS; nSlot++) {
 			if (PCONTENTS pItem = pChar->pMountsArray->Mounts[nSlot]) {
+#endif
 				if (ItemID == pItem->ID) {
 					if ((GetItemFromContents(pItem)->Type != ITEMTYPE_NORMAL) || (((EQ_Item*)pItem)->IsStackable() != 1)) {
 						Count++;
@@ -8697,9 +8497,15 @@ DWORD FindItemCountByID(int ItemID)
 	}
 
 	//still not found? fine... check illusions keyring
+#ifdef NEWCHARINFO
+	if (pChar) {
+		for (unsigned long nSlot = 0; nSlot < pChar->IllusionKeyRingItems.Items.Size; nSlot++) {
+			if (PCONTENTS pItem = pChar->IllusionKeyRingItems.Items[nSlot].pObject) {
+#else
 	if (pChar && pChar->pIllusionsArray && pChar->pIllusionsArray->Illusions) {
 		for (unsigned long nSlot = 0; nSlot < MAX_KEYRINGITEMS; nSlot++) {
 			if (PCONTENTS pItem = pChar->pIllusionsArray->Illusions[nSlot]) {
+#endif
 				if (ItemID == pItem->ID) {
 					if ((GetItemFromContents(pItem)->Type != ITEMTYPE_NORMAL) || (((EQ_Item*)pItem)->IsStackable() != 1)) {
 						Count++;
@@ -8713,9 +8519,15 @@ DWORD FindItemCountByID(int ItemID)
 	}
 
 	//still not found? fine... check familiars keyring
+#ifdef NEWCHARINFO
+	if (pChar) {
+		for (unsigned long nSlot = 0; nSlot < pChar->FamiliarKeyRingItems.Items.Size; nSlot++) {
+			if (PCONTENTS pItem = pChar->FamiliarKeyRingItems.Items[nSlot].pObject) {
+#else
 	if (pChar && pChar->pFamiliarArray && pChar->pFamiliarArray->Familiars) {
 		for (unsigned long nSlot = 0; nSlot < MAX_KEYRINGITEMS; nSlot++) {
 			if (PCONTENTS pItem = pChar->pFamiliarArray->Familiars[nSlot]) {
+#endif
 				if (ItemID == pItem->ID) {
 					if ((GetItemFromContents(pItem)->Type != ITEMTYPE_NORMAL) || (((EQ_Item*)pItem)->IsStackable() != 1)) {
 						Count++;
@@ -8739,9 +8551,15 @@ PCONTENTS FindBankItemByName(char *pName,BOOL bExact)
 	PCHARINFO pCharInfo = GetCharInfo();
 
 	// Check bank slots
-	if (pCharInfo->pBankArray) {
+#ifdef NEWCHARINFO
+	if (pCharInfo) {
+		for (unsigned long nPack = 0; nPack < pCharInfo->BankItems.Items.Size; nPack++) {
+			if (PCONTENTS pPack = pCharInfo->BankItems.Items[nPack].pObject) {
+#else
+	if (pCharInfo && pCharInfo->pBankArray && pCharInfo->pBankArray->Bank) {
 		for (unsigned long nPack = 0; nPack < NUM_BANK_SLOTS; nPack++) {
 			if (PCONTENTS pPack = pCharInfo->pBankArray->Bank[nPack]) {
+#endif
 				if (bExact) {
 					if (!_stricmp(Name, GetItemFromContents(pPack)->Name)) {
 						return pPack;
@@ -8820,9 +8638,15 @@ PCONTENTS FindBankItemByName(char *pName,BOOL bExact)
 	}
 
 	// Check shared bank slots
+#ifdef NEWCHARINFO
+	if (pCharInfo) {
+		for (unsigned long nPack = 0; nPack < pCharInfo->SharedBankItems.Items.Size; nPack++) {
+			if (PCONTENTS pPack = pCharInfo->SharedBankItems.Items[nPack].pObject) {
+#else
 	if (pCharInfo->pSharedBankArray) {
 		for (unsigned long nPack = 0; nPack < NUM_SHAREDBANK_SLOTS; nPack++) 		{
 			if (PCONTENTS pPack = pCharInfo->pSharedBankArray->SharedBank[nPack]) {
+#endif
 				if (bExact) {
 					if (!_stricmp(Name, GetItemFromContents(pPack)->Name)) {
 						return pPack;
@@ -8906,9 +8730,15 @@ PCONTENTS FindBankItemByID(int ItemID)
 	PCHARINFO pCharInfo = GetCharInfo();
 
 	// Check bank slots
-	if (pCharInfo->pBankArray) {
+#ifdef NEWCHARINFO
+	if (pCharInfo) {
+		for (unsigned long nPack = 0; nPack < pCharInfo->BankItems.Items.Size; nPack++) {
+			if (PCONTENTS pPack = pCharInfo->BankItems.Items[nPack].pObject) {
+#else
+	if (pCharInfo && pCharInfo->pBankArray && pCharInfo->pBankArray->Bank) {
 		for (unsigned long nPack = 0; nPack < NUM_BANK_SLOTS; nPack++) {
 			if (PCONTENTS pPack = pCharInfo->pBankArray->Bank[nPack]) {
+#endif
 				if (ItemID == GetItemFromContents(pPack)->ItemNumber) {
 					return pPack;
 				}
@@ -8951,9 +8781,15 @@ PCONTENTS FindBankItemByID(int ItemID)
 	}
 
 	// Check shared bank slots
+#ifdef NEWCHARINFO
+	if (pCharInfo) {
+		for (unsigned long nPack = 0; nPack < pCharInfo->SharedBankItems.Items.Size; nPack++) {
+			if (PCONTENTS pPack = pCharInfo->SharedBankItems.Items[nPack].pObject) {
+#else
 	if (pCharInfo->pSharedBankArray) {
 		for (unsigned long nPack = 0; nPack < NUM_SHAREDBANK_SLOTS; nPack++) {
 			if (PCONTENTS pPack = pCharInfo->pSharedBankArray->SharedBank[nPack]) {
+#endif
 				if (ItemID == GetItemFromContents(pPack)->ItemNumber) {
 					return pPack;
 				}
@@ -9006,9 +8842,15 @@ DWORD FindBankItemCountByName(char *pName, BOOL bExact)
 	PCHARINFO pCharInfo = GetCharInfo();
 
 	// Check bank slots
-	if (pCharInfo->pBankArray) {
+#ifdef NEWCHARINFO
+	if (pCharInfo) {
+		for (unsigned long nPack = 0; nPack < pCharInfo->BankItems.Items.Size; nPack++) {
+			if (PCONTENTS pPack = pCharInfo->BankItems.Items[nPack].pObject) {
+#else
+	if (pCharInfo && pCharInfo->pBankArray && pCharInfo->pBankArray->Bank) {
 		for (unsigned long nPack = 0; nPack < NUM_BANK_SLOTS; nPack++) {
 			if (PCONTENTS pPack = pCharInfo->pBankArray->Bank[nPack]) {
+#endif
 				if (bExact) {
 					if (!_stricmp(Name, GetItemFromContents(pPack)->Name)) {
 						if ((GetItemFromContents(pPack)->Type != ITEMTYPE_NORMAL) || (((EQ_Item*)pPack)->IsStackable() != 1)) {
@@ -9107,9 +8949,15 @@ DWORD FindBankItemCountByName(char *pName, BOOL bExact)
 	}
 
 	// Check shared bank slots
+#ifdef NEWCHARINFO
+	if (pCharInfo) {
+		for (unsigned long nPack = 0; nPack < pCharInfo->SharedBankItems.Items.Size; nPack++) {
+			if (PCONTENTS pPack = pCharInfo->SharedBankItems.Items[nPack].pObject) {
+#else
 	if (pCharInfo->pSharedBankArray) {
 		for (unsigned long nPack = 0; nPack < NUM_SHAREDBANK_SLOTS; nPack++) {
 			if (PCONTENTS pPack = pCharInfo->pSharedBankArray->SharedBank[nPack]) {
+#endif
 				if (bExact) {
 					if (!_stricmp(Name, GetItemFromContents(pPack)->Name)) {
 						if ((GetItemFromContents(pPack)->Type != ITEMTYPE_NORMAL) || (((EQ_Item*)pPack)->IsStackable() != 1)) {
@@ -9216,9 +9064,15 @@ DWORD FindBankItemCountByID(int ItemID)
 	PCHARINFO pCharInfo = GetCharInfo();
 
 	// Check bank slots
-	if (pCharInfo->pBankArray) {
+#ifdef NEWCHARINFO
+	if (pCharInfo) {
+		for (unsigned long nPack = 0; nPack < pCharInfo->BankItems.Items.Size; nPack++) {
+			if (PCONTENTS pPack = pCharInfo->BankItems.Items[nPack].pObject) {
+#else
+	if (pCharInfo && pCharInfo->pBankArray && pCharInfo->pBankArray->Bank) {
 		for (unsigned long nPack = 0; nPack < NUM_BANK_SLOTS; nPack++) {
 			if (PCONTENTS pPack = pCharInfo->pBankArray->Bank[nPack]) {
+#endif
 				if (ItemID == pPack->ID) {
 					if ((GetItemFromContents(pPack)->Type != ITEMTYPE_NORMAL) || (((EQ_Item*)pPack)->IsStackable() != 1)) {
 						Count++;
@@ -9271,9 +9125,15 @@ DWORD FindBankItemCountByID(int ItemID)
 	}
 
 	// Check shared bank slots
+#ifdef NEWCHARINFO
+	if (pCharInfo) {
+		for (unsigned long nPack = 0; nPack < pCharInfo->SharedBankItems.Items.Size; nPack++) {
+			if (PCONTENTS pPack = pCharInfo->SharedBankItems.Items[nPack].pObject) {
+#else
 	if (pCharInfo->pSharedBankArray) {
 		for (unsigned long nPack = 0; nPack < NUM_SHAREDBANK_SLOTS; nPack++) {
 			if (PCONTENTS pPack = pCharInfo->pSharedBankArray->SharedBank[nPack]) {
+#endif
 				if (ItemID == pPack->ID) {
 					if ((GetItemFromContents(pPack)->Type != ITEMTYPE_NORMAL) || (((EQ_Item*)pPack)->IsStackable() != 1)) {
 						Count++;
@@ -9499,7 +9359,7 @@ BOOL PickupItem(ItemContainerInstance type, PCONTENTS pItem)
 					To.Index.Slot1 = pItem->GetGlobalIndex().Index.Slot1;
 					To.Index.Slot2 = pItem->GetGlobalIndex().Index.Slot2;
 					To.Index.Slot3 = -1;
-					pMerchantWnd->ActualSelect(&To);
+					pMerchantWnd->SelectBuySellSlot(&To);
 					return TRUE;
 				}
 			}
@@ -9531,19 +9391,19 @@ BOOL PickupItem(ItemContainerInstance type, PCONTENTS pItem)
 					To.Index.Slot1 = pItem->GetGlobalIndex().Index.Slot1;
 					To.Index.Slot2 = pItem->GetGlobalIndex().Index.Slot2;
 					To.Index.Slot3 = -1;
-					pMerchantWnd->ActualSelect(&To);
+					pMerchantWnd->SelectBuySellSlot(&To);
 					return TRUE;
 				}
-			}
-			else {
-				//well now is where it gets complicated then... or not...
-				ItemGlobalIndex To;
-				To.Location = eItemContainerPossessions;
-				To.Index.Slot1 = pItem->GetGlobalIndex().Index.Slot1;
-				To.Index.Slot2 = pItem->GetGlobalIndex().Index.Slot2;
-				To.Index.Slot3 = -1;
-				pMerchantWnd->ActualSelect(&To);
-				return TRUE;
+				else {
+					//well now is where it gets complicated then... or not...
+					ItemGlobalIndex To;
+					To.Location = eItemContainerPossessions;
+					To.Index.Slot1 = pItem->GetGlobalIndex().Index.Slot1;
+					To.Index.Slot2 = pItem->GetGlobalIndex().Index.Slot2;
+					To.Index.Slot3 = -1;
+					pMerchantWnd->SelectBuySellSlot(&To);
+					return TRUE;
+				}
 			}
 		}
 		else {//not a selected slot
@@ -9652,7 +9512,7 @@ BOOL DropItem(ItemContainerInstance type, short ToInvSlot, short ToBagSlot)
 					To.Index.Slot1 = cSlot->pInvSlotWnd->InvSlot;
 					To.Index.Slot2 = cSlot->pInvSlotWnd->BagSlot;
 					To.Index.Slot3 = cSlot->pInvSlotWnd->GlobalSlot;
-					pMerchantWnd->ActualSelect(&To);
+					pMerchantWnd->SelectBuySellSlot(&To);
 					return TRUE;
 				}
 			}
@@ -9683,7 +9543,7 @@ BOOL DropItem(ItemContainerInstance type, short ToInvSlot, short ToBagSlot)
 					To.Index.Slot1 = cSlot->pInvSlotWnd->InvSlot;
 					To.Index.Slot2 = cSlot->pInvSlotWnd->BagSlot;
 					To.Index.Slot3 = -1;
-					pMerchantWnd->ActualSelect(&To);
+					pMerchantWnd->SelectBuySellSlot(&To);
 					return TRUE;
 				}
 			}
@@ -9695,7 +9555,7 @@ BOOL DropItem(ItemContainerInstance type, short ToInvSlot, short ToBagSlot)
 				To.Index.Slot1 = ToInvSlot;
 				To.Index.Slot2 = ToBagSlot;
 				To.Index.Slot3 = -1;
-				pMerchantWnd->ActualSelect(&To);
+				pMerchantWnd->SelectBuySellSlot(&To);
 				return TRUE;
 			}
 		} else {
@@ -9802,7 +9662,11 @@ int GetTargetBuffBySPA(int spa, bool bIncrease, int startslot)
 			if (PSPELL pSpell = GetSpellByID(buffID)) {
 				if (LONG base = ((EQ_Spell *)pSpell)->SpellAffectBase(spa)) {
 					//if (PCHARINFO pChar = GetCharInfo()) {
-					//	if (pChar->vtable2) {
+#ifdef NEWCHARINFO
+						//  if (pChar->PcClient_CharacterZoneClient_vfTable) {
+#else
+						//  if (pChar->vtable2) {
+#endif
 					//		int test = ((CharacterZoneClient*)pCharData1)->CalcAffectChangeGeneric((EQ_Spell*)pSpell, 0, 0, NULL, 1, true);
 					//	}
 					//}
@@ -10271,45 +10135,64 @@ void RefreshKeyRings(PVOID kr)
 int GetMountCount()
 {
 	int Count = 0;
-	PCHARINFO pChar = GetCharInfo();
-	if (pChar && pChar->pMountsArray && pChar->pMountsArray->Mounts) {
-		for (unsigned long nSlot = 0; nSlot < MAX_KEYRINGITEMS; nSlot++)
-		{
-			if (PCONTENTS pItem = pChar->pMountsArray->Mounts[nSlot])
+	if (PCHARINFO pChar = GetCharInfo())
+	{
+#ifdef NEWCHARINFO
+		return pChar->MountKeyRingItems.Items.Size;
+#else
+		if (pChar && pChar->pMountsArray && pChar->pMountsArray->Mounts) {
+			for (unsigned long nSlot = 0; nSlot < MAX_KEYRINGITEMS; nSlot++)
 			{
-				Count++;
+				if (PCONTENTS pItem = pChar->pMountsArray->Mounts[nSlot])
+				{
+					Count++;
+				}
 			}
 		}
+#endif
 	}
 	return Count;
 }
 int GetIllusionCount()
 {
 	int Count = 0;
-	PCHARINFO pChar = GetCharInfo();
-	if (pChar && pChar->pIllusionsArray && pChar->pIllusionsArray->Illusions) {
-		for (unsigned long nSlot = 0; nSlot < MAX_KEYRINGITEMS; nSlot++)
-		{
-			if (PCONTENTS pItem = pChar->pIllusionsArray->Illusions[nSlot])
+	if (PCHARINFO pChar = GetCharInfo())
+	{
+#ifdef NEWCHARINFO
+		return pChar->IllusionKeyRingItems.Items.Size;
+#else
+		if (pChar && pChar->pIllusionsArray && pChar->pIllusionsArray->Illusions) {
+			for (unsigned long nSlot = 0; nSlot < MAX_KEYRINGITEMS; nSlot++)
 			{
-				Count++;
+				if (PCONTENTS pItem = pChar->pIllusionsArray->Illusions[nSlot])
+				{
+					Count++;
+				}
 			}
 		}
+#endif
 	}
 	return Count;
 }
 int GetFamiliarCount()
 {
 	int Count = 0;
-	PCHARINFO pChar = GetCharInfo();
-	if (pChar && pChar->pFamiliarArray && pChar->pFamiliarArray->Familiars) {
-		for (unsigned long nSlot = 0; nSlot < MAX_KEYRINGITEMS; nSlot++)
-		{
-			if (PCONTENTS pItem = pChar->pFamiliarArray->Familiars[nSlot])
+	if (PCHARINFO pChar = GetCharInfo())
+	{
+#ifdef NEWCHARINFO
+		return pChar->FamiliarKeyRingItems.Items.Size;
+#else
+		if (pChar && pChar->pFamiliarArray && pChar->pFamiliarArray->Familiars) {
+			for (unsigned long nSlot = 0; nSlot < MAX_KEYRINGITEMS; nSlot++)
 			{
-				Count++;
+				if (PCONTENTS pItem = pChar->pFamiliarArray->Familiars[nSlot])
+
+				{
+					Count++;
+				}
 			}
 		}
+#endif
 	}
 	return Count;
 }
@@ -10360,7 +10243,7 @@ DWORD GetKeyRingIndex(DWORD KeyRing, PCHAR szItemName, SIZE_T BuffLen, bool bExa
 				if (PCONTENTS pCont = FindItemByName(szItemName, bExact)) {
 					bool bKeyring = false;
 					if (PCHARINFO pCharInfo = GetCharInfo()) {
-						if (CharacterBase *cb = (CharacterBase *)&pCharInfo->pCharacterBase) {
+						if (CharacterBase *cb = (CharacterBase *)&pCharInfo->CharacterBase_vftable) {
 							ItemGlobalIndex location;
 							location.Location = (ItemContainerInstance)pCont->GetGlobalIndex().Location;
 							location.Index.Slot1 = pCont->GetGlobalIndex().Index.Slot1;
@@ -10438,7 +10321,11 @@ void InitKeyRings()
 VOID MakeMeVisible(PSPAWNINFO pChar, PCHAR szLine)
 {
 	if (PCHARINFO pChar = GetCharInfo()) {
+#ifdef NEWCHARINFO
+		if (pChar->PcClient_CharacterZoneClient_vfTable) {
+#else
 		if (pChar->vtable2) {
+#endif
 			((CharacterZoneClient*)pCharData1)->MakeMeVisible(0, 0);
 		}
 	}
@@ -10790,6 +10677,7 @@ int GetFreeInventory(int nSize)
 	}
 	return freeslots;
 }
+
 struct _CONTENTS *CONTENTS::GetContent(UINT index)
 {
 	if (Contents.ContainedItems.pItems && Contents.ContainedItems.Capacity) {

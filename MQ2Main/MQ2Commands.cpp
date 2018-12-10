@@ -37,8 +37,10 @@ VOID Unload(PSPAWNINFO pChar, PCHAR szLine)
 	if (!pChar)
 		pChar = (PSPAWNINFO)pLocalPlayer;
 	bRunNextCommand = TRUE;
-	if (gMacroBlock)
-		EndMacro(pChar, szLine);
+	if (GetCurrentMacroBlock())
+	{
+		EndAllMacros();
+	}
 	DebugSpew("%s", ToUnloadString);
 	WriteChatColor(ToUnloadString, USERCOLOR_DEFAULT);
 	gbUnload = TRUE;
@@ -241,8 +243,8 @@ VOID MacroPause(PSPAWNINFO pChar, PCHAR szLine)
 		WriteChatColor(szBuffer, USERCOLOR_DEFAULT);
 		return;
 	}
-
-	if (!gMacroBlock) {
+	PMACROBLOCK pBlock = GetCurrentMacroBlock();
+	if (!pBlock) {
 		MacroError("You cannot pause a macro when one isn't running.");
 		return;
 	}
@@ -257,14 +259,14 @@ VOID MacroPause(PSPAWNINFO pChar, PCHAR szLine)
 		WriteChatColor("Syntax: /mqpause [on|off] [chat [on|off]]", USERCOLOR_DEFAULT);
 	}
 	else {
-		Pause = !gMacroPause;
+		Pause = !pBlock->Paused;
 	}
-	if (gMacroPause == Pause) {
+	if (pBlock->Paused == Pause) {
 		sprintf_s(szBuffer, "Macro is already %s.", (Pause) ? "paused" : "running");
 	}
 	else {
 		sprintf_s(szBuffer, "Macro is %s.", (Pause) ? "paused" : "running again");
-		gMacroPause = Pause;
+		pBlock->Paused = Pause;
 	}
 	WriteChatColor(szBuffer, USERCOLOR_DEFAULT);
 }
@@ -445,6 +447,58 @@ VOID Items(PSPAWNINFO pChar, PCHAR szLine)
 			pItem = pItem->pNext;
 		}
 	}
+	RealEstateManagerClient& manager = RealEstateManagerClient::Instance();
+	if (&manager)
+	{
+		CHAR szLineLwr[MAX_STRING] = { 0 };
+		CHAR szName[MAX_STRING] = { 0 };
+		SPAWNINFO TempSpawn = { 0 };
+		iteminfo ii;
+		strcpy_s(szLineLwr, szLine);
+
+		_strlwr_s(szLineLwr);
+		if (EQPlacedItem *top0 = *(EQPlacedItem**)pinstEQObjectList) {
+			if (EQPlacedItem *top = *(EQPlacedItem**)top0) {
+				for (EQPlacedItem *pObj = top; pObj != NULL; pObj = pObj->pNext)
+				{
+					const RealEstateItemClient* pRealEstateItem = manager.GetItemByRealEstateAndItemIds(pObj->RealEstateID, pObj->RealEstateItemID);
+					if (pRealEstateItem)
+					{
+						if (PCONTENTS pCont = pRealEstateItem->Object.pItemBase.pObject)
+						{
+							if (PITEMINFO pItem = GetItemFromContents(pCont))
+							{
+								strcpy_s(szBuffer, pItem->Name);
+								_strlwr_s(szBuffer);
+								DebugSpew("   Item found - %d: DropID %d %s", pObj->RealEstateID, pObj->RealEstateItemID, pItem->Name);
+								if ((szLine[0] == 0) || (strstr(szBuffer, szLineLwr))) {
+									ZeroMemory(&TempSpawn, sizeof(TempSpawn));
+									TempSpawn.Y = pObj->Y;
+									TempSpawn.X = pObj->X;
+									TempSpawn.Z = pObj->Z;
+									FLOAT Distance = Distance3DToSpawn(pChar, &TempSpawn);
+									INT Angle = (INT)((atan2f(pChar->X - pObj->X, pChar->Y - pObj->Y) * 180.0f / PI + 360.0f) / 22.5f + 0.5f) % 16;
+									ii.angle = Angle;
+									_itoa_s(pObj->RealEstateItemID, szName, 10);
+									ii.Name.append("[");
+									ii.Name = szName;
+									ii.Name.append("] ");
+									ii.Name.append(pItem->Name);
+									ii.Name.append(" ");
+									ii.Name.append(pObj->Name);//
+									ii.Name.append(" (");
+									GetCXStr(pRealEstateItem->OwnerInfo.OwnerName, szName);
+									ii.Name.append(szName);
+									ii.Name.append(")");
+									itemsmap[Distance] = ii;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 	if (itemsmap.size() == 0) {
 		WriteChatColor("No items found.", USERCOLOR_DEFAULT);
 	}
@@ -486,38 +540,138 @@ VOID ItemTarget(PSPAWNINFO pChar, PCHAR szLine)
 	CHAR Arg1[MAX_STRING] = { 0 };
 	CHAR Arg2[MAX_STRING] = { 0 };
 	GetArg(Arg1, szLine, 1);
+	_strlwr_s(Arg1);
 	GetArg(Arg2, szLine, 2);
 	ZeroMemory(&EnviroTarget, sizeof(EnviroTarget));
+	ZeroMemory(&GroundObject,sizeof(GroundObject));
+	pGroundTarget = NULL;
 	if (PGROUNDITEM pItem = *(PGROUNDITEM*)pItemList) {
 		CHAR szName[MAX_STRING] = { 0 };
 		FLOAT cDistance = 100000.0f;
-		pGroundTarget = NULL;
 		SPAWNINFO tSpawn = { 0 };
 		while (pItem) {
 			GetFriendlyNameForGroundItem(pItem, szName, sizeof(szName));
-			if (((szLine[0] == 0) || (!_strnicmp(szName, Arg1, strlen(Arg1)))) && ((gZFilter >= 10000.0f) || ((pItem->Z <= pChar->Z + gZFilter) && (pItem->Z >= pChar->Z - gZFilter)))) {
-				ZeroMemory(&tSpawn, sizeof(tSpawn));
-				strcpy_s(tSpawn.Name, szName);
-				strcpy_s(tSpawn.DisplayedName, szName);
-				tSpawn.Y = pItem->Y;
-				tSpawn.X = pItem->X;
-				tSpawn.Z = pItem->pSwitch->Z;
-				tSpawn.Type = SPAWN_NPC;
-				tSpawn.HPCurrent = 1;
-				tSpawn.HPMax = 1;
-				tSpawn.Heading = pItem->Heading;
-				tSpawn.mActorClient.Race = pItem->DropID;
-				tSpawn.StandState = STANDSTATE_STAND;//im using this for /clicked left item -eqmule
-				FLOAT Distance = Get3DDistance(pChar->X, pChar->Y, pChar->Z, tSpawn.X, tSpawn.Y, tSpawn.Z);
-				if (Distance < cDistance) {
-					CopyMemory(&EnviroTarget, &tSpawn, sizeof(EnviroTarget));
-					cDistance = Distance;
-					pGroundTarget = pItem;
+			_strlwr_s(szName);
+			if (((szLine[0] == '\0') || (strstr(szName, Arg1))))
+			{
+				if (((gZFilter >= 10000.0f) || ((pItem->Z <= pChar->Z + gZFilter) && (pItem->Z >= pChar->Z - gZFilter))))
+				{
+					ZeroMemory(&tSpawn, sizeof(tSpawn));
+					strcpy_s(tSpawn.Name, szName);
+					strcpy_s(tSpawn.DisplayedName, szName);
+					tSpawn.Y = pItem->Y;
+					tSpawn.X = pItem->X;
+					tSpawn.Z = pItem->pSwitch->Z;
+					tSpawn.Type = SPAWN_NPC;
+					tSpawn.HPCurrent = 1;
+					tSpawn.HPMax = 1;
+					tSpawn.Heading = pItem->Heading;
+					tSpawn.mActorClient.Race = pItem->DropID;
+					tSpawn.StandState = STANDSTATE_STAND;//im using this for /clicked left item -eqmule
+					FLOAT Distance = Get3DDistance(pChar->X, pChar->Y, pChar->Z, tSpawn.X, tSpawn.Y, tSpawn.Z);
+					if (Distance < cDistance) {
+						CopyMemory(&EnviroTarget, &tSpawn, sizeof(EnviroTarget));
+						cDistance = Distance;
+						pGroundTarget = pItem;
+					}
 				}
 			}
 			pItem = pItem->pNext;
 		}
 	}
+	if (pGroundTarget)
+	{
+		GroundObject.Type = GO_GroundType;
+		GroundObject.pGroundItem = pGroundTarget;
+	}
+	else
+	{
+		FLOAT cDistance = 100000.0f;
+		SPAWNINFO tSpawn = { 0 };
+		RealEstateManagerClient& manager = RealEstateManagerClient::Instance();
+		if (&manager)
+		{
+			if (EQPlacedItem *top0 = *(EQPlacedItem**)pinstEQObjectList) {
+				if (EQPlacedItem *top = *(EQPlacedItem**)top0) {
+					CHAR szName[MAX_STRING] = { 0 };
+					for (EQPlacedItem *pObj = top; pObj != NULL; pObj = pObj->pNext)
+					{
+						const RealEstateItemClient* pRealEstateItem = manager.GetItemByRealEstateAndItemIds(pObj->RealEstateID, pObj->RealEstateItemID);
+						if (pRealEstateItem)
+						{
+							if (PCONTENTS pCont = pRealEstateItem->Object.pItemBase.pObject)
+							{
+								if (PITEMINFO pItem = GetItemFromContents(pCont))
+								{
+									strcpy_s(szName, pItem->Name);
+									_strlwr_s(szName);
+									if (((szLine[0] == '\0') || (strstr(szName, Arg1)) || (strstr(szName, Arg1))))
+									{
+										if (((gZFilter >= 10000.0f) || ((pObj->Z <= pChar->Z + gZFilter) && (pObj->Z >= pChar->Z - gZFilter)))) {
+											ZeroMemory(&tSpawn, sizeof(tSpawn));
+											strcpy_s(tSpawn.Name, pItem->Name);
+											PEQSWITCH si = (PEQSWITCH)pObj->pActor;
+											strcpy_s(tSpawn.DisplayedName, pItem->Name);
+											tSpawn.Y = pObj->Y;
+											tSpawn.X = pObj->X;
+											tSpawn.Z = pObj->Z;
+											tSpawn.Type = SPAWN_NPC;
+											tSpawn.HPCurrent = 1;
+											tSpawn.HPMax = 1;
+											tSpawn.Heading = pObj->Heading;
+											tSpawn.mActorClient.Race = pObj->RealEstateItemID;
+											tSpawn.StandState = STANDSTATE_STAND;//im using this for /clicked left item -eqmule
+											FLOAT Distance = Get3DDistance(pChar->X, pChar->Y, pChar->Z, tSpawn.X, tSpawn.Y, tSpawn.Z);
+											if (Distance < cDistance) {
+												CopyMemory(&EnviroTarget, &tSpawn, sizeof(EnviroTarget));
+												cDistance = Distance;
+												GroundObject.Type = GO_ObjectType;
+												GroundObject.ObjPtr = (void*)pObj;
+											}
+										}
+										//WriteChatf("[%d] %s %0.2f,%0.2f,%0.2f , %0.2f, %0.2f,", pObj->RealEstateItemID, pItem->Name, pObj->Y, pObj->X, pObj->Z, pObj->Heading * 0.703125f, pObj->Angle * 0.703125f);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		if (GroundObject.Type == GO_ObjectType)
+		{
+			EQPlacedItem *ObjPtr = (EQPlacedItem *)GroundObject.ObjPtr;
+			//ok so its not actually a grounditem, we need to fake that for the tlo to be work
+			//we do this because I want people to be able to use ${Ground} in their macros and not worry about if its an object or not.
+			//also I want people to not have to update their macros.
+			//this should make older tradeskill macros for example work in guild halls... -eqmule
+			GroundObject.GroundItem.DropID = ObjPtr->RealEstateItemID;
+			GroundObject.GroundItem.DropSubID = ObjPtr->RealEstateID;
+			GroundObject.GroundItem.Expires = 0;
+			GroundObject.GroundItem.Heading = ObjPtr->Heading;
+			GroundObject.GroundItem.ID.pObject = NULL;
+			if (EnviroTarget.DisplayedName[0] != '\0') {
+				strcpy_s(GroundObject.GroundItem.Name, EnviroTarget.DisplayedName);
+			}
+			else
+			{
+				strcpy_s(GroundObject.GroundItem.Name, ObjPtr->Name);
+			}
+			GroundObject.GroundItem.Pitch = ObjPtr->Angle;
+			GroundObject.GroundItem.pNext = 0;
+			GroundObject.GroundItem.pPrev = 0;
+			GroundObject.GroundItem.pSwitch = (PEQSWITCH)ObjPtr->pActor;
+			GroundObject.GroundItem.Roll = ObjPtr->Roll;
+			GroundObject.GroundItem.Scale = ObjPtr->Scale;
+			GroundObject.GroundItem.Weight = 0;
+			GroundObject.GroundItem.X = ObjPtr->X;
+			GroundObject.GroundItem.Y = ObjPtr->Y;
+			GroundObject.GroundItem.Z = ObjPtr->Z;
+			GroundObject.GroundItem.ZoneID = ((PSPAWNINFO)pLocalPlayer)->Zone & 0x7FFF;
+			pGroundTarget = &GroundObject.GroundItem;
+		}
+	}
+
 	if (EnviroTarget.DisplayedName[0] != 0) {
 		sprintf_s(szBuffer, "Item '%s' targeted.", EnviroTarget.DisplayedName);
 		WriteChatColor(szBuffer, USERCOLOR_DEFAULT);
@@ -804,7 +958,66 @@ VOID MemSpell(PSPAWNINFO pSpawn, PCHAR szLine)
 		}
 	}
 }
-
+// ***************************************************************************
+// Function:    selectitem
+// Description: Our '/selectitem' command
+// Usage:       /selectitem Name
+// 
+// will select the specified item in your inventory if merchantwindow is open
+// ***************************************************************************
+VOID SelectItem(PSPAWNINFO pChar, PCHAR szLine)
+{
+	bRunNextCommand = FALSE;
+	if (!pMerchantWnd)
+		return;
+	bool bExact = false;
+	CHAR szBuffer[MAX_STRING] = { 0 };
+	CHAR szTemp[MAX_STRING] = { 0 };
+	CHAR szTemp2[MAX_STRING] = { 0 };
+	char *pName = 0 ;
+	GetArg(szBuffer, szLine, 1);
+	if (szBuffer[0])
+	{
+		pName = &szBuffer[0];
+		if (*pName == '=')
+		{
+			bExact = true;
+			pName++;
+		}
+		if (PCHARINFO pCharInfo = GetCharInfo())
+		{
+			if (CMerchantWnd * pmercho = (CMerchantWnd *)pMerchantWnd)
+			{
+				if (pmercho->dShow)
+				{
+					PITEMINFO pItem = 0;
+					PCONTENTS pCont = 0;
+					bool bFound = false;
+					if (PCONTENTS pCont = FindItemByName(szBuffer, bExact))
+					{
+						ItemGlobalIndex To;
+						To.Location = pCont->GetGlobalIndex().Location;
+						To.Index.Slot1 = pCont->GetGlobalIndex().Index.Slot1;
+						To.Index.Slot2 = pCont->GetGlobalIndex().Index.Slot2;
+						To.Index.Slot3 = -1;
+#if !defined(ROF2EMU) && !defined(UFEMU)
+						pmercho->SelectBuySellSlot(&To,To.Index.Slot1);
+#else
+						pmercho->SelectBuySellSlot(&To);
+#endif
+					}
+					else {
+						WriteChatf("/selectitem Could NOT find %s in your inventory to select.\nUse /invoke ${Merchant.SelectItem[%s]} if you want to select an item in the merchants inventory.", szBuffer,szBuffer);
+					}
+				}
+			}
+		}
+	}
+	else {
+		WriteChatf("/selectitem works when a merchantwindow is open, it will select a item from YOUR inventory.\nUse /invoke ${Merchant.SelectItem[some item]} if you want to select an item in the MERCHANTS inventory.");
+		WriteChatf("Usage: /selectitem \"some item in YOUR inventory\", use \"=some item in YOUR inventory\" for EXACT name search.");
+	}
+}
 // ***************************************************************************
 // Function:    buyitem
 // Description: Our '/buyitem' command
@@ -828,8 +1041,11 @@ VOID BuyItem(PSPAWNINFO pChar, PCHAR szLine)
 		GetArg(szQty, szLine, 1);
 		Qty = (DWORD)atoi(szQty);
 		if (Qty < 1) return;
-		CMerchantWnd * pmercho = (CMerchantWnd *)((PEQMERCHWINDOW)pMerchantWnd)->pMerchOther->pMerchData;
-		pmercho->RequestBuyItem(Qty);
+		//CMerchantWnd * pmercho = (CMerchantWnd *)((PEQMERCHWINDOW)pMerchantWnd)->pMerchOther->pMerchData;
+		if (CMerchantWnd * pmercho = (CMerchantWnd *)pMerchantWnd)
+		{
+			pmercho->PageHandlers[0].pObject->RequestGetItem(Qty);
+		}
 	}
 }
 #else
@@ -878,9 +1094,13 @@ VOID SellItem(PSPAWNINFO pChar, PCHAR szLine)
 	if (((PEQMERCHWINDOW)pMerchantWnd)->pMerchOther && ((PEQMERCHWINDOW)pMerchantWnd)->pMerchOther->pMerchData) {
 		GetArg(szQty, szLine, 1);
 		Qty = (DWORD)atoi(szQty);
-		if (Qty < 1) return;
-		CMerchantWnd * pmercho = (CMerchantWnd *)((PEQMERCHWINDOW)pMerchantWnd)->pMerchOther->pMerchData;
-		pmercho->RequestSellItem(Qty);
+		if (Qty < 1)
+			return;
+		//CMerchantWnd * pmercho = (CMerchantWnd *)((PEQMERCHWINDOW)pMerchantWnd)->pMerchOther->pMerchData;
+		if (CMerchantWnd * pmercho = (CMerchantWnd *)pMerchantWnd)
+		{
+			pmercho->PageHandlers[0].pObject->RequestPutItem(Qty);
+		}
 	}
 }
 #else
@@ -2289,7 +2509,11 @@ VOID DoAbility(PSPAWNINFO pChar, PCHAR szLine)
 						return;
 					}
 					if (PCHARINFO pChar = GetCharInfo()) {
+#ifdef NEWCHARINFO
+						if (pChar->PcClient_CharacterZoneClient_vfTable) {
+#else
 						if (pChar->vtable2) {
+#endif
 							pCharData1->UseSkill((unsigned char)Index, (EQPlayer*)pCharData1);
 						}
 					}
@@ -2627,6 +2851,7 @@ VOID Target(PSPAWNINFO pChar, PCHAR szLine)
 			pTarget = NULL;
 			pDoorTarget = 0;
 			pGroundTarget = 0;
+			ZeroMemory(&GroundObject, sizeof(GroundObject));
 			ZeroMemory(&EnviroTarget, sizeof(EnviroTarget));
 			ZeroMemory(&DoorEnviroTarget, sizeof(DoorEnviroTarget));
 			if (pChar)
@@ -2962,7 +3187,13 @@ VOID BankList(PSPAWNINFO pChar, PCHAR szLine)
 	WriteChatColor("-------------------------", USERCOLOR_DEFAULT);
 	char Link[MAX_STRING] = { 0 };
 	for (int a = 0; a<NUM_BANK_SLOTS; a++) {
-		if (pCharInfo->pBankArray) pContainer = pCharInfo->pBankArray->Bank[a];
+#ifdef NEWCHARINFO
+		if (pCharInfo && pCharInfo->BankItems.Items.Size > (UINT)a)
+			pContainer = pCharInfo->BankItems.Items[a].pObject;
+#else
+		if (pCharInfo && pCharInfo->pBankArray)
+			pContainer = pCharInfo->pBankArray->Bank[a];
+#endif
 		if (pContainer) {
 			GetItemLink(pContainer, Link);
 			sprintf_s(szTemp, "Slot %d: %dx %s (%s)", a, pContainer->StackCount ? pContainer->StackCount : 1, Link, GetItemFromContents(pContainer)->LoreName);
@@ -3356,7 +3587,7 @@ VOID UseItemCmd(PSPAWNINFO pChar, PCHAR szLine)
 				bool bKeyring = false;
 #if !defined(ROF2EMU) && !defined(UFEMU)
 				if (PCHARINFO pCharInfo = GetCharInfo()) {
-					if (CharacterBase *cb = (CharacterBase *)&pCharInfo->pCharacterBase) {
+					if (CharacterBase *cb = (CharacterBase *)&pCharInfo->CharacterBase_vftable) {
 						ItemGlobalIndex location;
 						location.Location = (ItemContainerInstance)pItem->GlobalIndex.Location;
 						location.Index.Slot1 = pItem->GlobalIndex.Index.Slot1;
@@ -3672,6 +3903,33 @@ VOID CaptionCmd(PSPAWNINFO pChar, PCHAR szLine)
 		gAnonymize = (!_stricmp(GetNextArg(szLine), "On"));
 		WritePrivateProfileString("Captions", "Anonymize", (gAnonymize ? "1" : "0"), gszINIFilename);
 		WriteChatf("Anonymize is now \ay%s\ax.", (gAnonymize ? "On" : "Off"));
+		return;
+	}
+	else if (!_stricmp(Arg1, "reload")) {
+		CHAR Filename[MAX_STRING] = { 0 };
+		sprintf_s(Filename, "%s", gszINIFilename);
+		GetPrivateProfileString("Captions", "NPC", gszSpawnNPCName, gszSpawnNPCName, MAX_STRING, Filename);
+		GetPrivateProfileString("Captions", "Player1", gszSpawnPlayerName[1], gszSpawnPlayerName[1], MAX_STRING, Filename);
+		GetPrivateProfileString("Captions", "Player2", gszSpawnPlayerName[2], gszSpawnPlayerName[2], MAX_STRING, Filename);
+		GetPrivateProfileString("Captions", "Player3", gszSpawnPlayerName[3], gszSpawnPlayerName[3], MAX_STRING, Filename);
+		GetPrivateProfileString("Captions", "Player4", gszSpawnPlayerName[4], gszSpawnPlayerName[4], MAX_STRING, Filename);
+		GetPrivateProfileString("Captions", "Player5", gszSpawnPlayerName[5], gszSpawnPlayerName[5], MAX_STRING, Filename);
+		GetPrivateProfileString("Captions", "Player6", gszSpawnPlayerName[6], gszSpawnPlayerName[6], MAX_STRING, Filename);
+		GetPrivateProfileString("Captions", "Corpse", gszSpawnCorpseName, gszSpawnCorpseName, MAX_STRING, Filename);
+		GetPrivateProfileString("Captions", "Pet", gszSpawnPetName, gszSpawnPetName, MAX_STRING, Filename);
+		GetPrivateProfileString("Captions", "AnonCaption", gszAnonCaption, gszAnonCaption, MAX_STRING, Filename);
+
+		ConvertCR(gszSpawnNPCName, MAX_STRING);
+		ConvertCR(gszSpawnPlayerName[1], MAX_STRING);
+		ConvertCR(gszSpawnPlayerName[2], MAX_STRING);
+		ConvertCR(gszSpawnPlayerName[3], MAX_STRING);
+		ConvertCR(gszSpawnPlayerName[4], MAX_STRING);
+		ConvertCR(gszSpawnPlayerName[5], MAX_STRING);
+		ConvertCR(gszSpawnPlayerName[6], MAX_STRING);
+		ConvertCR(gszSpawnCorpseName, MAX_STRING);
+		ConvertCR(gszSpawnPetName, MAX_STRING);
+		ConvertCR(gszAnonCaption, MAX_STRING);
+		WriteChatf("Updated Captions from INI.");
 		return;
 	}
 	else
@@ -4663,6 +4921,68 @@ VOID MapZoomCmd(PSPAWNINFO pChar, char *szLine)
 		float theabs = fTemp / 360.0f / (fZoom + 1) * 10000;
 		int Range = (int)fTemp;
 		((MapViewMap*)pMapView)->SetZoom(theabs);
+	}
+}
+void SetForegroundWindowInternal(HWND hWnd)
+{
+	if (!IsWindow(hWnd)) return;
+
+	BYTE keyState[256] = { 0 };
+	//to unlock SetForegroundWindow we need to imitate Alt pressing
+	if (GetKeyboardState((LPBYTE)&keyState))
+	{
+		if (!(keyState[VK_MENU] & 0x80))
+		{
+			keybd_event(VK_MENU, 0, KEYEVENTF_EXTENDEDKEY | 0, 0);
+		}
+	}
+
+	SetForegroundWindow(hWnd);
+	ShowWindow(hWnd, SW_SHOWNORMAL);
+
+	if (GetKeyboardState((LPBYTE)&keyState))
+	{
+		if (!(keyState[VK_MENU] & 0x80))
+		{
+			keybd_event(VK_MENU, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
+		}
+	}
+}
+// ***************************************************************************
+// Function:    ForeGroundCmd
+// Description: '/foreground' command
+// Purpose:     Adds the ability to move your eq window to the foreground.
+// Usage:		/foreground
+// Example:		/bct <toonname> //foreground
+// Author:      EqMule
+// ***************************************************************************
+//todo: check manually
+VOID ForeGroundCmd(PSPAWNINFO pChar, char *szLine)
+{
+	typedef HWND( __stdcall *fEQW_GetDisplayWindow )(VOID);
+	fEQW_GetDisplayWindow EQW_GetDisplayWindow = 0;
+	HWND hWnd = 0;
+	DWORD lReturn = GetCurrentProcessId();
+	DWORD pid = lReturn;
+	AllowSetForegroundWindow(pid);
+	BOOL ret = EnumWindows(EnumWindowsProc,(LPARAM)&lReturn);
+	if(lReturn!=pid) {
+		hWnd = (HWND)lReturn;
+		SetForegroundWindowInternal(hWnd);
+		//ShowWindow(hWnd, SW_SHOWNORMAL);
+	}	
+	else
+	{
+		if (HMODULE EQWhMod = GetModuleHandle("eqw.dll"))
+		{
+			EQW_GetDisplayWindow = (fEQW_GetDisplayWindow)GetProcAddress(EQWhMod, "EQW_GetDisplayWindow");
+		}
+		if (EQW_GetDisplayWindow)
+			hWnd = EQW_GetDisplayWindow();
+		else
+			hWnd = *(HWND*)EQADDR_HWND;
+		SetForegroundWindowInternal(hWnd);
+		//ShowWindow(hWnd, SW_SHOWNORMAL);
 	}
 }
 #endif

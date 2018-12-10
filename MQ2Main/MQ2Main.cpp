@@ -97,7 +97,7 @@ BOOL ParseINIFile(PCHAR lpINIPath)
     CHAR FilterList[MAX_STRING*10] = {0};
 	CHAR Delimiter[MAX_STRING] = {0};
     GetEQPath(gszEQPath,MAX_STRING);
-
+	DWORD StackingDebug = 0;
 
     sprintf_s(Filename,"%s\\MacroQuest.ini",lpINIPath);
     sprintf_s(ClientINI,"%s\\eqgame.ini",lpINIPath);
@@ -105,7 +105,7 @@ BOOL ParseINIFile(PCHAR lpINIPath)
 
     DebugSpew("Expected Client version: %s %s",__ExpectedVersionDate,__ExpectedVersionTime);
     DebugSpew("    Real Client version: %s %s",__ActualVersionDate,__ActualVersionTime);
-
+	//MessageBox(NULL,"Debug me","MacroQuest",MB_OK);
     // note: __ClientOverride is always #defined as 1 or 0
 #if (!__ClientOverride)
     if (strncmp(__ExpectedVersionDate,(const char *)__ActualVersionDate,strlen(__ExpectedVersionDate)) ||
@@ -115,7 +115,13 @@ BOOL ParseINIFile(PCHAR lpINIPath)
         return FALSE;
     }
 #endif
-
+	//this is a new addition to core, if they dont have it, I want them to at least see it
+	//from that point on they can chose to unload it.
+	int defval = GetPrivateProfileInt("Plugins", "MQ2TargetInfo", -1, Filename);
+	if (defval == -1)
+	{
+		WritePrivateProfileString("Plugins", "MQ2TargetInfo", "1", Filename);
+	}
 	int ic = GetPrivateProfileInt("Plugins", "MQ2Ic", 1, Filename);
 	if (ic==0) {//its set to 0 thats not good
 		WritePrivateProfileString("Plugins", "MQ2Ic", "1", Filename);
@@ -148,6 +154,7 @@ BOOL ParseINIFile(PCHAR lpINIPath)
 	gCreateMQ2NewsWindow = 1==GetPrivateProfileInt("MacroQuest","CreateMQ2NewsWindow",1,Filename);
 	gNetStatusXPos = GetPrivateProfileInt("MacroQuest","NetStatusXPos",0,Filename);
 	gNetStatusYPos = GetPrivateProfileInt("MacroQuest","NetStatusYPos",0,Filename);
+	StackingDebug = GetPrivateProfileInt("MacroQuest","BuffStackTestDebug",0,Filename); gStackingDebug = (StackingDebug == 2 ? -1 : StackingDebug);
 
 	GetPrivateProfileString("Macroquest","IfDelimiter",",",Delimiter,MAX_STRING,Filename); gIfDelimiter = Delimiter[0];
 	GetPrivateProfileString("Macroquest","IfAltDelimiter","~",Delimiter,MAX_STRING,Filename); gIfAltDelimiter = Delimiter[0];
@@ -185,7 +192,11 @@ BOOL ParseINIFile(PCHAR lpINIPath)
             gMaxSpawnCaptions=GetPrivateProfileInt("Captions","Update",gMaxSpawnCaptions,Filename);
             gMQCaptions = 1==GetPrivateProfileInt("Captions","MQCaptions",1,Filename); 
             gAnonymize = 1==GetPrivateProfileInt("Captions","Anonymize",0,Filename); 
-			
+			GetPrivateProfileString("Captions", "AnonCaption", "", gszAnonCaption, MAX_STRING, Filename);
+			if (gszAnonCaption[0] == '\0')
+			{
+				WritePrivateProfileString("Captions", "AnonCaption", "[${NamingSpawn.Level}] ${NamingSpawn.Race} ${NamingSpawn.Class} ${NamingSpawn.Type}", Filename);
+			}
             ConvertCR(gszSpawnNPCName,MAX_STRING);
             ConvertCR(gszSpawnPlayerName[1], MAX_STRING);
             ConvertCR(gszSpawnPlayerName[2], MAX_STRING);
@@ -195,6 +206,7 @@ BOOL ParseINIFile(PCHAR lpINIPath)
             ConvertCR(gszSpawnPlayerName[6], MAX_STRING);
             ConvertCR(gszSpawnCorpseName, MAX_STRING);
             ConvertCR(gszSpawnPetName, MAX_STRING);
+			ConvertCR(gszAnonCaption, MAX_STRING);
 
             gFilterSWho.Lastname= GetPrivateProfileInt("SWho Filter","Lastname",1,Filename);
             gFilterSWho.Class    = GetPrivateProfileInt("SWho Filter","Class",1,Filename);
@@ -342,7 +354,7 @@ bool __cdecl MQ2Initialize()
 	HMODULE heagamemod = GetModuleHandle(NULL);
 	GetModuleInformation(GetCurrentProcess(), heagamemod, &modinfo, sizeof(MODULEINFO));
 	g_eqgameimagesize = (DWORD)heagamemod + modinfo.SizeOfImage;
-	if (HMODULE hmLavish=GetModuleHandle("Lavish.dll")) {
+	if (GetModuleHandle("Lavish.dll") || GetModuleHandle("InnerSpace.dll")) {
 		//I dont know why but if we dont sleep here for a while
 		//we will crash but only if I have a detour on wwsCrashReportCheckForUploader
 		//I suspect Lax would know more about this than me -eqmule
@@ -555,7 +567,12 @@ void __cdecl MQ2Shutdown()
 
 DWORD __stdcall InitializeMQ2SpellDb(PVOID pData)
 {
-	WriteChatfSafe("Initializing SpellMap. (%d)",(DWORD)pData);
+	switch ((DWORD)pData)
+	{
+		case 1:  { WriteChatfSafe("Initializing SpellMap from SetGameState."); break; }
+		case 2:  { WriteChatfSafe("Initializing SpellMap from GetSpellByName."); break; }
+		default: { WriteChatfSafe("Initializing SpellMap. (%d)", (DWORD)pData); break; }
+	}
 	if (!ghLockSpellMap)
 		ghLockSpellMap = CreateMutex(NULL, FALSE, NULL);
 	if (ghLockSpellMap) {
@@ -573,7 +590,12 @@ DWORD __stdcall InitializeMQ2SpellDb(PVOID pData)
 		//ok everything checks out lets fill our own map with spells
 		PopulateSpellMap();
 	}
-	WriteChatfSafe("SpellMap Initialized. (%d)",(DWORD)pData);
+	switch ((DWORD)pData)
+	{
+		case 1:  { WriteChatfSafe("SpellMap Initialized from SetGameState."); break; }
+		case 2:  { WriteChatfSafe("SpellMap Initialized  from GetSpellByName."); break; }
+		default: { WriteChatfSafe("SpellMap Initialized. (%d)", (DWORD)pData); break; }
+	}
 	ghInitializeMQ2SpellDb = 0;
 	return 0;
 }

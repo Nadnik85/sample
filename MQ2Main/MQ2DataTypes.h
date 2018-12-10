@@ -1211,6 +1211,9 @@ public:
 		CountersCurse = 268,
 		CountersCorruption = 269,
 		Bandolier = 270,
+#if defined(EQBETA) || defined(TEST)
+		LCK = 271,
+#endif
 	};
 	enum CharacterMethods
 	{
@@ -1481,6 +1484,9 @@ public:
 		TypeMember(CountersCurse);
 		TypeMember(CountersCorruption);
 		TypeMember(Bandolier);
+#if defined(EQBETA) || defined(TEST)
+		TypeMember(LCK);
+#endif
 		
 		TypeMethod(Stand);
 		TypeMethod(Sit);
@@ -2108,6 +2114,10 @@ public:
 		Illusion = 159,
 		Familiar = 160,
 		CanUse = 161,
+		LoreEquipped = 162,
+		Luck = 163,
+		MinLuck = 164,
+		MaxLuck = 165,
 	};
 	enum ItemMethods
 	{
@@ -2275,6 +2285,10 @@ public:
 		TypeMember(Illusion);
 		TypeMember(Familiar);
 		TypeMember(CanUse);
+		TypeMember(LoreEquipped);
+		TypeMember(Luck);
+		TypeMember(MinLuck);
+		TypeMember(MaxLuck);
 	}
 
 	~MQ2ItemType()
@@ -2477,9 +2491,9 @@ public:
 
 	void InitVariable(MQ2VARPTR &VarPtr)
 	{
-		VarPtr.Ptr = malloc(sizeof(GROUNDITEM));
+		VarPtr.Ptr = malloc(sizeof(GROUNDOBJECT));
 		VarPtr.HighPart = 0;
-		ZeroMemory(VarPtr.Ptr, sizeof(GROUNDITEM));
+		ZeroMemory(VarPtr.Ptr, sizeof(GROUNDOBJECT));
 	}
 	void FreeVariable(MQ2VARPTR &VarPtr)
 	{
@@ -2489,8 +2503,34 @@ public:
 	{
 		if (VarPtr.Ptr)
 		{
-			GetFriendlyNameForGroundItem((PGROUNDITEM)VarPtr.Ptr, Destination, MAX_STRING);
-			return true;
+			PGROUNDOBJECT pObj = (PGROUNDOBJECT)VarPtr.Ptr;
+			if (pObj->Type == GO_GroundType)
+			{
+				GetFriendlyNameForGroundItem(pObj->pGroundItem, Destination, MAX_STRING);
+				return true;
+			}
+			else if (pObj->Type == GO_ObjectType)
+			{
+				RealEstateManagerClient& manager = RealEstateManagerClient::Instance();
+				if (&manager)
+				{
+					if (EQPlacedItem*pPlaced = (EQPlacedItem*)pObj->ObjPtr)
+					{
+						const RealEstateItemClient* pRealEstateItem = manager.GetItemByRealEstateAndItemIds(pPlaced->RealEstateID, pPlaced->RealEstateItemID);
+						if (pRealEstateItem)
+						{
+							if (PCONTENTS pCont = pRealEstateItem->Object.pItemBase.pObject)
+							{
+								if (PITEMINFO pItem = GetItemFromContents(pCont))
+								{
+									strcpy_s(Destination, MAX_STRING, pItem->Name);
+									return true;
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 		return true;
 	}
@@ -2498,21 +2538,45 @@ public:
 	{
 		if (Source.Type != pGroundType)
 			return false;
-		memcpy(VarPtr.Ptr, Source.Ptr, sizeof(GROUNDITEM));
+		memcpy(VarPtr.Ptr, Source.Ptr, sizeof(GROUNDOBJECT));
 		return true;
 	}
 	bool FromString(MQ2VARPTR &VarPtr, PCHAR Source)
 	{
 		int id = atoi(Source);
 		PGROUNDITEM pGroundItem = *(PGROUNDITEM*)pItemList;
+		GROUNDOBJECT go;
+		ZeroMemory(&go, sizeof(go));
 		while (pGroundItem)
 		{
 			if (pGroundItem->DropID == id)
 			{
-				memcpy(VarPtr.Ptr, pGroundItem, sizeof(GROUNDITEM));
+				go.pGroundItem = pGroundItem;
+				go.Type = GO_GroundType;
+				memcpy(VarPtr.Ptr, &go, sizeof(GROUNDOBJECT));
 				return true;
 			}
 			pGroundItem = pGroundItem->pNext;
+		}
+		//didn't find one, check objects...
+		RealEstateManagerClient& manager = RealEstateManagerClient::Instance();
+		if (&manager)
+		{
+			if (EQPlacedItem *top0 = *(EQPlacedItem**)pinstEQObjectList) {
+				if (EQPlacedItem *top = *(EQPlacedItem**)top0) {
+					while (top)
+					{
+						if (top->RealEstateItemID == id)
+						{
+							go.ObjPtr = (void*)top;
+							go.Type = GO_ObjectType;
+							memcpy(VarPtr.Ptr, &go, sizeof(GROUNDOBJECT));
+							return true;
+						}
+						top = top->pNext;
+					}
+				}
+			}
 		}
 		return false;
 	}
@@ -2578,9 +2642,15 @@ public:
 		Items = 3,
 		Open = 4,
 		Full = 5,
+		ItemsReceived = 6,
 	};
 	enum MerchantMethods
 	{
+		SelectItem = 1,
+		Buy = 2,
+		Sell = 3,
+		OpenWindow = 4,
+		CloseWindow = 5,
 	};
 	MQ2MerchantType() :MQ2Type("merchant")
 	{
@@ -2589,6 +2659,13 @@ public:
 		TypeMember(Items);
 		TypeMember(Open);
 		TypeMember(Full);
+		TypeMember(ItemsReceived);
+
+		TypeMethod(SelectItem);
+		TypeMethod(Buy);
+		TypeMethod(Sell);
+		TypeMethod(OpenWindow);
+		TypeMethod(CloseWindow);
 	}
 
 	~MQ2MerchantType()
@@ -3100,6 +3177,72 @@ public:
 	}
 };
 
+class MQ2MenuType : public MQ2Type
+{
+public:
+	enum MenuMembers
+	{
+		Address = 1,
+		NumVisibleMenus = 2,
+		CurrMenu = 3,
+		Name = 4,
+		NumItems = 5,
+		Items = 6,
+	};
+	enum MenuMethods
+	{
+		Select = 1,
+	};
+	MQ2MenuType() : MQ2Type("menu")
+	{
+		TypeMember(Address);
+		TypeMember(NumVisibleMenus);
+		TypeMember(CurrMenu);
+		TypeMember(Name);
+		TypeMember(NumItems);
+		TypeMember(Items);
+		
+		TypeMethod(Select);
+	}
+
+	~MQ2MenuType()
+	{
+	}
+
+	bool GETMEMBER();
+	DECLAREGETMETHOD();
+
+	bool ToString(MQ2VARPTR VarPtr, PCHAR Destination)
+	{
+		strcpy_s(Destination, MAX_STRING, "No Menu Open");
+		if (VarPtr.Ptr && ((CContextMenuManager*)VarPtr.Ptr)->NumVisibleMenus == 1)
+		{
+			CContextMenuManager*pMgr = (CContextMenuManager*)VarPtr.Ptr;
+			if (pMgr->CurrMenu < 8)
+			{
+				int currmen = pMgr->CurrMenu;
+				if (CContextMenu*menu = pMgr->pCurrMenus[currmen])
+				{
+					CXStr Str;
+					((CListWnd*)menu)->GetItemText(&Str, 0, 1);
+					GetCXStr(Str.Ptr, Destination);
+				}
+			}
+		}
+		return true;
+	}
+	bool FromData(MQ2VARPTR &VarPtr, MQ2TYPEVAR &Source)
+	{
+		if (Source.Type != pMenuType)
+			return false;
+		VarPtr.Ptr = Source.Ptr;
+		return true;
+	}
+	bool FromString(MQ2VARPTR &VarPtr, PCHAR Source)
+	{
+		return false;
+	}
+};
 #ifndef ISXEQ
 class MQ2MacroType : public MQ2Type
 {
@@ -3369,6 +3512,7 @@ public:
 		CharSelectList = 25,
 		CurrentUI = 26,
 		IsDefaultUILoaded = 27,
+		HWND = 28,
 	};
 	enum EverQuestMethods
 	{
@@ -3402,6 +3546,7 @@ public:
 		TypeMember(CharSelectList);
 		TypeMember(CurrentUI);
 		TypeMember(IsDefaultUILoaded);
+		TypeMember(HWND);
 	}
 
 	~MQ2EverQuestType()
@@ -5897,6 +6042,7 @@ public:
 		return false;
 	}
 };
+#if !defined(UFEMU)
 class MQ2BandolierItemType : public MQ2Type
 {
 public:
@@ -5986,3 +6132,4 @@ public:
 		return false;
 	}
 };
+#endif

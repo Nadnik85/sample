@@ -91,6 +91,7 @@ namespace MQ2Globals
 	EQLIB_VAR HMODULE ghmq2ic;
 #ifndef ISXEQ
 	LEGACY_VAR PMACROBLOCK gMacroBlock;
+	LEGACY_VAR int BlockIndex;
 	LEGACY_VAR PMACROSTACK gMacroStack;
 	LEGACY_VAR std::map <std::string, int, CaseInsensitiveLess> gMacroSubLookupMap;
 	LEGACY_VAR std::map<std::string, int> gUndeclaredVars;
@@ -121,6 +122,7 @@ namespace MQ2Globals
 	EQLIB_VAR CHAR gszSpawnPlayerName[8][MAX_STRING];
 	EQLIB_VAR CHAR gszSpawnPetName[MAX_STRING];
 	EQLIB_VAR CHAR gszSpawnCorpseName[MAX_STRING];
+	EQLIB_VAR CHAR gszAnonCaption[MAX_STRING];
 
 	EQLIB_VAR DWORD DrawHUDParams[4];
 
@@ -136,6 +138,7 @@ namespace MQ2Globals
 
 	EQLIB_VAR DWORD gbAssistComplete; 
 	EQLIB_VAR BOOL gTargetbuffs;
+	EQLIB_VAR BOOL gItemsReceived;
 	EQLIB_VAR BOOL gbInZone;
 	EQLIB_VAR BOOL gZoning;
 	EQLIB_VAR BOOL WereWeZoning;
@@ -173,6 +176,8 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD gNetStatusXPos;
 	EQLIB_VAR DWORD gNetStatusYPos;
 
+	EQLIB_VAR LONG gStackingDebug;
+
 	EQLIB_VAR DOUBLE DegToRad;
 	EQLIB_VAR DOUBLE PI;
 #define ZoneShift             0
@@ -190,10 +195,10 @@ namespace MQ2Globals
 	EQLIB_VAR PMQTIMER gTimer;
 	EQLIB_VAR LONG gDelay;
 	EQLIB_VAR CHAR gDelayCondition[MAX_STRING];
-	EQLIB_VAR BOOL gMacroPause;
 	EQLIB_VAR SPAWNINFO EnviroTarget;
 	EQLIB_VAR SPAWNINFO PetSpawn;
 	EQLIB_VAR SPAWNINFO MercenarySpawn;
+	EQLIB_VAR GROUNDOBJECT GroundObject;
 	EQLIB_VAR PGROUNDITEM pGroundTarget;
 	EQLIB_VAR SPAWNINFO DoorEnviroTarget;
 	EQLIB_VAR PDOOR pDoorTarget;
@@ -279,10 +284,10 @@ namespace MQ2Globals
 #define gPCNames (*gpPCNames)
 	EQLIB_VAR PBYTE gpAutoFire;
 #define gAutoFire (*gpAutoFire)
-	#if !defined(ROF2EMU) && !defined(UFEMU)
-		EQLIB_VAR PAUTOSKILL gpAutoSkill;
-		#define gAutoSkill (*gpAutoSkill)
-	#endif
+#if !defined(ROF2EMU) && !defined(UFEMU)
+	EQLIB_VAR PAUTOSKILL gpAutoSkill;
+#define gAutoSkill (*gpAutoSkill)
+#endif
 	EQLIB_VAR PBYTE gpShiftKeyDown;
 #define gShiftKeyDown (*gpShiftKeyDown)
 	EQLIB_VAR DWORD *gpMouseEventTime;
@@ -333,10 +338,12 @@ namespace MQ2Globals
 	EQLIB_VAR PCHAR szCombineTypes[];
 	EQLIB_VAR PCHAR szItemTypes[];
 	EQLIB_VAR PCHAR szSPATypes[];
+	EQLIB_VAR PCHAR szFactionNames[];
 
 	EQLIB_VAR SIZE_T MAX_COMBINES;
 	EQLIB_VAR SIZE_T MAX_ITEMTYPES;
 	EQLIB_VAR SIZE_T MAX_SPELLEFFECTS;
+	EQLIB_VAR SIZE_T MAX_FACTIONNAMES;
 
 	EQLIB_VAR PCHAR szWornLoc[];
 
@@ -433,7 +440,11 @@ namespace MQ2Globals
 #define pPCData (*ppPCData)
 	EQLIB_VAR EQ_Character **ppCharData;
 #define pCharData (*ppCharData)
+#ifdef NEWCHARINFO
+#define pCharData1 ((EQ_Character1 *)&GetCharInfo()->PcClient_CharacterZoneClient_vfTable)
+#else
 #define pCharData1 ((EQ_Character1 *)&GetCharInfo()->vtable2)
+#endif
 	EQLIB_VAR EQPlayer **ppCharSpawn;
 #define pCharSpawn (*ppCharSpawn)
 	EQLIB_VAR EQPlayer **ppActiveMerchant;
@@ -549,6 +560,9 @@ namespace MQ2Globals
 	EQLIB_VAR CConfirmationDialog **ppConfirmationDialog;
 
 	EQLIB_VAR CFacePick **ppFacePick;
+	EQLIB_VAR CFactionWnd **ppFactionWnd;
+	EQLIB_VAR CExtendedTargetWnd **ppExtendedTargetWnd;
+	
 	EQLIB_VAR CFindItemWnd **ppFindItemWnd;
 	EQLIB_VAR CFindLocationWnd **ppFindLocationWnd;
 	EQLIB_VAR CInvSlotMgr **ppInvSlotMgr;
@@ -635,7 +649,8 @@ namespace MQ2Globals
 	EQLIB_VAR CWebManager **ppCWebManager;
 	#define pCWebManager (*ppCWebManager)
 	EQLIB_VAR CTaskWnd **ppTaskWnd;
-	EQLIB_VAR CTaskSomething *ppTaskSomething;
+	EQLIB_VAR CTaskManager *ppTaskManager;
+	#define pTaskManager (*ppTaskManager)
 	EQLIB_VAR CTimeLeftWnd **ppTimeLeftWnd;
 	EQLIB_VAR CTextOverlay **ppTextOverlay;
 	EQLIB_VAR CAdvancedLootWnd **ppAdvancedLootWnd;
@@ -657,6 +672,8 @@ namespace MQ2Globals
 #define pChatManager (*ppChatManager)
 #define pEQSuiteTextureLoader (ppEQSuiteTextureLoader)
 #define pFacePick (*ppFacePick)
+#define pFactionWnd (*ppFactionWnd)
+#define pExtendedTargetWnd (*ppExtendedTargetWnd)
 #define pFindItemWnd (*ppFindItemWnd)
 #define pFindLocationWnd (*ppFindLocationWnd)
 #define pInvSlotMgr (*ppInvSlotMgr)
@@ -851,6 +868,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD pinstDZMember;
 	EQLIB_VAR DWORD pinstDZTimerInfo;
 	EQLIB_VAR DWORD pinstEQItemList;
+	EQLIB_VAR DWORD pinstEQObjectList;
 	EQLIB_VAR DWORD instEQMisc;
 	EQLIB_VAR DWORD pinstEQSoundManager;
 	EQLIB_VAR DWORD pinstEQSpellStrings;
@@ -891,7 +909,9 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD pinstCTextOverlay;
 	EQLIB_VAR DWORD pinstCAudioTriggersWindow;
 	EQLIB_VAR DWORD pinstCCharacterListWnd;
+	EQLIB_VAR DWORD pinstCExtendedTargetWnd;
 	EQLIB_VAR DWORD pinstCFacePick;
+	EQLIB_VAR DWORD pinstCFactionWnd;
 	EQLIB_VAR DWORD pinstCFindItemWnd;
 	EQLIB_VAR DWORD pinstCNoteWnd;
 	EQLIB_VAR DWORD pinstCBookWnd;
@@ -1002,7 +1022,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD pinstCTargetOfTargetWnd;
 	EQLIB_VAR DWORD pinstCTaskTemplateSelectWnd;
 	EQLIB_VAR DWORD pinstCTaskWnd;
-	EQLIB_VAR DWORD pinstCTaskSomething;
+	EQLIB_VAR DWORD pinstCTaskManager;
 	EQLIB_VAR DWORD pinstCTipWndOFDAY;
 	EQLIB_VAR DWORD pinstCTipWndCONTEXT;
 	EQLIB_VAR DWORD pinstCTitleWnd;
@@ -1016,7 +1036,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD pinstEQSuiteTextureLoader;
 	EQLIB_VAR DWORD pinstCPointMerchantWnd;
 	EQLIB_VAR DWORD pinstCZoneGuideWnd;
-
+	
 	EQLIB_VAR DWORD __AppCrashWrapper;
 	EQLIB_VAR DWORD __CastRay;
 	EQLIB_VAR DWORD __CastRay2;
@@ -1221,7 +1241,7 @@ namespace MQ2Globals
 	
 	EQLIB_VAR DWORD CHotButtonWnd__DoHotButton;
 	EQLIB_VAR DWORD CHotButton__SetButtonSize;
-	
+
 	EQLIB_VAR DWORD CInvSlotMgr__FindInvSlot;
 	EQLIB_VAR DWORD CInvSlotMgr__MoveItem;
 	EQLIB_VAR DWORD CInvSlotMgr__SelectSlot;
@@ -1296,10 +1316,10 @@ namespace MQ2Globals
     EQLIB_VAR DWORD CMapViewWnd__HandleLButtonDown;
 
 	EQLIB_VAR DWORD CMerchantWnd__DisplayBuyOrSellPrice;
-	EQLIB_VAR DWORD CMerchantWnd__RequestBuyItem;
-	EQLIB_VAR DWORD CMerchantWnd__RequestSellItem;
+	EQLIB_VAR DWORD CMerchantWnd__PurchasePageHandler__RequestGetItem;
+	EQLIB_VAR DWORD CMerchantWnd__PurchasePageHandler__RequestPutItem;
 	EQLIB_VAR DWORD CMerchantWnd__SelectBuySellSlot;
-	EQLIB_VAR DWORD CMerchantWnd__ActualSelect;
+	EQLIB_VAR DWORD CMerchantWnd__PurchasePageHandler__UpdateList;
 
 	EQLIB_VAR DWORD CPacketScrambler__ntoh;
 	EQLIB_VAR DWORD CPacketScrambler__hton;
@@ -1512,6 +1532,11 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD ItemBaseContainer__ItemBaseContainer;
 	EQLIB_VAR DWORD ItemBaseContainer__CreateItemGlobalIndex;
 
+	EQLIB_VAR DWORD ItemBase__IsLore;
+#if !defined(ROF2EMU) && !defined(UFEMU)
+	EQLIB_VAR DWORD ItemBase__IsLoreEquipped;
+#endif
+	
 	EQLIB_VAR DWORD EQItemList__EQItemList;
 	EQLIB_VAR DWORD EQItemList__add_item;
 	EQLIB_VAR DWORD EQItemList__delete_item;
@@ -1519,6 +1544,14 @@ namespace MQ2Globals
 
 	EQLIB_VAR DWORD EQMisc__GetActiveFavorCost;
 
+	EQLIB_VAR DWORD RealEstateManagerClient__GetItemByRealEstateAndItemIds;
+	EQLIB_VAR DWORD RealEstateManagerClient__Instance;
+	EQLIB_VAR DWORD FactionManagerClient__Instance;
+	EQLIB_VAR DWORD FactionManagerClient__HandleFactionMessage;
+
+	EQLIB_VAR DWORD EQPlacedItemManager__Instance;
+	EQLIB_VAR DWORD EQPlacedItemManager__GetItemByGuid;
+	EQLIB_VAR DWORD EQPlacedItemManager__GetItemByRealEstateAndRealEstateItemIds;
 	EQLIB_VAR DWORD EQPlayer__ChangeBoneStringSprite;
 	EQLIB_VAR DWORD EQPlayer__dEQPlayer;
 	EQLIB_VAR DWORD EQPlayer__DoAttack;
@@ -1569,7 +1602,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD PcZoneClient__GetItemByItemClass;
 	EQLIB_VAR DWORD PcZoneClient__RemoveBuffEffect;
 	EQLIB_VAR DWORD PcZoneClient__BandolierSwap;
-
+	
 	EQLIB_VAR DWORD EQSwitch__UseSwitch;
 
 	EQLIB_VAR BOOL gbTimeStampChat;
@@ -1615,6 +1648,8 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD CTargetWnd__GetBuffCaster;
 	EQLIB_VAR DWORD CTargetWnd__WndNotification;
 	EQLIB_VAR DWORD CTaskWnd__UpdateTaskTimers;
+	EQLIB_VAR DWORD CTaskManager__GetEntry;
+
 	EQLIB_VAR DWORD EqSoundManager__WavePlay;
 	EQLIB_VAR DWORD EqSoundManager__PlayScriptMp3;
 	EQLIB_VAR DWORD EqSoundManager__SoundAssistPlay;

@@ -101,9 +101,20 @@ public:
 		}
 		return CTargetWnd__WndNotification_Tramp(pWnd,uiMessage,pData);
 	}
+	int CSidlScreenWnd__WndNotification_Tramp(class CXWnd *,unsigned __int32,void *);
+	int CSidlScreenWnd__WndNotification_Detour(class CXWnd *pWnd, unsigned int uiMessage, void* pData)
+	{
+		if ((int)uiMessage == XWM_LINK)
+		{
+			Sleep(0);
+		}
+		return CSidlScreenWnd__WndNotification_Tramp(pWnd, uiMessage, pData);
+	}
 };
 DETOUR_TRAMPOLINE_EMPTY(void CSidlInitHook::Init_Trampoline(class CXStr*,int));
 DETOUR_TRAMPOLINE_EMPTY(int CSidlInitHook::CTargetWnd__WndNotification_Tramp(class CXWnd *,unsigned __int32,void *));
+DETOUR_TRAMPOLINE_EMPTY(int CSidlInitHook::CSidlScreenWnd__WndNotification_Tramp(class CXWnd *,unsigned __int32,void *));
+
 
 class CXWndManagerHook
 {
@@ -200,6 +211,8 @@ void InitializeMQ2Windows()
     EzDetourwName(CSidlScreenWnd__Init1,&CSidlInitHook::Init_Detour,&CSidlInitHook::Init_Trampoline,"CSidlScreenWnd__Init1");
 	EzDetourwName(CTargetWnd__WndNotification,&CSidlInitHook::CTargetWnd__WndNotification_Detour,&CSidlInitHook::CTargetWnd__WndNotification_Tramp,"CTargetWnd__WndNotification");
     EzDetourwName(CXWndManager__RemoveWnd,&CXWndManagerHook::RemoveWnd_Detour,&CXWndManagerHook::RemoveWnd_Trampoline,"CXWndManager__RemoveWnd");
+    //debugging
+	//EzDetourwName(CChatWindow__WndNotification,&CSidlInitHook::CSidlScreenWnd__WndNotification_Detour,&CSidlInitHook::CSidlScreenWnd__WndNotification_Tramp,"linktest");
 
 #ifndef ISXEQ
     AddCommand("/windows",ListWindows,false,true,false);
@@ -266,6 +279,10 @@ void ShutdownMQ2Windows()
     RemoveDetour(CSidlScreenWnd__Init1);
     RemoveDetour(CTargetWnd__WndNotification);
     RemoveDetour(CXWndManager__RemoveWnd);
+	//for testing notifications, only for debugging
+	//dont leave active for release
+    //RemoveDetour(CChatWindow__WndNotification);
+	
 	//WindowList.clear();
 }
 
@@ -461,8 +478,13 @@ CXWnd *FindMQ2Window(PCHAR WindowName)
 		if (!_strnicmp(WindowName, "bank", 4)) {
 			unsigned long nPack = atoi(&WindowName[4]);
 			if (nPack && nPack <= NUM_BANK_SLOTS) {
+#ifdef NEWCHARINFO
+				if (pCharData && ((PCHARINFO)pCharData)->BankItems.Items.Size > nPack - 1) {
+					pPack = ((PCHARINFO)pCharData)->BankItems.Items[nPack - 1].pObject;
+#else
 				if (pCharData && ((PCHARINFO)pCharData)->pBankArray) {
 					pPack = ((PCHARINFO)pCharData)->pBankArray->Bank[nPack - 1];
+#endif
 				}
 			}
 		}
@@ -1170,8 +1192,7 @@ int WndNotify(int argc, char *argv[])
     GetArg(szArg2, szLine, 2);
     GetArg(szArg3, szLine, 3);
     GetArg(szArg4, szLine, 4);
-
-    if (!szArg3[0] && !IsNumber(szArg1))
+    if (!szArg3[0] && !IsNumber(szArg1) && _stricmp(szArg2,"menuselect"))
     {
         SyntaxError("Syntax: /notify <window|\"item\"> <control|0> <notification> [notification data]");
         return;
@@ -1191,7 +1212,43 @@ int WndNotify(int argc, char *argv[])
     CHAR *szArg3=argv[3];
     CHAR *szArg4=argv[4];
 #endif 
-
+	if (!_stricmp(szArg2, "menuselect"))
+	{
+		CContextMenuManager*ccmgr = pContextMenuManager;
+		if (ccmgr->NumVisibleMenus == 1)
+		{
+			if (ccmgr->CurrMenu < 8)
+			{
+				int currmen = ccmgr->CurrMenu;
+				if (CContextMenu*menu = ccmgr->pCurrMenus[currmen])
+				{
+					CXStr Str;
+					PCXSTR pStr = 0;
+					_strlwr_s(szArg1);
+					for (int i = 0; i < menu->NumItems; i++)
+					{
+						((CListWnd*)menu)->GetItemText(&Str, i, 1);
+						GetCXStr(Str.Ptr, szArg4);
+						if (szArg4[0] != '\0')
+						{
+							_strlwr_s(szArg4);
+							if (strstr(szArg4, szArg1))
+							{
+								WriteChatf("\ay[/notify] SUCCESS\ax: Clicking \"%s\" at position %d in the menu.", szArg4, i);
+								((CXWnd*)(ccmgr))->WndNotification((CXWnd*)menu, XWM_LMOUSEUP, (void*)i);
+								RETURN(0);
+							}
+						}
+					}
+					WriteChatf("\ar[/notify] FAILED\ax: No Menu item was found with the word %s in it", szArg1);
+				}
+			}
+		}
+		else {
+			WriteChatf("\ar[/notify] FAILED\ax: No Menu is currently open.");
+		}
+		RETURN(0);
+	}
     if (!_stricmp(szArg3,"link")) {
         DebugSpewAlways("WndNotify: link found, Data = 1");
         Data = 1;
@@ -1498,7 +1555,7 @@ int ItemNotify(int argc, char *argv[])
 			}
 			WriteChatf("[/itemnotify] Invalid item slot '%s'",szArg1);
             RETURN(0);
-        } else if (Slot > 0 && Slot < 0x800 && !pSlot) {
+        } else if (Slot > 0 && Slot < MAX_INV_SLOTS && !pSlot) {
             pSlot = pInvMgr->SlotArray[Slot];
         }
     }
@@ -1527,7 +1584,7 @@ int ListItemSlots(int argc, char *argv[])
     unsigned long Count=0;
     WriteChatColor("List of available item slots");
     WriteChatColor("-------------------------");
-    for (unsigned long N = 0 ; N < 0x800 ; N++)
+    for (unsigned long N = 0 ; N < MAX_INV_SLOTS ; N++)
         if (PEQINVSLOT pSlot=pMgr->SlotArray[N])
         {
             if (pSlot->pInvSlotWnd)

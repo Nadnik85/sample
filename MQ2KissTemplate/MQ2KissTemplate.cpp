@@ -13,19 +13,26 @@ PreSetup(PLUGIN_NAME);
 PLUGIN_VERSION(VERSION);
 
 //Variables
+bool oldCond = false;
+bool useClass = false;
+bool useLevel = false;
+
 CHAR filename[MAX_STRING] = "";
 CHAR newfilename[MAX_STRING] = "";
 CHAR OurClass[MAX_STRING] = "";
 CHAR ConditionsFile[MAX_STRING] = "";
+CHAR tempClass[MAX_STRING] = "";
+CHAR tempLevel[MAX_STRING] = "";
 
+int condNumber = 1;
 int OurLevel = 0;
 int useConditions = 0;
-int condNumber = 1;
 //End Variables
 
 //Prototypes
 void GetINI(char Section[MAX_STRING], char Key[MAX_STRING], char Default[MAX_STRING], char ININame[MAX_STRING]);
 void GetINILoop(char Section[MAX_STRING], char Key[MAX_STRING], char Default[MAX_STRING], char ININame[MAX_STRING]);
+void ParseArg(CHAR Arg[MAX_STRING]);
 void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine);
 inline bool InGame();
 //End Prototypes
@@ -59,31 +66,18 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 {
 	if (!InGame()) return;
 
-	bool useClass = false;
-	bool useLevel = false;
-	CHAR tempClass[MAX_STRING] = "";
-	CHAR tempLevel[MAX_STRING] = "";
 	CHAR temp[MAX_STRING] = "";
-	GetArg(tempClass, szLine, 1);
-	GetArg(tempLevel, szLine, 2);
-	if (strlen(tempClass))
-		if (_stricmp(tempClass, "BRD") && _stricmp(tempClass, "BST") && _stricmp(tempClass, "BER") && _stricmp(tempClass, "CLR") && _stricmp(tempClass, "DRU") && _stricmp(tempClass, "ENC") && _stricmp(tempClass, "MAG") && _stricmp(tempClass, "MNK") && _stricmp(tempClass, "NEC") && _stricmp(tempClass, "PAL") && _stricmp(tempClass, "RNG") && _stricmp(tempClass, "ROG") && _stricmp(tempClass, "SHD") && _stricmp(tempClass, "SHM") && _stricmp(tempClass, "WAR") && _stricmp(tempClass, "WIZ")) {
-			WriteChatf("You've provided %s as a class to emulate, but that doesn't appear to be one of the 16 playable classes.", tempClass);
-			return;
-		}
-		else {
-			useClass = true;
-		}
+	CHAR Arg1[MAX_STRING] = "";
+	CHAR Arg2[MAX_STRING] = "";
+	CHAR Arg3[MAX_STRING] = "";
+	GetArg(Arg1, szLine, 1);
+	GetArg(Arg2, szLine, 2);
+	GetArg(Arg3, szLine, 3);
+	ParseArg(Arg1);
+	ParseArg(Arg2);
+	ParseArg(Arg3);
 
-	if (strlen(tempLevel))
-		if (atoi(tempLevel) < 0 || atoi(tempLevel) > 110) {
-			WriteChatf("You've provided %s as a level to emulate, but it is not between 1 and 110", tempLevel);
-			return;
-		}
-		else {
-			useLevel = true;
-		}
-
+	
 	sprintf_s(filename, "%s\\Macros\\Kissassist_%s.ini", gszINIPath, pChar->Name);
 	if (useClass)
 		sprintf_s(OurClass, "%s", tempClass);
@@ -103,7 +97,11 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 		sprintf_s(ConditionsFile, "%s\\Macros\\Kissassist_%s.ini", gszINIPath, pChar->Name);
 
 	//General Section
-	GetINI("General", "KissAssVer", 0, filename);
+	GetINI("General", "KissAssistVer", 0, filename);
+	if (oldCond) {
+		WritePrivateProfileString("General", "ConditionsOn", "2", newfilename);
+		//useConditions = 2;
+	}
 	if (!_stricmp(OurClass, "BRD")) {
 		if (GetPrivateProfileInt("General", "TwistOn", 0, filename) != 0) {
 			GetINI("General", "TwistOn", 0, filename);
@@ -115,7 +113,9 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 	//Buff Section
 	if (GetPrivateProfileInt("Buffs", "BuffsOn", 0, filename) != 0) {
 		GetINI("Buffs", "BuffsOn", 0, filename);
-		if (useConditions) GetINI("Buffs", "BuffsCOn", 0, filename);
+		if (oldCond) 
+			if (useConditions) 
+				GetINI("Buffs", "BuffsCOn", 0, filename);
 		GetINI("Buffs", "BuffsSize", 0, filename);
 		GetINILoop("Buffs", "Buffs", 0, filename);
 		GetINI("Buffs", "RebuffOn", 0, filename);
@@ -139,7 +139,9 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 	//DPS Section
 	if (GetPrivateProfileInt("DPS", "DPSOn", 0, filename) != 0) {
 		GetINI("DPS", "DPSOn", 0, filename);
-		if (useConditions) GetINI("DPS", "DPSCOn", 0, filename);
+		if (oldCond) 
+			if (useConditions)
+				GetINI("DPS", "DPSCOn", 0, filename);
 		GetINI("DPS", "DPSSize", 0, filename);
 		GetINI("DPS", "DPSSkip", 0, filename);
 		GetINI("DPS", "DPSInterval", 0, filename);
@@ -150,7 +152,9 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 	//Aggro Section
 	if (GetPrivateProfileInt("Aggro", "AggroOn", 0, filename)) {
 		GetINI("Aggro", "AggroOn", 0, filename);
-		if (useConditions) GetINI("Aggro", "AggroCOn", 0, filename);
+		if (oldCond) 
+			if (useConditions)
+				GetINI("Aggro", "AggroCOn", 0, filename);
 		GetINI("Aggro", "AggroSize", 0, filename);
 		GetINILoop("Aggro", "Aggro", 0, filename);
 	}
@@ -160,7 +164,9 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 	//Heals Section
 	if (GetPrivateProfileInt("Heals", "HealsOn", 0, filename) != 0) {
 		GetINI("Heals", "HealsOn", 0, filename);
-		if (useConditions) GetINI("Heals", "HealsCOn", 0, filename);
+		if (oldCond) 
+			if (useConditions)
+				GetINI("Heals", "HealsCOn", 0, filename);
 		GetINI("Heals", "HealsSize", 0, filename);
 		GetINILoop("Heals", "Heals", 0, filename);
 		if (!_stricmp(OurClass, "CLR") || !_stricmp(OurClass, "NEC") || !_stricmp(OurClass, "SHM") || !_stricmp(OurClass, "DRU") || !_stricmp(OurClass, "PAL")) {
@@ -211,7 +217,9 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 		}
 	}
 	//Burn Section
-	if (useConditions) GetINI("Burn", "BurnCOn", 0, filename);
+	if (oldCond) 
+		if (useConditions)
+			GetINI("Burn", "BurnCOn", 0, filename);
 	GetINI("Burn", "BurnSize", 0, filename);
 	GetINI("Burn", "BurnAllNamed", 0, filename);
 	GetINILoop("Burn", "Burn", 0, filename);
@@ -242,6 +250,12 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 		WritePrivateProfileString("KConditions", "CondSize", temp, newfilename);
 	}
 	condNumber = 1;
+	//reset my arguement modified variables back to their default settings.  
+	sprintf_s(tempClass, "");
+	sprintf_s(tempLevel, "");
+	useLevel = false;
+	useClass = false;
+	oldCond = false;
 }
 
 
@@ -264,42 +278,96 @@ void GetINILoop(char Section[MAX_STRING], char Key[MAX_STRING], char Default[MAX
 	CHAR temp[MAX_STRING] = "";
 	CHAR tempCond[MAX_STRING] = "";
 	CHAR condTemp[MAX_STRING] = "Cond";
+	CHAR szCondNumber[2] = "";
 	for (int i = 0; i < size; i++)
 	{
 		sprintf_s(KeyNum, "%s%i", Key, i);
 		sprintf_s(KeyNumCond, "%sCond%i", Key, i);
+		sprintf_s(szCondNumber, "");
+
+		//If there is something stored in our current INI at this section and key, then lets do some copying.
 		if (GetPrivateProfileString(Section, KeyNum, 0, temp, MAX_STRING, filename) != 0)
 		{
-			//str = strstr(temp, "Cond");
-			//while (str != NULL)
-			//{
-			//	condFound = true;
-			//	str = strstr(str + 1, "Cond");
-			//}
-			if (strstr(temp, "|Cond") != NULL)
-				condFound = true;
-			//WriteChatf("Section: %s, Key: %s, Value: %s", Section, KeyNum, temp);
-			WritePrivateProfileString(Section, KeyNum, temp, newfilename);
-			if (_stricmp(Section, "KConditions")) {
-				if (GetPrivateProfileString(Section, KeyNumCond, 0, tempCond, MAX_STRING, ConditionsFile) != 0 && !condFound) {
-					if (_stricmp(tempCond, "TRUE") && _stricmp(tempCond, "NULL") && _stricmp(tempCond, "FALSE")) {
-						sprintf_s(condTemp, "Cond%d", condNumber);
-						WritePrivateProfileString("KConditions", condTemp, tempCond, newfilename);
-						
-						if (GetPrivateProfileString(Section, KeyNum, 0, temp, MAX_STRING, filename) != 0) {
-							sprintf_s(condTemp, "|Cond%d", condNumber);
-							strcat_s(temp, condTemp);
-							if (_stricmp(Section,"KConditions"))
+			//If Section, Key is not equal to "NULL" then lets write it to the new file. 
+			if (_stricmp(temp, "NULL")) {
+
+				//if |Cond is found in the string for temp, set condfound == true;
+				if (strstr(temp, "|Cond") != NULL) {
+					//WriteChatf("Condition Found");
+					condFound = true;
+				}
+				//if converting to old conditions, remove |Cond## from the end of the string. 
+				//WriteChatf("oldCond: %d, condFound: %d", oldCond, condFound);
+				if (oldCond && condFound) {
+					char *p = strrchr(temp, '|');
+					if (p) p[0] = 0;
+					p += 5;
+					if (p) sprintf_s(szCondNumber,"%s",p);
+					//WriteChatf("CondNumber: %s", szCondNumber);
+				}
+				WritePrivateProfileString(Section, KeyNum, temp, newfilename);
+				//does it already have the KA11 Condition style. 
+				
+				//If the section isn't KConditions - Lets process conditions.
+				if (_stricmp(Section, "KConditions")) {
+					//If Section, KeyCond# has a value  and we didn't find a |Cond# in the key in our current condition file, then lets see about copying some things.
+					if (GetPrivateProfileString(Section, KeyNumCond, 0, tempCond, MAX_STRING, ConditionsFile) != 0 && !condFound) {
+						//If the condition isn't TRUE, isn't NULL,  isn't FALSE, and oldCond isn't true, then lets upgrade it to KA11. 
+						if (_stricmp(tempCond, "TRUE") && _stricmp(tempCond, "NULL") && _stricmp(tempCond, "FALSE") && !oldCond) {
+							//set CondTemp to our current condNumber and then write the condition to the new file. 
+							sprintf_s(condTemp, "Cond%d", condNumber);
+							WritePrivateProfileString("KConditions", condTemp, tempCond, newfilename);
+							//Just to be sure, if the Section, KeyNum isn't blank, then lets append |Cond# to the end of the current key in the new file.  
+							if (GetPrivateProfileString(Section, KeyNum, 0, temp, MAX_STRING, filename) != 0) {
+								sprintf_s(condTemp, "|Cond%d", condNumber);
+								strcat_s(temp, condTemp);
 								WritePrivateProfileString(Section, KeyNum, temp, newfilename);
+							}
+							//We've used this Cond#, so lets add 1 to it.
+							condNumber += 1;
 						}
-						condNumber += 1;
-						//WritePrivateProfileString(Section, KeyNumCond, tempCond, newfilename);
+						//If oldCond is true, then we're going to write using the old conditions style. 
+						if (oldCond) WritePrivateProfileString(Section, KeyNumCond, tempCond, newfilename);
+					}
+					else if (condFound) {
+						sprintf_s(condTemp, "Cond%s", szCondNumber);
+						if (GetPrivateProfileString("KConditions", condTemp, 0, tempCond, MAX_STRING, filename) != 0) {
+							WritePrivateProfileString(Section, KeyNumCond, tempCond, newfilename);
+						}
+						
 					}
 				}
 			}
 		}
 		condFound = false;
 	}
+}
+
+
+void ParseArg(CHAR Arg[MAX_STRING])
+{
+	if (strlen(Arg)) {
+		//WriteChatf("Parsing Arg: %s", Arg);
+		if (!IsNumber(Arg)) {
+			if (_stricmp(Arg, "BRD") && _stricmp(Arg, "BST") && _stricmp(Arg, "BER") && _stricmp(Arg, "CLR") && _stricmp(Arg, "DRU") && _stricmp(Arg, "ENC") && _stricmp(Arg, "MAG") && _stricmp(Arg, "MNK") && _stricmp(Arg, "NEC") && _stricmp(Arg, "PAL") && _stricmp(Arg, "RNG") && _stricmp(Arg, "ROG") && _stricmp(Arg, "SHD") && _stricmp(Arg, "SHM") && _stricmp(Arg, "WAR") && _stricmp(Arg, "WIZ") && _stricmp(Arg, "old")) {
+				WriteChatf("You've provided %s as a class to emulate, but that doesn't appear to be one of the 16 playable classes.", Arg);
+				return;
+			} else if (_stricmp(Arg, "old")) {
+				sprintf_s(tempClass, Arg);
+				useClass = true;
+			} else if (!_stricmp(Arg, "old")) {
+				oldCond = true;
+			}
+		} else {
+			if (atoi(Arg) < 0 || atoi(Arg) > 110) {
+				WriteChatf("You've provided %s as a level to emulate, but it is not between 1 and 110", tempLevel);
+				return;
+			} else {
+				sprintf_s(tempLevel, Arg);
+				useLevel = true;
+			}
+		}
+	}	
 }
 
 inline bool InGame()

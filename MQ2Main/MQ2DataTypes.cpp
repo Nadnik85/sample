@@ -899,9 +899,15 @@ bool MQ2MacroType::GETMEMBER()
 		Dest.Type = pInt64Type;
 		return true;
 	case Paused:
-		Dest.DWord = gMacroPause;
+	{
+		Dest.DWord = 0;
+		if (PMACROBLOCK pBlock = GetCurrentMacroBlock())
+		{
+			Dest.DWord = pBlock->Paused;
+		}
 		Dest.Type = pBoolType;
 		return true;
+	}
 	case Return:
 		Dest.Ptr = &DataTypeTemp[0];
 		strcpy_s(DataTypeTemp, gMacroStack->Return);
@@ -1439,6 +1445,7 @@ bool MQ2SpawnType::GETMEMBER()
 		}
 		return false;
 	}
+#if defined(UFEMU) || defined(ROF2EMU)
 	case GuildStatus:
 	{
 		if (pSpawn->GuildID != -1 && pSpawn->GuildID != 0)
@@ -1450,6 +1457,7 @@ bool MQ2SpawnType::GETMEMBER()
 		}
 		break;
 	}
+#endif
 	case Type:
 		DataTypeTemp[0] = '\0';
 		switch (GetSpawnType(pSpawn))
@@ -2537,22 +2545,13 @@ bool MQ2CharacterType::GETMEMBER()
 		Dest.Type = pInt64Type;
 		return true;
 	case PctExp:
-	{
-		if (PCHARINFO pMe = (PCHARINFO)pChar) {
-			Dest.Float = (float)pMe->Exp / 3.30f;
-			Dest.Type = pFloatType;
-			return true;
-		}
-	}
+		Dest.Float = (float)pChar->Exp / 3.30f;
+		Dest.Type = pFloatType;
+		return true;
 	case PctExpToAA:
-	{
-		if (PCHARINFO pMe = (PCHARINFO)pChar) {
-			Dest.Int = (int)pMe->PercentEXPtoAA;
-			Dest.Type = pIntType;
-			return true;
-		}
-		break;
-	}
+		Dest.Int = (int)pChar->PercentEXPtoAA;
+		Dest.Type = pIntType;
+		return true;
 	case PctAAExp:
 		Dest.Float = (float)pChar->AAExp / 3.30f;
 		Dest.Type = pFloatType;
@@ -2564,14 +2563,12 @@ bool MQ2CharacterType::GETMEMBER()
 	case PctVitality:
 	{
 		Dest.Float = 0;
-		if (PCHARINFO pMe = (PCHARINFO)pChar) {
-			__int64 vitality = pMe->Vitality;
-			__int64 cap = pInventoryWnd->VitalityCap;
-			if (vitality > cap)
-				vitality = cap;
-			if (cap > 0)
-				Dest.Float = (float)vitality * 100 / cap;
-		}
+		__int64 vitality = pChar->Vitality;
+		__int64 cap = pInventoryWnd->VitalityCap;
+		if (vitality > cap)
+			vitality = cap;
+		if (cap > 0)
+			Dest.Float = (float)vitality * 100 / cap;
 		Dest.Type = pFloatType;
 		return true;
 	}
@@ -2582,14 +2579,12 @@ bool MQ2CharacterType::GETMEMBER()
 	case PctAAVitality:
 	{
 		Dest.Float = 0;
-		if (PCHARINFO pMe = (PCHARINFO)pChar) {
-			int aavitality = pMe->AAVitality;
-			int aacap = pInventoryWnd->AAVitalityCap;
-			if (aavitality > aacap)
-				aavitality = aacap;
-			if (aacap > 0)
-				Dest.Float = (float)aavitality * 100 / aacap;
-		}
+		int aavitality = pChar->AAVitality;
+		int aacap = pInventoryWnd->AAVitalityCap;
+		if (aavitality > aacap)
+			aavitality = aacap;
+		if (aacap > 0)
+			Dest.Float = (float)aavitality * 100 / aacap;
 		Dest.Type = pFloatType;
 		return true;
 	}
@@ -2896,42 +2891,66 @@ bool MQ2CharacterType::GETMEMBER()
 		return true;
 	case GukEarned:
 		Dest.DWord = 0;
+#ifdef NEWCHARINFO
+		if (PCHARINFO pCharnew = GetCharInfo()) {
+#else
 		if (PCHARINFONEW pCharnew = (PCHARINFONEW)GetCharInfo()) {
+#endif
 			Dest.DWord = pCharnew->AdventureData.ThemeStats[eAT_DeepGuk].AdventureTotalPointsEarned;
 		}
 		Dest.Type = pIntType;
 		return true;
 	case MMEarned:
 		Dest.DWord = 0;
+#ifdef NEWCHARINFO
+		if (PCHARINFO pCharnew = GetCharInfo()) {
+#else
 		if (PCHARINFONEW pCharnew = (PCHARINFONEW)GetCharInfo()) {
+#endif
 			Dest.DWord = pCharnew->AdventureData.ThemeStats[eAT_Mistmoore].AdventureTotalPointsEarned;
 		}
 		Dest.Type = pIntType;
 		return true;
 	case RujEarned:
 		Dest.DWord = 0;
+#ifdef NEWCHARINFO
+		if (PCHARINFO pCharnew = GetCharInfo()) {
+#else
 		if (PCHARINFONEW pCharnew = (PCHARINFONEW)GetCharInfo()) {
+#endif
 			Dest.DWord = pCharnew->AdventureData.ThemeStats[eAT_Rujarkian].AdventureTotalPointsEarned;
 		}
 		Dest.Type = pIntType;
 		return true;
 	case TakEarned:
 		Dest.DWord = 0;
+#ifdef NEWCHARINFO
+		if (PCHARINFO pCharnew = GetCharInfo()) {
+#else
 		if (PCHARINFONEW pCharnew = (PCHARINFONEW)GetCharInfo()) {
+#endif
 			Dest.DWord = pCharnew->AdventureData.ThemeStats[eAT_Takish].AdventureTotalPointsEarned;
 		}
 		Dest.Type = pIntType;
 		return true;
 	case MirEarned:
 		Dest.DWord = 0;
+#ifdef NEWCHARINFO
+		if (PCHARINFO pCharnew = GetCharInfo()) {
+#else
 		if (PCHARINFONEW pCharnew = (PCHARINFONEW)GetCharInfo()) {
+#endif
 			Dest.DWord = pCharnew->AdventureData.ThemeStats[eAT_Miraguls].AdventureTotalPointsEarned;
 		}
 		Dest.Type = pIntType;
 		return true;
 	case LDoNPoints:
 		Dest.DWord = 0;
+#ifdef NEWCHARINFO
+		if (PCHARINFO pCharnew = GetCharInfo()) {
+#else
 		if (PCHARINFONEW pCharnew = (PCHARINFONEW)GetCharInfo()) {
+#endif
 			Dest.DWord = pCharnew->AdventureData.AdventurePointsAvailable;
 		}
 		Dest.Type = pIntType;
@@ -2991,8 +3010,13 @@ bool MQ2CharacterType::GETMEMBER()
 					return false;
 				if (nSlot<NUM_BANK_SLOTS)
 				{
-					if (pChar->pBankArray) {
+#ifdef NEWCHARINFO
+					if (pChar && pChar->BankItems.Items.Size > (UINT)nSlot) {
+						if (Dest.Ptr = pChar->BankItems.Items[nSlot].pObject)
+#else
+					if (pChar && pChar->pBankArray) {
 						if (Dest.Ptr = pChar->pBankArray->Bank[nSlot])
+#endif
 						{
 							Dest.Type = pItemType;
 							return true;
@@ -3003,8 +3027,13 @@ bool MQ2CharacterType::GETMEMBER()
 					nSlot -= NUM_BANK_SLOTS;
 					if (nSlot<NUM_SHAREDBANK_SLOTS)
 					{
-						if (pChar->pSharedBankArray) {
+#ifdef NEWCHARINFO
+						if (pChar && pChar->SharedBankItems.Items.Size > (UINT)nSlot) {
+							if (Dest.Ptr = pChar->SharedBankItems.Items[nSlot].pObject)
+#else
+						if (pChar && pChar->pSharedBankArray) {
 							if (Dest.Ptr = pChar->pSharedBankArray->SharedBank[nSlot])
+#endif
 							{
 								Dest.Type = pItemType;
 								return true;
@@ -4081,6 +4110,12 @@ bool MQ2CharacterType::GETMEMBER()
 		Dest.DWord = pChar->CHA;
 		Dest.Type = pIntType;
 		return true;
+#if defined(EQBETA) || defined(TEST)
+	case LCK:
+		Dest.DWord = pChar->LCK;
+		Dest.Type = pIntType;
+		return true;
+#endif
 	case svMagic:
 		Dest.DWord = pChar->SaveMagic;
 		Dest.Type = pIntType;
@@ -4701,7 +4736,11 @@ bool MQ2CharacterType::GETMEMBER()
 	case Haste:
 	{
 		if (PCHARINFO pCharInfo = GetCharInfo()) {
+#ifdef NEWCHARINFO
+			if (pCharInfo->PcClient_CharacterZoneClient_vfTable) {
+#else
 			if (pCharInfo->vtable2) {
+#endif
 				Dest.DWord = pCharData1->TotalEffect(0xb, true, 0, true, true);
 				Dest.Type = pIntType;
 				return true;
@@ -4716,7 +4755,11 @@ bool MQ2CharacterType::GETMEMBER()
 		if (ISNUMBER())
 		{
 			if (PCHARINFO pCharInfo = GetCharInfo()) {
+#ifdef NEWCHARINFO
+				if (pCharInfo->PcClient_CharacterZoneClient_vfTable) {
+#else
 				if (pCharInfo->vtable2) {
+#endif
 					Dest.DWord = pCharData1->TotalEffect(GETNUMBER(), true, 0, true, true);
 					Dest.Type = pIntType;
 					return true;
@@ -4874,11 +4917,11 @@ bool MQ2CharacterType::GETMEMBER()
 		Dest.Int64 = pChar->MercAAExp;
 		Dest.Type = pInt64Type;
 		return true;
+#endif
 	case Krono:
 		Dest.DWord = pChar->Krono;
 		Dest.Type = pIntType;
 		return true;
-#endif
 	case Subscription:
 		strcpy_s(DataTypeTemp, "UNKNOWN");
 		if (EQADDR_SUBSCRIPTIONTYPE && *EQADDR_SUBSCRIPTIONTYPE) {
@@ -5606,6 +5649,7 @@ bool MQ2CharacterType::GETMEMBER()
 		Dest.DWord = pChar->CursorKrono;
 		Dest.Type = pIntType;
 		return true;
+#if !defined(UFEMU) && !defined(ROF2EMU)
 	case MercAAPoints:
 		Dest.DWord = pChar->MercAAPoints;
 		Dest.Type = pIntType;
@@ -5614,6 +5658,8 @@ bool MQ2CharacterType::GETMEMBER()
 		Dest.DWord = pChar->MercAAPointsSpent;
 		Dest.Type = pIntType;
 		return true;
+#endif
+#if !defined(UFEMU)
 	case Bandolier:
 	{
 		if (PCHARINFO2 pChar2 = GetCharInfo2())
@@ -5644,7 +5690,8 @@ bool MQ2CharacterType::GETMEMBER()
 		}
 		break;
 	}
-		//end of MQ2CharacterType
+#endif
+	//end of MQ2CharacterType
 	}
 	return false;
 #undef pChar
@@ -5907,7 +5954,11 @@ bool MQ2SpellType::GETMEMBER()
 		Dest.DWord = 0;
 		Dest.Type = pBoolType;
 		if (PCHARINFO pMe = GetCharInfo()) {
+#ifdef NEWCHARINFO
+			if (pMe->PcClient_CharacterZoneClient_vfTable) {
+#else
 			if (pMe->vtable2) {
+#endif
 				int SlotIndex = -1;//contains the slotindex upon return if there is a slot it will land in...
 				EQ_Affect*ret = ((CharacterZoneClient*)pCharData1)->FindAffectSlot(thespell->ID, (PSPAWNINFO)pMe, &SlotIndex, true, pMe->MainLevel);
 				if (ret) {
@@ -5934,7 +5985,11 @@ bool MQ2SpellType::GETMEMBER()
 			return true;
 		PSPELL thespell = pSpell;
 		if (PCHARINFO pMe = GetCharInfo()) {
+#ifdef NEWCHARINFO
+			if (pMe->PcClient_CharacterZoneClient_vfTable) {
+#else
 			if (pMe->vtable2) {
+#endif
 				int SlotIndex = -1;
 				EQ_Affect eff;
 				eff.ID = thespell->ID;
@@ -5960,36 +6015,38 @@ bool MQ2SpellType::GETMEMBER()
 		if (ISNUMBER())
 			duration = GETNUMBER();
 		unsigned long nBuff;
-		PCHARINFO2 pChar = GetCharInfo2();
 		Dest.DWord = true;
 		Dest.Type = pBoolType;
 		// Check Buffs
-		for (nBuff = 0; nBuff < NUM_LONG_BUFFS; nBuff++) {
-			if (pChar->Buff[nBuff].SpellID > 0) {
-				if (PSPELL buffSpell = GetSpellByID(pChar->Buff[nBuff].SpellID)) {
-					buffduration = pChar->Buff[nBuff].Duration;
-					if (GetSpellDuration(buffSpell, (PSPAWNINFO)pLocalPlayer) >= 0xFFFFFFFE) {
-						buffduration = 99999 + 1;
-					}
-					if (!BuffStackTest(pSpell, buffSpell, TRUE) || ((buffSpell == pSpell) && (buffduration > duration))) {
-						Dest.DWord = false;
-						return true;
-					}
-				}
-			}
-		}
-		// Check Songs
-		for (nBuff = 0; nBuff < NUM_SHORT_BUFFS; nBuff++) {
-			if (pChar->ShortBuff[nBuff].SpellID > 0) {
-				if (PSPELL buffSpell = GetSpellByID(pChar->Buff[nBuff].SpellID)) {
-					buffduration = pChar->ShortBuff[nBuff].Duration;
-					if (!IsBardSong(buffSpell) && !((IsSPAEffect(pSpell, SPA_CHANGE_FORM) && !pSpell->DurationWindow))) {		// Don't check against bard songs or buff window illusions
+		if (PCHARINFO2 pChar2 = GetCharInfo2())
+		{
+			for (nBuff = 0; nBuff < NUM_LONG_BUFFS; nBuff++) {
+				if (pChar2->Buff[nBuff].SpellID > 0) {
+					if (PSPELL buffSpell = GetSpellByID(pChar2->Buff[nBuff].SpellID)) {
+						buffduration = pChar2->Buff[nBuff].Duration;
 						if (GetSpellDuration(buffSpell, (PSPAWNINFO)pLocalPlayer) >= 0xFFFFFFFE) {
 							buffduration = 99999 + 1;
 						}
 						if (!BuffStackTest(pSpell, buffSpell, TRUE) || ((buffSpell == pSpell) && (buffduration > duration))) {
 							Dest.DWord = false;
 							return true;
+						}
+					}
+				}
+			}
+			// Check Songs
+			for (nBuff = 0; nBuff < NUM_SHORT_BUFFS; nBuff++) {
+				if (pChar2->ShortBuff[nBuff].SpellID > 0) {
+					if (PSPELL buffSpell = GetSpellByID(pChar2->Buff[nBuff].SpellID)) {
+						buffduration = pChar2->ShortBuff[nBuff].Duration;
+						if (!IsBardSong(buffSpell) && !((IsSPAEffect(pSpell, SPA_CHANGE_FORM) && !pSpell->DurationWindow))) {		// Don't check against bard songs or buff window illusions
+							if (GetSpellDuration(buffSpell, (PSPAWNINFO)pLocalPlayer) >= 0xFFFFFFFE) {
+								buffduration = 99999 + 1;
+							}
+							if (!BuffStackTest(pSpell, buffSpell, TRUE) || ((buffSpell == pSpell) && (buffduration > duration))) {
+								Dest.DWord = false;
+								return true;
+							}
 						}
 					}
 				}
@@ -6612,6 +6669,9 @@ bool MQ2ItemType::GETMEMBER()
 #define pItem ((PCONTENTS)VarPtr.Ptr)
 	if (!VarPtr.Ptr)
 		return false;
+	PITEMINFO pItemInfo = GetItemFromContents(pItem);
+	if (!pItemInfo)
+		return false;
 	PMQ2TYPEMEMBER pMember = MQ2ItemType::FindMember(Member);
 	if (!pMember)
 		return false;
@@ -6628,9 +6688,15 @@ bool MQ2ItemType::GETMEMBER()
 		Dest.Type = pStringType;
 		return true;
 	case Lore:
-		Dest.DWord = GetItemFromContents(pItem)->Lore;
+		Dest.DWord = ((ItemBase *)pItem)->IsLore(false);
 		Dest.Type = pBoolType;
 		return true;
+#if !defined(ROF2EMU) && !defined(UFEMU)
+	case LoreEquipped:
+		Dest.DWord = ((ItemBase *)pItem)->IsLoreEquipped(false);
+		Dest.Type = pBoolType;
+		return true;
+#endif
 	case NoDrop:
 	case NoTrade:
 		Dest.DWord = !((EQ_Item*)pItem)->CanDrop(0, 1);
@@ -7959,11 +8025,11 @@ bool MQ2ItemType::GETMEMBER()
 		{
 			if (pTheItem->Type == ITEMTYPE_PACK || (pTheItem->Type == ITEMTYPE_NORMAL && pTheCont->Item1))//a worldcontainer has its item in Item1
 			{
-				Dest.DWord = 1;
+				Dest.DWord = -1;
 				if (pTheCont->Contents.ContainedItems.pItems) {
 					for (unsigned long N = 0; N < pTheItem->Slots; N++) {
 						if (!pTheCont->Contents.ContainedItems.pItems->Item[N]) {
-							Dest.DWord = N + 1;
+							Dest.DWord = N;
 							break;
 						}
 					}
@@ -8069,6 +8135,20 @@ bool MQ2ItemType::GETMEMBER()
 			return true;
 		}
 		return false;
+#if defined(EQBETA) || defined(TEST)
+	case Luck:
+		Dest.DWord = pItem->Luck;
+		Dest.Type = pIntType;
+		return true;
+	case MinLuck:
+		Dest.DWord = GetItemFromContents(pItem)->MinLuck;
+		Dest.Type = pIntType;
+		return true;
+	case MaxLuck:
+		Dest.DWord = GetItemFromContents(pItem)->MaxLuck;
+		Dest.Type = pIntType;
+		return true;
+#endif
 	}
 	return false;
 #undef pItem
@@ -8462,6 +8542,163 @@ bool MQ2WindowType::GETMEMBER()
 	}
 	return false;
 #undef pWnd
+}
+bool MQ2MenuType::GETMEMBER()
+{
+	if (!VarPtr.Ptr)
+		return false;
+	CContextMenuManager*pMgr = (CContextMenuManager*)VarPtr.Ptr;
+	PMQ2TYPEMEMBER pMethod = MQ2MenuType::FindMethod(Member);
+	if (pMethod)
+	{
+		switch ((MenuMethods)pMethod->ID)
+		{
+			case Select:
+			{
+				if (ISINDEX())
+				{
+					if (pMgr->NumVisibleMenus == 1)
+					{
+						CHAR szArg[MAX_STRING] = { 0 };
+						CHAR szArg2[MAX_STRING] = { 0 };
+						strcpy_s(szArg,GETFIRST());
+						_strlwr_s(szArg);
+						if (pMgr->CurrMenu < 8)
+						{
+							int currmen = pMgr->CurrMenu;
+							if (CContextMenu*menu = pMgr->pCurrMenus[currmen])
+							{
+								CXStr Str;
+								PCXSTR pStr = 0;
+								for (int i = 0; i < menu->NumItems; i++)
+								{
+									((CListWnd*)menu)->GetItemText(&Str, i, 1);
+									GetCXStr(Str.Ptr, szArg2);
+									if (szArg2[0] != '\0')
+									{
+										_strlwr_s(szArg2);
+										if (strstr(szArg2, szArg))
+										{
+											WriteChatf("\ay[${Menu.Select}] SUCCESS\ax: Clicking \"%s\" at position %d in the menu.", szArg2, i);
+											((CXWnd*)(pMgr))->WndNotification((CXWnd*)menu, XWM_LMOUSEUP, (void*)i);
+											Dest.DWord = 1;
+											Dest.Type = pBoolType;
+											return true;
+										}
+									}
+								}
+								WriteChatf("\ar[${Menu.Select}] FAILED\ax: No Menu item was found with the word %s in it", szArg);
+							}
+						}
+					}
+				}
+				break;
+			}
+		};
+		Dest.DWord = 0;
+		Dest.Type = pBoolType;
+		return true;
+	}
+	PMQ2TYPEMEMBER pMember = MQ2MenuType::FindMember(Member);
+	if (!pMember)
+	{
+		if (pMgr->NumVisibleMenus == 1)
+		{
+			if (CContextMenu*pMenu = pMgr->pCurrMenus[pMgr->CurrMenu])
+			{
+				return pWindowType->GetMember(*(MQ2VARPTR*)&pMenu, Member, Index, Dest);
+			}
+		}
+		return false;
+	}
+
+	switch ((MenuMembers)pMember->ID)
+	{
+		case Address:
+		{
+			if (pMgr->NumVisibleMenus == 1)
+			{
+				if (CContextMenu*pMenu = pMgr->pCurrMenus[pMgr->CurrMenu])
+				{
+					Dest.DWord = (DWORD)pMenu;
+					Dest.Type = pIntType;
+					return true;
+				}
+			}
+			break;
+		}
+		case NumVisibleMenus:
+			Dest.DWord = pMgr->NumVisibleMenus;
+			Dest.Type = pIntType;
+			return true;
+
+		case CurrMenu:
+			Dest.DWord = pMgr->CurrMenu;
+			Dest.Type = pIntType;
+			return true;
+		case Name:
+			if (pMgr->NumVisibleMenus == 1)
+			{
+				if (pMgr->CurrMenu < 8)
+				{
+					int currmen = pMgr->CurrMenu;
+					if (CContextMenu*menu = pMgr->pCurrMenus[currmen])
+					{
+						CXStr Str;
+						((CListWnd*)menu)->GetItemText(&Str, 0, 1);
+						GetCXStr(Str.Ptr, DataTypeTemp);
+						if (DataTypeTemp[0] != '\0')
+						{
+							Dest.Ptr = &DataTypeTemp[0];
+							Dest.Type = pStringType;
+							return true;
+						}
+					}
+				}
+			}
+			break;
+		case NumItems:
+			if (pMgr->NumVisibleMenus == 1)
+			{
+				if (pMgr->CurrMenu < 8)
+				{
+					int currmen = pMgr->CurrMenu;
+					if (CContextMenu*menu = pMgr->pCurrMenus[currmen])
+					{
+						Dest.DWord = menu->NumItems;
+						Dest.Type = pIntType;
+						return true;
+					}
+				}
+			}
+			break;
+		case Items:
+			if (ISNUMBER())
+			{
+				if (pMgr->NumVisibleMenus == 1)
+				{
+					if (pMgr->CurrMenu < 8)
+					{
+						int index = GETNUMBER();
+						int currmen = pMgr->CurrMenu;
+						if (CContextMenu*menu = pMgr->pCurrMenus[currmen])
+						{
+							if (index < menu->NumItems)
+							{
+								CXStr Str;
+								((CListWnd*)menu)->GetItemText(&Str, index, 1);
+								GetCXStr(Str.Ptr, DataTypeTemp);
+								Dest.Ptr = &DataTypeTemp[0];
+								Dest.Type = pStringType;
+								return true;
+							}
+						}
+					}
+				}
+			}
+			break;
+	}
+	return false;
 }
 bool MQ2CurrentZoneType::GETMEMBER()
 {
@@ -8919,44 +9156,54 @@ bool MQ2GroundType::GETMEMBER()
 	if (!VarPtr.Ptr)
 		return false;
 	
-#define pGround ((PGROUNDITEM)VarPtr.Ptr)
+	PGROUNDOBJECT pGroundObject = (PGROUNDOBJECT)VarPtr.Ptr;
+	if(pGroundObject->Type==GO_None)
+		return false;
 	PMQ2TYPEMEMBER pMethod = MQ2GroundType::FindMethod(Member);
 	if (pMethod) {
 		switch ((GroundMethods)pMethod->ID)
 		{
 		case Grab:
 		{
-			
 			Dest.DWord = 0;
 			Dest.Type = pBoolType;
-			if (PEQSWITCH pSwitch = (PEQSWITCH)pGround->pSwitch) {
-				CHAR szName[256] = { 0 };
-				GetFriendlyNameForGroundItem(pGround, szName, sizeof(szName));
-				float dist3d = Get3DDistance(((PSPAWNINFO)pCharSpawn)->X, ((PSPAWNINFO)pCharSpawn)->Y, ((PSPAWNINFO)pCharSpawn)->Z, pGround->X, pGround->Y, pGround->Z);
-				if (dist3d <= 20.0f) {
-					SPAWNINFO tSpawn = { 0 };
-					strcpy_s(tSpawn.Name, szName);
-					strcpy_s(tSpawn.DisplayedName, szName);
-					tSpawn.Y = pGround->Y;
-					tSpawn.X = pGround->X;
-					tSpawn.Z = pGround->pSwitch->Z;
-					tSpawn.Type = SPAWN_NPC;
-					tSpawn.HPCurrent = 1;
-					tSpawn.HPMax = 1;
-					tSpawn.Heading = pGround->Heading;
-					tSpawn.mActorClient.Race = pGround->DropID;
-					tSpawn.StandState = STANDSTATE_STAND;//im using this for /clicked left item -eqmule
-					CopyMemory(&EnviroTarget, &tSpawn, sizeof(EnviroTarget));
-					pGroundTarget = pGround;
-					*((DWORD*)__LMouseHeldTime) = ((PCDISPLAY)pDisplay)->TimeStamp - 0x45;
-					pEverQuest->LMouseUp(-10000, -10000);
-					ZeroMemory(&EnviroTarget, sizeof(EnviroTarget));
-					pGroundTarget = NULL;
-					Dest.DWord = 1;
-					return true;
-				}
-				else {
-					MacroError("You are %.2f away from the %s, move within 20 feet of it to Grab it.", dist3d, szName);
+			PEQSWITCH pSwitch = 0;
+			if (pGroundObject->Type == GO_GroundType)
+			{
+				pSwitch = (PEQSWITCH)pGroundObject->pGroundItem->pSwitch;
+			}
+			if (pSwitch) {
+				if (PGROUNDITEM pGround = pGroundObject->pGroundItem)
+				{
+					CHAR szName[256] = { 0 };
+					GetFriendlyNameForGroundItem(pGround, szName, sizeof(szName));
+					float dist3d = Get3DDistance(((PSPAWNINFO)pCharSpawn)->X, ((PSPAWNINFO)pCharSpawn)->Y, ((PSPAWNINFO)pCharSpawn)->Z, pGround->X, pGround->Y, pGround->Z);
+					if (dist3d <= 20.0f) {
+						SPAWNINFO tSpawn = { 0 };
+						strcpy_s(tSpawn.Name, szName);
+						strcpy_s(tSpawn.DisplayedName, szName);
+						tSpawn.Y = pGround->Y;
+						tSpawn.X = pGround->X;
+						tSpawn.Z = pGround->pSwitch->Z;
+						tSpawn.Type = SPAWN_NPC;
+						tSpawn.HPCurrent = 1;
+						tSpawn.HPMax = 1;
+						tSpawn.Heading = pGround->Heading;
+						tSpawn.mActorClient.Race = pGround->DropID;
+						tSpawn.StandState = STANDSTATE_STAND;//im using this for /clicked left item -eqmule
+						CopyMemory(&EnviroTarget, &tSpawn, sizeof(EnviroTarget));
+						pGroundTarget = pGround;
+						*((DWORD*)__LMouseHeldTime) = ((PCDISPLAY)pDisplay)->TimeStamp - 0x45;
+						pEverQuest->LMouseUp(-10000, -10000);
+						ZeroMemory(&EnviroTarget, sizeof(EnviroTarget));
+						ZeroMemory(&GroundObject, sizeof(GroundObject));
+						pGroundTarget = NULL;
+						Dest.DWord = 1;
+						return true;
+					}
+					else {
+						MacroError("You are %.2f away from the %s, move within 20 feet of it to Grab it.", dist3d, szName);
+					}
 				}
 			}
 			return true;
@@ -8964,35 +9211,85 @@ bool MQ2GroundType::GETMEMBER()
 		case DoTarget:
 		{
 			CHAR szName[256] = { 0 };
-			GetFriendlyNameForGroundItem(pGround, szName, sizeof(szName));
 			SPAWNINFO tSpawn = { 0 };
+			if (pGroundObject->Type == GO_GroundType)
+			{
+				GetFriendlyNameForGroundItem(pGroundObject->pGroundItem, szName, sizeof(szName));
+				tSpawn.Y = pGroundObject->pGroundItem->Y;
+				tSpawn.X = pGroundObject->pGroundItem->X;
+				tSpawn.Z = pGroundObject->pGroundItem->Z;
+				tSpawn.Heading = pGroundObject->pGroundItem->Heading;
+				tSpawn.mActorClient.Race = pGroundObject->pGroundItem->DropID;
+				pGroundTarget = pGroundObject->pGroundItem;
+				GroundObject.Type = GO_GroundType;
+				GroundObject.pGroundItem = pGroundTarget;
+			}
+			else {
+				if (EQPlacedItem*Placed = (EQPlacedItem*)pGroundObject->ObjPtr)
+				{
+					strcpy_s(szName, Placed->Name);
+					tSpawn.Y = Placed->Y;
+					tSpawn.X = Placed->X;
+					tSpawn.Z = Placed->Z;
+					tSpawn.Heading = Placed->Heading;
+					tSpawn.mActorClient.Race = Placed->RealEstateItemID;
+					GroundObject.Type = GO_ObjectType;
+					GroundObject.ObjPtr = (void*)Placed;
+					
+					GroundObject.GroundItem.DropID = Placed->RealEstateItemID;
+					GroundObject.GroundItem.DropSubID = Placed->RealEstateID;
+					GroundObject.GroundItem.Expires = 0;
+					GroundObject.GroundItem.Heading = Placed->Heading;
+					GroundObject.GroundItem.ID.pObject = NULL;
+					strcpy_s(GroundObject.GroundItem.Name, Placed->Name);
+					GroundObject.GroundItem.Pitch = Placed->Angle;
+					GroundObject.GroundItem.pNext = 0;
+					GroundObject.GroundItem.pPrev = 0;
+					GroundObject.GroundItem.pSwitch = (PEQSWITCH)Placed->pActor;
+					GroundObject.GroundItem.Roll = Placed->Roll;
+					GroundObject.GroundItem.Scale = Placed->Scale;
+					GroundObject.GroundItem.Weight = 0;
+					GroundObject.GroundItem.X = Placed->X;
+					GroundObject.GroundItem.Y = Placed->Y;
+					GroundObject.GroundItem.Z = Placed->Z;
+					GroundObject.GroundItem.ZoneID = ((PSPAWNINFO)pLocalPlayer)->Zone & 0x7FFF;
+					pGroundTarget = &GroundObject.GroundItem;
+				}
+			}
 			strcpy_s(tSpawn.Name, szName);
 			strcpy_s(tSpawn.DisplayedName, szName);
-			tSpawn.Y = pGround->Y;
-			tSpawn.X = pGround->X;
-			tSpawn.Z = pGround->Z;
 			tSpawn.Type = SPAWN_NPC;
 			tSpawn.HPCurrent = 1;
 			tSpawn.HPMax = 1;
-			tSpawn.Heading = pGround->Heading;
-			tSpawn.mActorClient.Race = pGround->DropID;
 			tSpawn.StandState = STANDSTATE_STAND;//im using this for /clicked left item -eqmule
 			CopyMemory(&EnviroTarget, &tSpawn, sizeof(EnviroTarget));
-			pGroundTarget = pGround;
-			Dest.Ptr = pGround;
+			Dest.Ptr = pGroundObject;
 			Dest.Type = pGroundType;
 			return true;
 		}
 		case DoFace:
 		{
-			gFaceAngle = (atan2(pGround->X - ((PSPAWNINFO)pCharSpawn)->X, pGround->Y - ((PSPAWNINFO)pCharSpawn)->Y) * 256.0f / PI);
-			float theDistance = Get3DDistance(((PSPAWNINFO)pCharSpawn)->X, ((PSPAWNINFO)pCharSpawn)->Y, ((PSPAWNINFO)pCharSpawn)->Z, pGround->X, pGround->Y, pGround->Z);
-			gLookAngle = (atan2(pGround->Z - ((PSPAWNINFO)pCharSpawn)->Z - ((PSPAWNINFO)pCharSpawn)->AvatarHeight*StateHeightMultiplier(((PSPAWNINFO)pCharSpawn)->StandState), (FLOAT)theDistance)	* 256.0f / PI);
+			float theDistance = 100000.0f;
+			if (pGroundObject->Type == GO_GroundType)
+			{
+
+				gFaceAngle = (atan2(pGroundObject->pGroundItem->X - ((PSPAWNINFO)pCharSpawn)->X, pGroundObject->pGroundItem->Y - ((PSPAWNINFO)pCharSpawn)->Y) * 256.0f / PI);
+				theDistance = Get3DDistance(((PSPAWNINFO)pCharSpawn)->X, ((PSPAWNINFO)pCharSpawn)->Y, ((PSPAWNINFO)pCharSpawn)->Z, pGroundObject->pGroundItem->X, pGroundObject->pGroundItem->Y, pGroundObject->pGroundItem->Z);
+				gLookAngle = (atan2(pGroundObject->pGroundItem->Z - ((PSPAWNINFO)pCharSpawn)->Z - ((PSPAWNINFO)pCharSpawn)->AvatarHeight*StateHeightMultiplier(((PSPAWNINFO)pCharSpawn)->StandState), (FLOAT)theDistance) * 256.0f / PI);
+			}
+			else {
+				if (EQPlacedItem*Placed = (EQPlacedItem*)pGroundObject->ObjPtr)
+				{
+					gFaceAngle = (atan2(Placed->X - ((PSPAWNINFO)pCharSpawn)->X, Placed->Y - ((PSPAWNINFO)pCharSpawn)->Y) * 256.0f / PI);
+					theDistance = Get3DDistance(((PSPAWNINFO)pCharSpawn)->X, ((PSPAWNINFO)pCharSpawn)->Y, ((PSPAWNINFO)pCharSpawn)->Z, Placed->X, Placed->Y, Placed->Z);
+					gLookAngle = (atan2(Placed->Z - ((PSPAWNINFO)pCharSpawn)->Z - ((PSPAWNINFO)pCharSpawn)->AvatarHeight*StateHeightMultiplier(((PSPAWNINFO)pCharSpawn)->StandState), (FLOAT)theDistance) * 256.0f / PI);
+				}
+			}
 			if (gFaceAngle >= 512.0f)
 				gFaceAngle -= 512.0f;
 			if (gFaceAngle<0.0f)
 				gFaceAngle += 512.0f;
-			Dest.Ptr = pGround;
+			Dest.Ptr = pGroundObject;
 			Dest.Type = pGroundType;
 			return true;
 		}
@@ -9002,120 +9299,281 @@ bool MQ2GroundType::GETMEMBER()
 	PMQ2TYPEMEMBER pMember = MQ2GroundType::FindMember(Member);
 	if (!pMember)
 		return false;
-	switch ((GroundMembers)pMember->ID)
+	if (pGroundObject->Type == GO_GroundType)
 	{
-	case Address:
-		Dest.DWord = (DWORD)VarPtr.Ptr;
-		Dest.Type = pIntType;
-		return true;
-	case ID:
-		Dest.DWord = pGround->DropID;
-		Dest.Type = pIntType;
-		return true;
-	case SubID:
-		Dest.DWord = pGround->DropSubID;
-		Dest.Type = pIntType;
-		return true;
-	case ZoneID:
-		Dest.DWord = (pGround->ZoneID & 0x7FFF);
-		Dest.Type = pIntType;
-		return true;
-	case W:
-	case X:
-		Dest.Float = pGround->X;
-		Dest.Type = pFloatType;
-		return true;
-	case N:
-	case Y:
-		Dest.Float = pGround->Y;
-		Dest.Type = pFloatType;
-		return true;
-	case U:
-	case Z:
-		Dest.Float = pGround->Z;
-		Dest.Type = pFloatType;
-		return true;
-	case Name:
-		strcpy_s(DataTypeTemp, pGround->Name);
-		Dest.Ptr = &DataTypeTemp[0];
-		Dest.Type = pStringType;
-		return true;
-	case DisplayName:
-	{
-		DataTypeTemp[0] = '\0';
-		GetFriendlyNameForGroundItem(pGround, DataTypeTemp, sizeof(DataTypeTemp));
-		Dest.Ptr = &DataTypeTemp[0];
-		Dest.Type = pStringType;
-		return true;
-	}
-	case Heading:
-		Dest.Float = pGround->Heading*0.703125f;
-		Dest.Type = pHeadingType;
-		return true;
-	case Distance:
-		Dest.Float = GetDistance(pGround->X, pGround->Y);
-		Dest.Type = pFloatType;
-		return true;
-	case Distance3D:
-	{
-		FLOAT X = ((PSPAWNINFO)pCharSpawn)->X - pGround->X;
-		FLOAT Y = ((PSPAWNINFO)pCharSpawn)->Y - pGround->Y;
-		FLOAT Z = 0;
-		if (pGround->pSwitch)
-			Z = ((PSPAWNINFO)pCharSpawn)->Z - pGround->pSwitch->Z;
-		else
-			Z = ((PSPAWNINFO)pCharSpawn)->Z - pGround->Z;
-		Dest.Float = sqrtf(X*X + Y*Y + Z*Z);
-		Dest.Type = pFloatType;
-		return true;
-	}
-	case HeadingTo:
-		Dest.Float = (FLOAT)(atan2f(((PSPAWNINFO)pCharSpawn)->Y - pGround->Y, pGround->X - ((PSPAWNINFO)pCharSpawn)->X) * 180.0f / PI + 90.0f);
-		if (Dest.Float<0.0f)
-			Dest.Float += 360.0f;
-		else if (Dest.Float >= 360.0f)
-			Dest.Float -= 360.0f;
-		Dest.Type = pHeadingType;
-		return true;
-	case xLineOfSight:
-		Dest.DWord = (CastRay(GetCharInfo()->pSpawn, pGround->Y, pGround->X, pGround->Z));
-		Dest.Type = pBoolType;
-		return true;
-	case First:
-		if (Dest.Ptr = (PVOID)*(DWORD*)pItemList)
+		PGROUNDITEM pGround = pGroundObject->pGroundItem;
+		switch ((GroundMembers)pMember->ID)
 		{
-			Dest.Type = pGroundType;
-            return true;
-		}
-		return false;
-	case Last:
-		if (PGROUNDITEM pItem = *(PGROUNDITEM*)pItemList)
+		case Address:
+			Dest.DWord = (DWORD)VarPtr.Ptr;
+			Dest.Type = pIntType;
+			return true;
+		case ID:
+			Dest.DWord = pGround->DropID;
+			Dest.Type = pIntType;
+			return true;
+		case SubID:
+			Dest.DWord = pGround->DropSubID;
+			Dest.Type = pIntType;
+			return true;
+		case ZoneID:
+			Dest.DWord = (pGround->ZoneID & 0x7FFF);
+			Dest.Type = pIntType;
+			return true;
+		case W:
+		case X:
+			Dest.Float = pGround->X;
+			Dest.Type = pFloatType;
+			return true;
+		case N:
+		case Y:
+			Dest.Float = pGround->Y;
+			Dest.Type = pFloatType;
+			return true;
+		case U:
+		case Z:
+			Dest.Float = pGround->Z;
+			Dest.Type = pFloatType;
+			return true;
+		case Name:
+			strcpy_s(DataTypeTemp, pGround->Name);
+			Dest.Ptr = &DataTypeTemp[0];
+			Dest.Type = pStringType;
+			return true;
+		case DisplayName:
 		{
-			while (pItem->pNext)
-			{
-				pItem = pItem->pNext;
-			}
-			Dest.Type = pGroundType;
-            return true;
-		}
-		return false;
-	case Next:
-        if (Dest.Ptr = pGround->pNext)
-        {
-            Dest.Type = pGroundType;
-            return true;
-        }
-        return false;
-    case Prev:
-		if (Dest.Ptr = pGround->pPrev)
-		{
-			Dest.Type = pGroundType;
+			DataTypeTemp[0] = '\0';
+			GetFriendlyNameForGroundItem(pGround, DataTypeTemp, sizeof(DataTypeTemp));
+			Dest.Ptr = &DataTypeTemp[0];
+			Dest.Type = pStringType;
 			return true;
 		}
-		return false;
+		case Heading:
+			Dest.Float = pGround->Heading*0.703125f;
+			Dest.Type = pHeadingType;
+			return true;
+		case Distance:
+			Dest.Float = GetDistance(pGround->X, pGround->Y);
+			Dest.Type = pFloatType;
+			return true;
+		case Distance3D:
+		{
+			FLOAT X = ((PSPAWNINFO)pCharSpawn)->X - pGround->X;
+			FLOAT Y = ((PSPAWNINFO)pCharSpawn)->Y - pGround->Y;
+			FLOAT Z = 0;
+			if (pGround->pSwitch)
+				Z = ((PSPAWNINFO)pCharSpawn)->Z - pGround->pSwitch->Z;
+			else
+				Z = ((PSPAWNINFO)pCharSpawn)->Z - pGround->Z;
+			Dest.Float = sqrtf(X*X + Y * Y + Z * Z);
+			Dest.Type = pFloatType;
+			return true;
+		}
+		case HeadingTo:
+			Dest.Float = (FLOAT)(atan2f(((PSPAWNINFO)pCharSpawn)->Y - pGround->Y, pGround->X - ((PSPAWNINFO)pCharSpawn)->X) * 180.0f / PI + 90.0f);
+			if (Dest.Float < 0.0f)
+				Dest.Float += 360.0f;
+			else if (Dest.Float >= 360.0f)
+				Dest.Float -= 360.0f;
+			Dest.Type = pHeadingType;
+			return true;
+		case xLineOfSight:
+			Dest.DWord = (CastRay(GetCharInfo()->pSpawn, pGround->Y, pGround->X, pGround->Z));
+			Dest.Type = pBoolType;
+			return true;
+		case First:
+			if (PGROUNDITEM pItem = pGround)
+			{
+				while (pItem->pPrev)
+				{
+					pItem = pItem->pPrev;
+				}
+				GroundObject.Type = GO_GroundType;
+				GroundObject.pGroundItem = pItem;
+				Dest.Ptr = &GroundObject;
+				Dest.Type = pGroundType;
+				return true;
+			}
+			return false;
+		case Last:
+			if (PGROUNDITEM pItem = pGround)
+			{
+				while (pItem->pNext)
+				{
+					pItem = pItem->pNext;
+				}
+				GroundObject.Type = GO_GroundType;
+				GroundObject.pGroundItem = pItem;
+				Dest.Ptr = &GroundObject;
+				Dest.Type = pGroundType;
+				return true;
+			}
+			return false;
+		case Next:
+			if (pGround->pNext)
+			{
+				GroundObject.Type = GO_GroundType;
+				GroundObject.pGroundItem = pGround->pNext;
+				Dest.Ptr = &GroundObject;
+				Dest.Type = pGroundType;
+				return true;
+			}
+			return false;
+		case Prev:
+			if (pGround->pPrev)
+			{
+				GroundObject.Type = GO_GroundType;
+				GroundObject.pGroundItem = pGround->pPrev;
+				Dest.Ptr = &GroundObject;
+				Dest.Type = pGroundType;
+				return true;
+			}
+			return false;
+		}
+	}
+	else
+	{
+		EQPlacedItem* pGround = (EQPlacedItem*)pGroundObject->ObjPtr;
+		switch ((GroundMembers)pMember->ID)
+		{
+		case Address:
+			Dest.DWord = (DWORD)VarPtr.Ptr;
+			Dest.Type = pIntType;
+			return true;
+		case ID:
+			Dest.DWord = pGround->RealEstateItemID;
+			Dest.Type = pIntType;
+			return true;
+		case SubID:
+			Dest.DWord = pGround->RealEstateID;
+			Dest.Type = pIntType;
+			return true;
+		case ZoneID:
+			Dest.DWord = (((PSPAWNINFO)pLocalPlayer)->Zone & 0x7FFF);
+			Dest.Type = pIntType;
+			return true;
+		case W:
+		case X:
+			Dest.Float = pGround->X;
+			Dest.Type = pFloatType;
+			return true;
+		case N:
+		case Y:
+			Dest.Float = pGround->Y;
+			Dest.Type = pFloatType;
+			return true;
+		case U:
+		case Z:
+			Dest.Float = pGround->Z;
+			Dest.Type = pFloatType;
+			return true;
+		case Name:
+			strcpy_s(DataTypeTemp, pGround->Name);
+			Dest.Ptr = &DataTypeTemp[0];
+			Dest.Type = pStringType;
+			return true;
+		case DisplayName:
+		{
+			RealEstateManagerClient& manager = RealEstateManagerClient::Instance();
+			if (&manager)
+			{
+				const RealEstateItemClient* pRealEstateItem = manager.GetItemByRealEstateAndItemIds(pGround->RealEstateID, pGround->RealEstateItemID);
+				if (pRealEstateItem)
+				{
+					if (PCONTENTS pCont = pRealEstateItem->Object.pItemBase.pObject)
+					{
+						if (PITEMINFO pItem = GetItemFromContents(pCont))
+						{
+							strcpy_s(DataTypeTemp, pItem->Name);
+							Dest.Ptr = &DataTypeTemp[0];
+							Dest.Type = pStringType;
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+		case Heading:
+			Dest.Float = pGround->Heading*0.703125f;
+			Dest.Type = pHeadingType;
+			return true;
+		case Distance:
+			Dest.Float = GetDistance(pGround->X, pGround->Y);
+			Dest.Type = pFloatType;
+			return true;
+		case Distance3D:
+		{
+			FLOAT X = ((PSPAWNINFO)pCharSpawn)->X - pGround->X;
+			FLOAT Y = ((PSPAWNINFO)pCharSpawn)->Y - pGround->Y;
+			FLOAT Z = ((PSPAWNINFO)pCharSpawn)->Z - pGround->Z;
+			Dest.Float = sqrtf(X*X + Y * Y + Z * Z);
+			Dest.Type = pFloatType;
+			return true;
+		}
+		case HeadingTo:
+			Dest.Float = (FLOAT)(atan2f(((PSPAWNINFO)pCharSpawn)->Y - pGround->Y, pGround->X - ((PSPAWNINFO)pCharSpawn)->X) * 180.0f / PI + 90.0f);
+			if (Dest.Float < 0.0f)
+				Dest.Float += 360.0f;
+			else if (Dest.Float >= 360.0f)
+				Dest.Float -= 360.0f;
+			Dest.Type = pHeadingType;
+			return true;
+		case xLineOfSight:
+			Dest.DWord = (CastRay(GetCharInfo()->pSpawn, pGround->Y, pGround->X, pGround->Z));
+			Dest.Type = pBoolType;
+			return true;
+		case First:
+			if (EQPlacedItem *pItem = pGround)
+			{
+				while (pItem->pPrev)
+				{
+					pItem = pItem->pPrev;
+				}
+				GroundObject.Type = GO_ObjectType;
+				GroundObject.ObjPtr = (void*)pItem;
+				Dest.Ptr = &GroundObject;
+				Dest.Type = pGroundType;
+				return true;
+			}
+			return false;
+		case Last:
+			if (EQPlacedItem *pItem = pGround)
+			{
+				while (pItem->pNext)
+				{
+					pItem = pItem->pNext;
+				}
+				GroundObject.Type = GO_ObjectType;
+				GroundObject.ObjPtr = (void*)pItem;
+				Dest.Ptr = &GroundObject;
+				Dest.Type = pGroundType;
+				return true;
+			}
+			return false;
+		case Next:
+			if (pGround->pNext)
+			{
+				GroundObject.Type = GO_ObjectType;
+				GroundObject.ObjPtr = (void*)pGround->pNext;
+				Dest.Ptr = &GroundObject;
+				Dest.Type = pGroundType;
+				return true;
+			}
+			return false;
+		case Prev:
+			if (pGround->pPrev)
+			{
+				GroundObject.Type = GO_ObjectType;
+				GroundObject.ObjPtr = (void*)pGround->pPrev;
+				Dest.Ptr = &GroundObject;
+				Dest.Type = pGroundType;
+				return true;
+			}
+			return false;
+		}
 	}
 	return false;
-#undef pGround
 }
 bool MQ2MacroQuestType::GETMEMBER()
 {
@@ -9323,6 +9781,8 @@ bool MQ2CharSelectListType::GETMEMBER()
 	}
 	return false;
 }
+typedef HWND( __stdcall *fEQW_GetDisplayWindow )(VOID);
+fEQW_GetDisplayWindow EQW_GetDisplayWindow = 0;
 bool MQ2EverQuestType::GETMEMBER()
 {
 	PMQ2TYPEMEMBER pMember = MQ2EverQuestType::FindMember(Member);
@@ -9330,6 +9790,19 @@ bool MQ2EverQuestType::GETMEMBER()
 		return false;
 	switch ((EverQuestMembers)pMember->ID)
 	{
+	case HWND:
+	{
+		if (HMODULE EQWhMod = GetModuleHandle("eqw.dll"))
+		{
+			EQW_GetDisplayWindow = (fEQW_GetDisplayWindow)GetProcAddress(EQWhMod, "EQW_GetDisplayWindow");
+		}
+		if (EQW_GetDisplayWindow)
+			Dest.DWord = (DWORD)EQW_GetDisplayWindow();
+		else
+			Dest.DWord = *(DWORD*)EQADDR_HWND;
+		Dest.Type = pIntType;
+		return true;
+	}
 	case GameState:
 		if (gGameState == GAMESTATE_CHARSELECT)
 			strcpy_s(DataTypeTemp, "CHARSELECT");
@@ -9820,9 +10293,162 @@ bool MQ2CorpseType::GETMEMBER()
 
 bool MQ2MerchantType::GETMEMBER()
 {
-	if (!pActiveMerchant || !pMerchantWnd)
+	if (!pMerchantWnd)
 		return false;
-	PEQMERCHWINDOW pMerch = ((PEQMERCHWINDOW)pMerchantWnd);
+	PEQMERCHWINDOW pMerch = (PEQMERCHWINDOW)pMerchantWnd;
+	CMerchantWnd *pCMerch = (CMerchantWnd*)pMerchantWnd;
+	PMQ2TYPEMEMBER pMethod = MQ2MerchantType::FindMethod(Member);
+	if (pMethod) {
+		switch ((MerchantMethods)pMethod->ID)
+		{
+		case SelectItem:
+		{
+			if (pMerchantWnd->dShow)
+			{
+				CHAR szTemp[MAX_STRING] = { 0 };
+				CHAR szTemp2[MAX_STRING] = { 0 };
+				BOOL bExact = FALSE;
+				PCHAR pName = GETFIRST();
+				if (*pName == '=')
+				{
+					bExact = TRUE;
+					pName++;
+				}
+				PCONTENTS pCont = 0;
+				PITEMINFO pItem = 0;
+				bool bFound = false;
+				int listindex = 0;
+#if !defined(ROF2EMU) && !defined(UFEMU)
+				for (int i = 0; i < pCMerch->PageHandlers[0].pObject->ItemContainer.m_length; i++)
+				{
+					if (pCont = pCMerch->PageHandlers[0].pObject->ItemContainer.m_array[i].pCont)
+					{
+#else
+				for (int i = 0; i < (int)pCMerch->PageHandlers[0].pObject->ItemContainer.Items.Size; i++)
+				{
+					if (pCont = pCMerch->PageHandlers[0].pObject->ItemContainer.Items[i].pObject)
+					{
+#endif
+						if (pItem = GetItemFromContents(pCont))
+						{
+							//WriteChatf("[%d] %s %d",i, pItem->Name, pCont->GetGlobalIndex().Index.Slot1);
+							if (bExact)
+							{
+								if (!_stricmp(pName, pItem->Name))
+								{
+									listindex = i;
+									bFound = true;
+									break;
+								}
+							}
+							else
+							{
+								strcpy_s(szTemp, pItem->Name);
+								_strlwr_s(szTemp);
+								strcpy_s(szTemp2, pName);
+								_strlwr_s(szTemp2);
+								if (strstr(szTemp,szTemp2)) {
+									listindex = i;
+									bFound = true;
+									break;
+								}
+							}
+						}
+					}
+				}
+				if (bFound)
+				{
+					ItemGlobalIndex To;
+					To.Location = eItemContainerMerchant;
+					To.Index.Slot1 = pCont->GetGlobalIndex().Index.Slot1;
+					To.Index.Slot2 = pCont->GetGlobalIndex().Index.Slot2;
+					To.Index.Slot3 = -1;
+					for (int i = 0; i < pCMerch->ItemsList->ItemsArray.Count; i++)
+					{
+						CXStr Str;
+						pCMerch->ItemsList->GetItemText(&Str, i, 1);
+						CHAR szOut[MAX_STRING] = { 0 };
+						GetCXStr(Str.Ptr, szOut, MAX_STRING);
+						if (szOut[0] != '\0') {
+							if (!_stricmp(szOut, pItem->Name))
+							{
+								pCMerch->ItemsList->SetCurSel(i);
+								break;
+							}
+						}
+					}
+#if !defined(ROF2EMU) && !defined(UFEMU)
+					pCMerch->SelectBuySellSlot(&To, listindex);
+#else
+					pCMerch->SelectBuySellSlot(&To);
+#endif
+					return true;
+				}
+			}
+			return true;
+		}
+		case Buy:
+		{
+			if (pMerchantWnd->dShow)
+			{
+				int Qty = GETNUMBER();
+				if (Qty < 1)
+					return false;
+				if (pCMerch->pSelectedItem.pObject && pCMerch->pSelectedItem.pObject->GetGlobalIndex().Location == eItemContainerMerchant)
+				{
+					pCMerch->PageHandlers[0].pObject->RequestGetItem(Qty);
+					return true;
+				}
+			}
+			return true;
+		}
+		case Sell:
+		{
+			if (pMerchantWnd->dShow)
+			{
+				int Qty = GETNUMBER();
+				if (Qty < 1)
+					return false;
+				if (pCMerch->pSelectedItem.pObject && pCMerch->pSelectedItem.pObject->GetGlobalIndex().Location == eItemContainerPossessions)
+				{
+					pCMerch->PageHandlers[0].pObject->RequestPutItem(Qty);
+					return true;
+				}
+			}
+			return true;
+		}
+		case OpenWindow:
+		{
+			SEARCHSPAWN SearchSpawn;
+			ClearSearchSpawn(&SearchSpawn);
+			SearchSpawn.FRadius = 999999.0f;
+			SearchSpawn.bMerchant = true;
+			if (pTarget && ((PSPAWNINFO)pTarget)->mActorClient.Class == 41)
+			{
+				pEverQuest->RightClickedOnPlayer(pTarget, 0);
+				return true;
+			}
+			else if (PSPAWNINFO pSpawn = SearchThroughSpawns(&SearchSpawn, (PSPAWNINFO)pLocalPlayer))
+			{
+				*ppTarget = (EQPlayer*)pSpawn;
+				pEverQuest->RightClickedOnPlayer((EQPlayer*)pSpawn, 0);
+				return true;
+			}
+			return true;
+		}
+		case CloseWindow:
+			if (pMerchantWnd->dShow)
+			{
+				//Need to call deactivate here.
+				WriteChatf("Not implemented yet");
+				return true;
+			}
+			return true;
+		}
+		return false;
+	}
+	if (!pActiveMerchant)
+		return false;
 	PMQ2TYPEMEMBER pMember = MQ2MerchantType::FindMember(Member);
 	if (!pMember)
 	{
@@ -9836,7 +10462,11 @@ bool MQ2MerchantType::GETMEMBER()
 	switch ((MerchantMembers)pMember->ID)
 	{
 	case Open:
-		Dest.DWord = 1; // obviously, since we're this far ;)
+		Dest.DWord = pMerchantWnd->dShow;
+		Dest.Type = pBoolType;
+		return true;
+	case ItemsReceived:
+		Dest.DWord = gItemsReceived;
 		Dest.Type = pBoolType;
 		return true;
 	case Item://todo: check manually for uf
@@ -10639,7 +11269,12 @@ bool MQ2InvSlotType::GETMEMBER()
 							unsigned long nPack = (nInvSlot - 2032) / 10;
 							unsigned long nSlot = (nInvSlot - 2) % 10;
 							PCONTENTS pPack = NULL;
-							if (pCharInfo->pBankArray) pPack = pCharInfo->pBankArray->Bank[nPack];
+#ifdef NEWCHARINFO
+							if (pCharInfo && pCharInfo->BankItems.Items.Size > nPack)
+								pPack = pCharInfo->BankItems.Items[nPack].pObject;
+#else
+							if (pCharInfo && pCharInfo->pBankArray) pPack = pCharInfo->pBankArray->Bank[nPack];
+#endif
 							if (pPack)
 								if (GetItemFromContents(pPack)->Type == ITEMTYPE_PACK && nSlot < GetItemFromContents(pPack)->Slots)
 								{
@@ -10656,7 +11291,12 @@ bool MQ2InvSlotType::GETMEMBER()
 							unsigned long nPack = 23 + ((nInvSlot - 2532) / 10);
 							unsigned long nSlot = (nInvSlot - 2) % 10;
 							PCONTENTS pPack = NULL;
-							if (pCharInfo->pBankArray) pPack = pCharInfo->pBankArray->Bank[nPack];
+#ifdef NEWCHARINFO
+							if (pCharInfo && pCharInfo->BankItems.Items.Size > nPack)
+								pPack = pCharInfo->BankItems.Items[nPack].pObject;
+#else
+							if (pCharInfo && pCharInfo->pBankArray) pPack = pCharInfo->pBankArray->Bank[nPack];
+#endif
 							if (pPack)
 								if (GetItemFromContents(pPack)->Type == ITEMTYPE_PACK && nSlot < GetItemFromContents(pPack)->Slots)
 								{
@@ -10670,8 +11310,13 @@ bool MQ2InvSlotType::GETMEMBER()
 						}
 						else if (nInvSlot >= 2000 && nInvSlot < 2024)
 						{
-							if (pCharInfo->pBankArray) {
+#ifdef NEWCHARINFO
+							if (pCharInfo && pCharInfo->BankItems.Items.Size > (UINT)nInvSlot - 2000) {
+								if (Dest.Ptr = pCharInfo->BankItems.Items[nInvSlot - 2000].pObject)
+#else
+							if (pCharInfo && pCharInfo->pBankArray) {
 								if (Dest.Ptr = pCharInfo->pBankArray->Bank[nInvSlot - 2000])
+#endif
 								{
 									Dest.Type = pItemType;
 									return true;
@@ -10680,11 +11325,13 @@ bool MQ2InvSlotType::GETMEMBER()
 						}
 						else if (nInvSlot == 2500 || nInvSlot == 2501)
 						{
-							if (pCharInfo->pBankArray) {
-								if (nInvSlot == 2500)
-									Dest.Ptr = pCharInfo->pBankArray->Bank[22];
-								else if (nInvSlot == 2501)
-									Dest.Ptr = pCharInfo->pBankArray->Bank[23];
+#ifdef NEWCHARINFO
+							if (pCharInfo && pCharInfo->BankItems.Items.Size > (UINT)nInvSlot - 2500 + 22) {
+								if (Dest.Ptr = pCharInfo->BankItems.Items[nInvSlot - 2500 + 22].pObject)
+#else
+							if (pCharInfo && pCharInfo->pBankArray) {
+								if (Dest.Ptr = pCharInfo->pBankArray->Bank[nInvSlot - 2500 + 22])
+#endif
 									if (Dest.Ptr)
 									{
 										Dest.Type = pItemType;
@@ -14617,6 +15264,7 @@ bool MQ2AuraType::GETMEMBER()
 	}
 	return false;
 }
+#if !defined(UFEMU)
 bool MQ2BandolierItemType::GETMEMBER()
 {
 	if (BandolierItemInfo *ptr = (BandolierItemInfo *)VarPtr.Ptr)
@@ -14806,3 +15454,4 @@ bool MQ2BandolierType::GETMEMBER()
 	}
 	return false;
 }
+#endif

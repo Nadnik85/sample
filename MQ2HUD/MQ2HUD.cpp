@@ -555,6 +555,7 @@ PLUGIN_API VOID OnDrawHUD(VOID)
         SY=ScreenY;
     }   
     PHUDELEMENT pElement=pHud;
+	bool bCheckParse = !(N % SkipParse);
 
     DWORD X,Y;
     while(pElement)
@@ -575,7 +576,8 @@ PLUGIN_API VOID OnDrawHUD(VOID)
                 X=SX+pElement->X;
                 Y=SX+pElement->Y;
             }
-            if (!(N%SkipParse)) {
+            //if (!(N%SkipParse)) {
+			if (bCheckParse) {
 				bOkToCheck = true;
                 strcpy_s(pElement->PreParsed,pElement->Text);
 				if (pElement->Type & HUDTYPE_MACRO) {

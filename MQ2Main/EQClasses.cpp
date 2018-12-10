@@ -134,21 +134,24 @@ FUNCTION_AT_ADDRESS(struct  _CONTENTS* CMyInventory::GetSlot(int), CMyInventory_
 #endif
 
 #ifdef EQ_Item__CreateItemTagString_x
-FUNCTION_AT_ADDRESS(char * EQ_Item::CreateItemTagString(char *, int),EQ_Item__CreateItemTagString); // Lax 11-14-2003
+#if defined(EQBETA) || defined(TEST)
+FUNCTION_AT_ADDRESS(char * EQ_Item::CreateItemTagString(char *, int, bool), EQ_Item__CreateItemTagString); // SwiftyMUSE 11-09-2018
+#else
+FUNCTION_AT_ADDRESS(char * EQ_Item::CreateItemTagString(char *, int), EQ_Item__CreateItemTagString); // Lax 11-14-2003
+#endif
 #endif
 #ifdef EQ_Item__GetImageNum_x
 FUNCTION_AT_ADDRESS(int EQ_Item::GetImageNum(void)const,EQ_Item__GetImageNum); // Eqmule 02-07-2014
 #endif
 #ifdef EQ_Item__CreateItemClient_x
-FUNCTION_AT_ADDRESS(struct  _CONTENTS** __cdecl EQ_Item::CreateItemClient(PBYTE*,DWORD),EQ_Item__CreateItemClient); // Eqmule 08-27-2015
+FUNCTION_AT_ADDRESS(_CONTENTS** __cdecl EQ_Item::CreateItemClient(PBYTE*,DWORD),EQ_Item__CreateItemClient); // Eqmule 08-27-2015
 #endif
 #ifdef CStmlWnd__AppendSTML_x
 FUNCTION_AT_ADDRESS(class CXSize CStmlWnd::AppendSTML(class CXStr),CStmlWnd__AppendSTML);
 #endif
 #ifdef EQ_Item__CanDrop_x
-FUNCTION_AT_ADDRESS(int EQ_Item::CanDrop(bool,int,int,int),EQ_Item__CanDrop); // dkaa 2-11-2011
+FUNCTION_AT_ADDRESS(bool EQ_Item::CanDrop(bool,bool,bool,bool) const,EQ_Item__CanDrop);
 #endif
-
 ///////////////////////////////////////////////////////////////////
 #ifdef EQ_Character__Max_Endurance_x
 FUNCTION_AT_ADDRESS(int  EQ_Character1::Max_Endurance(bool),EQ_Character__Max_Endurance);
@@ -1340,6 +1343,9 @@ FUNCTION_AT_ADDRESS(void  CFacePick::SetFaceSelectionsFromPlayer(void),CFacePick
 #ifdef CFacePick__CycleThroughFHEB_x
 FUNCTION_AT_ADDRESS(void  CFacePick::CycleThroughFHEB(int,int),CFacePick__CycleThroughFHEB);
 #endif
+#ifdef CFactionWnd__CFactionWnd1_x
+FUNCTION_AT_ADDRESS( CFactionWnd::CFactionWnd(class CXWnd *),CFactionWnd__CFactionWnd);
+#endif
 #ifdef CFindItemWnd__CFindItemWnd_x
 FUNCTION_AT_ADDRESS( CFindItemWnd::CFindItemWnd(class CXWnd *),CFindItemWnd__CFindItemWnd);
 #endif
@@ -2011,11 +2017,11 @@ FUNCTION_AT_ADDRESS(bool  CInvSlotMgr::MoveItem(ItemGlobalIndex *from, ItemGloba
 FUNCTION_AT_ADDRESS(class CInvSlot *  CInvSlotMgr::CreateInvSlot(class CInvSlotWnd *),CInvSlotMgr__CreateInvSlot);
 #endif
 #ifdef CInvSlotMgr__FindInvSlot_x
-	#if !defined(ROF2EMU) && !defined(UFEMU)
-		FUNCTION_AT_ADDRESS(class CInvSlot *  CInvSlotMgr::FindInvSlot(int,int,int,bool),CInvSlotMgr__FindInvSlot);
-	#else
-		FUNCTION_AT_ADDRESS(class CInvSlot *  CInvSlotMgr::FindInvSlot(int,int),CInvSlotMgr__FindInvSlot);
-	#endif
+#if !defined(ROF2EMU) && !defined(UFEMU)
+FUNCTION_AT_ADDRESS(class CInvSlot *  CInvSlotMgr::FindInvSlot(int,int,int,bool),CInvSlotMgr__FindInvSlot);
+#else
+FUNCTION_AT_ADDRESS(class CInvSlot *  CInvSlotMgr::FindInvSlot(int,int),CInvSlotMgr__FindInvSlot);
+#endif
 #endif
 #ifdef CInvSlotMgr__SelectSlot_x
 FUNCTION_AT_ADDRESS(void  CInvSlotMgr::SelectSlot(class CInvSlot *),CInvSlotMgr__SelectSlot);
@@ -2399,26 +2405,24 @@ FUNCTION_AT_ADDRESS(void  CMerchantWnd::HandleSell(int),CMerchantWnd__HandleSell
 FUNCTION_AT_ADDRESS(void  CMerchantWnd::UpdateBuySellButtons(void),CMerchantWnd__UpdateBuySellButtons);
 #endif
 #ifdef CMerchantWnd__SelectBuySellSlot_x
-FUNCTION_AT_ADDRESS(void  CMerchantWnd::SelectBuySellSlot(int,class CTextureAnimation *),CMerchantWnd__SelectBuySellSlot);
+//FUNCTION_AT_ADDRESS(void  CMerchantWnd::SelectBuySellSlot(int,class CTextureAnimation *),CMerchantWnd__SelectBuySellSlot);
+#if !defined(ROF2EMU) && !defined(UFEMU)
+FUNCTION_AT_ADDRESS(int  CMerchantWnd::SelectBuySellSlot(class ItemGlobalIndex *, int Unknown), CMerchantWnd__SelectBuySellSlot);
+#else
+FUNCTION_AT_ADDRESS(int  CMerchantWnd::SelectBuySellSlot(class ItemGlobalIndex *), CMerchantWnd__SelectBuySellSlot);
 #endif
-#ifdef CMerchantWnd__ActualSelect_x
-	#if !defined(ROF2EMU) && !defined(UFEMU)
-		FUNCTION_AT_ADDRESS(int  CMerchantWnd::ActualSelect(class ItemGlobalIndex *, int Unknown),CMerchantWnd__ActualSelect);
-	#else
-		FUNCTION_AT_ADDRESS(int  CMerchantWnd::ActualSelect(class ItemGlobalIndex *),CMerchantWnd__ActualSelect);
-	#endif
 #endif
 #ifdef CMerchantWnd__DisplayBuyOrSellPrice_x
 FUNCTION_AT_ADDRESS(void  CMerchantWnd::DisplayBuyOrSellPrice(bool,class EQ_Item *),CMerchantWnd__DisplayBuyOrSellPrice);
 #endif
-#ifdef CMerchantWnd__RequestBuyItem_x
-FUNCTION_AT_ADDRESS(void  CMerchantWnd::RequestBuyItem(int),CMerchantWnd__RequestBuyItem);
+#ifdef CMerchantWnd__PurchasePageHandler__RequestGetItem_x
+FUNCTION_AT_ADDRESS(bool CMerchantWnd::PurchasePageHandler::RequestGetItem(int), CMerchantWnd__PurchasePageHandler__RequestGetItem);
 #endif
 #ifdef CMerchantWnd__FinishBuyingItem_x
 FUNCTION_AT_ADDRESS(void  CMerchantWnd::FinishBuyingItem(struct _sell_msg *),CMerchantWnd__FinishBuyingItem);
 #endif
-#ifdef CMerchantWnd__RequestSellItem_x
-FUNCTION_AT_ADDRESS(void  CMerchantWnd::RequestSellItem(int),CMerchantWnd__RequestSellItem);
+#ifdef CMerchantWnd__PurchasePageHandler__RequestPutItem_x
+FUNCTION_AT_ADDRESS(void CMerchantWnd::PurchasePageHandler::RequestPutItem(int), CMerchantWnd__PurchasePageHandler__RequestPutItem);
 #endif
 #ifdef CMerchantWnd__FinishSellingItem_x
 FUNCTION_AT_ADDRESS(void  CMerchantWnd::FinishSellingItem(struct _sell_msg *),CMerchantWnd__FinishSellingItem);
@@ -2954,6 +2958,9 @@ FUNCTION_AT_ADDRESS(class CXStr *CTargetWnd::GetBuffCaster(int),CTargetWnd__GetB
 #ifdef CTaskWnd__UpdateTaskTimers_x
 FUNCTION_AT_ADDRESS(int CTaskWnd::UpdateTaskTimers(unsigned long),CTaskWnd__UpdateTaskTimers);
 #endif
+#ifdef CTaskManager__GetEntry_x
+FUNCTION_AT_ADDRESS(CTaskEntry *CTaskManager::GetEntry(int Index, int System, bool bCheckEmpty), CTaskManager__GetEntry);
+#endif
 #ifdef CTextEntryWnd__CTextEntryWnd_x
 FUNCTION_AT_ADDRESS( CTextEntryWnd::CTextEntryWnd(class CXWnd *),CTextEntryWnd__CTextEntryWnd);
 #endif
@@ -3294,6 +3301,14 @@ FUNCTION_AT_ADDRESS(ItemGlobalIndex CharacterBase::CreateItemGlobalIndex(int, in
 #endif
 #ifdef CharacterBase__CreateItemIndex_x
 FUNCTION_AT_ADDRESS(ItemIndex CharacterBase::CreateItemIndex(int,int,int), CharacterBase__CreateItemIndex);
+#endif
+#if !defined(ROF2EMU) && !defined(UFEMU)
+#ifdef ItemBase__IsLoreEquipped_x
+FUNCTION_AT_ADDRESS(bool ItemBase::IsLoreEquipped(bool bIncludeSockets) const, ItemBase__IsLoreEquipped);
+#endif
+#endif
+#ifdef ItemBase__IsLore_x
+FUNCTION_AT_ADDRESS(bool ItemBase::IsLore(bool bIncludeSockets) const, ItemBase__IsLore);
 #endif
 #ifdef ItemGlobalIndex__IsKeyRingLocation_x
 FUNCTION_AT_ADDRESS(bool ItemGlobalIndex::IsKeyRingLocation(void), ItemGlobalIndex__IsKeyRingLocation);
@@ -4574,7 +4589,7 @@ FUNCTION_AT_ADDRESS(int  EQ_Character::GetFirstEffectSlot(bool),EQ_Character__Ge
 FUNCTION_AT_ADDRESS(int  EQ_Character::GetLastEffectSlot(bool),EQ_Character__GetLastEffectSlot);
 #endif
 #ifdef CharacterZoneClient__IsStackBlocked_x
-#if !defined(ROF2EMU) && !defined(UFEMU) && !defined(TEST)
+#if !defined(ROF2EMU) && !defined(UFEMU)
 FUNCTION_AT_ADDRESS(bool CharacterZoneClient::IsStackBlocked(const EQ_Spell *, CharacterZoneClient*, EQ_Affect*, int, bool), CharacterZoneClient__IsStackBlocked);
 #else
 FUNCTION_AT_ADDRESS(bool CharacterZoneClient::IsStackBlocked(const EQ_Spell *, CharacterZoneClient*, EQ_Affect*,int),CharacterZoneClient__IsStackBlocked);
@@ -5260,6 +5275,27 @@ FUNCTION_AT_ADDRESS( EQObject::EQObject(class EQObject *,class EQPlayer *,char *
 #ifdef EQObject__dEQObject_x
 FUNCTION_AT_ADDRESS( EQObject::~EQObject(void),EQObject__dEQObject);
 #endif
+#ifdef EQPlacedItemManager__Instance_x
+FUNCTION_AT_ADDRESS(EQPlacedItemManager& EQPlacedItemManager::Instance(),EQPlacedItemManager__Instance);
+#endif
+#ifdef EQPlacedItemManager__GetItemByGuid_x
+FUNCTION_AT_ADDRESS(EQPlacedItem * EQPlacedItemManager::GetItemByGuid(const EqItemGuid& ItemGuid),EQPlacedItemManager__GetItemByGuid);
+#endif
+#ifdef EQPlacedItemManager__GetItemByRealEstateAndRealEstateItemIds_x
+FUNCTION_AT_ADDRESS(EQPlacedItem * EQPlacedItemManager::GetItemByRealEstateAndRealEstateItemIds(int RealEstateID, int RealEstateItemID),EQPlacedItemManager__GetItemByRealEstateAndRealEstateItemIds);
+#endif
+#ifdef RealEstateManagerClient__Instance_x
+FUNCTION_AT_ADDRESS(RealEstateManagerClient &RealEstateManagerClient::Instance(),RealEstateManagerClient__Instance)
+#endif
+#ifdef RealEstateManagerClient__GetItemByRealEstateAndItemIds_x
+FUNCTION_AT_ADDRESS(const RealEstateItemClient *RealEstateManagerClient::GetItemByRealEstateAndItemIds(int realEstateID, int realEstateItemID) const,RealEstateManagerClient__GetItemByRealEstateAndItemIds)
+#endif
+#ifdef FactionManagerClient__Instance_x
+FUNCTION_AT_ADDRESS(FactionManagerClient &FactionManagerClient::Instance(),FactionManagerClient__Instance)
+#endif
+#ifdef FactionManagerClient__HandleFactionMessage_x
+FUNCTION_AT_ADDRESS(void FactionManagerClient::HandleFactionMessage(UINT MessageID, PCHAR pData, unsigned int DataLength),FactionManagerClient__HandleFactionMessage)
+#endif
 #ifdef EQPlayer__EQPlayer_x
 FUNCTION_AT_ADDRESS( EQPlayer::EQPlayer(class EQPlayer *,unsigned char,unsigned int,unsigned char,char *),EQPlayer__EQPlayer);
 #endif
@@ -5338,16 +5374,15 @@ FUNCTION_AT_ADDRESS(bool  EQPlayer::CanSee(class EQPlayer *), EQPlayer__CanSee);
 #ifdef EQPlayer__CanSee1_x
 FUNCTION_AT_ADDRESS(bool EQPlayer::CanSee(CVector3 *pos), EQPlayer__CanSee1);
 #endif
-
 #ifdef EQPlayer__ModifyAttackSpeed_x
 FUNCTION_AT_ADDRESS(unsigned int  EQPlayer::ModifyAttackSpeed(unsigned int,int),EQPlayer__ModifyAttackSpeed);
 #endif
 #ifdef EQPlayer__DoAttack_x
-	#if defined(ROF2EMU) || defined(UFEMU)
-		FUNCTION_AT_ADDRESS(int EQPlayer::DoAttack(BYTE,BYTE,EQPlayer *),EQPlayer__DoAttack);
-	#else
-		FUNCTION_AT_ADDRESS(int EQPlayer::DoAttack(BYTE,BYTE,EQPlayer *,bool,bool),EQPlayer__DoAttack);
-	#endif
+#if defined(ROF2EMU) || defined(UFEMU)
+FUNCTION_AT_ADDRESS(int EQPlayer::DoAttack(BYTE,BYTE,EQPlayer *),EQPlayer__DoAttack);
+#else
+FUNCTION_AT_ADDRESS(int EQPlayer::DoAttack(BYTE,BYTE,EQPlayer *,bool,bool),EQPlayer__DoAttack);
+#endif
 #endif
 #ifdef EQPlayer__HandleAmmo_x
 FUNCTION_AT_ADDRESS(unsigned char  EQPlayer::HandleAmmo(void),EQPlayer__HandleAmmo);
@@ -8796,11 +8831,11 @@ FUNCTION_AT_ADDRESS(void  CButtonWnd::SetCheck(bool),CButtonWnd__SetCheck);
 FUNCTION_AT_ADDRESS(int  CXWnd::GetWidth(void)const ,CXWnd__GetWidth);
 #endif
 #ifdef CComboWnd__GetListRect_x
-	#if !defined(ROF2EMU) && !defined(UFEMU)
-		FUNCTION_AT_ADDRESS(class CXRect  CComboWnd::GetListRect(bool)const ,CComboWnd__GetListRect);
-	#else
-		FUNCTION_AT_ADDRESS(class CXRect  CComboWnd::GetListRect(void)const ,CComboWnd__GetListRect);
-	#endif
+#if !defined(ROF2EMU) && !defined(UFEMU)
+FUNCTION_AT_ADDRESS(class CXRect  CComboWnd::GetListRect(bool)const ,CComboWnd__GetListRect);
+#else
+FUNCTION_AT_ADDRESS(class CXRect  CComboWnd::GetListRect(void)const ,CComboWnd__GetListRect);
+#endif
 #endif
 #ifdef CComboWnd__SetColors_x
 FUNCTION_AT_ADDRESS(void  CComboWnd::SetColors(unsigned long,unsigned long,unsigned long),CComboWnd__SetColors);
@@ -9272,11 +9307,11 @@ FUNCTION_AT_ADDRESS(class CSliderDrawTemplate *  CSidlManager::FindSliderDrawTem
 FUNCTION_AT_ADDRESS(class CSliderDrawTemplate *  CSidlManager::FindSliderDrawTemplate(unsigned __int32)const ,CSidlManager__FindSliderDrawTemplate1);
 #endif
 #ifdef CSidlManager__CreateXWndFromTemplate_x
-	#if !defined(ROF2EMU) && !defined(UFEMU)
-		FUNCTION_AT_ADDRESS(class CXWnd *  CSidlManager::CreateXWndFromTemplate(class CXWnd *,class CControlTemplate *, bool),CSidlManager__CreateXWndFromTemplate);
-	#else
-		FUNCTION_AT_ADDRESS(class CXWnd *  CSidlManager::CreateXWndFromTemplate(class CXWnd *,class CControlTemplate *),CSidlManager__CreateXWndFromTemplate);
-	#endif
+#if !defined(ROF2EMU) && !defined(UFEMU)
+FUNCTION_AT_ADDRESS(class CXWnd *  CSidlManager::CreateXWndFromTemplate(class CXWnd *,class CControlTemplate *, bool),CSidlManager__CreateXWndFromTemplate);
+#else
+FUNCTION_AT_ADDRESS(class CXWnd *  CSidlManager::CreateXWndFromTemplate(class CXWnd *,class CControlTemplate *),CSidlManager__CreateXWndFromTemplate);
+#endif
 #endif
 #ifdef CSidlManager__CreateXWndFromTemplate1_x
 FUNCTION_AT_ADDRESS(class CXWnd * CSidlManager::CreateXWndFromTemplate(CXWnd *,CXStr &),CSidlManager__CreateXWndFromTemplate1);

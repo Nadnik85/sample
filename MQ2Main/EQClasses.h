@@ -82,6 +82,8 @@ class CEQSuiteTextureLoader;
 class CEverQuest;
 class CExploreModeWnd;
 class CFacePick;
+class CFactionWnd;
+class CExtendedTargetWnd;
 class CFindItemWnd;
 class CFeedbackWnd;
 class CFileSelectionWnd;
@@ -226,7 +228,7 @@ class CTargetManager;
 class CTargetRing;
 class CTargetWnd;
 class CTaskWnd;
-class CTaskSomething;
+class CTaskManager;
 class CTextEntryWnd;
 class CTextureAnimation;
 class CTextureFont;
@@ -310,6 +312,7 @@ class flex_unit;
 class GrammarRulesClass;
 class GuildMember;
 class IconCache;
+class ItemBase;
 //class ItemBaseContainer;
 class JournalNPC;
 class KeyCombo;
@@ -1641,6 +1644,12 @@ EQLIB_OBJECT void CConfirmationDialog::ResetFocusOnClose(void);
 /*0x170*/    BYTE    Unknown0x170[0x18];
 /*0x188*/
 };
+class ItemBase
+{
+public:
+	EQLIB_OBJECT bool ItemBase::IsLore(bool bIncludeSockets = false) const;
+	EQLIB_OBJECT bool ItemBase::IsLoreEquipped(bool bIncludeSockets = false) const;
+};
 class ItemGlobalIndex
 {
 public:
@@ -2561,7 +2570,17 @@ EQLIB_OBJECT CExploreModeWnd::~CExploreModeWnd(void);
 //EQLIB_OBJECT void * CExploreModeWnd::`vector deleting destructor'(unsigned int);
 EQLIB_OBJECT void CExploreModeWnd::Deactivate(void);
 };
+class CExtendedTargetWnd : public CSidlScreenWnd
+{
+public:
 
+};
+//Size: 258h see 53F643 Nov 29 2018 Beta -eqmule 
+class CFactionWnd : public CSidlScreenWnd
+{
+public:
+	EQLIB_OBJECT CFactionWnd::CFactionWnd(class CXWnd *);
+};
 class CFacePick : public CSidlScreenWnd
 {
 public:
@@ -3403,7 +3422,7 @@ public:
 /****** ButtonWnd inherits ******/
 /*0x01e8*/ int		MouseButtonState;
 /*0x01ec*/ bool	bPicture;
-/*0x01f0*/ CRadioGroup	*pGroup;
+/*0x01f0*/ CRadioGroup* pGroup;
 /*0x01f4*/ bool	bChecked;
 /*0x01f5*/ bool	bMouseOverLastFrame;
 /*0x01f8*/ tagPOINT	DecalOffset;
@@ -3417,24 +3436,24 @@ public:
 /*0x022c*/ UINT		CoolDownBeginTime;
 /*0x0230*/ UINT		CoolDownDuration;
 #if !defined(ROF2EMU) && !defined(UFEMU)
-/*0x0234*/ CXStr		*Indicator;
+/*0x0234*/ CXStr*   Indicator;
 /*0x0238*/ UINT		IndicatorVal;
-/*0x023c*/ void		*pIndicatorTextObject;
+/*0x023c*/ void*    pIndicatorTextObject;
 #endif
 	/* CButtonDrawTemplate Start */
-/*0x0240*/ CXStr	*Name;
-/*0x0244*/ CTextureAnimation   *Normal;
-/*0x0248*/ CTextureAnimation   *taPressed;
-/*0x024c*/ CTextureAnimation   *Flyby;
-/*0x0250*/ CTextureAnimation   *taDisabled;
-/*0x0254*/ CTextureAnimation   *PressedFlyby;
-/*0x0258*/ CTextureAnimation   *PressedDisabled;
-/*0x025c*/ CTextureAnimation   *NormalDecal;
-/*0x0260*/ CTextureAnimation   *PressedDecal;
-/*0x0264*/ CTextureAnimation   *FlybyDecal;
-/*0x0268*/ CTextureAnimation   *DisabledDecal;
-/*0x026c*/ CTextureAnimation   *PressedFlybyDecal;
-/*0x0270*/ CTextureAnimation   *PressedDisabledDecal;
+/*0x0240*/ CXStr*	Name;
+/*0x0244*/ CTextureAnimation*  Normal;
+/*0x0248*/ CTextureAnimation*  taPressed;
+/*0x024c*/ CTextureAnimation*  Flyby;
+/*0x0250*/ CTextureAnimation*  taDisabled;
+/*0x0254*/ CTextureAnimation*  PressedFlyby;
+/*0x0258*/ CTextureAnimation*  PressedDisabled;
+/*0x025c*/ CTextureAnimation*  NormalDecal;
+/*0x0260*/ CTextureAnimation*  PressedDecal;
+/*0x0264*/ CTextureAnimation*  FlybyDecal;
+/*0x0268*/ CTextureAnimation*  DisabledDecal;
+/*0x026c*/ CTextureAnimation*  PressedFlybyDecal;
+/*0x0270*/ CTextureAnimation*  PressedDisabledDecal;
 #if !defined(ROF2EMU) && !defined(UFEMU)
 /*0x0274*/ bool		bAllowButtonClickThrough;
 /*0x0275*/ bool		bCoolDownDoDelayedStart;
@@ -3443,15 +3462,15 @@ public:
 /*0x0277*/ bool		bIsDrawLasso;
 /*0x0278*/ UINT		ButtonStyle;
 #if !defined(ROF2EMU) && !defined(UFEMU)
-/*0x027c*/ CLabel		*pButtonLabel;
+/*0x027c*/ CLabel*  pButtonLabel;
 #endif
 /*0x0280*/
 /****** CInvSlotWnd Start ******/
-	CTextureAnimation	*pBackground;
+	CTextureAnimation*  pBackground;
 	//ItemGlobalIndex	ItemLocation;
 	ItemContainerInstance ICLocation;
 	ItemIndex iIndex;
-	void	*LinkedItem;
+	void*   LinkedItem;
 	int		ItemOffsetX;
 	int		ItemOffsetY;
 	CTextureAnimation*	ptItem;
@@ -3460,8 +3479,8 @@ public:
 	int		RecastLeft;
 	bool	bHotButton;
 	bool	bInventorySlotLinked;
-	CInvSlot	*pEQInvSlot;
-	void	*pinvslotwndTextObject;
+	CInvSlot*   pEQInvSlot;
+	void*   pinvslotwndTextObject;
 	int		TextFontStyle;
     int		Mode;
 	COLORREF	BGTintRollover;
@@ -4278,10 +4297,24 @@ public:
 class VeBaseReferenceCount
 {
 public:
-	DWORD vfTable;
-    int References;
+	//just couting the vftable here, dont get confused -eqmule
+/*0x00*/ virtual UINT GetMemUsage() const;
+/*0x04*/ virtual ~VeBaseReferenceCount();
+ 
+/*0x04*/ int References;
 };
-
+enum eMerchantServices
+{
+	Regular,
+	Recovery,
+	Mail,
+	ServiceCount
+};
+class PopDialogHandler2
+{
+public:
+/*0x08*/ virtual void Unknownv0x08();
+};
 class WndEventHandler
 {
 public:
@@ -4319,7 +4352,32 @@ public:
 	/*0x78*/ int Unknown0x78;
 	/*0x7c*/ int Unknown0x7c;
 	/*0x80*/ int Unknown0x80;
-	/*0x84*/ 
+	/*0x84*/
+	//dont pay any attention to the count on these, i needed to figure out the vftable
+	//so thats why they are commented like this.
+/*0x0c*/ virtual void Unknownv0x08();
+/*0x0c*/ virtual void Unknownv0x0c();
+/*0x10*/ virtual void Unknownv0x10();
+/*0x14*/ virtual void Unknownv0x14();
+/*0x18*/ virtual void DestroyItemByUniqueId(__int64 UniqueID);
+/*0x1c*/ virtual void DestroyItemByItemGuid(const EqItemGuid& ItemGuid);
+/*0x20*/ virtual bool AddItemToArray(const VePointer<CONTENTS>& pSentItem);
+/*0x24*/ virtual int Sort(SListWndSortInfo *SortInfo);
+/*0x28*/ virtual void UpdateList();
+/*0x2c*/ virtual int DisplayBuyOrSellPrice(const VePointer<CONTENTS>& pItem, bool bBuy) const;
+/*0x30*/ virtual CXStr GetPriceString(int Price) const;
+/*0x34*/ virtual void UpdateControls();
+/*0x38*/ virtual bool RequestGetItem(int Qty);
+/*0x3c*/ virtual void RequestPutItem(int Qty);
+/*0x40*/ virtual bool CanSelectSlot(const ItemGlobalIndex& Location) const;
+/*0x44*/ virtual void DisablePageSpecificButtons();
+/*0x48*/ virtual eMerchantServices GetHandlerType() const;
+/*0x4c*/ virtual void CXWnd__OnShowANDPostDraw() const;
+/*0x50*/ virtual void Unknownv0x50() const;
+/*0x54*/ virtual void Unknownv0x54() const;
+/*0x58*/ virtual void Unknownv0x58() const;
+//there are 22 of them...
+
 	};
 	class PurchasePageHandler : public MerchantPageHandler
 	{
@@ -4334,6 +4392,8 @@ public:
 	/*0xa0*/ int Unknown0xa0;
 	/*0xa4*/ int Unknown0xa4;
 	/*0xa8*/
+	EQLIB_OBJECT bool CMerchantWnd::PurchasePageHandler::RequestGetItem(int);
+	EQLIB_OBJECT void CMerchantWnd::PurchasePageHandler::RequestPutItem(int);
 	};
 //size 0x420 in Nov 02 2017 Beta  -eqmule
 /*0x230*/ UINT NextRefreshTime;
@@ -4396,7 +4456,7 @@ public:
 	/*0x14*/	BYTE AtDepth;
 	/*0x16*/	short Slots[2];
 	/*0x1a*/	bool bDynamic;
-	/*0x1C*/
+	/*0x1c*/
 	};
 	class ItemBaseContainer : public ItemContainer<CONTENTS>
 	{
@@ -4414,12 +4474,26 @@ public:
 	/*0x34*/ CPageWnd* Page;
 	/*0x38*/ bool bListNeedsRefresh;
 	/*0x3c*/ 
+/*0x0c*/ virtual void Unknownv0x10();
+/*0x10*/ virtual void Unknownv0x14();
+/*0x14*/ virtual void DestroyItemByUniqueId(__int64 UniqueID);
+/*0x18*/ virtual void DestroyItemByItemGuid(const EqItemGuid& ItemGuid);
+/*0x1c*/ virtual bool AddItemToArray(const VePointer<CONTENTS>& pSentItem);
+/*0x20*/ virtual int Sort(SListWndSortInfo *SortInfo);
+/*0x24*/ virtual void UpdateList();
+/*0x28*/ virtual int DisplayBuyOrSellPrice(const VePointer<CONTENTS>& pItem, bool bBuy) const;
+/*0x2c*/ virtual CXStr GetPriceString(int Price) const;
+/*0x30*/ virtual void UpdateControls();
+/*0x34*/ virtual bool RequestGetItem(int Qty);
+/*0x38*/ virtual void RequestPutItem(int Qty);
 	};
 	class PurchasePageHandler : public MerchantPageHandler
 	{
 	public:
 	/*0x3c*/ bool bShowAllItems;
 	/*0x40*/
+	EQLIB_OBJECT bool CMerchantWnd::PurchasePageHandler::RequestGetItem(int);
+	EQLIB_OBJECT void CMerchantWnd::PurchasePageHandler::RequestPutItem(int);
 	};
 /*0x228*/ UINT NextRefreshTime;
 /*0x22c*/ bool bInventoryWasActive;
@@ -4465,11 +4539,12 @@ EQLIB_OBJECT void CMerchantWnd::AddNoteToMercArray(class EQ_Note *);
 EQLIB_OBJECT void CMerchantWnd::ClearMerchantSlot(int);
 EQLIB_OBJECT void CMerchantWnd::FinishBuyingItem(struct _sell_msg *);
 EQLIB_OBJECT void CMerchantWnd::FinishSellingItem(struct _sell_msg *);
-EQLIB_OBJECT void CMerchantWnd::SelectBuySellSlot(int,class CTextureAnimation *);
+//older clients and im not really sure that it was correct then
+//EQLIB_OBJECT void CMerchantWnd::SelectBuySellSlot(int,class CTextureAnimation *);
 #if !defined(ROF2EMU) && !defined(UFEMU)
-EQLIB_OBJECT int CMerchantWnd::ActualSelect(ItemGlobalIndex *,int Unknown = -1);
+EQLIB_OBJECT int CMerchantWnd::SelectBuySellSlot(ItemGlobalIndex *,int ListIndex = -1);//for itemlists such as merchant items, we also need to send the actual listindex.
 #else
-EQLIB_OBJECT int CMerchantWnd::ActualSelect(ItemGlobalIndex *);
+EQLIB_OBJECT int CMerchantWnd::SelectBuySellSlot(ItemGlobalIndex *);
 #endif
 // virtual
 EQLIB_OBJECT CMerchantWnd::~CMerchantWnd(void);
@@ -4484,8 +4559,6 @@ EQLIB_OBJECT void CMerchantWnd::DisplayBuyOrSellPrice(bool,class EQ_Item *);
 EQLIB_OBJECT void CMerchantWnd::HandleBuy(int);
 EQLIB_OBJECT void CMerchantWnd::HandleSell(int);
 EQLIB_OBJECT void CMerchantWnd::Init(void);
-EQLIB_OBJECT void CMerchantWnd::RequestBuyItem(int);
-EQLIB_OBJECT void CMerchantWnd::RequestSellItem(int);
 EQLIB_OBJECT void CMerchantWnd::UpdateBuySellButtons(void);
 };
 
@@ -6263,13 +6336,105 @@ EQLIB_OBJECT int CTaskWnd::UpdateTaskTimers(unsigned long fasttime);
 // virtual
 EQLIB_OBJECT CTaskWnd::~CTaskWnd(void);
 };
-class CTaskSomething
+enum TaskType {
+	TT_Unknown = -1,
+	TT_None = 0,
+	TT_Deliver,
+	TT_Kill,
+	TT_Loot,
+	TT_Hail,
+	TT_Explore,
+	TT_Tradeskill,
+	TT_Fishing,
+	TT_Foraging,
+	TT_Cast,
+	TT_UseSkill,
+	TT_DZSwitch,
+	TT_DestroyObject,
+	TT_Collect,
+	TT_Dialogue,
+	TT_TotalCount
+};
+enum TaskGroupType {
+	TGT_Solo,
+	TGT_Group,
+	TGT_Raid
+};
+typedef struct _CTaskElement
+{
+/*0x000*/ TaskType Type;
+/*0x004*/ TaskGroupType GroupType;
+/*0x008*/ CHAR TargetName[0x40];
+/*0x048*/ CHAR ZoneID[0x40];
+/*0x088*/ CHAR TargetZoneID[0x40];
+/*0x0c8*/ int RequiredCount;
+/*0x0cc*/ bool bOptional;
+/*0x0d0*/ int ElementGroup;
+/*0x0d4*/ int DZSwitchID;
+/*0x0d8*/ CHAR ElementDescriptionOverride[0x80];
+/*0x158*/ PCXSTR ItemNameList;
+/*0x15c*/ PCXSTR SkillIDList;
+/*0x160*/ PCXSTR SpellIDList;
+/*0x164*/ PCXSTR TaskTitle;
+/*0x168*/
+} CTaskElement, *PCTaskElement;
+typedef struct _CTaskEntry
+{
+/*0x0000*/ int TaskID;
+/*0x0004*/ FLOAT RewardAdjustment;
+/*0x0008*/ CHAR TaskTitle[0x40];
+/*0x0048*/ int DurationSeconds;
+/*0x004C*/ int DurCode;
+/*0x0050*/ CHAR StartText[0xFa0];//4000
+/*0x0FF0*/ bool bShowReward;
+/*0x0FF4*/ int RewardCash;
+/*0x0FF8*/ int RewardExp;
+/*0x0FFC*/ int RewardPoints;
+/*0x1000*/ int RewardFactionID;
+/*0x1004*/ int RewardFactionAmount;
+/*0x1008*/ PCXSTR RewardItemTag;
+/*0x100C*/ CTaskElement Elements[0x14];//0x168 * 0x14 = 0x1C20
+/*0x2C2C*/ int TaskSystem;
+/*0x2C30*/ int PointType;
+/*0x2C34*/ bool StartTextCompiled;//for sure see 51B861 in Nov 13 2018 Live
+/*0x0000*/ CHAR RawStartText[0xFa0];//4000
+/*0x0000*/ bool bElementsReceived;
+/*0x0000*/ __time32_t TimeCompleted;
+/*0x3BDC*/ ArrayClass_RO<MonsterMissionTemplate> MonsterTemplates;
+/*0x3BEC*/ bool bTemplateSelectionLocked;//51B887
+/*0x3BED*/ bool bHasRewardSet;
+/*0x3BF0*/ 
+} CTaskEntry,*PCTaskEntry;
+enum SharedTaskPlayerRole 
+{ 
+	STPR_None,
+	STPR_Leader
+};
+typedef struct _SharedTaskClientPlayerInfo
+{
+	CHAR	Name[0x40];
+	int		TemplateID;
+	SharedTaskPlayerRole m_role;
+	_SharedTaskClientPlayerInfo *pNext;
+}SharedTaskClientPlayerInfo,*PSharedTaskClientPlayerInfo;
+
+class CTaskManager// : public PopDialogHandler /*0x000000*/ 
 {
 public:
-EQLIB_OBJECT CTaskSomething::CTaskSomething(class CXWnd *);
+/*0x000000*/ PVOID vfTable;
+/*0x000004*/ CTaskEntry TaskEntries[1];
+/*0x003BF4*/ CTaskEntry QuestEntries[0x1d];//see 51B93B 0x1d * 0x3BF0 = 0x6CA30
+/*0x070624*/ CTaskEntry SharedTaskEntries[1];
+/*0x074214*/ CTaskEntry QuestHistoryEntries[0x32];
+/*0x12F6F4*/ int AddPlayerID;
+/*0x12F6F8*/ bool bAddPlayerIsSwap;
+/*0x12F6FC*/ CHAR AddPlayerSwapeeName[0x40];
+/*0x12F73C*/ SharedTaskClientPlayerInfo *pFirstMember;//51B9D8
+/*0x12F740*/
+EQLIB_OBJECT CTaskManager::CTaskManager(class CXWnd *);
 // virtual
-EQLIB_OBJECT CTaskSomething::~CTaskSomething(void);
-EQLIB_OBJECT DWORD CTaskSomething::GetTaskByIndex(DWORD arg1,DWORD arg2,DWORD arg3);
+EQLIB_OBJECT CTaskManager::~CTaskManager(void);
+EQLIB_OBJECT CTaskEntry *CTaskManager::GetEntry(int Index, int System, bool bCheckEmpty = true);
 };
 class CTextEntryWnd : public CEditBaseWnd
 {
@@ -7330,8 +7495,12 @@ EQLIB_OBJECT int EQ_Item::Platinum(void);
 EQLIB_OBJECT int EQ_Item::Silver(void);
 EQLIB_OBJECT long EQ_Item::ValueSellMerchant(float,long)const;
 EQLIB_OBJECT bool EQ_Item::IsStackable(void); // Valerian 12-20-2004 
+#if defined(EQBETA) || defined(TEST)
+EQLIB_OBJECT char * EQ_Item::CreateItemTagString(char *, int, bool bFlag = true); // SwiftyMUSE 11-09-2018
+#else
 EQLIB_OBJECT char * EQ_Item::CreateItemTagString(char *, int); // Lax 11-14-2003
-EQLIB_OBJECT int EQ_Item::CanDrop(bool,int,int mq2_dummy=0, int mq2_dummy2=1);
+#endif
+EQLIB_OBJECT bool EQ_Item::CanDrop(bool bDisplayText = false, bool bIncludeContainedItems = true, bool bAllowOverrideNoDropCheck = false, bool bCantDropIfContainingRealEstate = true) const;
 EQLIB_OBJECT int EQ_Item::GetImageNum(void)const;
 EQLIB_OBJECT struct  _CONTENTS** __cdecl CreateItemClient(PBYTE*,DWORD);
 EQLIB_OBJECT int EQ_Item::GetItemValue(bool)const;
@@ -7602,7 +7771,149 @@ EQLIB_OBJECT virtual bool EQOldPlayerAnimation::GetAlternateAnimTag(char *,char 
 EQLIB_OBJECT void EQOldPlayerAnimation::ChangeAttachmentAnimationTrackSpeeds(bool,float);
 EQLIB_OBJECT void EQOldPlayerAnimation::PlayAttachmentAnimationTracks(int,int,bool,bool,float,bool,unsigned char);
 };
+enum ePlacementType
+{
+	PLACEMENT_TYPE_FLOOR,
+	PLACEMENT_TYPE_WALL,
+	PLACEMENT_TYPE_CEILING,
+};
+class EQPlacedItem
+{
+public:
+/*0x00*/ PVOID vftable;
+/*0x04*/ EQPlacedItem *pPrev;
+/*0x08*/ EQPlacedItem *pNext;
+/*0x0c*/ int	RecordNum;
+/*0x10*/ EqItemGuid ItemGuid;
+/*0x22*/
+/*0x24*/ int	RealEstateID;
+/*0x28*/ int	RealEstateItemID;
+/*0x2C*/ bool	bIsNPC;
+/*0x30*/ UINT	PlacingItemNpcID;
+/*0x34*/ void*	pLight;//CLightInterface
+/*0x38*/ void*	pActor;//CActorInterface
+/*0x3c*/ CHAR   Name[0x40];
+/*0x7c*/ FLOAT  Scale;
+/*0x80*/ FLOAT  Heading;
+/*0x84*/ FLOAT  Angle;
+/*0x88*/ FLOAT  Roll;
+/*0x8c*/ FLOAT  Y;
+/*0x90*/ FLOAT  X;
+/*0x94*/ FLOAT  Z;
+/*0x98*/ bool	bIgnoreCollisions;
+/*0x98*/ bool	bDisablePlacementRotation;
+/*0x98*/ bool	bDisableFreePlacement;
+/*0x9c*/ ePlacementType  PlacementType;
+/*0xa0*/ FLOAT  ScaleRangeMin;
+/*0xa4*/ FLOAT  ScaleRangeMax;
+/*0xa8*/ FLOAT  DefaultScale;
+/*0xac*/ FLOAT  DefaultHeading;
+/*0xb0*/ FLOAT  DefaultAngle;
+/*0xb4*/ FLOAT  DefaultRoll;
+/*0xb8*/ int	LightType;
+/*0xbc*/ FLOAT  NPCHeight;
+/*0xC0*/
+};
 
+class EQPlacedItemManager
+{ 
+public:
+EQLIB_OBJECT static EQPlacedItemManager& Instance();
+EQLIB_OBJECT EQPlacedItem* GetItemByGuid(const EqItemGuid& ItemGuid);
+EQLIB_OBJECT EQPlacedItem* GetItemByRealEstateAndRealEstateItemIds(int RealEstateID, int RealEstateItemID);
+
+	EQPlacedItem *Top;
+};
+class RealEstateItemIds
+{
+public:
+	int RealEstateID;
+	int RealEstateItemID;
+};
+class RealEstateItemState
+{
+public:
+	bool		bPlaced;
+	__time32_t	UpkeepExpiredTime;
+};
+class RealEstateItemPosition
+{
+public:
+	FLOAT Heading;
+	FLOAT Pitch;
+	FLOAT Roll;
+	FLOAT Scale;
+	FLOAT X;
+	FLOAT Y;
+	FLOAT Z;
+};
+class RealEstateItemOwnerInfo
+{
+public:
+	PCXSTR	OwnerName;
+	PCXSTR	OwnerHandle;
+	int		OwnerNameHashKey;
+};
+class RealEstateItemObject
+{
+public:
+	VePointer<CONTENTS> pItemBase;
+};
+class RealEstateItem
+{
+public:
+	RealEstateItemState		State;
+	RealEstateItemPosition	Position;
+	RealEstateItemOwnerInfo	OwnerInfo;
+	RealEstateItemObject	Object;
+};
+class RealEstateItemClient : public RealEstateItem
+{
+public:
+	RealEstateItemIds IDs;
+};
+enum eRealEstateType
+{
+	RET_None = 0,
+	RET_Zone = 1,
+	RET_GuildHall,
+	RET_PlayerHousing,
+	RET_PlayerPlot,
+	RET_Neighborhood,
+	RET_Town,
+	RET_MovingCrate,
+	RET_GuildPlot,
+	RET_Count,
+	RET_Unknown,
+	RET_Any
+};
+class RealEstateManagerClient
+{
+public:
+/*0x00*/ PVOID vftable;
+/*0x04*/ BYTE Stuff[0xb4];
+/*0xb8*/ UINT lastRefreshTime;
+/*0xbc*/ int ZoneRealEstateId;
+/*0xc0*/ eRealEstateType ZoneRealEstateType;
+/*0xc4*/ int CurrentRealEstateID;
+/*0xc8*/ int CurrentYardID;
+/*0xcc*/ int CurrentHouseID;
+/*0xa0*/ int CurrentMovingCrateID;
+/*0xa4*/ bool bRequestPending;
+/*0xa8*/ UINT RequestTime;
+/*0xac*/ bool bPrintRequestTimes;
+	EQLIB_OBJECT static RealEstateManagerClient &RealEstateManagerClient::Instance();
+	EQLIB_OBJECT const RealEstateItemClient* GetItemByRealEstateAndItemIds( int RealEstateID, int RealEstateItemID ) const;
+};
+
+class FactionManagerClient
+{
+public:
+/*0x00*/ PVOID vftable;
+/*0x04*/ //todo: map it
+	EQLIB_OBJECT static FactionManagerClient &FactionManagerClient::Instance();
+	EQLIB_OBJECT void FactionManagerClient::HandleFactionMessage(UINT MessageID, PCHAR pData, unsigned int DataLength);
+};
 class EQPlayer
 {
 public:
@@ -8259,17 +8570,17 @@ union {
 /*0x2424*/ PlayerClient *me;//just here for comparing the 2, todo: fix
 /*0x2424*/ PSPAWNINFO me2;
 };
-/*0x242c*/ bool		bUpdateStuff;
+/*0x242c*/ bool			bUpdateStuff;
 /*0x242d*/ bool         bZoningStatProcessing;
 /*0x2430*/ DWORD        ArmorClassBonus;//vtable2+10
 /*0x2434*/ DWORD        CurrWeight;//vtable2+14
-/*0x2438*/ int			astHitPointSendPercent;
+/*0x2438*/ int			LastHitPointSendPercent;
 /*0x243c*/ int			LastManaPointSendPercent;
 /*0x2440*/ int			LastEndurancePointSendPercent;
 /*0x2444*/ DWORD        HPBonus;//vtable2+24
 /*0x2448*/ DWORD        ManaBonus;//vtable2+28
 /*0x244c*/ DWORD        EnduranceBonus;//vtable2+2c
-/*0x2450*/ BYTE         Unknown0x2458[0x4];
+/*0x2450*/ BYTE     Unknown0x2450[0x4];
 /*0x2454*/ DWORD        CombatEffectsBonus;//vtable2+34 Combat Effects in UI
 /*0x2458*/ DWORD        ShieldingBonus;//vtable2+38 Melee Shielding in UI
 /*0x245c*/ DWORD        SpellShieldBonus;//vtable2+3c Spell Shielding in UI
@@ -8344,7 +8655,7 @@ EQLIB_OBJECT int CharacterZoneClient::GetCursorItemCount(int);
 EQLIB_OBJECT bool CharacterZoneClient::HasSkill(int);
 EQLIB_OBJECT EQ_Affect *CharacterZoneClient::FindAffectSlot(int SpellID, PSPAWNINFO Caster, int *slindex, bool bJustTest, int CasterLevel = -1, EQ_Affect* BuffArray = NULL, int BuffArraySize = 0, bool bFailAltAbilities = true);
 EQLIB_OBJECT EQ_Affect *CharacterZoneClient::FindAffectSlotMine(int SpellID, PSPAWNINFO Caster, int *slindex, bool bJustTest, int CasterLevel = -1, EQ_Affect* BuffArray = NULL, int BuffArraySize = 0, bool bFailAltAbilities = true);
-#if !defined(ROF2EMU) && !defined(UFEMU) && !defined(TEST)
+#if !defined(ROF2EMU) && !defined(UFEMU)
 EQLIB_OBJECT bool CharacterZoneClient::IsStackBlocked(const EQ_Spell *pSpell, CharacterZoneClient* pCaster, EQ_Affect* pEffecs = NULL, int EffectsSize = 0, bool bMessageOn = false);
 #else
 EQLIB_OBJECT bool CharacterZoneClient::IsStackBlocked(const EQ_Spell *pSpell, CharacterZoneClient* pCaster, EQ_Affect* pEffecs = NULL, int EffectsSize = 0);

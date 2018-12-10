@@ -92,21 +92,25 @@ GNU General Public License for more details.
 #endif
 
 extern CRITICAL_SECTION gPluginCS;
-#if defined(LIVE) || defined(TEST) || defined(BETA) || defined(ROF2EMU) || defined(UFEMU)
+#if defined(LIVE) || defined(TEST) || defined(EQBETA) || defined(ROF2EMU) || defined(UFEMU)
 //do nothing because the user has set one of these as a preprocessor argument instead...
 //we default to LIVE though...
 #else
-//define LIVE, TEST, BETA ROF2EMU or UFEMU here depending on which eqgame you are building for. -eqmule sep 27 2014
-#define LIVE
+//define LIVE, TEST, EQBETA, ROF2EMU or UFEMU here depending on which eqgame you are building for. -eqmule sep 27 2014
+#define EQBETA
 #endif
 #if defined(LIVE)
 #include "eqgame.h"
+//#define NEWCHARINFO
 #elif defined(TEST)
 #include "eqgame(Test).h"
-#elif defined(BETA)
+//#define NEWCHARINFO
+#elif defined(EQBETA)
 #include "eqgame(beta).h"
+//#define NEWCHARINFO
 #elif defined(ROF2EMU)
 #include "eqgame(emu).h"
+//#define NEWCHARINFO
 #elif defined(UFEMU)
 #include "eqgame(uf).h"
 #endif
@@ -267,7 +271,7 @@ typedef double DOUBLE;
 #elif defined(TEST)
 #include "EQData(Test).h"
 #include "EQUIStructs(Test).h"
-#elif defined(BETA)
+#elif defined(EQBETA)
 #include "EQData(beta).h"
 #include "EQUIStructs(beta).h"
 #elif defined(ROF2EMU)
@@ -486,6 +490,7 @@ EQLIB_API VOID DrawHUDText(PCHAR Text, DWORD X, DWORD Y, DWORD Argb, DWORD Font)
 EQLIB_API VOID FixStringTable();
 EQLIB_API VOID DebugSpew(PCHAR szFormat, ...);
 EQLIB_API VOID DebugSpewAlways(PCHAR szFormat, ...);
+EQLIB_API VOID DebugSpewAlwaysFile(PCHAR szFormat, ...);
 EQLIB_API VOID DebugSpewNoFile(PCHAR szFormat, ...);
 //#ifndef ISXEQ
 LEGACY_API PSTR GetNextArg(PCSTR szLine, DWORD dwNumber = 1, BOOL CSV = FALSE, CHAR Separator = 0);
@@ -604,7 +609,11 @@ EQLIB_API PCONTENTS GetEnviroContainer();
 EQLIB_API PEQCONTAINERWINDOW FindContainerForContents(PCONTENTS pContents);
 EQLIB_API FLOAT FindSpeed(PSPAWNINFO pSpawn);
 EQLIB_API BOOL IsNamed(PSPAWNINFO pSpawn);
-EQLIB_API VOID GetItemLinkHash(PCONTENTS Item, PCHAR Buffer);
+EQLIB_API VOID GetItemLinkHash(PCONTENTS Item, PCHAR Buffer, SIZE_T BufferSize);
+template <unsigned int _Size>__declspec(dllexport) VOID GetItemLinkHash(PCONTENTS Item, CHAR(&Buffer)[_Size])
+{
+	return GetItemLinkHash(Item, Buffer, _Size);
+}
 EQLIB_API BOOL GetItemLink(PCONTENTS Item, PCHAR Buffer, SIZE_T BufferSize, BOOL Clickable = TRUE);
 template <unsigned int _Size>__declspec(dllexport) BOOL GetItemLink(PCONTENTS Item, CHAR(&Buffer)[_Size], BOOL Clickable = TRUE)
 {
@@ -777,6 +786,10 @@ EQLIB_API HANDLE hLoadComplete;
 
 EQLIB_API void AttackRanged(EQPlayer *pRangedTarget = pTarget);
 EQLIB_API VOID UseAbility(char *sAbility);
+EQLIB_API PMACROBLOCK GetNextMacroBlock();
+EQLIB_API PMACROBLOCK GetCurrentMacroBlock();
+EQLIB_API int GetmacroBlockCount();
+EQLIB_API void EndAllMacros();
 //                                                                                               //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -844,6 +857,7 @@ LEGACY_API BOOL Calculate(PCHAR szFormula, DOUBLE& Dest);
 #define XWM_FOCUS               33
 #define XWM_LOSTFOCUS           34
 #define XWM_TEXTENTRY_COMPLETE  40
+#define XWM_RSELITEM_DOWN       46
 #define XWN_OUTPUT_TEXT         48
 #define XWN_COMMANDLINK         49
 #endif
