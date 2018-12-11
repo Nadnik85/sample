@@ -1,3 +1,9 @@
+Dec 10 2018 by eqmule
+- Updated for TEST
+- Updated mq2auth.exe so it can be run silently now using the /silent switch - idea cred: brainiac
+- Right Clicking the AutoBank button brings up a menu now in TEST and EQBETA builds.
+  This menu is NOT useful atm, it's work in progress, just ignore it.
+
 Dec 10 2018 by eqmule & SwiftyMUSE
 - Updated for BETA
 

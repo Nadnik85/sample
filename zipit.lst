@@ -269,6 +269,7 @@ MQ2Main\MQ2Windows.cpp
 MQ2Main\resource.h
 MQ2Main\skills.h
 MQ2Main\SpellEffects.h
+MQ2Main\factionnames.h
 MQ2Main\ISXEQ\ISXEQ.cpp
 MQ2Main\ISXEQ\ISXEQ.h
 MQ2Main\ISXEQ\ISXEQCommandAPI.cpp
@@ -298,7 +299,8 @@ MQ2TargetInfo\db1.bin
 MQ2TargetInfo\LocalDB.h
 MQ2TargetInfo\MQ2TargetInfo.cpp
 MQ2TargetInfo\MQ2TargetInfo.rc
-mq2targetinfo\resource.h
+MQ2TargetInfo\resource.h
+MQ2TargetInfo\MQ2TargetInfo.ini
 MQ2TargetInfo\MQ2TargetInfo.vcxproj
 MQ2TargetInfo\MQ2TargetInfo.vcxproj.filters
 mq2telnet\ISXEQTelnet.cpp
