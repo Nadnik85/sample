@@ -109,6 +109,8 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 			GetINI("General", "TwistWhat", 0, filename);
 		}
 	}
+	//Spellset section
+	WritePrivateProfileString("SpellSet", "LoadSpellSet", "2", newfilename);
 
 	//Buff Section
 	if (GetPrivateProfileInt("Buffs", "BuffsOn", 0, filename) != 0) {

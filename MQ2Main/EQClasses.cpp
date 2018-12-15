@@ -134,7 +134,7 @@ FUNCTION_AT_ADDRESS(struct  _CONTENTS* CMyInventory::GetSlot(int), CMyInventory_
 #endif
 
 #ifdef EQ_Item__CreateItemTagString_x
-#if defined(EQBETA) || defined(TEST)
+#if !defined(ROF2EMU) && !defined(UFEMU)
 FUNCTION_AT_ADDRESS(char * EQ_Item::CreateItemTagString(char *, int, bool), EQ_Item__CreateItemTagString); // SwiftyMUSE 11-09-2018
 #else
 FUNCTION_AT_ADDRESS(char * EQ_Item::CreateItemTagString(char *, int), EQ_Item__CreateItemTagString); // Lax 11-14-2003
@@ -1247,7 +1247,7 @@ FUNCTION_AT_ADDRESS(int  CContextMenuManager::PopupMenu(int,class CXPoint const 
 FUNCTION_AT_ADDRESS(void  CContextMenuManager::Flush(void),CContextMenuManager__Flush);
 #endif
 #ifdef CContextMenuManager__CreateDefaultMenu_x
-FUNCTION_AT_ADDRESS(void  CContextMenuManager::CreateDefaultMenu(void),CContextMenuManager__CreateDefaultMenu);
+FUNCTION_AT_ADDRESS(void CContextMenuManager::CreateDefaultMenu(void),CContextMenuManager__CreateDefaultMenu);
 #endif
 #ifdef CContextMenuManager__WarnDefaultMenu_x
 FUNCTION_AT_ADDRESS(void  CContextMenuManager::WarnDefaultMenu(class CXWnd *),CContextMenuManager__WarnDefaultMenu);

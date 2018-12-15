@@ -1,3 +1,22 @@
+Dec 13 2018 by eqmule
+- Updated for LIVE
+- Updated the LOOTITEM struct
+  This fix will break plugins that use that struct.
+  Search the source for ->LootDetails.m_array to see how it should be fixed.
+- NotifyOnServerUP in mq2autologin.ini can be left at =1 or =2 now, it will only trigger on server is up after server is detected as LOCKED or DOWN when the plugin first checks it.
+-
+Dec 11 2018 by eqmule TBL Launch
+- Updated for LIVE
+- Placeholders in mq2targetinfo for the PH button on the target window has been updated for TBL
+- Made mq2autologin not try to join a locked/down server.
+- Added NotifyOnServerUP to the mq2autologin inifile in the [Settings] section.
+  If you set it to NotifyOnServerUP=1 it will BEEEEEEEEEEEEEEEP when server is up.
+  If you set it to NotifyOnServerUP=2 it will also email you if you have the mq2gmail plugin loaded and correctly configured.
+  You can try /gmail "hi there" "test" in game, if u get that, u will also get the autologin notification.
+  Or just leave the setting as NotifyOnServerUP=0 and it wont bother u at all.
+  I find it useful to enable it on patchday's when servers are LOCKED/DOWN
+  Under normal circumstances, it should be set to 0, unless u really like 10 seconds of BEEEEEEPING everytime u login...
+
 Dec 10 2018 by eqmule
 - Updated for TEST
 - Updated mq2auth.exe so it can be run silently now using the /silent switch - idea cred: brainiac

@@ -4110,7 +4110,7 @@ bool MQ2CharacterType::GETMEMBER()
 		Dest.DWord = pChar->CHA;
 		Dest.Type = pIntType;
 		return true;
-#if defined(EQBETA) || defined(TEST)
+#if !defined(ROF2EMU) && !defined(UFEMU)
 	case LCK:
 		Dest.DWord = pChar->LCK;
 		Dest.Type = pIntType;
@@ -8135,7 +8135,7 @@ bool MQ2ItemType::GETMEMBER()
 			return true;
 		}
 		return false;
-#if defined(EQBETA) || defined(TEST)
+#if !defined(ROF2EMU) && !defined(UFEMU)
 	case Luck:
 		Dest.DWord = pItem->Luck;
 		Dest.Type = pIntType;
@@ -14363,13 +14363,15 @@ bool MQ2AdvLootItemType::GETMEMBER()
 	case StackSize:
 		Dest.DWord = 1;
 		Dest.Type = pIntType;
-		if (pItem && pItem->LootDetails && pItem->LootDetails->StackCount>=1) {
-			Dest.DWord = pItem->LootDetails->StackCount;
+		EQArray2<LOOTDETAILS>ploot;
+		ploot = pItem->LootDetails;
+		if (pItem && pItem->LootDetails.m_length && pItem->LootDetails.m_array[0].StackCount>=1) {
+			Dest.DWord = pItem->LootDetails.m_array[0].StackCount;
 		}
 		return true;
 	case Corpse:
-		if (pItem && pItem->LootDetails) {
-			if (PSPAWNINFO pSpawn = (PSPAWNINFO)GetSpawnByID(pItem->LootDetails->CorpseID)) {
+		if (pItem && pItem->LootDetails.m_length) {
+			if (PSPAWNINFO pSpawn = (PSPAWNINFO)GetSpawnByID(pItem->LootDetails.m_array[0].CorpseID)) {
 				Dest.Type = pSpawnType;
 				Dest.Ptr = pSpawn;
 				return true;
