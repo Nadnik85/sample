@@ -91,8 +91,6 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 	//WriteChatf("Copying Key parts of %s to a new file %s", filename, newfilename);
 	useConditions = GetPrivateProfileInt("General", "ConditionsOn", 0, filename);
 	//WriteChatf("useConditions: %d", useConditions);
-	useConditions = GetPrivateProfileInt("General", "ConditionsOn", 0, filename);
-	//WriteChatf("useConditions: %d", useConditions);
 	if (useConditions == 0)
 		sprintf_s(ConditionsFile, "");
 	if (useConditions == 1)
