@@ -4,6 +4,8 @@
 
 
 #include "../MQ2Plugin.h"
+#include <iostream>
+#include <fstream>
 using namespace std;
 
 #define PLUGIN_NAME "MQ2KissTemplate"
@@ -16,6 +18,8 @@ PLUGIN_VERSION(VERSION);
 bool oldCond = false;
 bool useClass = false;
 bool useLevel = false;
+bool pulling = false;
+bool debugging = false;
 
 CHAR filename[MAX_STRING] = "";
 CHAR newfilename[MAX_STRING] = "";
@@ -70,12 +74,16 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 	CHAR Arg1[MAX_STRING] = "";
 	CHAR Arg2[MAX_STRING] = "";
 	CHAR Arg3[MAX_STRING] = "";
+	CHAR Arg4[MAX_STRING] = "";
 	GetArg(Arg1, szLine, 1);
 	GetArg(Arg2, szLine, 2);
 	GetArg(Arg3, szLine, 3);
+	GetArg(Arg4, szLine, 4);
 	ParseArg(Arg1);
 	ParseArg(Arg2);
 	ParseArg(Arg3);
+	ParseArg(Arg4);
+	
 
 	
 	sprintf_s(filename, "%s\\Macros\\Kissassist_%s.ini", gszINIPath, pChar->Name);
@@ -97,6 +105,12 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 		sprintf_s(ConditionsFile, "%s\\Macros\\Kissassist_%s_Conditions.ini", gszINIPath, pChar->Name);
 	if (useConditions == 2)
 		sprintf_s(ConditionsFile, "%s\\Macros\\Kissassist_%s.ini", gszINIPath, pChar->Name);
+
+	//Lemme insert the start of code tags for the user using ios::in - this should overwrite the file for us. 
+	ofstream myfile;
+	myfile.open(newfilename, ios::in);
+	myfile << "[CODE=INI|KissAssist INI - " << OurClass << "]" << endl;
+	myfile.close();
 
 	//General Section
 	GetINI("General", "KissAssistVer", 0, filename);
@@ -163,7 +177,12 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 		GetINILoop("Aggro", "Aggro", 0, filename);
 	}
 
-	//Pull Section - Not Needed
+	//Pull Section - PullWith Only??
+	if (pulling) {
+		if (GetPrivateProfileString("Pull", "PullWith", 0, temp, MAX_STRING, filename) != 0)
+			GetINI("Pull", "PullWith", 0, filename);
+	}
+	
 
 	//Heals Section
 	if (GetPrivateProfileInt("Heals", "HealsOn", 0, filename) != 0) {
@@ -245,6 +264,11 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 	//MySpells - Need to figure out how to handle this.
 	GetINILoop("MySpells", "Gem", 0, filename);
 
+	//Lets close the code tags now. Open newfilename to append to the end of it with ios::app
+	myfile.open(newfilename, ios::app);
+	myfile << "[/CODE]" << endl;
+	myfile.close();
+
 	WriteChatf("\agI'm finished! Template saved to Kissassist_%d_%s", OurLevel, OurClass);
 	condNumber -= 1;
 	if (condNumber) {
@@ -260,6 +284,7 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 	useLevel = false;
 	useClass = false;
 	oldCond = false;
+	pulling = false;
 }
 
 
@@ -353,21 +378,28 @@ void ParseArg(CHAR Arg[MAX_STRING])
 	if (strlen(Arg)) {
 		//WriteChatf("Parsing Arg: %s", Arg);
 		if (!IsNumber(Arg)) {
-			if (_stricmp(Arg, "BRD") && _stricmp(Arg, "BST") && _stricmp(Arg, "BER") && _stricmp(Arg, "CLR") && _stricmp(Arg, "DRU") && _stricmp(Arg, "ENC") && _stricmp(Arg, "MAG") && _stricmp(Arg, "MNK") && _stricmp(Arg, "NEC") && _stricmp(Arg, "PAL") && _stricmp(Arg, "RNG") && _stricmp(Arg, "ROG") && _stricmp(Arg, "SHD") && _stricmp(Arg, "SHM") && _stricmp(Arg, "WAR") && _stricmp(Arg, "WIZ") && _stricmp(Arg, "old")) {
+			if (debugging) WriteChatf("Arg is: %s", Arg);
+			if (_stricmp(Arg, "BRD") && _stricmp(Arg, "BST") && _stricmp(Arg, "BER") && _stricmp(Arg, "CLR") && _stricmp(Arg, "DRU") && _stricmp(Arg, "ENC") && _stricmp(Arg, "MAG") && _stricmp(Arg, "MNK") && _stricmp(Arg, "NEC") && _stricmp(Arg, "PAL") && _stricmp(Arg, "RNG") && _stricmp(Arg, "ROG") && _stricmp(Arg, "SHD") && _stricmp(Arg, "SHM") && _stricmp(Arg, "WAR") && _stricmp(Arg, "WIZ") && _stricmp(Arg, "old") && _stricmp(Arg, "pull")) {
 				WriteChatf("You've provided %s as a class to emulate, but that doesn't appear to be one of the 16 playable classes.", Arg);
 				return;
-			} else if (_stricmp(Arg, "old")) {
+			} else if (_stricmp(Arg, "old") && _stricmp(Arg, "pull")) {
 				sprintf_s(tempClass, Arg);
+				if (debugging) WriteChatf("\aySetting useClass to true");
 				useClass = true;
 			} else if (!_stricmp(Arg, "old")) {
 				oldCond = true;
+			} else if (!_stricmp(Arg, "pull")) {
+				if (debugging) WriteChatf("\aySetting pulling to true");
+				pulling = true;
 			}
 		} else {
+			if (debugging) WriteChatf("Arg is: %d", atoi(Arg));
 			if (atoi(Arg) < 0 || atoi(Arg) > 110) {
 				WriteChatf("You've provided %s as a level to emulate, but it is not between 1 and 110", tempLevel);
 				return;
 			} else {
 				sprintf_s(tempLevel, Arg);
+				if (debugging) WriteChatf("\aySetting useLevel to true");
 				useLevel = true;
 			}
 		}
