@@ -1,10 +1,53 @@
+Jan 03 2019 by EqMule
+- ${Me.Ability[#|X]} now return the real ID/Name of a Ability...
+  Example /echo ${Me.Ability[Hide]}
+  returns: 29
+  /echo ${Me.Ability[29]}
+  returns: Hide
+-
+  Before this change doing ${Me.Ability[Hide]} would return whatever number 1-6 you had assigned to Hide in Abilities.
+  NOW it returns 29, which is the actual ability ID for Hide.
+-
+- /doability # now takes REAL ability IDs as well as the "fake ones", which are 1-6
+  This means you can do /doability 29 and it will activate the Hide ability since it's REAL ID is 29...
+  You can also still do /doability 1 and if you have Hide assigned as 1 in your abilities tab on the actions window, it will activate it.
+  This is kinda stupid though, so I recommend just doing /doability Hide instead, and 
+  don't worry about where its assigned or not assigned at all...
+
+Dec 19 2018 by SwiftyMUSE
+- Added .Feared, .Silenced, .Invulnerable to ${Me} and ${Target}
+- Added new .Named checking algorithm. You can use the new version by adding UseNewNamedTest=1 to the
+  [MacroQuest] section in macroquest.ini
+- Updated new SPA effects and corrected display of some others
+- Added .Foreground to EverQuest TLO
+- Added .BaseName to Spell TLO (spell name w/o any Rk. XXX crap)
+- Fixed Me.GemTimer to clamp return to 0 after spell is ready to cast 
+
+Dec 18 2018 by eqmule
+- Updated for LIVE
+- Updated for TEST
+- Added Quest items to the autobank button rightclick menu
+- Added an option Autoinventory from bank back to inventory (reverse AutoBank basically).
+- /loadskin and /camp out/in out will not break this new feature anymore.
+
+Dec 17 2018 by eqmule
+- New Fature: AutoBank Filter : idea cred Kaen01
+- Basically rightclick the autobank button to set options for items you like to autobank
+  Click AutoBank Button WITHOUT anything on the cursor.
+  If you have something on cursor AutoBank will just work like it always have and autobank the item
+  BUT if your cursor is empty it will autobank:
+  Collectibles if you have that option set. (off by default)
+  Tradeskill Items if you have that option set. (off by default)
+  Right now those are the two types of items it works for, I'm not against other item types so if anyone has some clever ideas let me know.
+  Known Issue: need to add reloadui support so it's a little bit beta still, but anyway, I'll fix that later.
+
 Dec 13 2018 by eqmule
 - Updated for LIVE
 - Updated the LOOTITEM struct
   This fix will break plugins that use that struct.
   Search the source for ->LootDetails.m_array to see how it should be fixed.
 - NotifyOnServerUP in mq2autologin.ini can be left at =1 or =2 now, it will only trigger on server is up after server is detected as LOCKED or DOWN when the plugin first checks it.
--
+
 Dec 11 2018 by eqmule TBL Launch
 - Updated for LIVE
 - Placeholders in mq2targetinfo for the PH button on the target window has been updated for TBL

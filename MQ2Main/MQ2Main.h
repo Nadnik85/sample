@@ -533,6 +533,7 @@ EQLIB_API PSPELL GetSpellByAAName(PCHAR szName);
 EQLIB_API PSPELL GetSpellByAAName(PCHAR szName);
 EQLIB_API PALTABILITY GetAAByIdWrapper(int nAbilityId, int playerLevel = -1);
 EQLIB_API DWORD GetSpellRankByName(PCHAR SpellName);
+EQLIB_API VOID TruncateSpellRankName(PCHAR SpellName);
 EQLIB_API VOID RemoveBuff(PSPAWNINFO pChar, PCHAR szLine);
 EQLIB_API VOID RemovePetBuff(PSPAWNINFO pChar, PCHAR szLine);
 EQLIB_API bool StripQuotes(char *str);
@@ -768,6 +769,7 @@ EQLIB_API int		  GetTargetBuffBySPA(int spa, bool bIncrease, int startslot = 0);
 EQLIB_API int		  GetSelfBuffByCategory(DWORD category, DWORD classmask = 0, int startslot = 0);
 EQLIB_API int		  GetSelfBuffBySubCat(PCHAR subcat, DWORD classmask = 0, int startslot = 0);
 EQLIB_API int		  GetSelfBuffBySPA(int spa, bool bIncrease, int startslot = 0);
+EQLIB_API int		  GetSelfShortBuffBySPA(int spa, bool bIncrease, int startslot = 0);
 EQLIB_API bool        IsSpellUsableForClass(PSPELL pSpell, DWORD classmask = 0);
 EQLIB_API bool        IsAegoSpell(PSPELL pSpell);
 EQLIB_API int         GetSpellCategory(PSPELL pSpell);
@@ -883,7 +885,12 @@ LEGACY_API BOOL Calculate(PCHAR szFormula, DOUBLE& Dest);
 EQLIB_API VOID memchecks_tramp(PCHAR, DWORD, PVOID, DWORD, BOOL);
 EQLIB_API VOID memchecks(PCHAR, DWORD, PVOID, DWORD, BOOL);
 EQLIB_API void InitializeLoginPulse();
-
+EQLIB_API void RemoveAutoBankMenu();
+EQLIB_API bool WillFitInBank(PCONTENTS pContent);
+EQLIB_API bool WillFitInInventory(PCONTENTS pContent);
+EQLIB_API void AddAutoBankMenu();
+EQLIB_API void AutoBankPulse();
+EQLIB_API void DoCommandf(PCHAR szFormat, ...);
 inline PCHAR ISXEQArgToMQ2Arg(int argc, char *argv[], char *szTemp, size_t size)
 {
 	for (int qq = 1; qq < argc; qq++) {

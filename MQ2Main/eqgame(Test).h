@@ -429,6 +429,7 @@ GNU General Public License for more details.
 #define CharacterZoneClient__GetLastEffectSlot_x                   0x4C15D0
 #define CharacterZoneClient__CalcAffectChange_x                    0x4C1720
 #define CharacterZoneClient__CalcAffectChangeGeneric_x             0x4C18F0
+#define CharacterZoneClient__GetFocusReuseMod_x                    0x4AFF40
 
 // CBankWnd 
 #define CBankWnd__GetNumBankSlots_x                                0x6CB200
@@ -702,6 +703,8 @@ GNU General Public License for more details.
 #define CSkillMgr__IsAvailable_x                                   0x66AA50
 #define CSkillMgr__GetSkillCap_x                                   0x66AC30
 #define CSkillMgr__GetNameToken_x                                  0x66A1E0
+#define CSkillMgr__IsActivatedSkill_x                              0x66A320
+#define CSkillMgr__IsCombatSkill_x                                 0x66A260
 
 // CSliderWnd 
 #define CSliderWnd__GetValue_x                                     0x930730
@@ -883,6 +886,7 @@ GNU General Public License for more details.
 #define EQ_Item__ValueSellMerchant_x                               0x8987B0
 #define EQ_Item__IsKeyRingItem_x                                   0x896920
 #define EQ_Item__CanGoInBag_x                                      0x60C780
+#define EQ_Item__IsEmpty_x                                         0x896450
 #define EQ_Item__GetMaxItemCount_x                                 0x895640
 #define EQ_Item__GetHeldItem_x                                     0x893EE0
 #define EQ_Item__GetAugmentFitBySlot_x                             0x891F00
@@ -969,6 +973,7 @@ GNU General Public License for more details.
 #define PcZoneClient__GetItemByItemClass_x                         0x6342E0
 #define PcZoneClient__RemoveBuffEffect_x                           0x6371D0
 #define PcZoneClient__BandolierSwap_x                              0x6321E0
+#define PcZoneClient__GetLinkedSpellReuseTimer_x                   0x633CB0
 
 //Doors
 #define EQSwitch__UseSwitch_x                                      0x5C8950
