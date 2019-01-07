@@ -1,25 +1,51 @@
-// MQ2FarmTest.cpp
-// Chatwiththisname/PeteSampras - Started MQ2Farm Initial Setup/Preperation
-// Chatwiththisname/Renji - 10/07/2018 - Worked SpawnSearch and Nav Code
-// Chatwiththisname 10/8/2018 - Working on Algorithms for Farming.
-//							  - Adding FarmCommand Functionality.
-//							  - Added Health/Endurance/Mana Checks, still requires logic for resting routines.
-//							  - Added HaveAggro() function. Returns true if any Autohaters are populated on Xtargetlist. 
-// Chatwiththisname 10/16/2018 - Test has been down a while, but added a getFirstAggroed() function to try and
-//							   - deal with aggro before trying to find a mob with a shortest path to fix
-//							   - ignoring aggrod mobs. 
-// Chatwiththisname 11/12/2018 - Working on CastDetrimental() function to cast single target detrimental spells.
-//							   - Added rest routines.
-// Chatwiththisname 1/2/2019 - Cleaning up the code to remove all the comments.
-//							 - trying to add Discs to combat routines, not having much luck.
-//							 - Separated FarmTest into seperate files.
-//							 - Tried adding TLO and member support. No luck, but kept the file.
-// Chatwiththisname 1/3/2019 - Now generating a list of Discs for toons to use and separating them to sections. 
-//							 - Firing Discs during combat based on the previously mentioned list.
-//							 - DiscReady function now checks endurance/mana/reagent requirements before reporting true.
-//							 - Actually enjoying testing this on my berserker. He's doing pretty good DPS without MQ2Melee. 
+/* MQ2FarmTest.cpp
+ Chatwiththisname/PeteSampras - Started MQ2Farm Initial Setup/Preperation
+ Chatwiththisname/Renji - 10/07/2018 - Worked SpawnSearch and Nav Code
+ Chatwiththisname 10/8/2018 - Working on Algorithms for Farming.
+							  - Adding FarmCommand Functionality.
+							  - Added Health/Endurance/Mana Checks, still requires logic for resting routines.
+							  - Added HaveAggro() function. Returns true if any Autohaters are populated on Xtargetlist. 
+ Chatwiththisname 10/16/2018 - Test has been down a while, but added a getFirstAggroed() function to try and
+							   - deal with aggro before trying to find a mob with a shortest path to fix
+							   - ignoring aggrod mobs. 
+ Chatwiththisname 11/12/2018 - Working on CastDetrimental() function to cast single target detrimental spells.
+							   - Added rest routines.
+ Chatwiththisname 1/2/2019 - Cleaning up the code to remove all the comments.
+							 - trying to add Discs to combat routines, not having much luck.
+							 - Separated FarmTest into seperate files.
+							 - Tried adding TLO and member support. No luck, but kept the file.
+ Chatwiththisname 1/3/2019 - Now generating a list of Discs for toons to use and separating them to sections. 
+							 - Firing Discs during combat based on the previously mentioned list.
+							 - DiscReady function now checks endurance/mana/reagent requirements before reporting true.
+							 - Actually enjoying testing this on my berserker. He's doing pretty good DPS without MQ2Melee.
+ Chatwiththisname 1/5/2019 - Got the Farm datatype fixed and added two members. TargetID and Version. ${Farm.TargetID} ${Farm.Version}
+							 - Cleaned up FarmCommand and it now report invalid command.
+							 - Made additions to ignorethese and ignorethis.
+							 - "/farm " Help list of commands updated to show all commands for current build.
+							 - Now sitting when no target is found to kill while it waits for more things to spawn or wander in range.
+							 - DiscReady function now makes sure you aren't trying to use an active disc when you already have one running.
+							 - Added usage of Instant cast beneficial buffs while in combat.
+							 - Made a HUD for use with the ${Farm.TargetID} to get a display of what it's going after and some information, useful for debugging. :-)
+							 - You can now add and remove Discs with INI entries. [DiscRemove] section for removing. [DiscAdd] section for Additions.
+							   EXAMPLE DiscAdd DiscRemove sections to follow
+
+[DiscRemove]
+DiscRemove1=Hiatus
+DiscRemove2=Mangling Discipline
+DiscRemove3=Proactive Retaliation
+DiscRemove4=Axe of Rekatok Rk. II
+[DiscAdd]
+DiscAdd1=Breather Rk. II
+DiscAdd2=Disconcerting Discipline Rk. II
+DiscAdd3=Frenzied Resolve Discipline Rk. II
+DiscAdd4=Axe of the Aeons Rk. II
+DiscAdd5=Cry Carnage Rk. II
+*/
 
 
+#define PLUGIN_NAME "MQ2FarmTest"
+#define VERSION "0.2"
+#define PLUGINMSG "\ar[\a-tMQ2Farm\ar]\ao:: "
 #include "../MQ2Plugin.h"
 #include "Prototypes.h"
 #include "Variables.h"
@@ -29,30 +55,31 @@
 using namespace std;
 
 bool pulsing = false;
-//#define MerchSelect(X) if (pMerchantWnd) *((PEQMERCHWINDOW*)pMerchantWnd)->SelectedSlotID)=X
-#define PLUGIN_NAME "MQ2FarmTest"
-#define VERSION 0.1
-#define PLUGINMSG "\ar[\a-tMQ2Farm\ar]\ao:: "
+
 
 PreSetup(PLUGIN_NAME);
-PLUGIN_VERSION(VERSION);
+PLUGIN_VERSION(atof(VERSION));
 
 // Called once, when the plugin is to initialize
 PLUGIN_API VOID InitializePlugin(VOID)
 {
 	CheckAlias();
 	DoINIThings();
+	AddMQ2Data("Farm", dataFarm);
+	pFarmType = new MQ2FarmType;
 	AddCommand("/farm", FarmCommand);
 	AddCommand("/ignorethese", IgnoreTheseCommand);
 	AddCommand("/ignorethis", IgnoreThisCommand);
 	DiscSetup();
-	WriteChatf("%s\aw- \agv0.1",PLUGINMSG);
+	WriteChatf("%s\aw- \ag%s",PLUGINMSG,VERSION);
+	
 }
 
 // Called once, when the plugin is to shutdown
 PLUGIN_API VOID ShutdownPlugin(VOID)
 {
 	PluginOff();
+	RemoveMQ2Data("Farm");
 	RemoveCommand("/farm");
 	RemoveCommand("/ignorethese");
 	RemoveCommand("/ignorethis");
@@ -269,8 +296,14 @@ void IgnoreTheseCommand(PSPAWNINFO pChar, PCHAR szLine)
 			Alert(GetCharInfo()->pSpawn, IgnoreString);
 			MyTargetID = 0;
 			ClearTarget();
+			return;
 		}
 	}
+	else {
+		Alert(GetCharInfo()->pSpawn, szLine);
+		return;
+	}
+	WriteChatf("%s \atYou must have a target or provide a NPC name to ignore. Please try again.", PLUGINMSG);
 }
 
 void IgnoreThisCommand(PSPAWNINFO pChar, PCHAR szLine)
@@ -283,6 +316,9 @@ void IgnoreThisCommand(PSPAWNINFO pChar, PCHAR szLine)
 			MyTargetID = 0;
 			ClearTarget();
 		}
+	}
+	else {
+		WriteChatf("%s \atYou cannot use a name for this ignore command. It will only use your target. \arNothing added to ignore!");
 	}
 }
 
@@ -307,11 +343,13 @@ void FarmCommand(PSPAWNINFO pChar, PCHAR Line) {
 		if (!_stricmp(Arg1, "on")) {
 			DoINIThings();
 			PluginOn();
+			return;
 		}
 
 		if (!_stricmp(Arg1, "off"))
 		{
 			PluginOff();
+			return;
 		}
 
 		if (!_stricmp(Arg1, "radius"))
@@ -323,8 +361,10 @@ void FarmCommand(PSPAWNINFO pChar, PCHAR Line) {
 				WritePrivateProfileString("Pull", "Radius", Arg2, INIFileName);
 				sprintf_s(searchString, MAX_STRING, "npc noalert 1 radius %i zradius %i targetable %s", Radius, ZRadius, FarmMob);
 				WriteChatf("%s\atRadius is now: \ap%i", PLUGINMSG, Radius);
+				return;
 			} else {
 				WriteChatf("%s\atRadius: \ap%i", PLUGINMSG, Radius);
+				return;
 			}
 		}
 
@@ -337,8 +377,10 @@ void FarmCommand(PSPAWNINFO pChar, PCHAR Line) {
 				WritePrivateProfileString("Pull", "ZRadius", Arg2, INIFileName);
 				sprintf_s(searchString, MAX_STRING, "npc noalert 1 radius %i zradius %i targetable %s", Radius, ZRadius, FarmMob);
 				WriteChatf("%s\atZRadius is now: \ap%i", PLUGINMSG, ZRadius);
+				return;
 			} else {
 				WriteChatf("%s\atZRadius: \ap%i", PLUGINMSG, ZRadius);
+				return;
 			}
 		}
 
@@ -348,30 +390,36 @@ void FarmCommand(PSPAWNINFO pChar, PCHAR Line) {
 			if (!strlen(Arg2)) 
 			{
 				WriteChatf("%sCurrent farmmob is %s", PLUGINMSG, FarmMob);
+				return;
 			}
 			if (!IsNumber(Arg2))
 			{
 				if (!_stricmp(Arg2, "clear"))
 				{
 					sprintf_s(FarmMob, MAX_STRING, "");
+					return;
 				}
 				else {
 					sprintf_s(FarmMob, Arg2);
 				}
 				sprintf_s(searchString, MAX_STRING, "npc noalert 1 radius %i zradius %i targetable %s", Radius, ZRadius, FarmMob);
 				WriteChatf("%s\atFarmMob is now: \ap%s", PLUGINMSG, FarmMob);
+				return;
 			}
 		}
 		if (!_stricmp(Arg1, "castdetrimental"))
 		{
 			GetArg(Arg2, Line, 2);
-			if (!strlen(Arg2))
+			if (!strlen(Arg2)) {
 				if (CastDetrimental) {
 					WriteChatf("%sCast Detrimental is On!", PLUGINMSG);
+					return;
 				}
 				else {
 					WriteChatf("%sCast Detrimental is Off!", PLUGINMSG);
+					return;
 				}
+			}
 			if (IsNumber(Arg2))
 			{
 				if (!_stricmp(Arg2, "1"))
@@ -380,6 +428,7 @@ void FarmCommand(PSPAWNINFO pChar, PCHAR Line) {
 						WriteChatf("%sTurning Cast Detrimental: On!", PLUGINMSG);
 						CastDetrimental = true;
 						WritePrivateProfileString("General", "CastDetrimental", "true", INIFileName);
+						return;
 					}
 				}
 				if (!_stricmp(Arg2, "0")) 
@@ -387,6 +436,7 @@ void FarmCommand(PSPAWNINFO pChar, PCHAR Line) {
 					if (CastDetrimental) {
 						CastDetrimental = false;
 						WritePrivateProfileString("General", "CastDetrimental", "false", INIFileName);
+						return;
 					}
 				}
 			}
@@ -396,6 +446,7 @@ void FarmCommand(PSPAWNINFO pChar, PCHAR Line) {
 					if (!CastDetrimental) {
 						CastDetrimental = true;
 						WritePrivateProfileString("General", "CastDetrimental", "true", INIFileName);
+						return;
 					}
 				}
 				if (!_stricmp(Arg2, "off"))
@@ -403,6 +454,7 @@ void FarmCommand(PSPAWNINFO pChar, PCHAR Line) {
 					if (CastDetrimental) {
 						CastDetrimental = false;
 						WritePrivateProfileString("General", "CastDetrimental", "false", INIFileName);
+						return;
 					}
 				}
 			}
@@ -411,8 +463,10 @@ void FarmCommand(PSPAWNINFO pChar, PCHAR Line) {
 		if (!_stricmp(Arg1, "debug") || !_stricmp(Arg1, "debugging"))
 		{
 			GetArg(Arg2, Line, 2);
-			if (!strlen(Arg2))
+			if (!strlen(Arg2)) {
 				WriteChatf("%sDebugging: %d", PLUGINMSG, Debugging);
+				return;
+			}
 			if (!IsNumber(Arg2))
 			{
 				if (!_stricmp(Arg2, "on"))
@@ -421,6 +475,7 @@ void FarmCommand(PSPAWNINFO pChar, PCHAR Line) {
 						Debugging = true;
 						WritePrivateProfileString("General", "Debugging", "true", INIFileName);
 						WriteChatf("%sDebugging: \agOn", PLUGINMSG);
+						return;
 					}	
 				}
 				if (!_stricmp(Arg2, "off"))
@@ -429,21 +484,26 @@ void FarmCommand(PSPAWNINFO pChar, PCHAR Line) {
 						Debugging = false;
 						WritePrivateProfileString("General", "Debugging", "false", INIFileName);
 						WriteChatf("%sDebugging: \arOff", PLUGINMSG);
+						return;
 					}	
 				}
 			} else {
-				if (atoi(Arg2) == 1)
+				if (atoi(Arg2) == 1) {
 					if (!Debugging) {
 						Debugging = true;
 						WritePrivateProfileString("General", "Debugging", "true", INIFileName);
 						WriteChatf("%sDebugging: \agOn", PLUGINMSG);
-					}	
-				if (atoi(Arg2) == 0)
+						return;
+					}
+				}
+				if (atoi(Arg2) == 0) {
 					if (Debugging) {
 						Debugging = false;
 						WritePrivateProfileString("General", "Debugging", "false", INIFileName);
 						WriteChatf("%sDebugging: \arOff", PLUGINMSG);
-					}	
+						return;
+					}
+				}
 			}
 		}
 
@@ -456,9 +516,11 @@ void FarmCommand(PSPAWNINFO pChar, PCHAR Line) {
 				MedAt = atoi(Arg2);
 				WritePrivateProfileString("Mana", "MedAt", Arg2, INIFileName);
 				WriteChatf("%s\atMedAt is now: \ap%i", PLUGINMSG, MedAt);
+				return;
 			}
 			else {
 				WriteChatf("%s\atMedAt: \ap%i", PLUGINMSG, MedAt);
+				return;
 			}
 		}
 
@@ -470,9 +532,11 @@ void FarmCommand(PSPAWNINFO pChar, PCHAR Line) {
 				MedTill = atoi(Arg2);
 				WritePrivateProfileString("Mana", "MedTill", Arg2, INIFileName);
 				WriteChatf("%s\atMedTill is now: \ap%i", PLUGINMSG, MedTill);
+				return;
 			}
 			else {
 				WriteChatf("%s\atMedTill: \ap%i", PLUGINMSG, MedTill);
+				return;
 			}
 		}
 
@@ -485,9 +549,11 @@ void FarmCommand(PSPAWNINFO pChar, PCHAR Line) {
 				HealAt = atoi(Arg2);
 				WritePrivateProfileString("Health", "HealAt", Arg2, INIFileName);
 				WriteChatf("%s\atHealAt is now: \ap%i", PLUGINMSG, HealAt);
+				return;
 			}
 			else {
 				WriteChatf("%s\atHealAt: \ap%i", PLUGINMSG, HealAt);
+				return;
 			}
 		}
 
@@ -499,9 +565,11 @@ void FarmCommand(PSPAWNINFO pChar, PCHAR Line) {
 				HealTill = atoi(Arg2);
 				WritePrivateProfileString("Health", "HealTill", Arg2, INIFileName);
 				WriteChatf("%s\atHealTill is now: \ap%i", PLUGINMSG, HealTill);
+				return;
 			}
 			else {
 				WriteChatf("%s\atHealTill: \ap%i", PLUGINMSG, HealTill);
+				return;
 			}
 		}
 		//Endurance updates
@@ -513,9 +581,11 @@ void FarmCommand(PSPAWNINFO pChar, PCHAR Line) {
 				MedEndAt = atoi(Arg2);
 				WritePrivateProfileString("Endurance", "MedEndAt", Arg2, INIFileName);
 				WriteChatf("%s\atMedEndAt is now: \ap%i", PLUGINMSG, MedEndAt);
+				return;
 			}
 			else {
 				WriteChatf("%s\atMedEndAt: \ap%i", PLUGINMSG, MedEndAt);
+				return;
 			}
 		}
 
@@ -527,11 +597,15 @@ void FarmCommand(PSPAWNINFO pChar, PCHAR Line) {
 				MedEndTill = atoi(Arg2);
 				WritePrivateProfileString("Endurance", "MedEndTill", Arg2, INIFileName);
 				WriteChatf("%s\atMedEndTill is now: \ap%i", PLUGINMSG, MedEndTill);
+				return;
 			}
 			else {
 				WriteChatf("%s\atMedEndTill: \ap%i", PLUGINMSG, MedEndTill);
+				return;
 			}
 		}
+		GetArg(Arg1, Line, 1);
+		WriteChatf("%s \arYou provided an invalid command - %s - is not a valid command!", PLUGINMSG, Arg1);
 	}
 }
 
@@ -569,6 +643,8 @@ DWORD SearchSpawns(char szIndex[MAX_STRING])
 			return sShortest->SpawnID;
 		}
 	}
+	if (GetCharInfo()->pSpawn->StandState == STANDSTATE_STAND)
+		EzCommand("/sit");
 	return false;
 }
 
@@ -581,18 +657,29 @@ void ClearTarget() {
 
 void ListCommands()
 {
-	WriteChatf("%s\atCommands Available", PLUGINMSG);
-	WriteChatf("%s\ay/farm \aw--- \atWill output this help menu", PLUGINMSG);
-	WriteChatf("%s\ar[\a-tMQ2Farm\ar]\ao::\ay/farm on|off \aw--- \atWill turn on|off farming with INI settings.", PLUGINMSG);
-	//WriteChatf("\ar[\a-tMQ2Farm\ar]\ao::\ay/farm status \aw--- \atDisplay if the plugin is On/Off.");
+	WriteChatf("%s\ar[\atCommands Available\ar]", PLUGINMSG);
+	WriteChatf("%s\ay/farm help \awor \ay/farm\aw--- \atWill output this help menu", PLUGINMSG);
+	WriteChatf("%s\ay/farm on|off \aw--- \atWill turn on|off farming with INI settings.", PLUGINMSG);
 	WriteChatf("%s\ay/farm radius #### \aw--- \atWill set radius to number provided.", PLUGINMSG);
 	WriteChatf("%s\ay/farm zradius #### \aw--- \atWill set zradius to number provided.", PLUGINMSG);
-	WriteChatf("%s\ar[\a-tMQ2Farm\ar]\ao::\ay/farm farmmob \"Mob Name Here\" \aw--- \atWill specify a farmmob to farm.", PLUGINMSG);
-	WriteChatf("%s\ar[\a-tMQ2Farm\ar]\ao::\ay/farm farmmob clear \aw--- \atWill clear the FarmMob and attack anything not on an alertlist.", PLUGINMSG);
-	WriteChatf("%s\ar[\a-tMQ2Farm\ar]\ao::\ay/farm castdetrimental 1|On 0|Off \aw--- \atWill turn on and off casting of single target detrimental spells.", PLUGINMSG);
-	WriteChatf("%s\ar[\a-tMQ2Farm\ar]\ao::\ay/ignorethis \aw--- \atWill temporarily ignore your current target.", PLUGINMSG);
-	WriteChatf("%s\ar[\a-tMQ2Farm\ar]\ao::\ay/ignorethese \aw--- \atWill temporarily ignore all spawns with this targets clean name.", PLUGINMSG);
-	//WriteChatf("\ar[\a-tMQ2Farm\ar]\ao::\ay/loadignore \aw--- \atWill loadignores from the Ignore_Mobs.ini in the macro folder.");
+	WriteChatf("%s\ay/farm farmmob \"Mob Name Here\" \aw--- \atWill specify a farmmob to farm.", PLUGINMSG);
+	WriteChatf("%s\ay/farm farmmob clear \aw--- \atWill clear the FarmMob and attack anything not on an alertlist.", PLUGINMSG);
+	WriteChatf("%s\ay/farm castdetrimental 1|On 0|Off \aw--- \atWill turn on and off casting of single target detrimental spells.", PLUGINMSG);
+	WriteChatf("%s\ay/farm debug 1|on 0|Off \aw---\atWill turn on and off debugging messages", PLUGINMSG);
+	WriteChatf("%s\ay/farm MedAt \aw---\atWill show you when you will med mana", PLUGINMSG);
+	WriteChatf("%s\ay/farm MedAt #### \aw---\atWill set when you when you will med mana", PLUGINMSG);
+	WriteChatf("%s\ay/farm MedTill \aw---\atWill show you when you will stop medding mana", PLUGINMSG);
+	WriteChatf("%s\ay/farm MedTill ####\aw---\atWill set when you when you will stop medding mana", PLUGINMSG);
+	WriteChatf("%s\ay/farm HealAt \aw---\atWill show you when you will med health", PLUGINMSG);
+	WriteChatf("%s\ay/farm HealAt #### \aw---\atWill show you when you will med health", PLUGINMSG);
+	WriteChatf("%s\ay/farm HealTill \aw---\atWill show you when you will stop medding health", PLUGINMSG);
+	WriteChatf("%s\ay/farm HealTill #### \aw---\atWill set when you when you will med health", PLUGINMSG);
+	WriteChatf("%s\ay/farm MedEndAt \aw---\atWill show you when you will med endurance", PLUGINMSG);
+	WriteChatf("%s\ay/farm MedEndAt #### \aw---\atWill set you when you will med endurance", PLUGINMSG);
+	WriteChatf("%s\ay/farm MedEndTill \aw---\atWill show you when you will stop medding endurance", PLUGINMSG);
+	WriteChatf("%s\ay/farm MedEndTill #### \aw---\atWill set when you will stop medding endurance", PLUGINMSG);
+	WriteChatf("%s\ay/ignorethis \aw--- \atWill temporarily ignore your current target.", PLUGINMSG);
+	WriteChatf("%s\ay/ignorethese \aw--- \atWill temporarily ignore all spawns with this targets clean name.", PLUGINMSG);
 }
 
 bool AmIReady()
@@ -762,7 +849,6 @@ void PluginOn()
 	activated = true;
 	CheckAlias();
 	DoINIThings();
-	WriteChatf("%s\aw- \agv0.1", PLUGINMSG);
 	WriteChatf("%s\agActivated", PLUGINMSG);
 }
 
@@ -817,6 +903,7 @@ inline float PercentEndurance()
 
 void NavigateToID(DWORD ID) {
 	PSPAWNINFO Mob = (PSPAWNINFO)GetSpawnByID(ID);
+	if (!Mob) return;
 	CHAR szNavInfo[32];
 	sprintf_s(szNavInfo, 32, "%u", ID);
 	if (Mob && (!LineOfSight(GetCharInfo()->pSpawn, Mob) || GetDistance(GetCharInfo()->pSpawn, Mob) > 20)) {
@@ -833,7 +920,7 @@ void NavigateToID(DWORD ID) {
 		if (GetCharInfo()->pSpawn->StandState == STANDSTATE_SIT)
 			EzCommand("/stand");
 		//if (Debugging) WriteChatf("AmFacing() returned: %f", AmFacing(Mob->SpawnID));
-		if (AmFacing(Mob->SpawnID) > 30) Face(GetCharInfo()->pSpawn, "");
+		if (AmFacing(Mob->SpawnID) > 30) Face(GetCharInfo()->pSpawn, "fast");
 	}
 	if (Mob && pTarget) {
 		if (useDiscs) UseDiscs();
@@ -904,6 +991,42 @@ void DiscSetup()
 			}
 		}
 	}
+	//Should add stuff from the INI here so that it gets sorted.
+	for (int i = 0; i < 30; i++) {
+		CHAR temp[MAX_STRING] = "";
+		CHAR Key[MAX_STRING] = "DiscRemove";
+		CHAR KeyNum[MAX_STRING] = "";
+		sprintf_s(KeyNum, "%s%i", Key, i);
+		if (GetPrivateProfileString("DiscRemove", KeyNum, 0, temp, MAX_STRING, INIFileName) != 0) {
+			if (PSPELL pSpell = GetSpellByName(temp)) {
+				for (int j = 0; j < NUM_COMBAT_ABILITIES; j++) {
+					if (CATemp[j] == pSpell->ID) {
+						CATemp[j] = -1;
+						WriteChatf("\arRemoving %s based on INI settings.", pSpell->Name);
+						break;
+					}
+				}
+			}
+		}
+	}
+	for (int i = 0; i < 30; i++) {
+		CHAR temp[MAX_STRING] = "";
+		CHAR Key[MAX_STRING] = "DiscAdd";
+		CHAR KeyNum[MAX_STRING] = "";
+		sprintf_s(KeyNum, "%s%i", Key, i);
+		if (GetPrivateProfileString("DiscAdd", KeyNum, 0, temp, MAX_STRING, INIFileName) != 0) {
+			if (PSPELL pSpell = GetSpellByName(temp)) {
+				for (int j = 0; j < NUM_COMBAT_ABILITIES; j++) {
+					if (CATemp[j] == -1) {
+						CATemp[j] = pSpell->ID;
+						WriteChatf("\agAdding %s from the INI", pSpell->Name);
+						break;
+					}
+				}
+			}
+		}
+	}
+	
 	//BYTE    TargetType;         //03=Group v1, 04=PB AE, 05=Single, 06=Self, 08=Targeted AE, 0e=Pet, 28=AE PC v2, 29=Group v2, 2a=Directional, 46=Target Of Target
 	//*0x180*/   BYTE    SpellType;          //0=detrimental, 1=Beneficial, 2=Beneficial, Group Only
 	for (int i = 0; i < NUM_COMBAT_ABILITIES; i++) {
@@ -933,7 +1056,7 @@ void DiscSetup()
 					SingleBeneficial.push_back(pSpell);
 					//WriteChatf("\ag%s", pSpell->Name);
 				}
-				else if (pSpell->SpellType == 2) {
+				else if (pSpell->SpellType == 2 || (pSpell->SpellType == 1 && (pSpell->TargetType == 3 || pSpell->TargetType == 29))) {
 					//Group Beneficial
 					GroupBeneficial.push_back(pSpell);
 					//WriteChatf("\ap%s TargetType: %i", pSpell->Name, pSpell->TargetType);
@@ -979,43 +1102,86 @@ void UseDiscs()
 		return;
 	}
 	
-	CHAR temp[MAX_STRING] = "";
+	for (unsigned int i = 0; i < SelfBeneficial.size(); i++) {
+		if (DiscLastTimeUsed < GetTickCount64()) {
+			if (DiscReady(SelfBeneficial.at(i))) {
+				if (SelfBeneficial.at(i)->CanCastInCombat && !SelfBeneficial.at(i)->CastTime && !IHaveBuff(SelfBeneficial.at(i))) {
+					WriteChatf("\agSelf Beneficial \at---\ar> \ap%s", SelfBeneficial.at(i)->Name);
+					DiscLastTimeUsed = GetTickCount64();
+					pCharData->DoCombatAbility(SelfBeneficial.at(i)->ID);
+				}
+			}
+
+		}
+	}
+
+	for (unsigned int i = 0; i < GroupBeneficial.size(); i++) {
+		if (DiscLastTimeUsed < GetTickCount64()) {
+			if (DiscReady(GroupBeneficial.at(i))) {
+				if (GroupBeneficial.at(i)->CanCastInCombat && !GroupBeneficial.at(i)->CastTime && !IHaveBuff(GroupBeneficial.at(i))) {
+					WriteChatf("\a-pSelf Beneficial \at---\ar> \ap%s", GroupBeneficial.at(i)->Name);
+					DiscLastTimeUsed = GetTickCount64();
+					pCharData->DoCombatAbility(GroupBeneficial.at(i)->ID);
+				}
+			}
+
+		}
+	}
+
 	for (unsigned int i = 0; i < SingleDetrimental.size(); i++) {
 		if (DiscLastTimeUsed < GetTickCount64()) {
 			if (DiscReady(SingleDetrimental.at(i))) {
 				if (SingleDetrimental.at(i)->CanCastInCombat) {
-					WriteChatf("Trying to fire ---> \ap%s", SingleDetrimental.at(i)->Name);
-					//DiscLastTimeUsed = (DWORD)time(NULL);
+					WriteChatf("\arSingleDetrimental \at---\ar> \ap%s", SingleDetrimental.at(i)->Name);
 					DiscLastTimeUsed = GetTickCount64();
 					pCharData->DoCombatAbility(SingleDetrimental.at(i)->ID);
 				}
 			}
+			
 		}
 	}
+	
+	
 }
 
-BOOL DiscReady(PSPELL pSpell)
+bool DiscReady(PSPELL pSpell)
 {
 	if (!InGame()) return false;
 	DWORD timeNow = (DWORD)time(NULL);
 	if (pPCData->GetCombatAbilityTimer(pSpell->ReuseTimerIndex, pSpell->SpellGroup) < timeNow) {
+		//If the Disc has a duration and the TargetType is Self and it's not going to the short duration buff window then do I have an active disc?
+		if (pSpell->TargetType == 6 && pSpell->SpellType == 1 && GetSpellDuration(pSpell, (PSPAWNINFO)pLocalPlayer) && !pSpell->DurationWindow) {
+			if (Debugging) WriteChatf("Name: %s TargetType: %i SpellType %i Duration: %i DurationWindow: %i", pSpell->Name, pSpell->TargetType, pSpell->SpellType, GetSpellDuration(pSpell, (PSPAWNINFO)pLocalPlayer), pSpell->DurationWindow);
+			if (pCombatAbilityWnd) {
+				if (CXWnd *Child = ((CXWnd*)pCombatAbilityWnd)->GetChildItem("CAW_CombatEffectLabel")) {
+					CHAR szBuffer[2048] = { 0 };
+					if (GetCXStr(Child->WindowText, szBuffer, MAX_STRING) && szBuffer[0] != '\0') {
+						if (PSPELL pbuff = GetSpellByName(szBuffer)) {
+							if (Debugging) WriteChatf("Already have an Active Disc: \ag%s, \awCan't use \ar%s", pbuff->Name, pSpell->Name);
+							return false;
+						}
+					}
+				}
+			}
+		}
+		//If I have enough mana and endurance (Never know, might be mana requirements lol).
 		if (GetCharInfo()->pSpawn->ManaCurrent >= (int)pSpell->ManaCost && GetCharInfo()->pSpawn->EnduranceCurrent >= (int)pSpell->EnduranceCost) {
-			
-			if (pSpell->CasterRequirementID == 518) {
+			DWORD ReqID = pSpell->CasterRequirementID;
+			if (ReqID == 518) {
 				//Requires under 90% hitpoints
 				if (PercentHealth() > 89) return false;
 			}
-			else if (pSpell->CasterRequirementID == 825) {
+			else if (ReqID == 825) {
 				//Requires under 21% Endurance
-				if (PercentEndurance() > 21) return false;
+				if (PercentEndurance() > 20) return false;
 			}
-			else if (pSpell->CasterRequirementID == 826) {
+			else if (ReqID == 826) {
 				//Requires under 25% Endurance
-				if (PercentEndurance() > 25) return false;
+				if (PercentEndurance() > 24) return false;
 			}
-			else if (pSpell->CasterRequirementID == 827) {
+			else if (ReqID == 827) {
 				//Requires under 29% Endurance
-				if (PercentEndurance() > 29) return false;
+				if (PercentEndurance() > 28) return false;
 			}
 			for (int i = 0; i < 4; i++) {
 				if (pSpell->ReagentCount[i] > 0) {
@@ -1023,10 +1189,10 @@ BOOL DiscReady(PSPELL pSpell)
 						DWORD count = FindItemCountByID((int)pSpell->ReagentID[i]);
 						if (count < pSpell->ReagentCount[i]) {
 							if (PCHAR pitemname = GetItemFromContents(FindItemByID((int)pSpell->ReagentID[i]))->Name) {
-								WriteChatf("\ap%s\aw needs Reagent: \ay%s x \ag%i", pSpell->Name, pitemname, pSpell->ReagentCount[i]);
+								if (Debugging) WriteChatf("\ap%s\aw needs Reagent: \ay%s x \ag%i", pSpell->Name, pitemname, pSpell->ReagentCount[i]);
 							}
 							else {
-								WriteChatf("%s needs Item ID: %d x \ag%d", pSpell->Name, pSpell->ReagentID[i], pSpell->ReagentCount[i]);
+								if (Debugging) WriteChatf("%s needs Item ID: %d x \ag%d", pSpell->Name, pSpell->ReagentID[i], pSpell->ReagentCount[i]);
 							}
 							return false;
 						}
@@ -1039,6 +1205,25 @@ BOOL DiscReady(PSPELL pSpell)
 		}
 		return true;
 	}		
+	return false;
+}
+
+bool IHaveBuff(PSPELL pSpell) {
+	if (!InGame()) return false;
+	for (int i = 0; i < NUM_LONG_BUFFS; i++) {
+		if (PSPELL pBuff = GetSpellByID(GetCharInfo2()->Buff[i].SpellID)) {
+			if (!_stricmp(pSpell->Name, pBuff->Name)) {
+				return true;
+			}
+		}
+	}
+	for (int i = 0; i < NUM_SHORT_BUFFS; i++) {
+		if (PSPELL pBuff = GetSpellByID(GetCharInfo2()->ShortBuff[i].SpellID)) {
+			if (!_stricmp(pSpell->Name, pBuff->Name)) {
+				return true;
+			}
+		}
+	}
 	return false;
 }
 
