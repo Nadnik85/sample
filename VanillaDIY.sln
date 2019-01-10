@@ -354,6 +354,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2Profiler", "MQ2Profiler\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2FarmTest", "MQ2FarmTest\MQ2FarmTest.vcxproj", "{B4B85164-526E-456A-931A-5984E39414A0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2MyButtons", "MQ2MyButtons\MQ2MyButtons.vcxproj", "{0BF42876-5764-4968-AADD-306D0E336C57}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -1243,6 +1245,16 @@ Global
 		{B4B85164-526E-456A-931A-5984E39414A0}.xDebug|Win32.Build.0 = Debug|Win32
 		{B4B85164-526E-456A-931A-5984E39414A0}.xDebug|x64.ActiveCfg = Release|Win32
 		{B4B85164-526E-456A-931A-5984E39414A0}.xDebug|x64.Build.0 = Release|Win32
+		{0BF42876-5764-4968-AADD-306D0E336C57}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0BF42876-5764-4968-AADD-306D0E336C57}.Debug|Win32.Build.0 = Debug|Win32
+		{0BF42876-5764-4968-AADD-306D0E336C57}.Debug|x64.ActiveCfg = Debug|Win32
+		{0BF42876-5764-4968-AADD-306D0E336C57}.Release|Win32.ActiveCfg = Release|Win32
+		{0BF42876-5764-4968-AADD-306D0E336C57}.Release|Win32.Build.0 = Release|Win32
+		{0BF42876-5764-4968-AADD-306D0E336C57}.Release|x64.ActiveCfg = Release|Win32
+		{0BF42876-5764-4968-AADD-306D0E336C57}.xDebug|Win32.ActiveCfg = Debug|Win32
+		{0BF42876-5764-4968-AADD-306D0E336C57}.xDebug|Win32.Build.0 = Debug|Win32
+		{0BF42876-5764-4968-AADD-306D0E336C57}.xDebug|x64.ActiveCfg = Release|Win32
+		{0BF42876-5764-4968-AADD-306D0E336C57}.xDebug|x64.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

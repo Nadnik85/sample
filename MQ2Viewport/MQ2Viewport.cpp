@@ -6,7 +6,9 @@
 // and Shutdown for setup and cleanup, do NOT do it in DllMain.
 
 // MQ2ViewPort - v1.0 - Written by jimbob for RedGuides
+// 2.0 by SwiftyMUSE 01-07-2019 Removed foreground detection since its in core
 
+#define   PLUGIN_VERS     2.0    // Plugin Version
 #include "../MQ2Plugin.h"
 
 PreSetup("MQ2ViewPort");
@@ -18,10 +20,6 @@ bool Foreground = true;
 bool FGState = false;
 bool FGChanged = false;
 bool ForceResize = false;
-
-HMODULE EQWhMod = 0;
-typedef HWND(__stdcall *fEQW_GetDisplayWindow)(VOID);
-fEQW_GetDisplayWindow EQW_GetDisplayWindow = 0;
 
 // Stolen from MQ2Rez - jimbob
 bool SetBOOL(bool Cur, PCHAR Val, PCHAR Sec, PCHAR Key) {
@@ -89,10 +87,6 @@ PLUGIN_API VOID InitializePlugin(VOID)
     Resized = false;
 
     DebugSpewAlways("Initializing MQ2ViewPort");
-    if (EQWhMod = GetModuleHandle("eqw.dll"))
-    {
-        EQW_GetDisplayWindow = (fEQW_GetDisplayWindow)GetProcAddress(EQWhMod, "EQW_GetDisplayWindow");
-    }
     //Add commands, MQ2Data items, hooks, etc.
     AddCommand("/vp", VPCommand);
 }
@@ -131,13 +125,10 @@ PLUGIN_API VOID OnPulse(VOID)
 		if(!gbInitDone) {
 			InitSettings();
 		}
-		HWND EQhWnd = *(HWND*)EQADDR_HWND;
-		if (EQW_GetDisplayWindow)
-			EQhWnd = EQW_GetDisplayWindow();
 		if (!VPResize)
 			return;
 
-		if (GetForegroundWindow() == EQhWnd)
+		if (gbInForeground)
 		{
 			Foreground = true;
 			if (Foreground == FGState)

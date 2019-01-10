@@ -1,3 +1,18 @@
+Jan 09 2019 by EqMule
+-Updated for TEST
+-
+Jan 07 2019 by SwiftyMUSE
+- Added .Dotted to ${Me} and ${Target}
+- Added .MaxMeleeTo to ${Target}
+- Updated .Foreground in EverQuest TLO
+  While not technically required... (although it improves performance)
+  Anyone using GetForegroundWindow() call should change their code
+  to use the new exported gbInForeground instead of making calls in the plugin pulse function.
+  These Global builder plugins are updated so as not unnecessarily using cpu in pulse:
+  MQ2AdvPath, MQ2CpuLoad, MQ2FPS and MQ2Radar
+  These Personal plugins should be updated, including, but not limited to:
+  MQ2Clip, MQ2Focus, MQ2Nav, MQ2SoD, MQ2Task, MQ2ViewPort, MQ2WinPath
+-
 Jan 03 2019 by EqMule
 - ${Me.Ability[#|X]} now return the real ID/Name of a Ability...
   Example /echo ${Me.Ability[Hide]}
@@ -13,6 +28,7 @@ Jan 03 2019 by EqMule
   You can also still do /doability 1 and if you have Hide assigned as 1 in your abilities tab on the actions window, it will activate it.
   This is kinda stupid though, so I recommend just doing /doability Hide instead, and 
   don't worry about where its assigned or not assigned at all...
+- Added Run To, to the groupwindow rightclick menu, it will run you over to the group member you clicked.
 
 Dec 19 2018 by SwiftyMUSE
 - Added .Feared, .Silenced, .Invulnerable to ${Me} and ${Target}

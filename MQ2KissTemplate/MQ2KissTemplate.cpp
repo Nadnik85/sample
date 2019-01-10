@@ -109,7 +109,9 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 	//Lemme insert the start of code tags for the user using ios::in - this should overwrite the file for us. 
 	ofstream myfile;
 	myfile.open(newfilename, ios::in);
-	myfile << "[CODE=INI|KissAssist INI - " << OurClass << "]" << endl;
+	char codetag[MAX_STRING] = "";
+	sprintf_s(codetag, "[CODE = INI | KissAssist INI - %s]", OurClass);
+	myfile << codetag << endl;
 	myfile.close();
 
 	//General Section

@@ -1,3 +1,60 @@
+Jan 09 2019 by RedGuides
+- MQ2DPSAdv fixes (ChatWithThisName)
+- 
+
+Jan 09 2019 by EqMule
+-Updated for TEST
+-
+Jan 07 2019 by SwiftyMUSE
+- Added .Dotted to ${Me} and ${Target}
+- Added .MaxMeleeTo to ${Target}
+- Updated .Foreground in EverQuest TLO
+  While not technically required... (although it improves performance)
+  Anyone using GetForegroundWindow() call should change their code
+  to use the new exported gbInForeground instead of making calls in the plugin pulse function.
+  These Global builder plugins are updated so as not unnecessarily using cpu in pulse:
+  MQ2AdvPath, MQ2CpuLoad, MQ2FPS and MQ2Radar
+  These Personal plugins should be updated, including, but not limited to:
+  MQ2Clip, MQ2Focus, MQ2Nav, MQ2SoD, MQ2Task, MQ2ViewPort, MQ2WinPath
+
+Jan 4 2019 by RedGuides
+- KissAssist updated to 11.000 Lots of changes, but the biggest is that old conditions are broken. 
+  To convert your old conditions, type "/plugin mq2kisstemplate" and then "/maketemplate"
+- The old KissAssist has been preserved. To use, type "/mac kiss10"
+- MQ2SQLite (Knightly) updated to use SQLite 3.26, thanks Darkie
+- MQ2KissTemplate (ChatWithThisName) bugs fixed and forum code tags added
+- MQ2MyButtons (Knightly) RESURRECTED! Modernized & fixed, but your existing .inis & keys are broken and need to be remade.
+  Read the MQ2MyButtons page in the RedGuides resource manager for instructions on this much improved plugin.
+- MQ2AFNuke (Jimbob) Updated for Mages, Druids, Enchanter and added option for AE spells, wait for ITC for burns, and added option to use a single AA nuke during GCD & more.
+
+Jan 03 2019 by EqMule
+- ${Me.Ability[#|X]} now return the real ID/Name of a Ability...
+  Example /echo ${Me.Ability[Hide]}
+  returns: 29
+  /echo ${Me.Ability[29]}
+  returns: Hide
+
+Dec 18 2018 by eqmule
+- Updated for LIVE
+- Updated for TEST
+- Added Quest items to the autobank button rightclick menu
+- Added an option Autoinventory from bank back to inventory (reverse AutoBank basically).
+- /loadskin and /camp out/in out will not break this new feature anymore.
+
+Dec 17 2018 by eqmule
+- New Fature: AutoBank Filter : idea cred Kaen01
+- Basically rightclick the autobank button to set options for items you like to autobank
+  Click AutoBank Button WITHOUT anything on the cursor.
+  If you have something on cursor AutoBank will just work like it always have and autobank the item
+  BUT if your cursor is empty it will autobank:
+  Collectibles if you have that option set. (off by default)
+  Tradeskill Items if you have that option set. (off by default)
+  Right now those are the two types of items it works for, I'm not against other item types so if anyone has some clever ideas let me know.
+  Known Issue: need to add reloadui support so it's a little bit beta still, but anyway, I'll fix that later.
+
+Dec 15 2018 by RedGuides
+- cskillup.mac (Maskoi, alynel) updated to include pets. Max those skills!
+
 Dec 13 2018 by RedGuides
 - MQ2KissTemplate (ChatWithThisName) updated to always include loadspellset=2, thanks LurkMcGurk for the idea
 - Zones.ini updated, thank you eqplayer16

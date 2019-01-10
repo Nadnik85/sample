@@ -9,11 +9,13 @@
 // 1.07 by ieatacid
 // 2.0 by Eqmule 2014-06-15 added support for MQGetTickCount64()
 // 2.1 by Eqmule 2015-12-11 added support for eqgame.exe dated Dec 08 2015
-// 2.2 by rswiders 2016-05-05 added support to set the FPS indicator color (/fpscolor)
-// 2.3 - Eqmule 07-22-2016 - Added string safety.
-// 2.4 - Eqmule 04-20-2018 - Fixed a ctd in pulse when pWndMgr was NULL
+// 2.2 by SwiftyMUSE 2016-05-05 added support to set the FPS indicator color (/fpscolor)
+// 2.3 by Eqmule 07-22-2016 - Added string safety.
+// 2.4 by SwiftyMUSE 2016-10-30 dont display FPS indicator at charselect
+// 2.5 by Eqmule 04-20-2018 - Fixed a ctd in pulse when pWndMgr was NULL
+// 2.6 by SwiftyMUSE 01-07-2019 Removed foreground detection since its in core
 
-#define   PLUGIN_VERS     2.4     // Plugin Version
+#define   PLUGIN_VERS     2.6     // Plugin Version
 #pragma warning(disable:4786)
 //#define DEBUG_TRY 1
 #include "../MQ2Plugin.h"
@@ -64,10 +66,6 @@ char *szFPSModes[]=
    "Calculate"
 };
 
-HMODULE EQWhMod=0;
-typedef HWND   (__stdcall *fEQW_GetDisplayWindow)(VOID);
-fEQW_GetDisplayWindow EQW_GetDisplayWindow=0;
-
 BOOL dataFPS(PCHAR szIndex, MQ2TYPEVAR &Ret);
 BOOL dataMaxFPS(PCHAR szIndex, MQ2TYPEVAR &Ret);
 BOOL dataForeground(PCHAR szIndex, MQ2TYPEVAR &Ret);
@@ -75,17 +73,12 @@ VOID RenderCommand(PSPAWNINFO pChar, PCHAR szLine);
 
 void SetVTable(DWORD index, DWORD value)
 {
-   DWORD oldperm=0;
-   DWORD Address=(DWORD)&(*((DWORD**)g_pDrawHandler))[index];
-   DebugSpewAlways("SetVTable writing at address %X to %X",Address,value);
-  VirtualProtectEx(GetCurrentProcess(), (LPVOID)Address, 4,PAGE_EXECUTE_READWRITE, &oldperm);
- WriteProcessMemory(
-  GetCurrentProcess(),
-  (LPVOID)Address,
-  (LPVOID)&value,
-  4,
-  NULL);
- VirtualProtectEx(GetCurrentProcess(), (LPVOID)Address, 4, oldperm, &oldperm);
+    DWORD oldperm=0;
+    DWORD Address=(DWORD)&(*((DWORD**)g_pDrawHandler))[index];
+    DebugSpewAlways("MQ2FPS SetVTable writing %X to address %X",value,Address);
+    VirtualProtectEx(GetCurrentProcess(), (LPVOID)Address, 4,PAGE_EXECUTE_READWRITE, &oldperm);
+	WriteProcessMemory(GetCurrentProcess(), (LPVOID)Address, (LPVOID)&value, 4,	NULL);
+    VirtualProtectEx(GetCurrentProcess(), (LPVOID)Address, 4, oldperm, &oldperm);
 }
 
 DWORD GetVTable(DWORD index)
@@ -120,10 +113,6 @@ FUNCTION_AT_VARIABLE_ADDRESS(VOID CMyDisplay::Render(VOID),PreDetour);
 PLUGIN_API VOID InitializePlugin(VOID)
 {
    DebugSpewAlways("Initializing MQ2FPS");
-   if (EQWhMod=GetModuleHandle("eqw.dll"))
-   {
-      EQW_GetDisplayWindow=(fEQW_GetDisplayWindow)GetProcAddress(EQWhMod,"EQW_GetDisplayWindow");
-   }
    
    // Add commands, macro parameters, hooks, etc.
    // INI Settings
@@ -327,12 +316,8 @@ PLUGIN_API VOID OnPulse(VOID)
 //   else
    { 
       InMacro=false;
-      HWND EQhWnd=*(HWND*)EQADDR_HWND;
-      if (EQW_GetDisplayWindow)
-         EQhWnd=EQW_GetDisplayWindow();
-      
-      if (GetForegroundWindow()==EQhWnd)
-      {
+	  if (gbInForeground)
+	  {
          InForeground=true;
          CurMax=gFG_MAX;
          CurrentRate=gFG_Rate;
@@ -409,6 +394,8 @@ PLUGIN_API VOID OnPulse(VOID)
 PLUGIN_API VOID OnDrawHUD(VOID)
 {
    if (!pDisplay || !FPSIndicator)
+      return;
+   if (gGameState == GAMESTATE_CHARSELECT)
       return;
    CHAR szBuffer[MAX_STRING];
 
@@ -674,7 +661,7 @@ BOOL dataMaxFPS(PCHAR szIndex, MQ2TYPEVAR &Ret)
 
 BOOL dataForeground(PCHAR szIndex, MQ2TYPEVAR &Ret)
 {
-   Ret.DWord=InForeground;
+   Ret.DWord=gbInForeground;
    Ret.Type=pBoolType;
    return true;
 }

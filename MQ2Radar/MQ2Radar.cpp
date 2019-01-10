@@ -52,7 +52,7 @@ sprite sRunning; // Running Spawn sprite
 sprite sTarget; // Target sprite
 sprite sCompass; // Compass sprite
 
-				 //HWND EQhWnd; // EQ Window
+//HWND EQhWnd; // EQ Window
 FILE *pFile = NULL; // use to load maps
 list<line> gMap; // list of map lines
 
@@ -619,8 +619,9 @@ PLUGIN_API VOID OnPulse(VOID)
 {
 	// Check if the plugin is active, if we are in foreground, if we are in game and if the radar is on-screen
 	if (!bgPluginInactive) {
-		HWND EQhWnd = *(HWND*)EQADDR_HWND;
-		if (GetForegroundWindow() == EQhWnd) {
+		//HWND EQhWnd = *(HWND*)EQADDR_HWND;
+		//if (GetForegroundWindow() == EQhWnd) {
+		if (gbInForeground) {
 			if (InGame()) {
 				if (GetKeyState(igRadarButton) & 0x80) {
 					if (!bgKeyPressed) ShowHide();
@@ -699,8 +700,6 @@ void Radar(PSPAWNINFO pChar, PCHAR szLine)
 
 PLUGIN_API VOID InitializePlugin()
 {
-	if (gBuild == 4 || gBuild == 5)//no support for emu yet
-		return;
 	DebugSpewAlways("MQ2Radar:: Starting.");
 	//MessageBox(NULL, "inject", "", MB_SYSTEMMODAL | MB_OK);
 	HMODULE hMQ2Radar = 0;
@@ -801,8 +800,6 @@ PLUGIN_API VOID InitializePlugin()
 PLUGIN_API VOID ShutdownPlugin(VOID)
 {
 	DebugSpewAlways("MQ2Radar:: Shutting Down.");
-	if (gBuild == 4 || gBuild == 5)
-		return;
 	if (!bgPluginInactive) {
 		RemoveCommand("/radar");
 		if (vCEverQuest__LeftClickedOnPlayer != 0)

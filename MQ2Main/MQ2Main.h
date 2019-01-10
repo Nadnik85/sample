@@ -833,6 +833,8 @@ LEGACY_API BOOL Calculate(PCHAR szFormula, DOUBLE& Dest);
 #define XWM_CLOSE               10
 #define XWN_TOOLTIP             12
 #define XWM_NEWVALUE            14
+#define XWM_COLUMNCLICK         15
+#define XWM_SORTREQUEST         16
 #define XWM_IS_LINK_ACTIVE      19
 #define XWM_MENUSELECT          20
 #define XWM_MOUSEOVER           21
