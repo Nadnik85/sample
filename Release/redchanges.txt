@@ -1,6 +1,22 @@
+Jan 14 2019 by RedGuides
+- MQ2Yes (kaen01) updated to a new and better version.
+
+Jan 14 2019 by EqMule
+- Added a new column to the Find Item Window which will let you mark items for delete or add them to never loot filter.
+  Usage: mark some items by checking the ckecboxes, then click the Never Loot button to set their never loot advloot filter.
+  Usage: mark some items by checking the ckecboxes, then click the Destroy Items button to delete them.
+-
+- It goes without saying, that if you have no idea what you are doing or if you are a complete imbecile, this feature might
+  be too dangerous for you to have enabled, in which case you can disable it by right clicking the Destroy Item or the Never Loot button
+  and then toggle the "Cool Checkbox Feature" on the menu that pops up. Default is ON.
+
 Jan 09 2019 by RedGuides
-- MQ2DPSAdv fixes (ChatWithThisName)
-- 
+- NEW Plugin! MQ2XAssist (eqmule) An easy to use, simple assist plugin
+- KissAssist (Maskoi) updated to 11.001, changelog coming soon
+- MQ2DPSAdv  (ChatWithThisName) Added 2 new colors for Others DoTs and Others Non-Melee
+- MQ2Vendors (ChatWithThisName) Fixed /vendor savevendors and /vendor nosavevendors to stop
+- MQ2Yes (kaen01) updated to work, a 2007 plugin back from the dead!
+- KissAssist 10.0.4 EqMule Edition (eqmule) updated
 
 Jan 09 2019 by EqMule
 -Updated for TEST
