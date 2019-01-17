@@ -1,3 +1,12 @@
+Jan 16 2019 by EqMule
+-Updated for LIVE
+-
+Jan 15 2019 by EqMule
+- Added a fixed up version of Inventory.mac - wired420
+
+Jan 15 2019 by SwiftyMUSE
+- Resync of code with ROF2EMU
+-
 Jan 14 2019 by EqMule
 - Added a new column to the Find Item Window which will let you mark items for delete or add them to never loot filter.
   Usage: mark some items by checking the ckecboxes, then click the Never Loot button to set their never loot advloot filter.
