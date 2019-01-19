@@ -1,3 +1,10 @@
+Jan 18 2019 by EqMule
+- Fixed a crash when switching character.
+- Added some code to catch crashes.
+  I guess I'll find out if it works once people report if they see the dialog.
+  It will save dump files as well. send those to eqmule@hotmail.com
+-
+
 Jan 16 2019 by EqMule
 -Updated for LIVE
 -
