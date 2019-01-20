@@ -1,3 +1,29 @@
+Jan 19 2019 by RedGuides
+MQ2AutoLoot (plure) - fixed a crash related to the loot struct change from late last year. Fixed a crash while passing out loot.
+
+Jan 19 2019 by EqMule
+- Fixed a crash in Find Item Window when character had more than 1000 items.
+- Fixed a bug where turning off Find Item Window Checkboxes setting would not save properly.
+
+Jan 18 2019 by RedGuides
+MQ2AFNuke & MQ2Heals (Jimbob) Updated for some TBL spells, still have some TBL work to do though.
+
+Jan 18 2019 by EqMule
+- Fixed a crash when switching character.
+- Added some code to catch crashes.
+  I guess I'll find out if it works once people report if they see the dialog.
+  It will save dump files as well. send those to eqmule@hotmail.com
+
+Jan 16 2019 by RedGuides
+- MQ2AutoLoot (plure) 
+  1) When items are marked “destroy” MQ2Autoloot will ignore your “SaveBagSlots” limit and will keep looting and destroying items.  
+  This means that if you want to clear all the corpses in your camp your loot.ini needs to have SaveBagSlots greater then 0.
+  2) There is a new loot setting. “NewItemDelay”, this allows people who are playing manually to pass out any new items before the plugin decides 
+  where they go.  The command to change this setting is: /AutoLoot newitemdelay #n -> Master looter waits #n seconds when a new item drops 
+  before looting that item.
+  3) Fixed CTD related to “/autoloot buy “Item Name” #Quantity” command.
+  4) Removed the patterns code stuff by eqholic, it was only implemented for people not grouped. Since no one was using it, I pulled the code out.
+
 Jan 16 2019 by EqMule
 -Updated for LIVE
 
