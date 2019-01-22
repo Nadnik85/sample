@@ -1,3 +1,11 @@
+Jan 21 2019 by EqMule
+- Dump file directory will now be created if it doesn't exist
+  this fixes the bug where you see a crash dialog that just say "Dump saved to"
+- Added a lock on tlo member and tlo method access so the maps used there wont get corrupted by plugin that use threads to query or change members.
+- The above change should fix a couple crashes i have gotten dumps for.
+- I spent most of the day looking at crash dumps, I made several adjustments and fixes.
+  Thanks to everyone that sent in dumps, please don't send anymore until u have updated.
+
 Jan 19 2019 by EqMule
 - Fixed a crash in Find Item Window when character had more than 1000 items.
 - Fixed a bug where turning off Find Item Window Checkboxes setting would not save properly.
@@ -2390,9 +2398,9 @@ Sunday is funday... so here is some fluff:
 
 15 Sep 2016 by eqmule
 - Updated for TEST
-- The injector now detects if a profile is loaded or not and reinjects if needed if clicked,
+- The Loader now detects if a profile is loaded or not and reloads if needed if clicked,
   prior to this update sessions that u did /unload in game for had their profile name set
-  as character (Loaded) and if you clicked such a profile, it would not reinject.
+  as character (Loaded) and if you clicked such a profile, it would not reload.
 - Fixed a bug in GetItemContentsByName
 - Fixed a bug in GetItemLink -cred demonstar55 and SwiftyMUSE
 - Added a new parameter to FindItemBySlot so we can specify which locations to search.
@@ -3749,7 +3757,7 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
 16 May 2015 by EqMule
 - Updated TEST and BETA builds.
 - Fixed an issue with the TEST build which prevented it from building correctly.
-- Fixed a ctd in ${DisplayItem} if used after a /unload and reinject but no item displayed. reporter: SwiftyMUSE
+- Fixed a ctd in ${DisplayItem} if used after a /unload and reload but no item displayed. reporter: SwiftyMUSE
 - Added ItemLink to the Item TLO it just prints the actual hexlink for an item (not clickable)
   this is useful for when creating hotbuttons with links in them manually...
   Usage: /echo ${Cursor.ItemLink}
