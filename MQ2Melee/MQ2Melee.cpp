@@ -27,6 +27,7 @@
 //                          | 2017-12-12: UPdated by rswiders (Ring of Scale abilities)
 //                          | 2018-01-19: Updated by Saar (rest of the RoS abilities)
 //                          | 2018-04-24: Updated by Eqmule (Slam Fix)
+//						    | 2919-01-28: Updated by s0rcier down/holyflag=3 parse when no macro running. increase down/holy shits to 90. stickmode=2 (disable sticking)
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
 // SHOW_ABILITY:    0=0ff, 1=Display every ability that plugin use.
 // SHOW_ATTACKING:  0=0ff, 1=Display Attacking Target
@@ -43,8 +44,8 @@
 // Distribution of this code in compile form without source code is prohibited.
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
 #define   PLUGIN_NAME  "MQ2Melee"   // Plugin Name
-#define   PLUGIN_DATE   20180424    // Plugin Date
-#define   PLUGIN_VERS   8.7         // Plugin Version
+#define   PLUGIN_DATE   20190128    // Plugin Date
+#define   PLUGIN_VERS   8.8         // Plugin Version
 
 #define   SHOW_ABILITY         0
 #define   SHOW_ATTACKING       1
@@ -1204,6 +1205,36 @@ DECLARE_ABILITY_OPTION(pDWNF57, "downflag57", "[ON/OFF] downflag57?", "0", "${If
 DECLARE_ABILITY_OPTION(pDWNF58, "downflag58", "[ON/OFF] downflag58?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit58].Length},1,0]}");
 DECLARE_ABILITY_OPTION(pDWNF59, "downflag59", "[ON/OFF] downflag59?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit59].Length},1,0]}");
 DECLARE_ABILITY_OPTION(pDWNF60, "downflag60", "[ON/OFF] downflag60?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit60].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF61, "downflag61", "[ON/OFF] downflag61?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit61].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF62, "downflag62", "[ON/OFF] downflag62?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit62].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF63, "downflag63", "[ON/OFF] downflag63?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit63].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF64, "downflag64", "[ON/OFF] downflag64?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit64].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF65, "downflag65", "[ON/OFF] downflag65?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit65].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF66, "downflag66", "[ON/OFF] downflag66?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit66].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF67, "downflag67", "[ON/OFF] downflag67?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit67].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF68, "downflag68", "[ON/OFF] downflag68?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit68].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF69, "downflag69", "[ON/OFF] downflag69?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit69].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF70, "downflag70", "[ON/OFF] downflag70?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit70].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF71, "downflag71", "[ON/OFF] downflag71?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit71].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF72, "downflag72", "[ON/OFF] downflag72?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit72].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF73, "downflag73", "[ON/OFF] downflag73?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit73].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF74, "downflag74", "[ON/OFF] downflag74?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit74].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF75, "downflag75", "[ON/OFF] downflag75?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit75].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF76, "downflag76", "[ON/OFF] downflag76?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit76].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF77, "downflag77", "[ON/OFF] downflag77?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit77].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF78, "downflag78", "[ON/OFF] downflag78?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit78].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF79, "downflag79", "[ON/OFF] downflag79?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit79].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF80, "downflag80", "[ON/OFF] downflag80?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit80].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF81, "downflag81", "[ON/OFF] downflag81?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit81].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF82, "downflag82", "[ON/OFF] downflag82?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit82].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF83, "downflag83", "[ON/OFF] downflag83?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit83].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF84, "downflag84", "[ON/OFF] downflag84?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit84].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF85, "downflag85", "[ON/OFF] downflag85?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit85].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF86, "downflag86", "[ON/OFF] downflag86?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit86].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF87, "downflag87", "[ON/OFF] downflag87?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit87].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF88, "downflag88", "[ON/OFF] downflag88?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit88].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF89, "downflag89", "[ON/OFF] downflag89?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit89].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pDWNF90, "downflag90", "[ON/OFF] downflag90?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[downshit90].Length},1,0]}");
 DECLARE_ABILITY_OPTION(pEAGLE, "eaglestrike", "[ON/OFF]?", "${If[${Me.Skill[eagle strike]},1,0]}", "${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.Skill[eagle strike]},1,0]}");
 DECLARE_ABILITY_OPTION(pERAGE, "enrage", "[ON/OFF]?", "1", "${If[${meleemvi[plugin]},1,0]}");
 DECLARE_ABILITY_OPTION(pERKCK, "enragingkick", "[#] Life% Below? 0=0ff", "${If[${Me.CombatAbility[Enraging Crescent Kicks]} || ${Me.CombatAbility[Enraging Crescent Kicks Rk. II]} || ${Me.CombatAbility[Enraging Crescent Kicks Rk. III]} || ${Me.CombatAbility[Enraging Heel Kicks]} || ${Me.CombatAbility[Enraging Heel Kicks Rk. II]} || ${Me.CombatAbility[Enraging Heel Kicks Rk. III]} || ${Me.CombatAbility[Enraging Cut Kicks]} || ${Me.CombatAbility[Enraging Cut Kicks Rk. II]} || ${Me.CombatAbility[Enraging Cut Kicks Rk. III]} ,20,0]}", "${If[${meleemvi[plugin]} && !${meleemvi[aggro]} && (${Me.CombatAbility[Enraging Crescent Kicks]} || ${Me.CombatAbility[Enraging Crescent Kicks Rk. II]} || ${Me.CombatAbility[Enraging Crescent Kicks Rk. III]} || ${Me.CombatAbility[Enraging Heel Kicks]} || ${Me.CombatAbility[Enraging Heel Kicks Rk. II]} || ${Me.CombatAbility[Enraging Heel Kicks Rk. III]})|| ${Me.CombatAbility[Enraging Cut Kicks]} || ${Me.CombatAbility[Enraging Cut Kicks Rk. II]} || ${Me.CombatAbility[Enraging Cut Kicks Rk. III]},1,0]}");
@@ -1288,6 +1319,36 @@ DECLARE_ABILITY_OPTION(pHOLF57, "holyflag57", "[ON/OFF] holyflag57?", "0", "${If
 DECLARE_ABILITY_OPTION(pHOLF58, "holyflag58", "[ON/OFF] holyflag58?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit58].Length},1,0]}");
 DECLARE_ABILITY_OPTION(pHOLF59, "holyflag59", "[ON/OFF] holyflag59?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit59].Length},1,0]}");
 DECLARE_ABILITY_OPTION(pHOLF60, "holyflag60", "[ON/OFF] holyflag60?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit60].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF61, "holyflag61", "[ON/OFF] holyflag61?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit61].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF62, "holyflag62", "[ON/OFF] holyflag62?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit62].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF63, "holyflag63", "[ON/OFF] holyflag63?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit63].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF64, "holyflag64", "[ON/OFF] holyflag64?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit64].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF65, "holyflag65", "[ON/OFF] holyflag65?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit65].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF66, "holyflag66", "[ON/OFF] holyflag66?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit66].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF67, "holyflag67", "[ON/OFF] holyflag67?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit67].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF68, "holyflag68", "[ON/OFF] holyflag68?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit68].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF69, "holyflag69", "[ON/OFF] holyflag69?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit69].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF70, "holyflag70", "[ON/OFF] holyflag70?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit70].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF71, "holyflag71", "[ON/OFF] holyflag71?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit71].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF72, "holyflag72", "[ON/OFF] holyflag72?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit72].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF73, "holyflag73", "[ON/OFF] holyflag73?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit73].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF74, "holyflag74", "[ON/OFF] holyflag74?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit74].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF75, "holyflag75", "[ON/OFF] holyflag75?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit75].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF76, "holyflag76", "[ON/OFF] holyflag76?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit76].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF77, "holyflag77", "[ON/OFF] holyflag77?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit77].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF78, "holyflag78", "[ON/OFF] holyflag78?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit78].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF79, "holyflag79", "[ON/OFF] holyflag79?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit79].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF80, "holyflag80", "[ON/OFF] holyflag80?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit80].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF81, "holyflag81", "[ON/OFF] holyflag81?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit81].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF82, "holyflag82", "[ON/OFF] holyflag82?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit82].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF83, "holyflag83", "[ON/OFF] holyflag83?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit83].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF84, "holyflag84", "[ON/OFF] holyflag84?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit84].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF85, "holyflag85", "[ON/OFF] holyflag85?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit85].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF86, "holyflag86", "[ON/OFF] holyflag86?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit86].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF87, "holyflag87", "[ON/OFF] holyflag87?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit87].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF88, "holyflag88", "[ON/OFF] holyflag88?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit88].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF89, "holyflag89", "[ON/OFF] holyflag89?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit89].Length},1,0]}");
+DECLARE_ABILITY_OPTION(pHOLF90, "holyflag90", "[ON/OFF] holyflag90?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit90].Length},1,0]}");
 DECLARE_ABILITY_OPTION(pHOVER, "pothealover", "[#] MyLife% Below? 0=0ff (OVER)", "${If[${meleemvi[idpothealover]},20,0]}", "${If[${meleemvi[plugin]} && ${meleemvi[idpothealover]},1,0]}");
 DECLARE_ABILITY_OPTION(pINFUR, "infuriate", "[ON/OFF]?", "1", "${If[${meleemvi[plugin]},1,0]}");
 DECLARE_ABILITY_OPTION(pINTIM, "intimidation", "[ON/OFF]?", "0", "${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.Skill[intimidation]},1,0]}");
@@ -1338,7 +1399,7 @@ DECLARE_ABILITY_OPTION(pSTAND, "standup", "[ON/OFF] Authorize to StandUp?", "0",
 DECLARE_ABILITY_OPTION(pSTEEL, "steely", "[ON/OFF]", "${If[${Select[${Me.Class.ShortName},PAL,SHD]} && (${Me.Book[Steely Stance]} || ${Me.Book[Steely Stance rk. ii]} || ${Me.Book[Steely Stance rk. iii]} || ${Me.Book[Stubborn Stance]} || ${Me.Book[Stubborn Stance rk. ii]} || ${Me.Book[Stubborn Stance rk. iii]} || ${Me.Book[Stoic Stance]} || ${Me.Book[Stoic Stance rk. ii]} || ${Me.Book[Stoic Stance rk. iii]} || ${Me.Book[Steadfast Stance]} || ${Me.Book[Steadfast Stance rk. ii]} || ${Me.Book[Steadfast Stance rk. iii]} || ${Me.Book[Staunch Stance]} || ${Me.Book[Staunch Stance rk. ii]} || ${Me.Book[Staunch Stance rk. iii]} || ${Me.Book[Defiant Stance]} || ${Me.Book[Defiant Stance Rk. II]} || ${Me.Book[Defiant Stance Rk. III]}),0,0]}", "${If[${meleemvi[plugin]} && ${Select[${Me.Class.ShortName},PAL,SHD]} && (${Me.Book[Steely Stance]} || ${Me.Book[Steely Stance rk. ii]} || ${Me.Book[Steely Stance rk. iii]} || ${Me.Book[Stubborn Stance]} || ${Me.Book[Stubborn Stance rk. ii]} || ${Me.Book[Stubborn Stance rk. iii]} || ${Me.Book[Stoic Stance]} || ${Me.Book[Stoic Stance rk. ii]} || ${Me.Book[Stoic Stance rk. iii]} || ${Me.Book[Steadfast Stance]} || ${Me.Book[Steadfast Stance rk. ii]} || ${Me.Book[Steadfast Stance rk. iii]} || ${Me.Book[Staunch Stance]} || ${Me.Book[Staunch Stance rk. ii]} || ${Me.Book[Staunch Stance rk. iii]} || ${Me.Book[Defiant Stance]} || ${Me.Book[Defiant Stance Rk. II]} || ${Me.Book[Defiant Stance Rk. III]}),1,0]}");
 DECLARE_ABILITY_OPTION(pSTIKD, "stickdelay", "[#] Sec to Wait Target in Range?", "0", "${If[${meleemvi[plugin]} && ${Stick.Status.NotEqual[NULL]},1,0]}");
 DECLARE_ABILITY_OPTION(pSTIKKB, "stickbreak", "0=Normal, 1=Allow BreakOnKB", "0", "${If[${meleemvi[plugin]} && ${Stick.Status.NotEqual[NULL]},1,0]}");
-DECLARE_ABILITY_OPTION(pSTIKM, "stickmode", "[ON/OFF] Use stickcmd from ini?", "0", "${If[${meleemvi[plugin]} && ${Stick.Status.NotEqual[NULL]},1,0]}");
+DECLARE_ABILITY_OPTION(pSTIKM, "stickmode", "[0-2] 0=Built-In 1=From INI 2=do not stick?", "0", "${If[${meleemvi[plugin]} && ${Stick.Status.NotEqual[NULL]},1,0]}");
 DECLARE_ABILITY_OPTION(pSTIKNR, "sticknorange", "0=Normal, 1=No Range Check", "0", "${If[${meleemvi[plugin]} && ${Stick.Status.NotEqual[NULL]},1,0]}");
 DECLARE_ABILITY_OPTION(pSTIKR, "stickrange", "[#] Target in Range? 0=0ff", "${If[${Stick.Status.NotEqual[NULL]},75,0]}", "${If[${meleemvi[plugin]} && ${Stick.Status.NotEqual[NULL]} && ${meleemvi[stickrange]},1,0]}");
 DECLARE_ABILITY_OPTION(pSTRIK, "strike", "Use best sneak attack disc [ON/OFF]?", "0", "${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${meleemvi[backstab]} && ${meleemvi[idstrike]},1,0]}");
@@ -2404,7 +2465,7 @@ doCRYHAVOC,
 doCSTRIKE,
 doDEFENSE,
 doDISARM,
-doDOWNFLAG[61],
+doDOWNFLAG[91],
 doDRAGONPUNCH,
 doEAGLESTRIKE,
 doENRAGE,
@@ -2428,7 +2489,7 @@ doGORILLASMASH,
 doGUTPUNCH,
 doHARMTOUCH,
 doHIDE,
-doHOLYFLAG[61],
+doHOLYFLAG[91],
 doINFURIATE,
 doINTIMIDATION,
 doJLTKICKS,
@@ -2587,8 +2648,8 @@ ifVIGDAGGER,
 ifVIGSHURIKEN,
 ifWITHSTAND,
 ifYAULP,
-DOWNSHIT[61],
-HOLYSHIT[61],
+DOWNSHIT[91],
+HOLYSHIT[91],
 StickCMD,
 StrikeCMD,
 HOLYSHITIF,
@@ -3963,12 +4024,17 @@ void DowntimeHandle()
                         }
                         break;
                     }
+					case 3: //only parsed when no macro running
+					{
+						if (!gRunning) EzCommand((char*)DOWNSHIT[doDOWN].c_str());
+						break;
+					}
                     default:
                         break;
                 }
             }
-            for (long x = 1; x < 61; x++) {
-                long n = (x + doDOWN) % 60;
+            for (long x = 1; x < 91; x++) {
+                long n = (x + doDOWN) % 91;
                 if (doDOWNFLAG[n]) {
                     doDOWN = n;
                     break;
@@ -4288,30 +4354,35 @@ void MeleeHandle()
                 // *** if a range is set and we are greater than this range, this may cause those "open space" problems
                 if (Immobile && !Sticking && (!doSTICKDELAY || (unsigned long)clock()>TimerStik) && (!doSTICKRANGE || doSTICKNORANGE || MeleeDist < doSTICKRANGE)) onSTICK = -1;
             }
-            if (onSTICK < 0)        // set negative by above in cases where we should stick
-            {
-                if (doSTICKMODE)        // if we have a custom stick command, use this
-                {
-                    strcpy_s(Reserved, StickCMD.c_str()); // copy our ini command to Reserved
-                    ParseMacroData(Reserved, sizeof(Reserved));          // parse out TLO evaluations
-                }
-                else       // else melee decides how to process stick as follows
-                {
-                    long type = Aggroed(MeleeTarg); // set to 1 if cases acceptable to attack (on hott, within range)
-                    bool swim = (SpawnMe()->UnderWater == 5); // use "uw" arg if underwater
-                    bool stab = (type < 1 && doBACKSTAB && doSTAB<192); // use "behind" if not aggro and strike option enabled, else !front
-                    bool tank = (type>0 || (!IsInvisible() && (doAGGRO || !GetCharInfo()->pGroupInfo))); // use "moveback" if tank and aggro, else process stab
-                    double dist = MeleeKill - 3.0f - (MeleeFlee*3.0f); // stick numeric parameter for distance
-                    sprintf_s(Reserved, "%2.2f id %d%s%s", dist, MeleeTarg, MeleeFlee ? "" : (tank ? " moveback" : (!stab ? " !front" : " behind")), swim ? " uw" : "");
-                }
-                //if(strcmp(Reserved,StickArg)) Stick(Reserved); // issue command if its not the same as the last issued (stickarg set to last arg given to Stick()??
-                // most likely because if we are sticking and want to change the type of stick we issue, but this will fail if stick got
-                // shut off and the arg never reset properly, so lets check also if we are not sticking by checking moveutils actual status
-                if (bMULoaded && bMUPointers)  // if moveutils is loaded
-                {
-                    if (strcmp(Reserved, StickArg) || (!doSTICKBREAK && !*pbStickOn)) Stick(Reserved);
-                }
-            }
+			if (onSTICK < 0)        // set negative by above in cases where we should stick
+			{
+				if (bMULoaded && bMUPointers)
+				{
+					switch (doSTICKMODE)
+					{
+						case 0: // stick from mq2melee
+						{
+							long type = Aggroed(MeleeTarg); // set to 1 if cases acceptable to attack (on hott, within range)
+							bool swim = (SpawnMe()->UnderWater == 5); // use "uw" arg if underwater
+							bool stab = (type < 1 && doBACKSTAB && doSTAB<192); // use "behind" if not aggro and strike option enabled, else !front
+							bool tank = (type>0 || (!IsInvisible() && (doAGGRO || !GetCharInfo()->pGroupInfo))); // use "moveback" if tank and aggro, else process stab
+							double dist = MeleeKill - 3.0f - (MeleeFlee*3.0f); // stick numeric parameter for distance
+							sprintf_s(Reserved, "%2.2f id %d%s%s", dist, MeleeTarg, MeleeFlee ? "" : (tank ? " moveback" : (!stab ? " !front" : " behind")), swim ? " uw" : "");
+							if (strcmp(Reserved, StickArg) || (!doSTICKBREAK && !*pbStickOn)) Stick(Reserved);
+							break;
+						}
+						case 1: // stick from ini
+						{
+							strcpy_s(Reserved, StickCMD.c_str()); 			// copy our ini command to Reserved
+							ParseMacroData(Reserved, sizeof(Reserved));     // parse out TLO evaluations
+							if (strcmp(Reserved, StickArg) || (!doSTICKBREAK && !*pbStickOn)) Stick(Reserved);
+							break;
+						}
+						default: // do not stick
+							break;
+					}
+				}
+			}
         }
         // end stick processing
 
@@ -4619,13 +4690,18 @@ void MeleeHandle()
                 }
                 break;
             }
+			case 3: //only parsed when no macro running
+			{
+				if (!gRunning) EzCommand((char*)HOLYSHIT[doHOLY].c_str());
+				break;
+			}
             default:
                 break;
             }
         }
-        for (long x = 1; x < 61; x++)
+        for (long x = 1; x < 91; x++)
         {
-            long n = (x + doHOLY) % 60;
+            long n = (x + doHOLY) % 91;
             if (doHOLYFLAG[n])
             {
                 doHOLY = n;
@@ -4868,6 +4944,36 @@ PLUGIN_API void InitializePlugin()
     REGISTER_ABILITY_OPTION(pDWNF58, NULL, &doDOWNFLAG[58]);
     REGISTER_ABILITY_OPTION(pDWNF59, NULL, &doDOWNFLAG[59]);
     REGISTER_ABILITY_OPTION(pDWNF60, NULL, &doDOWNFLAG[60]);
+	REGISTER_ABILITY_OPTION(pDWNF61, NULL, &doDOWNFLAG[61]);
+	REGISTER_ABILITY_OPTION(pDWNF62, NULL, &doDOWNFLAG[62]);
+	REGISTER_ABILITY_OPTION(pDWNF63, NULL, &doDOWNFLAG[63]);
+	REGISTER_ABILITY_OPTION(pDWNF64, NULL, &doDOWNFLAG[64]);
+	REGISTER_ABILITY_OPTION(pDWNF65, NULL, &doDOWNFLAG[65]);
+	REGISTER_ABILITY_OPTION(pDWNF66, NULL, &doDOWNFLAG[66]);
+	REGISTER_ABILITY_OPTION(pDWNF67, NULL, &doDOWNFLAG[67]);
+	REGISTER_ABILITY_OPTION(pDWNF68, NULL, &doDOWNFLAG[68]);
+	REGISTER_ABILITY_OPTION(pDWNF69, NULL, &doDOWNFLAG[69]);
+	REGISTER_ABILITY_OPTION(pDWNF70, NULL, &doDOWNFLAG[70]);
+	REGISTER_ABILITY_OPTION(pDWNF71, NULL, &doDOWNFLAG[71]);
+	REGISTER_ABILITY_OPTION(pDWNF72, NULL, &doDOWNFLAG[72]);
+	REGISTER_ABILITY_OPTION(pDWNF73, NULL, &doDOWNFLAG[73]);
+	REGISTER_ABILITY_OPTION(pDWNF74, NULL, &doDOWNFLAG[74]);
+	REGISTER_ABILITY_OPTION(pDWNF75, NULL, &doDOWNFLAG[75]);
+	REGISTER_ABILITY_OPTION(pDWNF76, NULL, &doDOWNFLAG[76]);
+	REGISTER_ABILITY_OPTION(pDWNF77, NULL, &doDOWNFLAG[77]);
+	REGISTER_ABILITY_OPTION(pDWNF78, NULL, &doDOWNFLAG[78]);
+	REGISTER_ABILITY_OPTION(pDWNF79, NULL, &doDOWNFLAG[79]);
+	REGISTER_ABILITY_OPTION(pDWNF80, NULL, &doDOWNFLAG[80]);
+	REGISTER_ABILITY_OPTION(pDWNF81, NULL, &doDOWNFLAG[81]);
+	REGISTER_ABILITY_OPTION(pDWNF82, NULL, &doDOWNFLAG[82]);
+	REGISTER_ABILITY_OPTION(pDWNF83, NULL, &doDOWNFLAG[83]);
+	REGISTER_ABILITY_OPTION(pDWNF84, NULL, &doDOWNFLAG[84]);
+	REGISTER_ABILITY_OPTION(pDWNF85, NULL, &doDOWNFLAG[85]);
+	REGISTER_ABILITY_OPTION(pDWNF86, NULL, &doDOWNFLAG[86]);
+	REGISTER_ABILITY_OPTION(pDWNF87, NULL, &doDOWNFLAG[87]);
+	REGISTER_ABILITY_OPTION(pDWNF88, NULL, &doDOWNFLAG[88]);
+	REGISTER_ABILITY_OPTION(pDWNF89, NULL, &doDOWNFLAG[89]);
+	REGISTER_ABILITY_OPTION(pDWNF90, NULL, &doDOWNFLAG[90]);
     REGISTER_ABILITY_OPTION(pEAGLE, NULL, &doEAGLESTRIKE);
     REGISTER_ABILITY_OPTION(pERAGE, NULL, &doENRAGE);
     REGISTER_ABILITY_OPTION(pERKCK, NULL, &doENRAGINGKICK);
@@ -4952,6 +5058,37 @@ PLUGIN_API void InitializePlugin()
     REGISTER_ABILITY_OPTION(pHOLF58, NULL, &doHOLYFLAG[58]);
     REGISTER_ABILITY_OPTION(pHOLF59, NULL, &doHOLYFLAG[59]);
     REGISTER_ABILITY_OPTION(pHOLF60, NULL, &doHOLYFLAG[60]);
+	REGISTER_ABILITY_OPTION(pHOLF60, NULL, &doHOLYFLAG[60]);
+	REGISTER_ABILITY_OPTION(pHOLF61, NULL, &doHOLYFLAG[61]);
+	REGISTER_ABILITY_OPTION(pHOLF62, NULL, &doHOLYFLAG[62]);
+	REGISTER_ABILITY_OPTION(pHOLF63, NULL, &doHOLYFLAG[63]);
+	REGISTER_ABILITY_OPTION(pHOLF64, NULL, &doHOLYFLAG[64]);
+	REGISTER_ABILITY_OPTION(pHOLF65, NULL, &doHOLYFLAG[65]);
+	REGISTER_ABILITY_OPTION(pHOLF66, NULL, &doHOLYFLAG[66]);
+	REGISTER_ABILITY_OPTION(pHOLF67, NULL, &doHOLYFLAG[67]);
+	REGISTER_ABILITY_OPTION(pHOLF68, NULL, &doHOLYFLAG[68]);
+	REGISTER_ABILITY_OPTION(pHOLF69, NULL, &doHOLYFLAG[69]);
+	REGISTER_ABILITY_OPTION(pHOLF70, NULL, &doHOLYFLAG[70]);
+	REGISTER_ABILITY_OPTION(pHOLF71, NULL, &doHOLYFLAG[71]);
+	REGISTER_ABILITY_OPTION(pHOLF72, NULL, &doHOLYFLAG[72]);
+	REGISTER_ABILITY_OPTION(pHOLF73, NULL, &doHOLYFLAG[73]);
+	REGISTER_ABILITY_OPTION(pHOLF74, NULL, &doHOLYFLAG[74]);
+	REGISTER_ABILITY_OPTION(pHOLF75, NULL, &doHOLYFLAG[75]);
+	REGISTER_ABILITY_OPTION(pHOLF76, NULL, &doHOLYFLAG[76]);
+	REGISTER_ABILITY_OPTION(pHOLF77, NULL, &doHOLYFLAG[77]);
+	REGISTER_ABILITY_OPTION(pHOLF78, NULL, &doHOLYFLAG[78]);
+	REGISTER_ABILITY_OPTION(pHOLF79, NULL, &doHOLYFLAG[79]);
+	REGISTER_ABILITY_OPTION(pHOLF80, NULL, &doHOLYFLAG[80]);
+	REGISTER_ABILITY_OPTION(pHOLF81, NULL, &doHOLYFLAG[81]);
+	REGISTER_ABILITY_OPTION(pHOLF82, NULL, &doHOLYFLAG[82]);
+	REGISTER_ABILITY_OPTION(pHOLF83, NULL, &doHOLYFLAG[83]);
+	REGISTER_ABILITY_OPTION(pHOLF84, NULL, &doHOLYFLAG[84]);
+	REGISTER_ABILITY_OPTION(pHOLF85, NULL, &doHOLYFLAG[85]);
+	REGISTER_ABILITY_OPTION(pHOLF86, NULL, &doHOLYFLAG[86]);
+	REGISTER_ABILITY_OPTION(pHOLF87, NULL, &doHOLYFLAG[87]);
+	REGISTER_ABILITY_OPTION(pHOLF88, NULL, &doHOLYFLAG[88]);
+	REGISTER_ABILITY_OPTION(pHOLF89, NULL, &doHOLYFLAG[89]);
+	REGISTER_ABILITY_OPTION(pHOLF90, NULL, &doHOLYFLAG[90]);
     REGISTER_ABILITY_OPTION(pHOVER, NULL, &doPOTHEALOVER);
     REGISTER_ABILITY_OPTION(pINFUR, NULL, &doINFURIATE);
     REGISTER_ABILITY_OPTION(pINTIM, NULL, &doINTIMIDATION);
@@ -5170,6 +5307,36 @@ PLUGIN_API void InitializePlugin()
     MapInsert(&IniListe, Option("downshit58", "", "", "", NULL, &DOWNSHIT[58]));
     MapInsert(&IniListe, Option("downshit59", "", "", "", NULL, &DOWNSHIT[59]));
     MapInsert(&IniListe, Option("downshit60", "", "", "", NULL, &DOWNSHIT[60]));
+	MapInsert(&IniListe, Option("downshit61", "", "", "", NULL, &DOWNSHIT[61]));
+	MapInsert(&IniListe, Option("downshit62", "", "", "", NULL, &DOWNSHIT[62]));
+	MapInsert(&IniListe, Option("downshit63", "", "", "", NULL, &DOWNSHIT[63]));
+	MapInsert(&IniListe, Option("downshit64", "", "", "", NULL, &DOWNSHIT[64]));
+	MapInsert(&IniListe, Option("downshit65", "", "", "", NULL, &DOWNSHIT[65]));
+	MapInsert(&IniListe, Option("downshit66", "", "", "", NULL, &DOWNSHIT[66]));
+	MapInsert(&IniListe, Option("downshit67", "", "", "", NULL, &DOWNSHIT[67]));
+	MapInsert(&IniListe, Option("downshit68", "", "", "", NULL, &DOWNSHIT[68]));
+	MapInsert(&IniListe, Option("downshit69", "", "", "", NULL, &DOWNSHIT[69]));
+	MapInsert(&IniListe, Option("downshit70", "", "", "", NULL, &DOWNSHIT[70]));
+	MapInsert(&IniListe, Option("downshit71", "", "", "", NULL, &DOWNSHIT[71]));
+	MapInsert(&IniListe, Option("downshit72", "", "", "", NULL, &DOWNSHIT[72]));
+	MapInsert(&IniListe, Option("downshit73", "", "", "", NULL, &DOWNSHIT[73]));
+	MapInsert(&IniListe, Option("downshit74", "", "", "", NULL, &DOWNSHIT[74]));
+	MapInsert(&IniListe, Option("downshit75", "", "", "", NULL, &DOWNSHIT[75]));
+	MapInsert(&IniListe, Option("downshit76", "", "", "", NULL, &DOWNSHIT[76]));
+	MapInsert(&IniListe, Option("downshit77", "", "", "", NULL, &DOWNSHIT[77]));
+	MapInsert(&IniListe, Option("downshit78", "", "", "", NULL, &DOWNSHIT[78]));
+	MapInsert(&IniListe, Option("downshit79", "", "", "", NULL, &DOWNSHIT[79]));
+	MapInsert(&IniListe, Option("downshit80", "", "", "", NULL, &DOWNSHIT[80]));
+	MapInsert(&IniListe, Option("downshit81", "", "", "", NULL, &DOWNSHIT[81]));
+	MapInsert(&IniListe, Option("downshit82", "", "", "", NULL, &DOWNSHIT[82]));
+	MapInsert(&IniListe, Option("downshit83", "", "", "", NULL, &DOWNSHIT[83]));
+	MapInsert(&IniListe, Option("downshit84", "", "", "", NULL, &DOWNSHIT[84]));
+	MapInsert(&IniListe, Option("downshit85", "", "", "", NULL, &DOWNSHIT[85]));
+	MapInsert(&IniListe, Option("downshit86", "", "", "", NULL, &DOWNSHIT[86]));
+	MapInsert(&IniListe, Option("downshit87", "", "", "", NULL, &DOWNSHIT[87]));
+	MapInsert(&IniListe, Option("downshit88", "", "", "", NULL, &DOWNSHIT[88]));
+	MapInsert(&IniListe, Option("downshit89", "", "", "", NULL, &DOWNSHIT[89]));
+	MapInsert(&IniListe, Option("downshit90", "", "", "", NULL, &DOWNSHIT[90]));
     MapInsert(&IniListe, Option("downshitif", "", "", "", NULL, &DOWNSHITIF));
     MapInsert(&IniListe, Option("holyshit0", "", "", "", NULL, &HOLYSHIT[0]));
     MapInsert(&IniListe, Option("holyshit1", "", "", "", NULL, &HOLYSHIT[1]));
@@ -5232,6 +5399,36 @@ PLUGIN_API void InitializePlugin()
     MapInsert(&IniListe, Option("holyshit58", "", "", "", NULL, &HOLYSHIT[58]));
     MapInsert(&IniListe, Option("holyshit59", "", "", "", NULL, &HOLYSHIT[59]));
     MapInsert(&IniListe, Option("holyshit60", "", "", "", NULL, &HOLYSHIT[60]));
+	MapInsert(&IniListe, Option("holyshit61", "", "", "", NULL, &HOLYSHIT[61]));
+	MapInsert(&IniListe, Option("holyshit62", "", "", "", NULL, &HOLYSHIT[62]));
+	MapInsert(&IniListe, Option("holyshit63", "", "", "", NULL, &HOLYSHIT[63]));
+	MapInsert(&IniListe, Option("holyshit64", "", "", "", NULL, &HOLYSHIT[64]));
+	MapInsert(&IniListe, Option("holyshit65", "", "", "", NULL, &HOLYSHIT[65]));
+	MapInsert(&IniListe, Option("holyshit66", "", "", "", NULL, &HOLYSHIT[66]));
+	MapInsert(&IniListe, Option("holyshit67", "", "", "", NULL, &HOLYSHIT[67]));
+	MapInsert(&IniListe, Option("holyshit68", "", "", "", NULL, &HOLYSHIT[68]));
+	MapInsert(&IniListe, Option("holyshit69", "", "", "", NULL, &HOLYSHIT[69]));
+	MapInsert(&IniListe, Option("holyshit70", "", "", "", NULL, &HOLYSHIT[70]));
+	MapInsert(&IniListe, Option("holyshit71", "", "", "", NULL, &HOLYSHIT[71]));
+	MapInsert(&IniListe, Option("holyshit72", "", "", "", NULL, &HOLYSHIT[72]));
+	MapInsert(&IniListe, Option("holyshit73", "", "", "", NULL, &HOLYSHIT[73]));
+	MapInsert(&IniListe, Option("holyshit74", "", "", "", NULL, &HOLYSHIT[74]));
+	MapInsert(&IniListe, Option("holyshit75", "", "", "", NULL, &HOLYSHIT[75]));
+	MapInsert(&IniListe, Option("holyshit76", "", "", "", NULL, &HOLYSHIT[76]));
+	MapInsert(&IniListe, Option("holyshit77", "", "", "", NULL, &HOLYSHIT[77]));
+	MapInsert(&IniListe, Option("holyshit78", "", "", "", NULL, &HOLYSHIT[78]));
+	MapInsert(&IniListe, Option("holyshit79", "", "", "", NULL, &HOLYSHIT[79]));
+	MapInsert(&IniListe, Option("holyshit80", "", "", "", NULL, &HOLYSHIT[80]));
+	MapInsert(&IniListe, Option("holyshit81", "", "", "", NULL, &HOLYSHIT[81]));
+	MapInsert(&IniListe, Option("holyshit82", "", "", "", NULL, &HOLYSHIT[82]));
+	MapInsert(&IniListe, Option("holyshit83", "", "", "", NULL, &HOLYSHIT[83]));
+	MapInsert(&IniListe, Option("holyshit84", "", "", "", NULL, &HOLYSHIT[84]));
+	MapInsert(&IniListe, Option("holyshit85", "", "", "", NULL, &HOLYSHIT[85]));
+	MapInsert(&IniListe, Option("holyshit86", "", "", "", NULL, &HOLYSHIT[86]));
+	MapInsert(&IniListe, Option("holyshit87", "", "", "", NULL, &HOLYSHIT[87]));
+	MapInsert(&IniListe, Option("holyshit88", "", "", "", NULL, &HOLYSHIT[88]));
+	MapInsert(&IniListe, Option("holyshit89", "", "", "", NULL, &HOLYSHIT[89]));
+	MapInsert(&IniListe, Option("holyshit90", "", "", "", NULL, &HOLYSHIT[90]));
     MapInsert(&IniListe, Option("holyshitif", "", "", "", NULL, &HOLYSHITIF));
 
     VarListe.clear();
