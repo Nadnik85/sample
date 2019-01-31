@@ -2,6 +2,7 @@
 // MQ2Radar by Odessa (eqplugins@gmail.com)
 // 1.0 July 5/2007
 // 2.0 July 8/2018 - eqmule updated to work again, removed dependency on DSurface.exe, there is no need for it anymore.
+// 2.1 Jan 31, 2019 - chatwiththisname - Added option to change map layer for LoadMap, added "/radar layer" option. 
 */
 
 #pragma warning(disable : 4244)
@@ -14,7 +15,7 @@
 using namespace std;
 PreSetup("MQ2Radar");
 HMODULE hDSurface = 0;
-PLUGIN_VERSION(2.0);
+PLUGIN_VERSION(2.1);
 
 //vDInput__MouseWheelScrolled was 0x6E3E10 08-18-09 I think it is actually __HandleMouseWheel
 
@@ -28,6 +29,7 @@ int vCEverQuest__LeftClickedOnPlayer = CEverQuest__LeftClickedOnPlayer;
 int igSkipPulses = 1; // how many pulses to skip
 int igSkipPulse = 0; // pulse counter
 int igMode = 0; // radar mode
+int mapLayer = 0; //what map layer to use
 surface igSurface; // surface from DSurface
 int igRadarButton = VK_F11; // toggle button
 float fgZoom = 1.0f; // radar zoom
@@ -66,7 +68,7 @@ public:
 	void EQClick_Detour(EQPlayer* pPlayer)
 	{
 		// If a CTRLClick happened within radar circle do not let EQ know about a click
-		if (!GetAsyncKeyState(VK_LCONTROL) || !DSPointInCircle(gCenter.x, gCenter.y, fgViewDistance*fgScale, (float)EQADDR_MOUSE->X, (float)EQADDR_MOUSE->Y))
+		if (!GetAsyncKeyState(VK_LCONTROL) || !DSPointInCircle(gCenter.x, gCenter.y, fgViewDistance*fgScale, (float)EQADDR_MOUSE->X, (float)EQADDR_MOUSE->Y)) 
 			EQClick_Trampoline(pPlayer);
 	}
 };
@@ -75,7 +77,7 @@ void MouseScroll_Trampoline(int);
 void MouseScroll_Detour(int scroll)
 {
 	// If we are holding CTRL and scrolling the mouse within a radar circle do zooming
-	if (!GetAsyncKeyState(VK_LCONTROL) || !DSPointInCircle(gCenter.x, gCenter.y, fgViewDistance*fgScale, (float)EQADDR_MOUSE->X, (float)EQADDR_MOUSE->Y))
+	if (!GetAsyncKeyState(VK_LCONTROL) || !DSPointInCircle(gCenter.x, gCenter.y, fgViewDistance*fgScale, (float)EQADDR_MOUSE->X, (float)EQADDR_MOUSE->Y)) 
 		MouseScroll_Trampoline(scroll);
 	else {
 		if (scroll<0)
@@ -170,7 +172,7 @@ void RadarZDepth(float zDepth)
 }
 
 void RadarHelp() {
-	WriteChatColor("MQ2Radar:\n/radar COMMAND\nCOMMANDS:\ncenter x y\nview z\nscale z\nzoom z\nzdepth z\nalertspeed z\nmode 0/1\nnames on/off\nmap on/off\ntargetline on/off\ndelay z\nspawnsize on/off (z)\nsave\nreload\ntoggle\noptions");
+	WriteChatColor("MQ2Radar:\n/radar COMMAND\nCOMMANDS:\ncenter x y\nview z\nscale z\nzoom z\nzdepth z\nalertspeed z\nmode 0/1\nnames on/off\nmap on/off\ntargetline on/off\ndelay z\nspawnsize on/off (z)\nsave\nreload\ntoggle\noptions\nlayer");
 }
 
 // Check if the mouse is over a radar element
@@ -298,6 +300,11 @@ VOID Load_MQ2CharRadar_INI()
 	sprintf_s(szTemp, "%d", bgDrawMap);
 	WritePrivateProfileString("MQ2Radar", "Map", szTemp, INIFileName);
 
+	GetPrivateProfileString("MQ2Radar", "MapLayer", "0", &szTemp[0], sizeof(szTemp), INIFileName);
+	mapLayer = atoi(&szTemp[0]) != 0;;
+	sprintf_s(szTemp, "%d", mapLayer);
+	WritePrivateProfileString("MQ2Radar", "MapLayer", szTemp, INIFileName);
+
 	GetPrivateProfileString("MQ2Radar", "TargetLine", "1", &szTemp[0], sizeof(szTemp), INIFileName);
 	bgDrawTargetLine = atoi(&szTemp[0]) != 0;;
 	sprintf_s(szTemp, "%d", bgDrawTargetLine);
@@ -384,7 +391,23 @@ void LoadMap(char* pZone) {
 	char cFileName[2048];
 	line tempLine;
 	gMap.clear();
-	sprintf_s(cFileName, "%s\\maps\\%s_1.txt", gszEQPath, pZone);
+	switch (mapLayer) {
+		case 0:
+			sprintf_s(cFileName, "%s\\maps\\%s.txt", gszEQPath, pZone);
+			break;
+		case 1:
+			sprintf_s(cFileName, "%s\\maps\\%s_1.txt", gszEQPath, pZone);
+			break;
+		case 2:
+			sprintf_s(cFileName, "%s\\maps\\%s_2.txt", gszEQPath, pZone);
+			break;
+		case 3:
+			sprintf_s(cFileName, "%s\\maps\\%s_3.txt", gszEQPath, pZone);
+			break;
+		default:
+			sprintf_s(cFileName, "%s\\maps\\%s.txt", gszEQPath, pZone);
+			break;
+	}
 	errno_t err = fopen_s(&pFile,cFileName, "rt");
 	if (!err) {
 		while (fgets(cBuffer, 128, pFile) != NULL) {
@@ -695,6 +718,21 @@ void Radar(PSPAWNINFO pChar, PCHAR szLine)
 	else if (strcmp(szSwitch, "options") == 0) RadarShowOptions();
 	else if (_stricmp(szSwitch, "filter") == 0) RadarFilter(GetNextArg(szLine, 1), _stricmp(GetNextArg(szLine, 2), "on") ? false : true);
 	else if (strcmp(szSwitch, "toggle") == 0) ShowHide();
+	else if (!_stricmp(szSwitch, "layer")) {
+		GetArg(szSwitch, szLine, 2);
+		if (!strlen(szSwitch)) {
+			WriteChatf("Select a layer between 0 and 3. 0 is the Base Layer.");
+			return;
+		}
+		if (atoi(szSwitch) > -1 && atoi(szSwitch) < 4) {
+			mapLayer = atoi(szSwitch);
+			WritePrivateProfileString("MQ2Radar", "MapLayer", szSwitch, INIFileName);
+			WriteChatf("MapLayer set to: %s", szSwitch);
+			if (!InGame())
+				return;
+			LoadMap(GetShortZone(GetCharInfo()->pSpawn->Zone));
+		}
+	}
 	else RadarHelp();
 }
 
