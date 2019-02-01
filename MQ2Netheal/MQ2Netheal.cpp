@@ -195,8 +195,17 @@ void UpdateIDLifePCT(DWORD ID, __int64 PCT) {
 }
 
 template <unsigned int _Size>PSTR MakeHeal(CHAR(&Buffer)[_Size], PSPAWNINFO x) {
-	if ((SpawnMask(x)&st_pw) == 0) Buffer[0] = 0;
-	else sprintf_s(Buffer, "%d=%I64d:", x->SpawnID, x->HPCurrent * 100 / x->HPMax);
+	if ((SpawnMask(x)&st_pw) == 0)
+	{
+		Buffer[0] = '\0';
+	}
+	else {
+		#if !defined(ROF2EMU) && !defined(UFEMU)
+		sprintf_s(Buffer, "%d=%I64d:", x->SpawnID, x->HPCurrent * 100 / x->HPMax);
+		#else
+		sprintf_s(Buffer, "%d=%d:", x->SpawnID, x->HPCurrent * 100 / x->HPMax);
+		#endif
+	}
 	return Buffer;
 }
 

@@ -1,3 +1,14 @@
+Jan 31 2019 by RedGuides
+- kissassist1004e15 (eqmule) updated with tweaks to pulling & casting
+- Ninjadvloot (eqmule) Added code to respect the user's advloot settings
+
+Jan 31 2019 by RedGuides
+- MQ2AutoLoot (plure) Fixed several crashes related to /AutoLoot sell.
+- MQ2Events (eqmule) Fixed a crash
+- KissAssist (ctaylor22, Maskoi) Fix for PullMoveUse not getting set and Chase throwing errors when MQ2Navigation Not loaded.
+  Fix for the tanks that sat around camp after death, additional debug code and minor fixes.
+- MQ2TributeManager (wired420) Saves info to ServerName_CharacterName.ini in main MQ\Release directory under heading [MQ2TributeManager].
+
 Jan 21 2019 by RedGuides
 - MQ2Spawnmaster (ChatWithThisName) Updated the .ini to reduce user error when setting a spawn alert.
 

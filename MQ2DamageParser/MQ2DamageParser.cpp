@@ -962,7 +962,7 @@ PLUGIN_API VOID InitializePlugin(VOID)
 	}
 	CHAR szShowLogWindow[MAX_STRING] = { 0 };
 	ReadStringSetting("ShowLogWindow", "0", szShowLogWindow);
-	gbShowLogWindow = atoi(szShowLogWindow);
+	gbShowLogWindow = atoi(szShowLogWindow) ? true:false;
 	//dots are unfortunately just text messages from the server
 	EzDetourwName(__msgTokenTextParam, msgTokenTextParam_Detour, msgTokenTextParam_Tramp, "mTTP");
 
