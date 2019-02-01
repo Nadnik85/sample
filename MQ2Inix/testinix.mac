@@ -1,0 +1,20 @@
+Sub Grimoire(string find, sting lookfor)
+    /declare i int local
+    /for i 1 to ${lookfor.Count[|]}
+         /varset ${find} ${lookfor.Arg[${i},|]}
+         /if (${Me.Book[${${find}}]} && ${Me.Level} >= ${Spell[${find}].Level}) /return
+    /next i
+/return
+
+Sub Main
+	/declare MyINI string outer "..\${MacroQuest.Server}_${Me.CleanName}.ini"
+	/declare SetSP string outer 
+
+    /call Grimoire SetSP "|Yaulp XI Rk. II|Yaulp X|Yaulp IX|Yaulp VIII|Yaulp VII|"
+	/inix ${MyINI} MQ2Melee downshit0 "/if (^{Me.Buff[${SetSP}].Duration} < 10000 && ^{Cast.Ready[${Spell[${SetSP}].ID}|gem]} && !^{Me.Mount.ID}) /casting ${Spell[${SetSP}].ID}|gem"
+	/inix ${MyINI} MQ2Melee holyshit0 "/if (^{Me.Buff[${SetSP}].Duration} < 10000 && ^{Cast.Ready[${Spell[${SetSP}].ID}|gem]} && !^{Me.Mount.ID}) /casting ${Spell[${SetSP}].ID}|gem"
+    /inix ${MyINI} MQ2Melee downflag0 1
+    /inix ${MyINI} MQ2Melee holyflag0 1
+
+	/melee load
+/return
