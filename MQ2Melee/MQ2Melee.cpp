@@ -27,7 +27,8 @@
 //                          | 2017-12-12: UPdated by rswiders (Ring of Scale abilities)
 //                          | 2018-01-19: Updated by Saar (rest of the RoS abilities)
 //                          | 2018-04-24: Updated by Eqmule (Slam Fix)
-//						    | 2919-01-28: Updated by s0rcier down/holyflag=3 parse when no macro running. increase down/holy shits to 90. stickmode=2 (disable sticking)
+//						    | 2019-01-28: Updated by s0rcier down/holyflag=3 parse when no macro running. increase down/holy shits to 90. stickmode=2 (disable sticking)
+//							| 2019-02-01: Updated Immobile flags to return false for a litte after being summoned
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
 // SHOW_ABILITY:    0=0ff, 1=Display every ability that plugin use.
 // SHOW_ATTACKING:  0=0ff, 1=Display Attacking Target
@@ -5662,6 +5663,11 @@ PLUGIN_API unsigned long OnIncomingChat(char* Line, unsigned long Color)
     return 0;
 }
 
+float CalcDist = 0.0f;	// Calculate Distance Moved Since Last Pulse
+float SaveX = 0.0f;		// Current Position X
+float SaveY = 0.0f;		// Current Position Y
+float SaveZ = 0.0f;		// Current Position Z
+
 PLUGIN_API void OnPulse()
 {
     if (doSKILL && Loaded && gbInZone && SpawnMe())
@@ -5675,10 +5681,18 @@ PLUGIN_API void OnPulse()
             }
             if (!HiddenTimer && IsInvisible()) HiddenTimer = (unsigned long)clock();
             if (!SilentTimer && IsSneaking())  SilentTimer = (unsigned long)clock();
-            Travel = SpeedRun(SpawnMe());
-            if (Moving = (Travel > 0.05 || Travel < -0.05)) TimerMove = (unsigned long)clock() + delay * 5;
-            Immobile = (!(MQ2Globals::gbMoving) && (!TimerMove || (unsigned long)clock() > TimerMove));
 
+			Travel = 5.0f; // assume we moving like a jet :P
+			if (PSPAWNINFO MySpawn = SpawnMe())
+			{
+				CalcDist = fabs(GetDistance3D(SaveX, SaveY, SaveZ, MySpawn->X, MySpawn->Y, MySpawn->Z));
+				SaveX	 = MySpawn->X;
+				SaveY	 = MySpawn->Y;
+				SaveZ	 = MySpawn->Z;
+				Travel	 = SpeedRun(MySpawn);
+			}
+			if (Moving = (Travel > 0.05 || Travel < -0.05 || CalcDist < 12.0f)) TimerMove = (unsigned long)clock() + delay * 7;
+			Immobile = (!(MQ2Globals::gbMoving) && (!TimerMove || (unsigned long)clock() > TimerMove));
 
             if (doPETASSIST)
             {
