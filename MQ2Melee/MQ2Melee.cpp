@@ -5691,7 +5691,7 @@ PLUGIN_API void OnPulse()
 				SaveZ	 = MySpawn->Z;
 				Travel	 = SpeedRun(MySpawn);
 			}
-			if (Moving = (Travel > 0.05 || Travel < -0.05 || CalcDist < 12.0f)) TimerMove = (unsigned long)clock() + delay * 7;
+			if (Moving = (Travel > 0.05 || Travel < -0.05 || CalcDist > 12.0f)) TimerMove = (unsigned long)clock() + delay * 7;
 			Immobile = (!(MQ2Globals::gbMoving) && (!TimerMove || (unsigned long)clock() > TimerMove));
 
             if (doPETASSIST)
