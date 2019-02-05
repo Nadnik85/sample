@@ -1,3 +1,11 @@
+Feb 05 2019 by EqMule
+- Fixed a bug in /unload
+- Misc Stability fixes all over the place.
+- Fixed a nasty stack overflow crash in mq2log
+-
+Jan 21 2019 by SwiftyMUSE
+- Resync of code with ROF2EMU
+
 Jan 21 2019 by EqMule
 - Dump file directory will now be created if it doesn't exist
   this fixes the bug where you see a crash dialog that just say "Dump saved to"
