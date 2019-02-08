@@ -29,6 +29,7 @@
 //                          | 2018-04-24: Updated by Eqmule (Slam Fix)
 //						    | 2019-01-28: Updated by s0rcier down/holyflag=3 parse when no macro running. increase down/holy shits to 90. stickmode=2 (disable sticking)
 //							| 2019-02-01: Updated Immobile flags to return false for a litte after being summoned
+//							| 2019-02-07: Fixed Two Handed Bash skills... 
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
 // SHOW_ABILITY:    0=0ff, 1=Display every ability that plugin use.
 // SHOW_ATTACKING:  0=0ff, 1=Display Attacking Target
@@ -46,7 +47,7 @@
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
 #define   PLUGIN_NAME  "MQ2Melee"   // Plugin Name
 #define   PLUGIN_DATE   20190128    // Plugin Date
-#define   PLUGIN_VERS   8.8         // Plugin Version
+#define   PLUGIN_VERS   8.801       // Plugin Version
 
 #define   SHOW_ABILITY         0
 #define   SHOW_ATTACKING       1
@@ -3146,7 +3147,11 @@ void Configure() {
             }
         }
     }
-    HaveBash = GetAAIndexByName("2 Hand Bash") ? true : false;
+	#if !defined(ROF2EMU) && !defined(UFEMU)
+		HaveBash = GetAAIndexByName("Two-Handed Bash") ? true : false;
+	#else
+		HaveBash = GetAAIndexByName("2 Hand Bash") ? true : false;
+	#endif
     BardClass = false;
     BerserkerClass = false;
     MonkClass = false;
