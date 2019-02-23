@@ -1,3 +1,16 @@
+Feb 22 2019 #2 by EqMule
+- Updated for TEST
+-
+Feb 21 2019 #2 by EqMule
+- Fixed /ranged crash, yes really this time. It got another parameter, don't know what it is.
+-
+Feb 21 2019 by EqMule
+- Fixed the spawninfo struct this means most weird crashes in mq2main and all kinds of plugins like mq2heals,mq2posse etc are now fixed.
+- I will realign address comments for it later in practice it works.
+-
+Feb 20 2019 by EqMule
+- Updated for LIVE
+-
 Feb 15 2019 by EqMule
 - Updated for TEST
 -
