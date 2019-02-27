@@ -70,7 +70,7 @@ public:
 		// If a CTRLClick happened within radar circle do not let EQ know about a click
 		if (!GetAsyncKeyState(VK_LCONTROL) || !DSPointInCircle(gCenter.x, gCenter.y, fgViewDistance*fgScale, (float)EQADDR_MOUSE->X, (float)EQADDR_MOUSE->Y)) 
 			EQClick_Trampoline(pPlayer);
-		}
+	}
 };
 // Detours scroll wheel// Detours scroll wheel
 void MouseScroll_Trampoline(int);
