@@ -2082,10 +2082,10 @@ public:
     CMoveUtilsWnd(CXStr* Template) : CCustomWnd(Template)
     {
         SetWndNotification(CMoveUtilsWnd);
-        StmlOut                                     = (CStmlWnd*)GetChildItem("CWChatOutput");
+        StmlOut                                     = (CStmlWnd*)GetChildItem("CW_ChatOutput");
         OutWnd                                      = (CXWnd*)StmlOut;
         OutWnd->Clickable                           = 1;
-        OutStruct                                   = (_CSIDLWND*)GetChildItem("CWChatOutput");
+        OutStruct                                   = (_CSIDLWND*)GetChildItem("CW_ChatOutput");
         CloseOnESC                                  = 0;
 		StmlOut->MaxLines                           = 0x190;
         BitOff(WindowStyle, CWS_CLOSE);
