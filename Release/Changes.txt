@@ -1,3 +1,6 @@
+Mar 13 2019 by EqMule
+- Updated for LIVE
+-
 Mar 06 2019 by EqMule
 - Updated for TEST
 - All instances of CWChatInput has been changed to CW_ChatInput due to a client change.
