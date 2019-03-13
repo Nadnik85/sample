@@ -106,10 +106,12 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 	if (useConditions == 2)
 		sprintf_s(ConditionsFile, "%s\\Macros\\Kissassist_%s.ini", gszINIPath, pChar->Name);
 
-	//Lemme insert the start of code tags for the user using ios::in - this should overwrite the file for us. 
+	//Lemme insert the start of code tags for the user using ios::in - this should overwrite the file for us.
+	remove(newfilename);
+	WritePrivateProfileString("SpellSet", "LoadSpellSet", "2", newfilename);
 	ofstream myfile;
 	myfile.open(newfilename, ios::in);
-	char codetag[MAX_STRING] = "";
+	char codetag[MAX_STRING] = { 0 };
 	sprintf_s(codetag, "[CODE = INI | KissAssist INI - %s]", OurClass);
 	myfile << codetag << endl;
 	myfile.close();
