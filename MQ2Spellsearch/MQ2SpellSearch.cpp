@@ -62,7 +62,7 @@ public:
 	CStmlWnd *OutputBox; 
 	CSpellInfoWnd():CCustomWnd("ChatWindow") 
 	{ 
-		OutputBox=(CStmlWnd*)GetChildItem("CWChatOutput"); 
+		OutputBox=(CStmlWnd*)GetChildItem("CW_ChatOutput"); 
 		SetWndNotification(CSpellInfoWnd); 
 		dShow = 0; 
 	} 
