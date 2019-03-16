@@ -1,9 +1,9 @@
-
+Mar 16 2019 by EqMule
+- Updated for TEST
+-
 Mar 14 2019 by EqMule
 - Fixed a crash when doing: /echo ${Window[MarketplaceWnd].Child[MKPW_AvailableFundsUpper].Text}
 - Fixed ${Math.Abs} - SwiftyMUSE
-- Fixed CWChatOutput crash in mq2spawns
-- Fixed CWChatOutput crash in mq2spellsearch
 -
 Mar 13 2019 by EqMule
 - Updated for LIVE
