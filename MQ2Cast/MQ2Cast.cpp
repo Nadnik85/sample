@@ -562,7 +562,7 @@ bool ItemSearch(PCHAR szItemName, long B, long E)
 	return false;
 }
 bool SpellFind(PCHAR szSpellorAltorItemName, PCHAR szTYPE) {
-	DWORD n = 0;
+	VePointer<CONTENTS> n;
 	if (szSpellorAltorItemName[0]) {
 		// is it an alt ability?
 		if (!szTYPE[0] || !_strnicmp(szTYPE, "alt", 3)) {
@@ -582,8 +582,8 @@ bool SpellFind(PCHAR szSpellorAltorItemName, PCHAR szTYPE) {
 			if (PSPELL Search = SpellBook(szSpellorAltorItemName)) {
 				fFIND = Search;
 				fINFO = Search;
-				fTIME = pCharData1->GetAACastingTimeModifier((EQ_Spell*)fFIND) +
-					pCharData1->GetFocusCastingTimeModifier((EQ_Spell*)fFIND, (EQ_Equipment**)&n, 0) +
+				fTIME = GetCastingTimeModifier((EQ_Spell*)fFIND) +
+					GetFocusCastingTimeModifier((EQ_Spell*)fFIND, n, false) +
 					fFIND->CastTime;
 				fNAME = (PCHAR)fFIND->Name;
 				fTYPE = TYPE_SPELL;

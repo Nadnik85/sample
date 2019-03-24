@@ -1,3 +1,30 @@
+Mar 23 2019 by RedGuides
+- MQ2Heals (jimbob) Fixed duplicate HotHeals, added Druid & Shaman AA heals, updated xtarget code.
+-
+Mar 23 2019 by EqMule
+- GetAACastingTimeModifier has been renamed to GetCastingTimeModifier (because it is)
+- GetCastingTimeModifier and GetFocusRangeModifier has been changed to deal with a ctd.
+- All plugin that call these needs to be changed, search for them and see how I fixed it in core.
+- No plugins should call the EQ_Character1::GetCastingTimeModifier and EQ_Character1::GetFocusRangeModifier directly
+- ALWAYS call the wrappers in mq2inlines. (well you can continue calling them directly but good luck with the crashes)
+- Fixed crashes in the spell tlo members .MyCastTime and .MyRange
+- CONTENTS member ItemType has been renamed to RefCount
+- This member should never ever be set or changed manually in plugins,
+- it's an internal eqgame counter, if you mess with it you are going to screw up checksums and get disconnected.
+- MQ2Cast needs to be updated look at the builder global version if you need help.
+- 
+Mar 18 2019 by EqMule
+- Fixed a bug when doing /ctrl /itemnotify and OpenContainer needed to be called
+- Added Make Me Leader to mq2targetinfo rightclick on group member menu
+-
+Mar 16 2019 by RedGuides
+- MQ2Heals (jimbob) Added "Dissident Blessing" to cleric spells 
+- MQ2AFNuke (jimbob) added "Dissident Companion" to mage spells
+- Zones.ini (saar) added gnome mountain ;)
+-
+Mar 16 2019 by EqMule
+- Updated for TEST
+-
 Mar 14 2019 by EqMule
 - Fixed a crash when doing: /echo ${Window[MarketplaceWnd].Child[MKPW_AvailableFundsUpper].Text}
 - Fixed ${Math.Abs} - SwiftyMUSE
