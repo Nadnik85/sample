@@ -2088,6 +2088,10 @@ public:
         OutStruct                                   = (_CSIDLWND*)GetChildItem("CW_ChatOutput");
         CloseOnESC                                  = 0;
 		StmlOut->MaxLines                           = 0x190;
+		BitOn(WindowStyle, CWS_TITLE);
+		BitOn(WindowStyle, CWS_MINIMIZE);
+		BitOn(WindowStyle, CWS_RESIZEBORDER);
+		BitOff(WindowStyle, CWS_TRANSPARENT);
         BitOff(WindowStyle, CWS_CLOSE);
     };
 
