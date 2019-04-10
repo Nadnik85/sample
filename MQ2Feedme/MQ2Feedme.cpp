@@ -44,7 +44,7 @@ using namespace std;
 PreSetup("MQ2FeedMe");
 PLUGIN_VERSION(4.0);
 
-#define	SKIP_PULSES	500
+#define	SKIP_PULSES	50
 #define	NOID -1
 
 bool         Loaded=0;                           // List Loaded?
@@ -107,7 +107,7 @@ bool GoodToFeed()
   if(MQ2Globals::gGameState==GAMESTATE_INGAME)   // currently ingame
   if(GetCharInfo2())                             // get charinfo
   if(!CursorHasItem())                           // nothing on cursor
-  if(!IsCasting())                               // not casting
+  if ((IsCasting() ? (GetCharInfo2() && GetCharInfo2()->Class != EQData::Bard ? false : true) : true)) // not casting
   if(!AbilityInUse())                            // not using abilities
   if(!WindowOpen("SpellBookWnd"))                // not medding a spell
   if(!WindowOpen("MerchantWnd"))                 // not interacting with vendor
@@ -162,66 +162,165 @@ void Consume(BYTE fTYPE, list<string> fLIST)
 
 void AutoFeedCmd(PSPAWNINFO pLPlayer, char* szLine)
 {
-     if (szLine[0] != 0) {
-        if (!_strnicmp(szLine, "list", 5)) {
-            WriteChatf("\ay%s\aw:: Listing Food:", PLUGIN_NAME);
-            ListTypes(Hunger);
-		    if (bAnnLevels) {
-		        sprintf_s(Buffer, "%d", FeedAt);
-			    WriteChatf("\ay%s\aw:: AutoFeed(\ag%s\ax).", PLUGIN_NAME, (FeedAt) ? Buffer : "\aroff");
-			    WriteChatf("\ay%s\aw:: Current Hunger(\ag%d\ax)", PLUGIN_NAME, GetCharInfo2()->hungerlevel);
-		    }
-        } else if (!_strnicmp(szLine, "warn", 5)) {
-            if (bFoodWarn) {
-                bFoodWarn = 0;
-                WriteChatf("\ay%s\aw:: Food Warning Off", PLUGIN_NAME);
-            } else {
-                bFoodWarn = 1;
-                WriteChatf("\ay%s\aw:: Food Warning On", PLUGIN_NAME);
-            }
+	if (!strlen(szLine)) {
+		if (GoodToFeed()) Consume(ITEMITEMTYPE_FOOD, Hunger);
+		return;
+	}
+	CHAR Arg[MAX_STRING] = { 0 };
+	GetArg(Arg, szLine, 1);
+    if (!_stricmp(Arg, "list")) {
+        WriteChatf("\ay%s\aw:: Listing Food:", PLUGIN_NAME);
+        ListTypes(Hunger);
+		if (bAnnLevels) {
+		    sprintf_s(Buffer, "%d", FeedAt);
+			WriteChatf("\ay%s\aw:: AutoFeed(\ag%s\ax).", PLUGIN_NAME, (FeedAt) ? Buffer : "\aroff");
+			WriteChatf("\ay%s\aw:: Current Hunger(\ag%d\ax)", PLUGIN_NAME, GetCharInfo2()->hungerlevel);
+		}
+    } else if (!_stricmp(Arg, "warn")) {
+        if (bFoodWarn) {
+            bFoodWarn = 0;
+            WriteChatf("\ay%s\aw:: Food Warning Off", PLUGIN_NAME);
         } else {
-            FeedAt = atoi(szLine);
-            if (FeedAt < 0) FeedAt = 0;
-            else if (FeedAt > 5000) FeedAt = 5000;
-            sprintf_s(Buffer, "%d", FeedAt);
-            WritePrivateProfileString(GetCharInfo()->Name, "AutoFeed", Buffer, INIFileName);
-            WriteChatf("\ay%s\aw:: AutoFeed(\ag%s\ax).", PLUGIN_NAME, (FeedAt) ? Buffer : "\aroff");
-            if (bAnnLevels) WriteChatf("\ay%s\aw:: Current Thirst(\ag%d\ax) Hunger(\ag%d\ax)", PLUGIN_NAME, GetCharInfo2()->thirstlevel, GetCharInfo2()->hungerlevel);
+            bFoodWarn = 1;
+            WriteChatf("\ay%s\aw:: Food Warning On", PLUGIN_NAME);
         }
     }
-    else if (GoodToFeed()) Consume(ITEMITEMTYPE_FOOD,Hunger);
+	else if (!_stricmp(Arg, "reload")) {
+		ReadList(&Hunger, "FOOD");
+		ReadList(&Thirst, "DRINK");
+	}
+	else if (!_stricmp(Arg, "add")) {
+		if (!ItemOnCursor()) {
+			WriteChatf("%s:: \arNeed to have a food item on your cursor to do this.", PLUGIN_NAME);
+			return;
+		}
+		if (ItemOnCursor()) {
+			if (FindItemCountByID(GetCharInfo2()->pInventoryArray->Inventory.Cursor->ID)) {
+				if (PCONTENTS item = FindItemByID(GetCharInfo2()->pInventoryArray->Inventory.Cursor->ID)) {
+					if (PITEMINFO pIteminf = GetItemFromContents(item)) {
+						if (pIteminf->FoodDuration) {
+							WriteChatf("%s:: \ayFound Item: \ap%s", PLUGIN_NAME, pIteminf->Name);
+							char temp[MAX_STRING] = "";
+							char ItemtoAdd[MAX_STRING] = "";
+							int FoodIndex = Hunger.size() + 1;
+							sprintf_s(temp, "Food%i", FoodIndex);
+							sprintf_s(ItemtoAdd, "%s", pIteminf->Name);
+							list<string>::iterator pTempList;
+							pTempList = Hunger.begin();
+							while (pTempList != Hunger.end()) {
+								strcpy_s(FindName, pTempList->c_str());
+								if (PCONTENTS pItem = FindItemByName(FindName, true)) {
+									if (!_stricmp(FindName, ItemtoAdd)) {
+										WriteChatf("%s:: \ap%s \aris already on the list", PLUGIN_NAME, ItemtoAdd);
+										return;
+									}
+								}
+								pTempList++;
+							}
+							WritePrivateProfileString("Food", temp, ItemtoAdd, INIFileName);
+							EzCommand("/autoinv");
+							WriteChatf("%s \agAdded\aw: \ap%s \ayto your autofeed list", PLUGIN_NAME, ItemtoAdd);
+							ReadList(&Hunger, "FOOD");
+						}
+						else {
+							WriteChatf("%s:: \arThat's not Food. Don't be rediculous", PLUGIN_NAME);
+						}
+					}
+				}
+			}
+		}
+	}
+	else if (IsNumber(Arg)) {
+        FeedAt = atoi(Arg);
+        if (FeedAt < 0) FeedAt = 0;
+        else if (FeedAt > 5000) FeedAt = 5000;
+        sprintf_s(Buffer, "%d", FeedAt);
+        WritePrivateProfileString(GetCharInfo()->Name, "AutoFeed", Buffer, INIFileName);
+        WriteChatf("\ay%s\aw:: AutoFeed(\ag%s\ax).", PLUGIN_NAME, (FeedAt) ? Buffer : "\aroff");
+        if (bAnnLevels) WriteChatf("\ay%s\aw:: Current Thirst(\ag%d\ax) Hunger(\ag%d\ax)", PLUGIN_NAME, GetCharInfo2()->thirstlevel, GetCharInfo2()->hungerlevel);
+    }
+
 }
 
 void AutoDrinkCmd(PSPAWNINFO pLPlayer, char* szLine)
 {
-    if (szLine[0] != 0) {
-        if (!_strnicmp(szLine, "list", 5)) {
-            WriteChatf("\ay%s\aw:: Listing Drink:", PLUGIN_NAME);
-            ListTypes(Thirst);
-            if (bAnnLevels) {
-                sprintf_s(Buffer, "%d", DrnkAt);
-                WriteChatf("\ay%s\aw:: AutoDrink(\ag%s\ax).", PLUGIN_NAME, (DrnkAt) ? Buffer : "\aroff");
-                WriteChatf("\ay%s\aw:: Current Thirst(\ag%d\ax)", PLUGIN_NAME, GetCharInfo2()->thirstlevel);
-            }
-        } else if (!_strnicmp(szLine, "warn", 5)) {
-            if (bDrinkWarn) {
-                bDrinkWarn = 0;
-                WriteChatf("\ay%s\aw:: Drink Warning Off", PLUGIN_NAME);
-            } else {
-                bDrinkWarn = 1;
-                WriteChatf("\ay%s\aw:: Drink Warning On", PLUGIN_NAME);
-            }
-        } else {
-            DrnkAt = atoi(szLine);
-            if (DrnkAt < 0) DrnkAt = 0;
-            else if (DrnkAt > 5000) DrnkAt = 5000;
+	if (!strlen(szLine)) {
+		if (GoodToFeed()) Consume(ITEMITEMTYPE_WATER, Thirst);
+		return;
+	}
+	CHAR Arg[MAX_STRING] = { 0 };
+	GetArg(Arg, szLine, 1);
+    if (!_stricmp(Arg, "list")) {
+        WriteChatf("\ay%s\aw:: Listing Drink:", PLUGIN_NAME);
+        ListTypes(Thirst);
+        if (bAnnLevels) {
             sprintf_s(Buffer, "%d", DrnkAt);
-            WritePrivateProfileString(GetCharInfo()->Name, "AutoDrink", Buffer, INIFileName);
-            WriteChatf("\ay%s\aw:: AutoDrink(\ag%s\ax).", PLUGIN_NAME, (DrnkAt) ? Buffer :"\aroff");
-            if (bAnnLevels) WriteChatf("\ay%s\aw:: Current Thirst(\ag%d\ax) Hunger(\ag%d\ax)", PLUGIN_NAME, GetCharInfo2()->thirstlevel, GetCharInfo2()->hungerlevel);
+            WriteChatf("\ay%s\aw:: AutoDrink(\ag%s\ax).", PLUGIN_NAME, (DrnkAt) ? Buffer : "\aroff");
+            WriteChatf("\ay%s\aw:: Current Thirst(\ag%d\ax)", PLUGIN_NAME, GetCharInfo2()->thirstlevel);
+        }
+    } else if (!_stricmp(Arg, "warn")) {
+        if (bDrinkWarn) {
+            bDrinkWarn = 0;
+            WriteChatf("\ay%s\aw:: Drink Warning Off", PLUGIN_NAME);
+        } else {
+            bDrinkWarn = 1;
+            WriteChatf("\ay%s\aw:: Drink Warning On", PLUGIN_NAME);
         }
     }
-    else if (GoodToFeed()) Consume(ITEMITEMTYPE_WATER,Thirst);
+	else if (!_stricmp(Arg, "reload")) {
+			ReadList(&Hunger, "FOOD");
+			ReadList(&Thirst, "DRINK");
+	}
+	else if (!_stricmp(Arg, "add")) {
+		if (!ItemOnCursor()) {
+			WriteChatf("%s:: \arNeed to have a food item on your cursor to do this.", PLUGIN_NAME);
+			return;
+		}
+		if (ItemOnCursor()) {
+			if (FindItemCountByID(GetCharInfo2()->pInventoryArray->Inventory.Cursor->ID)) {
+				if (PCONTENTS item = FindItemByID(GetCharInfo2()->pInventoryArray->Inventory.Cursor->ID)) {
+					if (PITEMINFO pIteminf = GetItemFromContents(item)) {
+						if (pIteminf->FoodDuration) {
+							WriteChatf("%s:: \ayFound Item: \ap%s", PLUGIN_NAME, pIteminf->Name);
+							char temp[MAX_STRING] = "";
+							char ItemtoAdd[MAX_STRING] = "";
+							int FoodIndex = Thirst.size() + 1;
+							sprintf_s(temp, "Drink%i", FoodIndex);
+							sprintf_s(ItemtoAdd, "%s", pIteminf->Name);
+							list<string>::iterator pTempList;
+							pTempList = Thirst.begin();
+							while (pTempList != Thirst.end()) {
+								strcpy_s(FindName, pTempList->c_str());
+								if (PCONTENTS pItem = FindItemByName(FindName, true)) {
+									if (!_stricmp(FindName, ItemtoAdd)) {
+										WriteChatf("%s:: \ap%s \aris already on the list", PLUGIN_NAME, ItemtoAdd);
+										return;
+									}
+								}
+								pTempList++;
+							}
+							WritePrivateProfileString("Drink", temp, ItemtoAdd, INIFileName);
+							EzCommand("/autoinv");
+							WriteChatf("%s \agAdded\aw: \ap%s \ayto your autodrink list", PLUGIN_NAME, ItemtoAdd);
+							ReadList(&Thirst, "DRINK");
+						}
+						else {
+							WriteChatf("%s:: \arThat's not a drink. Don't be rediculous", PLUGIN_NAME);
+						}
+					}
+				}
+			}
+		}
+	}
+	else if (IsNumber(Arg)) {
+        DrnkAt = atoi(Arg);
+        if (DrnkAt < 0) DrnkAt = 0;
+        else if (DrnkAt > 5000) DrnkAt = 5000;
+        sprintf_s(Buffer, "%d", DrnkAt);
+        WritePrivateProfileString(GetCharInfo()->Name, "AutoDrink", Buffer, INIFileName);
+        WriteChatf("\ay%s\aw:: AutoDrink(\ag%s\ax).", PLUGIN_NAME, (DrnkAt) ? Buffer :"\aroff");
+        if (bAnnLevels) WriteChatf("\ay%s\aw:: Current Thirst(\ag%d\ax) Hunger(\ag%d\ax)", PLUGIN_NAME, GetCharInfo2()->thirstlevel, GetCharInfo2()->hungerlevel);
+    }
 }
 
 PLUGIN_API void OnPulse()
