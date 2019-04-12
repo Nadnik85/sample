@@ -108,11 +108,11 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 
 	//Lemme insert the start of code tags for the user using ios::in - this should overwrite the file for us.
 	remove(newfilename);
-	WritePrivateProfileString("SpellSet", "LoadSpellSet", "2", newfilename);
+	WritePrivateProfileString("t", "t", "2", newfilename);
 	ofstream myfile;
 	myfile.open(newfilename, ios::in);
 	char codetag[MAX_STRING] = { 0 };
-	sprintf_s(codetag, "[CODE = INI | KissAssist INI - %s]", OurClass);
+	sprintf_s(codetag, "[CODE=INI]", OurClass);
 	myfile << codetag << endl;
 	myfile.close();
 

@@ -188,7 +188,7 @@ VOID RadarInitialize()
 	DSChangeScale(igSurface, fgScale);
 	DSChangeCenter(igSurface, gCenter.x, gCenter.y);
 	if (InGame())
-		LoadMap(GetShortZone(GetCharInfo()->pSpawn->Zone));
+		LoadMap(GetShortZone(GetCharInfo()->pSpawn->GetZoneID()));
 }
 
 VOID RadarFilter(char* filter, bool onoff)
@@ -730,7 +730,7 @@ void Radar(PSPAWNINFO pChar, PCHAR szLine)
 			WriteChatf("MapLayer set to: %s", szSwitch);
 			if (!InGame())
 				return;
-			LoadMap(GetShortZone(GetCharInfo()->pSpawn->Zone));
+			LoadMap(GetShortZone(GetCharInfo()->pSpawn->GetZoneID()));
 		}
 	}
 	else RadarHelp();
@@ -884,6 +884,6 @@ PLUGIN_API VOID OnEndZone(VOID)
 	if (!bgPluginInactive) {
 		// if we just zoned reload map
 		//if (InGame()) LoadMap(GetShortZone(GetCharInfo()->pSpawn->Zone));
-		LoadMap(GetShortZone(GetCharInfo()->pSpawn->Zone));
+		LoadMap(GetShortZone(GetCharInfo()->pSpawn->GetZoneID()));
 	}
 }

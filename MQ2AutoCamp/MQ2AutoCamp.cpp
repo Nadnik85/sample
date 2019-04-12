@@ -229,7 +229,7 @@ PLUGIN_API VOID SetGameState(DWORD GameState)
 void PopUpWarning(PCHAR szText) 
 {
 	// show popup in                red                 for 30 seconds
-	pTextOverlay->DisplayText(szText,13,10,255,100,500,30000);
+	((CTextOverlay*)pTextOverlay)->DisplayText(szText,13,10,255,100,500,30000);
 }
 
 // This is called every time MQ pulses

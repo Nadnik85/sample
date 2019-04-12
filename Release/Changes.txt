@@ -1,3 +1,41 @@
+Apr 12 2019 by EqMule
+- Updated for TEST
+- Updated for LIVE
+- Uncheck and Recheck the following Builder Plugins because they have been updated:
+  MQ2Cast
+  MQ2Radar
+
+- In preperation for next weeks live patch the following offsets has been removed:
+	pinstAggroInfo_x
+	pinstAuraMgr_x
+	pinstEQItemList_x
+	pinstMercAltAbilities_x
+	pinstRealEstateItems_x
+	pinstCTargetManager_x
+	pinstCTextOverlay_x
+	pinstEQObjectList_x
+- All of the above offsets are no longer static in the client so I have replaced them with 
+  calls to the proper Instance/Get functions instead.
+-
+- Plugin authors, you need to make a few changes to access some SPAWNINFO members from now on:
+  (don't change any other struct members if they happen to have the same name!)
+  All instances of ->SpellCooldownETA needs to be changed to ->GetSpellCooldownETA()
+  All instances of ->spawneqc_info needs to be changed to ->GetCharacter()
+  All instances of ->ManaMax needs to be changed to ->GetMaxMana()
+  All instances of ->ManaCurrent needs to be changed to ->GetCurrentMana()
+  All instances of ->EnduranceMax needs to be changed to ->GetMaxEndurance()
+  All instances of ->EnduranceCurrent needs to be changed to ->GetCurrentEndurance()
+  All instances of ->Zone needs to be changed to ->GetZoneID()
+-
+
+Mar 29 2019 by EqMule
+- Fixed MQ2Autologin
+- Added .SelectedItem to the Merchant TLO
+  it returns the currently selected item in the merchant window as a pItemType
+-
+Mar 26 2019 by EqMule
+- Fixed multiple problems in arrayclass.h due to client changes.
+-
 Mar 23 2019 by EqMule
 - GetAACastingTimeModifier has been renamed to GetCastingTimeModifier (because it is)
 - GetCastingTimeModifier and GetFocusRangeModifier has been changed to deal with a ctd.
@@ -580,7 +618,7 @@ Oct 25 2018 by eqmule && Chatwiththisname
 - Added Methods to the Merchant TLO: .SelectItem .Buy .Sell .OpenWindow
   Usage:
   /invoke ${Merchant.OpenWindow} //will open the merchant closest to you, or if you have a merchant target, that mrchant
-  /invoke ${Merchant.Selectitem[bottle of]} for a partial match OR ${Merchant.Selectitem[=bottle of vinegar]} if you need the name to match EXACTLY (its not case sensitive though)
+  /invoke ${Merchant.SelectItem[bottle of]} for a partial match OR ${Merchant.SelectItem[=bottle of vinegar]} if you need the name to match EXACTLY (its not case sensitive though)
   /invoke ${Merchant.Buy[100]} //buys 100 of whatever is selected with Merchant.SelectItem[blah]
   /invoke ${Merchant.Sell[100]} //sells 100 of whatever is selected with /selectitem
 - Fixed /caption anon - Chatwiththisname
