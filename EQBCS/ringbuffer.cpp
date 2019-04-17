@@ -26,10 +26,10 @@ RingBuffer::RingBuffer()
 	sz=MAX_BUF;
 	full=false;
 	empty=true;
-	w_avail=sz-1;
+	w_avail=sz;
 	r_avail=0;
 	start=0;
-	end=1;
+	end=0;
 }
 
 RingBuffer::RingBuffer(int size)
@@ -39,7 +39,7 @@ RingBuffer::RingBuffer(int size)
 	sz=size;
 	full=false;
 	empty=true;
-	w_avail=sz-1;
+	w_avail=sz;
 	r_avail=0;
 	start=0;
 	end=0;
@@ -55,10 +55,10 @@ int RingBuffer::Write(const void *_in, int len)
 	unsigned char *in=(unsigned char *)_in;
 	int to_write=0,x=0;
 	if(isFull()) return 0;
-	if(w_avail>=len)
-		to_write=len;
+	if (w_avail >= len)
+		to_write = len;
 	else
-		to_write=w_avail;
+		return 0;
 	for(x=0; x<to_write; x++)
 	{
 		Write(in[x]); // Should never fail, we checked how much we can write above...
@@ -138,6 +138,8 @@ int RingBuffer::Write(const unsigned char in)
 	end%=sz;
 	r_avail++;
 	w_avail--;
+	if (start == end)
+		full = true;
 	return 1;
 }
 
@@ -149,19 +151,37 @@ int RingBuffer::Writef(const char * format, ...)
 	va_list args;
 	va_start(args, format);
 	wrote=vsnprintf(temp, MAX_BUF, format, args);
-	if (wrote) Write(temp, wrote);
-	va_end(args);
-	return wrote;
+	if (wrote)
+	{
+		if (Write(temp, wrote))
+		{
+			va_end(args);
+			return wrote;
+		}
+		else
+			return 0;
+	}
+	else
+	{
+		va_end(args);
+		return -1;
+	}
 }
 
 int RingBuffer::Read(unsigned char &in)
 {
 	if(isEmpty()) return 0;
 	in=buf[start];
+	buf[start] = 0;
 	start++;
 	start%=sz;
 	r_avail--;
+	if (r_avail < 0)
+		r_avail = 0;
 	w_avail++;
+	if (w_avail > sz)
+		w_avail = sz;
+	full = false;
 	return 1;
 }
 
@@ -182,13 +202,14 @@ int RingBuffer::Peek(void *_out, int len)
 	unsigned char *out=(unsigned char *)_out;
 	int to_read=0,x=0;
 	if(isEmpty()) return 0;
-	if(r_avail>=len) to_read=len;
-	else to_read=r_avail;
+	if (r_avail >= len) to_read = len;
+	else
+		to_read = r_avail;
 	for(x=0; x<to_read; x++)
 	{
 		Peek(out[x], x);
 	}
-	return len;
+	return to_read;
 }
 
 int RingBuffer::ReadAvailable()
@@ -203,18 +224,24 @@ int RingBuffer::WriteAvailable()
 
 bool RingBuffer::isFull()
 {
+	return full;
 	/*
 	if((start==0)&&(end==(sz-1))) full=true;
 	else if((start>0)&&(end==(start-1))) full=true;
 	else full=false;
 	return full;
 	*/
-	return (w_avail > 0) ? false : true;
+	//return (w_avail > 0) ? false : true;
 }
 
 bool RingBuffer::isEmpty()
 {
 	//empty=(start==end);
 	//return empty;
-	return (r_avail > 0) ? false : true;
+	//return (r_avail > 0) ? false : true;
+	if (full)
+		return false;
+	if (start == end)
+		return true;
+	return false;
 }

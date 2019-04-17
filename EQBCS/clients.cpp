@@ -319,9 +319,13 @@ void Client::ProcessReads()
 {
 	if (CheckConnection("Client::ProcessReads()"))
 	{
-		if ((GetAvailableBytes() > 0)&&(rbuf->WriteAvailable()))
+		if ((GetAvailableBytes() > 0) && (rbuf->WriteAvailable()))
+		{
 			if (ev_read)
 				event_active(ev_read, EV_TIMEOUT, 0);
+		}
+		else if (!rbuf->WriteAvailable())
+			fprintf(stderr, "Client::ProcessReads() Error: read buffer is full...\n");
 	}
 	else
 	{
@@ -749,7 +753,7 @@ void Client::ProcessReadPacketBuffer()
 			ret = MAX_BUF - 1;
 			if (rbuf->ReadLine(data, ret))
 			{
-				if (gDebug) fprintf(stderr, "Debug Command Data: %s", data);
+				if (gDebug) fprintf(stderr, "<%s>:Debug Command Data: %s", name, data);
 				ProcessCommands(data);
 				command = false;
 			}
@@ -766,8 +770,17 @@ void Client::ProcessReadPacketBuffer()
 			ret = MAX_BUF - 1;
 			if (rbuf->ReadLine(data, ret))
 			{
-				if(gDebug) fprintf(stderr, "Debug Data: \"%s\"\n", data);
+				if(gDebug) fprintf(stderr, "<%s>:DEBUG Data: \"%s\"\n", name, data);
+				char *ptr = NULL;
 
+				while ((ptr=strchr(data, '\\')) != NULL)
+				{
+					//data[ptr - data] = 0;
+					for (int x = (ptr-data); data[x]!=0; x++)
+					{
+						data[x] = data[x+1];
+					}
+				}
 				switch (data[0])
 				{
 					case '\t':
@@ -796,6 +809,11 @@ void Client::ProcessReadPacketBuffer()
 					}break;
 					default:
 					{
+						if ((data[0]) == '\n')
+						{
+							if (gDebug) fprintf(stderr, "<%s>:DEBUG: Discarding newline\n", name);
+							break;
+						}
 						fprintf(stderr, "<%s> %s", name, data);
 						char message[MAX_BUF] = { 0 };
 						snprintf(message, MAX_BUF, "<%s> %s", name, data);

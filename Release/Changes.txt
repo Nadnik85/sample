@@ -1,3 +1,12 @@
+Apr 17 2019 by EqMule
+- Updated for LIVE
+- Previous updates see Apr 12 2019 by EqMule entry below.
+- Added more anonymizing to chat when using /caption anon - chatwiththisname
+- Moved advloot checkboxes dynamically to not cover fuse item button on mq2itemdisplay window  - chatwiththisname
+- 
+Apr 14 2019 by brainiac
+- Fix crash/freeze from starting macro from within another macro
+
 Apr 12 2019 by EqMule
 - Updated for TEST
 - Updated for LIVE
