@@ -793,6 +793,8 @@ namespace MQ2Globals
 
 	EQLIB_VAR DWORD __ActualVersionDate;
 	EQLIB_VAR DWORD __ActualVersionTime;
+	EQLIB_VAR DWORD __ActualVersionBuild;
+	
 	EQLIB_VAR DWORD __MemChecker0;
 	EQLIB_VAR DWORD __MemChecker1;
 	EQLIB_VAR DWORD __MemChecker2;
@@ -1513,6 +1515,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD CXWnd__StartFade;
 	EQLIB_VAR DWORD CXWnd__GetChildItem;
 	EQLIB_VAR DWORD CXWnd__SetParent;
+	EQLIB_VAR DWORD CXWnd__Minimize;
 	
 	EQLIB_VAR DWORD CXWndManager__DrawCursor;
 	EQLIB_VAR DWORD CXWndManager__DrawWindows;
@@ -1556,6 +1559,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD CTargetManager__Get;
 	EQLIB_VAR DWORD CBroadcast__Get;
 	EQLIB_VAR DWORD EQGroundItemListManager__Instance;
+	EQLIB_VAR DWORD EverQuestinfo__IsItemPending;
 	
 	EQLIB_VAR DWORD ProfileManager__GetCurrentProfile;
 

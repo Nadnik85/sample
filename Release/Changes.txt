@@ -1,3 +1,34 @@
+Apr 22 2019 by EqMule
+- Updated for TEST
+- Updated for LIVE
+- Find Item Window prices are no displaying merchant sell price.
+- Added sorting to find item window for the sell value column
+- Added sorting to find location window for the distance column
+- 
+Apr 20 2019 by EqMule
+- Added Colors to Quest items and Tradeskill items in the FindItem Window list.
+  Yellow=Quest
+  Magenta=Tradeskill
+  (No this is not configurable, I might add an option later.)
+-
+- Added a Value(Price) column to the FindItem window.
+- Enjoy marking items for sale in the FindItem Window.
+  Usage: mark some items while you have a merchant open, then click the Sell Marked button.
+  Still Todo: display real merchant price instead of item value.
+  Maybe add sort functionallity to Price column.
+
+Apr 19 2019 by EqMule
+- Updated for TEST
+- Updated for LIVE
+-
+Apr 18 2019 by EqMule
+- Added ${EverQuest.ValidLoc}
+  Usage: /echo ${EverQuest.ValidLoc[123 456 789]}
+  it returns true or false if the X Y Z location in the world is a valid player location.
+  in other words: can I go to this loc or is it inside a wall or a mountain or a tree or whatever invalid location?(those locs will return false obviously)
+-
+- Fixed the ZoneGuideManagerClient class.
+-
 Apr 17 2019 by EqMule
 - Updated for LIVE
 - Previous updates see Apr 12 2019 by EqMule entry below.

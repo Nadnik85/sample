@@ -1,3 +1,38 @@
+Apr 22 2019 by RedGuides
+- MQ2AFNuke (Jimbob) Fixed Mage and Wizard Dissident spells.
+-
+Apr 22 2019 by EqMule
+- Updated for TEST & LIVE
+- Find Item Window is now displaying merchant sell prices.
+- Added sorting to find item window for the sell value column
+- Added sorting to find location window for the distance column
+- Fixed .NewStacks
+- Fixed a autologin bug
+-
+Apr 20 2019 by EqMule
+- Added Colors to Quest items and Tradeskill items in the FindItem Window list.
+  Yellow=Quest
+  Magenta=Tradeskill
+  (No this is not configurable, I might add an option later.)
+-
+- Added a Value(Price) column to the FindItem window.
+- Enjoy marking items for sale in the FindItem Window.
+  Usage: mark some items while you have a merchant open, then click the Sell Marked button.
+  Still Todo: display real merchant price instead of item value.
+  Maybe add sort functionallity to Price column.
+-
+Apr 19 2019 by EqMule
+- Updated for TEST
+- Updated for LIVE
+-
+Apr 18 2019 by EqMule
+- Added ${EverQuest.ValidLoc}
+  Usage: /echo ${EverQuest.ValidLoc[123 456 789]}
+  it returns true or false if the X Y Z location in the world is a valid player location.
+  in other words: can I go to this loc or is it inside a wall or a mountain or a tree or whatever invalid location?(those locs will return false obviously)
+-
+- Fixed the ZoneGuideManagerClient class.
+-
 Apr 17 2019 by RedGuides
 - MQ2Nav (brainiac, dewey2461) 1.3.1 update includes: option to face backwards, fix path too long issues, other fixes
 - MQ2DanNet (dannuic) updated to version 0.75, added some guards against crashing while crashing
