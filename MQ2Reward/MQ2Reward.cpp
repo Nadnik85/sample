@@ -65,10 +65,10 @@
        }
      
         //             Parent                               TabWindow           PageTemplate
-        CXWnd *pWnd1 = (CXWnd*)FindMQ2Window("RewardSelectionWnd")->pFirstChildWnd->pFirstChildWnd;
+        CXWnd *pWnd1 = (CXWnd*)FindMQ2Window("RewardSelectionWnd")->GetFirstChildWnd()->GetFirstChildWnd();
        
        while (pWnd1) {
-          if (((PCSIDLWND)pWnd1)->dShow) {
+          if (((PCSIDLWND)pWnd1)->IsVisible()) {
      
              CListWnd *pListOpt = (CListWnd*)((CSidlScreenWnd*)(pWnd1->GetChildItem("RewardSelectionOptionList")));
              pListOpt->SetCurSel(arg1);
@@ -89,10 +89,10 @@
      
                 //             Parent                               TabWindow           PageTemplate
                 // CXWnd *pWnd2 = FindMQ2Window("RewardSelectionWnd")->GetFirstChildWnd()->GetFirstChildWnd();
-                CXWnd *pWnd2 = (CXWnd*)FindMQ2Window("RewardSelectionWnd")->pFirstChildWnd->pFirstChildWnd;
+                CXWnd *pWnd2 = (CXWnd*)FindMQ2Window("RewardSelectionWnd")->GetFirstChildWnd()->GetFirstChildWnd();
      
                 while (pWnd2) {
-                   if (((PCSIDLWND)pWnd2)->dShow) {
+                   if (((PCSIDLWND)pWnd2)->IsVisible()) {
      
                       CListWnd *pListItem = (CListWnd*)((CSidlScreenWnd*)(pWnd2->GetChildItem("RewardSelectionItemList")));
                       pListItem->SetCurSel(arg2);
@@ -103,12 +103,12 @@
                    }
      
                    // pWnd2 = pWnd2->GetNextSib();
-                   pWnd2 = (CXWnd*)pWnd2->pNextSiblingWnd;
+                   pWnd2 = (CXWnd*)pWnd2->GetNextSiblingWnd();
                 }
              }
           }
      
-          pWnd1 = (CXWnd*)pWnd1->pNextSiblingWnd;
+          pWnd1 = (CXWnd*)pWnd1->GetNextSiblingWnd();
        }
      
        sprintf_s(szBuffer, "Could not find reward at %s.", descr);

@@ -64,7 +64,7 @@ public:
 	{ 
 		OutputBox=(CStmlWnd*)GetChildItem("CW_ChatOutput"); 
 		SetWndNotification(CSpellInfoWnd); 
-		dShow = 0; 
+		SetVisible(0); 
 	} 
 
 	~CSpellInfoWnd() 
@@ -81,7 +81,7 @@ public:
 			{
 				CreateSpellWindow(); 
 				((CXWnd*)this)->Show(1,1);
-				dShow=1;
+				SetVisible(1);
 				return 1;
 			}
 		}
@@ -99,7 +99,7 @@ CSpellInfoWnd *MyWnd=0;
 void spellout(char *szMsg) { 
 	try {
 		if(bUseWnd) { 
-			if (!(PCSIDLWND)MyWnd->dShow) {
+			if (!(PCSIDLWND)MyWnd->IsVisible()) {
 				CreateSpellWindow();
 				((CXWnd*)MyWnd)->Show(1,1);
 			}
@@ -109,7 +109,7 @@ void spellout(char *szMsg) {
 				strcat_s(szProcessed,"<br>"); 
 				CXStr NewText(szProcessed); 
 				DebugTry( MyWnd->OutputBox->AppendSTML(NewText) ); 
-				DebugTry( ((CXWnd*)MyWnd->OutputBox)->SetVScrollPos(MyWnd->OutputBox->VScrollMax) ); 
+				DebugTry( ((CXWnd*)MyWnd->OutputBox)->SetVScrollPos(MyWnd->OutputBox->GetVScrollMax()) ); 
 			}
 			else
 				WriteChatColor("[MQ2SpellSearch::spellout] Window problem, please submit report.", USERCOLOR_DEFAULT);
@@ -544,25 +544,26 @@ void LoadChatFromINI(PCSIDLWND pWindow)
 	DebugSpewAlways("MQ2SpellSearch::LoadChatFromINI()"); 
 	CHAR Buffer[MAX_STRING] = {0}; 
 	sprintf_s(szChatINISection,"%s.%s",EQADDR_SERVERNAME,((PCHARINFO)pCharData)->Name); 
-	pWindow->Location.top      = GetPrivateProfileInt(szChatINISection,"ChatTop",    10,INIFileName); 
-	pWindow->Location.bottom   = GetPrivateProfileInt(szChatINISection,"ChatBottom",210,INIFileName); 
-	pWindow->Location.left      = GetPrivateProfileInt(szChatINISection,"ChatLeft",   10,INIFileName); 
-	pWindow->Location.right    = GetPrivateProfileInt(szChatINISection,"ChatRight", 410,INIFileName); 
-	pWindow->Locked             = (GetPrivateProfileInt(szChatINISection,"Locked",      0,INIFileName) ? true:false); 
-	pWindow->Fades             = (GetPrivateProfileInt(szChatINISection,"Fades",      1,INIFileName) ? true:false); 
-	pWindow->FadeDelay         = GetPrivateProfileInt(szChatINISection,"Delay",    2000,INIFileName); 
-	pWindow->FadeDuration       = GetPrivateProfileInt(szChatINISection,"Duration",      500,INIFileName); 
-	pWindow->Alpha            = GetPrivateProfileInt(szChatINISection,"Alpha",      255,INIFileName); 
-	pWindow->FadeToAlpha      = GetPrivateProfileInt(szChatINISection,"FadeToAlpha",      255,INIFileName); 
-	pWindow->BGType            = GetPrivateProfileInt(szChatINISection,"BGType",      1,INIFileName); 
+	pWindow->SetLocation({ (LONG)GetPrivateProfileInt(szChatINISection,"ChatLeft",   10,INIFileName),
+		(LONG)GetPrivateProfileInt(szChatINISection,"ChatTop",    10,INIFileName),
+		(LONG)GetPrivateProfileInt(szChatINISection,"ChatRight", 410,INIFileName),
+		(LONG)GetPrivateProfileInt(szChatINISection,"ChatBottom",210,INIFileName) });
+
+	pWindow->SetLocked((GetPrivateProfileInt(szChatINISection,"Locked",      0,INIFileName) ? true:false)); 
+	pWindow->SetFades((GetPrivateProfileInt(szChatINISection,"Fades",      1,INIFileName) ? true:false)); 
+	pWindow->SetFadeDelay(GetPrivateProfileInt(szChatINISection,"Delay",    2000,INIFileName)); 
+	pWindow->SetFadeDuration(GetPrivateProfileInt(szChatINISection,"Duration",      500,INIFileName)); 
+	pWindow->SetAlpha(GetPrivateProfileInt(szChatINISection,"Alpha",      255,INIFileName)); 
+	pWindow->SetFadeToAlpha(GetPrivateProfileInt(szChatINISection,"FadeToAlpha",      255,INIFileName)); 
+	pWindow->SetBGType(GetPrivateProfileInt(szChatINISection,"BGType",      1,INIFileName)); 
 	ARGBCOLOR col = { 0 };
-	col.ARGB = pWindow->BGColor;
+	col.ARGB = pWindow->GetBGColor();
 	col.A = GetPrivateProfileInt(szChatINISection, "BGTint.alpha", 255, INIFileName);
 	col.R = GetPrivateProfileInt(szChatINISection, "BGTint.red", 0, INIFileName);
 	col.G =  GetPrivateProfileInt(szChatINISection, "BGTint.green", 0, INIFileName);
 	col.B = GetPrivateProfileInt(szChatINISection, "BGTint.blue", 0, INIFileName); 
 	GetPrivateProfileString(szChatINISection,"WindowTitle","SpellSearch",Buffer,MAX_STRING,INIFileName); 
-	SetCXStr(&pWindow->WindowText,Buffer); 
+	pWindow->CSetWindowText(Buffer); 
 } 
 template <unsigned int _Size>LPSTR SafeItoa(int _Value, char(&_Buffer)[_Size], int _Radix)
 {
@@ -576,33 +577,33 @@ void SaveChatToINI(PCSIDLWND pWindow)
 { 
 	DebugSpewAlways("MQ2SpellSearch::SaveChatToINI()"); 
 	CHAR szTemp[MAX_STRING] = {0}; 
-	if (pWindow->Minimized) 
+	if (pWindow->IsMinimized()) 
 	{ 
-		WritePrivateProfileString(szChatINISection,"ChatTop",   SafeItoa(pWindow->OldLocation.top,      szTemp,10),INIFileName); 
-		WritePrivateProfileString(szChatINISection,"ChatBottom",SafeItoa(pWindow->OldLocation.bottom,   szTemp,10),INIFileName); 
-		WritePrivateProfileString(szChatINISection,"ChatLeft",   SafeItoa(pWindow->OldLocation.left,      szTemp,10),INIFileName); 
-		WritePrivateProfileString(szChatINISection,"ChatRight",   SafeItoa(pWindow->OldLocation.right,   szTemp,10),INIFileName); 
+		WritePrivateProfileString(szChatINISection,"ChatTop",   SafeItoa(pWindow->GetOldLocation().top,      szTemp,10),INIFileName); 
+		WritePrivateProfileString(szChatINISection,"ChatBottom",SafeItoa(pWindow->GetOldLocation().bottom,   szTemp,10),INIFileName); 
+		WritePrivateProfileString(szChatINISection,"ChatLeft",   SafeItoa(pWindow->GetOldLocation().left,      szTemp,10),INIFileName); 
+		WritePrivateProfileString(szChatINISection,"ChatRight",   SafeItoa(pWindow->GetOldLocation().right,   szTemp,10),INIFileName); 
 	} 
 	else 
 	{ 
-		WritePrivateProfileString(szChatINISection,"ChatTop",   SafeItoa(pWindow->Location.top,      szTemp,10),INIFileName); 
-		WritePrivateProfileString(szChatINISection,"ChatBottom",SafeItoa(pWindow->Location.bottom,   szTemp,10),INIFileName); 
-		WritePrivateProfileString(szChatINISection,"ChatLeft",   SafeItoa(pWindow->Location.left,   szTemp,10),INIFileName); 
-		WritePrivateProfileString(szChatINISection,"ChatRight",   SafeItoa(pWindow->Location.right,   szTemp,10),INIFileName); 
+		WritePrivateProfileString(szChatINISection,"ChatTop",   SafeItoa(pWindow->GetLocation().top,      szTemp,10),INIFileName); 
+		WritePrivateProfileString(szChatINISection,"ChatBottom",SafeItoa(pWindow->GetLocation().bottom,   szTemp,10),INIFileName); 
+		WritePrivateProfileString(szChatINISection,"ChatLeft",   SafeItoa(pWindow->GetLocation().left,   szTemp,10),INIFileName); 
+		WritePrivateProfileString(szChatINISection,"ChatRight",   SafeItoa(pWindow->GetLocation().right,   szTemp,10),INIFileName); 
 	} 
-	WritePrivateProfileString(szChatINISection,"Locked",   SafeItoa(pWindow->Locked,         szTemp,10),INIFileName); 
+	WritePrivateProfileString(szChatINISection,"Locked",   SafeItoa(pWindow->IsLocked(),         szTemp,10),INIFileName); 
 
-	GetCXStr(pWindow->WindowText,szTemp); 
+	GetCXStr(pWindow->CGetWindowText(),szTemp); 
 	WritePrivateProfileString(szChatINISection,"WindowTitle",   szTemp              ,INIFileName); 
 
-	WritePrivateProfileString(szChatINISection,"Fades",   SafeItoa(pWindow->Fades,         szTemp,10),INIFileName); 
-	WritePrivateProfileString(szChatINISection,"Delay",   SafeItoa(pWindow->FadeDelay,         szTemp,10),INIFileName); 
-	WritePrivateProfileString(szChatINISection,"Duration",   SafeItoa(pWindow->FadeDuration,         szTemp,10),INIFileName); 
-	WritePrivateProfileString(szChatINISection,"Alpha",   SafeItoa(pWindow->Alpha,         szTemp,10),INIFileName); 
-	WritePrivateProfileString(szChatINISection,"FadeToAlpha",   SafeItoa(pWindow->FadeToAlpha,         szTemp,10),INIFileName); 
-	WritePrivateProfileString(szChatINISection,"BGType",   SafeItoa(pWindow->BGType,         szTemp,10),INIFileName); 
+	WritePrivateProfileString(szChatINISection,"Fades",   SafeItoa(pWindow->GetFades(),         szTemp,10),INIFileName); 
+	WritePrivateProfileString(szChatINISection,"Delay",   SafeItoa(pWindow->GetFadeDelay(),         szTemp,10),INIFileName); 
+	WritePrivateProfileString(szChatINISection,"Duration",   SafeItoa(pWindow->GetFadeDuration(),         szTemp,10),INIFileName); 
+	WritePrivateProfileString(szChatINISection,"Alpha",   SafeItoa(pWindow->GetAlpha(),         szTemp,10),INIFileName); 
+	WritePrivateProfileString(szChatINISection,"FadeToAlpha",   SafeItoa(pWindow->GetFadeToAlpha(),         szTemp,10),INIFileName); 
+	WritePrivateProfileString(szChatINISection,"BGType",   SafeItoa(pWindow->GetBGType(),         szTemp,10),INIFileName); 
 	ARGBCOLOR col = { 0 };
-	col.ARGB = pWindow->BGColor;
+	col.ARGB = pWindow->GetBGColor();
 	WritePrivateProfileString(szChatINISection, "BGTint.alpha", SafeItoa(col.A, szTemp, 10), INIFileName);
 	WritePrivateProfileString(szChatINISection, "BGTint.red", SafeItoa(col.R, szTemp, 10), INIFileName);
 	WritePrivateProfileString(szChatINISection, "BGTint.green", SafeItoa(col.G, szTemp, 10), INIFileName);

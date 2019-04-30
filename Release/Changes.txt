@@ -1,10 +1,26 @@
+Apr 30 2019 by EqMule
+- TBL plavceholder info will again display correctly on the targetwindow if you use mq2targetinfo.
+- Changed a bunch of stuff, plugin authors you have until next patch to update your plugins.
+  No more direct access to the window struct members in prep for moving to classes.
+  From now on call functions to get/put data out/in:
+  Example: too many to list see CSW struct.
+  I'll list 4 examples:  previously pWnd->XMLIndex now: pWnd->GetXMLIndex()
+                         previously pWnd->IsVisible()==false now: pWnd->IsVisible()==false
+						 previously pWnd->dShow = true now: pWnd->SetVisible(true)
+						 previously SetCXStr(&pWnd->WindowText,"blah"); now pWnd->CSetWindowText("blah");
+						 previously GetCXStr(pWnd->WindowText,szOut); now GetCXStr(pWnd->CGetWindowText(),szOut);
+- Added .NoExpendReagentID to the Spell tlo.
+  Usage: /echo ${Spell[Burst of Fire].NoExpendReagentID[x]} where x can be 1-4
+  This returns the ID of the needed Reagent you have to have in your inventory but will not be spent.
+
 Apr 22 2019 by EqMule
-- Updated for TEST
-- Updated for LIVE
-- Find Item Window prices are no displaying merchant sell price.
+- Updated for TEST & LIVE
+- Find Item Window is now displaying merchant sell prices.
 - Added sorting to find item window for the sell value column
 - Added sorting to find location window for the distance column
-- 
+- Fixed .NewStacks
+- Fixed a autologin bug
+-
 Apr 20 2019 by EqMule
 - Added Colors to Quest items and Tradeskill items in the FindItem Window list.
   Yellow=Quest

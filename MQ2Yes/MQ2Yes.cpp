@@ -15,7 +15,7 @@ PreSetup("MQ2Yes");
 
 inline bool ClickTheThing(PCHAR MyWndName, PCHAR MyButton) {
 	if (CSidlScreenWnd* pMyWnd = (CSidlScreenWnd*)FindMQ2Window(MyWndName)) {
-		if (pMyWnd->dShow && pMyWnd->Enabled) {
+		if (pMyWnd->IsVisible() && pMyWnd->IsEnabled()) {
 			if (CXWnd* pWnd = pMyWnd->GetChildItem(MyButton)) {
 				SendWndClick2(pWnd, "leftmouseup");
 				WriteChatf("\ag[MQ2Yes] \awClicked \at%s \awon \ag%s", MyButton, MyWndName);

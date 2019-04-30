@@ -2084,22 +2084,19 @@ public:
         SetWndNotification(CMoveUtilsWnd);
         StmlOut                                     = (CStmlWnd*)GetChildItem("CW_ChatOutput");
         OutWnd                                      = (CXWnd*)StmlOut;
-        OutWnd->Clickable                           = 1;
+        OutWnd->SetClickable(1);
         OutStruct                                   = (_CSIDLWND*)GetChildItem("CW_ChatOutput");
-        CloseOnESC                                  = 0;
+		SetEscapable(0);
 		StmlOut->MaxLines                           = 0x190;
-		BitOn(WindowStyle, CWS_TITLE);
-		BitOn(WindowStyle, CWS_MINIMIZE);
-		BitOn(WindowStyle, CWS_RESIZEBORDER);
-		BitOff(WindowStyle, CWS_TRANSPARENT);
-        BitOff(WindowStyle, CWS_CLOSE);
+		AddStyle(CWS_TITLE | CWS_MINIMIZE | CWS_RESIZEBORDER);
+		RemoveStyle(CWS_TRANSPARENT | CWS_CLOSE);
     };
 
     int WndNotification(CXWnd* pWnd, unsigned int uiMessage, void* pData)
     {
         if (pWnd == NULL && uiMessage == XWM_CLOSE)
         {
-            dShow = 1;
+			SetVisible(true);
             return 0;
         }
         return CSidlScreenWnd::WndNotification(pWnd, uiMessage, pData);
@@ -2176,31 +2173,34 @@ protected:
         char szWindowText[MAX_STRING] = {0};
         class CXStr ChatWnd("ChatWindow");
         OurWnd = new CMoveUtilsWnd(&ChatWnd);
+		//left top right bottom
+		OurWnd->SetLocation({ (LONG)GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "ChatLeft",     10,   INIFileName),
+			(LONG)GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "ChatTop",      10,   INIFileName),
+			(LONG)GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "ChatRight",    410,  INIFileName),
+			(LONG)GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "ChatBottom",   210,  INIFileName) });
 
-        OurWnd->Location.top    = GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "ChatTop",      10,   INIFileName);
-        OurWnd->Location.bottom = GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "ChatBottom",   210,  INIFileName);
-        OurWnd->Location.left   = GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "ChatLeft",     10,   INIFileName);
-        OurWnd->Location.right  = GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "ChatRight",    410,  INIFileName);
-        OurWnd->Fades           = (GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Fades",  0,    INIFileName) ? true:false);
-        OurWnd->Alpha           = GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Alpha",        255,  INIFileName);
-        OurWnd->FadeToAlpha     = GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "FadeToAlpha",  255,  INIFileName);
-        OurWnd->FadeDuration    = GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Duration",     500,  INIFileName);
-        OurWnd->Locked          = (GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Locked", 0,    INIFileName) ? true:false);
-        OurWnd->FadeDelay   = GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Delay",        2000, INIFileName);
-        OurWnd->BGType          = GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "BGType",       1,    INIFileName);
+		OurWnd->SetFades((GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Fades",  0,    INIFileName) ? true:false));
+        OurWnd->SetAlpha(GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Alpha",        255,  INIFileName));
+        OurWnd->SetFadeToAlpha(GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "FadeToAlpha",  255,  INIFileName));
+        OurWnd->SetFadeDuration(GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Duration",     500,  INIFileName));
+        OurWnd->SetLocked((GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Locked", 0,    INIFileName) ? true:false));
+        OurWnd->SetFadeDelay(GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Delay",        2000, INIFileName));
+        OurWnd->SetBGType(GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "BGType",       1,    INIFileName));
 		ARGBCOLOR col = { 0 };
 
 		col.A       = GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "BGTint.alpha",   255,  INIFileName);
 		col.R       = GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "BGTint.red",   0,  INIFileName);
         col.G       = GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "BGTint.green", 0,  INIFileName);
         col.B       = GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "BGTint.blue",  0,  INIFileName);
-		OurWnd->BGColor = col.ARGB;
+		OurWnd->SetBGColor(col.ARGB);
 
         NewFont(GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "FontSize", 2, INIFileName));
         GetPrivateProfileString(SET->SaveByChar ? szCharName : "Window", "WindowTitle", "MoveUtils", szWindowText, MAX_STRING, INIFileName);
-        SetCXStr(&OurWnd->WindowText, szWindowText);
+        OurWnd->CSetWindowText(szWindowText);
+        //SetCXStr(&OurWnd->WindowText, szWindowText);
         ((CXWnd*)OurWnd)->Show(1, 1);
-        BitOff(OurWnd->OutStruct->WindowStyle, CWS_CLOSE);
+        OurWnd->OutStruct->RemoveStyle(CWS_CLOSE);
+        //BitOff(OurWnd->OutStruct->WindowStyle, CWS_CLOSE);
     };
 
     void SaveWnd()
@@ -2208,26 +2208,26 @@ protected:
         PCSIDLWND UseWnd = (PCSIDLWND)OurWnd;
         char szTemp[MAX_STRING]                = {0};
 
-        WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "ChatTop",      SafeItoa(UseWnd->Location.top,    szTemp, 10), INIFileName);
-        WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "ChatBottom",   SafeItoa(UseWnd->Location.bottom, szTemp, 10), INIFileName);
-        WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "ChatLeft",     SafeItoa(UseWnd->Location.left,   szTemp, 10), INIFileName);
-        WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "ChatRight",    SafeItoa(UseWnd->Location.right,  szTemp, 10), INIFileName);
-        WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "Fades",        SafeItoa(UseWnd->Fades,           szTemp, 10), INIFileName);
-        WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "Alpha",        SafeItoa(UseWnd->Alpha,           szTemp, 10), INIFileName);
-        WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "FadeToAlpha",  SafeItoa(UseWnd->FadeToAlpha,     szTemp, 10), INIFileName);
-        WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "Duration",     SafeItoa(UseWnd->FadeDuration,    szTemp, 10), INIFileName);
-        WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "Locked",       SafeItoa(UseWnd->Locked,          szTemp, 10), INIFileName);
-        WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "Delay",        SafeItoa(UseWnd->FadeDelay,   szTemp, 10), INIFileName);
-        WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "BGType",       SafeItoa(UseWnd->BGType,          szTemp, 10), INIFileName);
+        WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "ChatTop",      SafeItoa(UseWnd->GetLocation().top,    szTemp, 10), INIFileName);
+        WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "ChatBottom",   SafeItoa(UseWnd->GetLocation().bottom, szTemp, 10), INIFileName);
+        WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "ChatLeft",     SafeItoa(UseWnd->GetLocation().left,   szTemp, 10), INIFileName);
+        WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "ChatRight",    SafeItoa(UseWnd->GetLocation().right,  szTemp, 10), INIFileName);
+        WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "Fades",        SafeItoa(UseWnd->GetFades(),           szTemp, 10), INIFileName);
+        WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "Alpha",        SafeItoa(UseWnd->GetAlpha(),           szTemp, 10), INIFileName);
+        WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "FadeToAlpha",  SafeItoa(UseWnd->GetFadeToAlpha(),     szTemp, 10), INIFileName);
+        WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "Duration",     SafeItoa(UseWnd->GetFadeDuration(),    szTemp, 10), INIFileName);
+        WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "Locked",       SafeItoa(UseWnd->IsLocked(),          szTemp, 10), INIFileName);
+        WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "Delay",        SafeItoa(UseWnd->GetFadeDelay(),   szTemp, 10), INIFileName);
+        WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "BGType",       SafeItoa(UseWnd->GetBGType(),          szTemp, 10), INIFileName);
 		ARGBCOLOR col = { 0 };
-		col.ARGB = UseWnd->BGColor;
+		col.ARGB = UseWnd->GetBGColor();
 		WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "BGTint.alpha",   SafeItoa(col.A,       szTemp, 10), INIFileName);
 		WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "BGTint.red",   SafeItoa(col.R,       szTemp, 10), INIFileName);
         WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "BGTint.green", SafeItoa(col.G,       szTemp, 10), INIFileName);
         WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "BGTint.blue",  SafeItoa(col.B,       szTemp, 10), INIFileName);
         WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "FontSize",     SafeItoa(FontSize,                szTemp, 10), INIFileName);
 
-        GetCXStr(UseWnd->WindowText, szTemp);
+        GetCXStr(UseWnd->CGetWindowText(), szTemp);
         WritePrivateProfileString(SET->SaveByChar ? szCharName : "Window", "WindowTitle", szTemp, INIFileName);
     };
 
@@ -2241,7 +2241,7 @@ protected:
         strcat_s(szProcessed, "<br>");
         CXStr NewText(szProcessed);
         (OurWnd->StmlOut)->AppendSTML(NewText);
-        (OurWnd->OutWnd)->SetVScrollPos(OurWnd->OutStruct->VScrollMax);
+        (OurWnd->OutWnd)->SetVScrollPos(OurWnd->OutStruct->GetVScrollMax());
     };
 
     void SetFontSize(unsigned int uiSize)
@@ -2264,7 +2264,7 @@ protected:
         ((CXWnd*)OurWnd->StmlOut)->SetFont(pulSelFont);
         ((CStmlWnd*)OurWnd->StmlOut)->SetSTMLText(ContStr, 1, 0);
         ((CStmlWnd*)OurWnd->StmlOut)->ForceParseNow();
-        ((CXWnd*)OurWnd->StmlOut)->SetVScrollPos(OurWnd->StmlOut->VScrollMax);
+        ((CXWnd*)OurWnd->StmlOut)->SetVScrollPos(OurWnd->StmlOut->GetVScrollMax());
 
         FontSize = uiSize;
     };

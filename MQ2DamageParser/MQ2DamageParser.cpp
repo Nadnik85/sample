@@ -47,14 +47,14 @@ public:
         CreateChildrenFromSidl();
         pXWnd()->Show(gbShowLogWindow,0);
         ReplacevfTable();
-        CloseOnESC=1;
+        SetEscapable(true);
     }
     CDamageParserLogWnd(char *screenpiece):CSidlScreenWnd(0,&CXStr(screenpiece),-1,1,0)
     {
         CreateChildrenFromSidl();
 		pXWnd()->Show(gbShowLogWindow,0);
         ReplacevfTable();
-        CloseOnESC=1;
+        //SetEscapable(true);
 		SetWndNotification(CDamageParserLogWnd);
 		ResetButton = (CButtonWnd*)GetChildItem("DPLW_DPSResetButton");
 		UpdateButton = (CButtonWnd*)GetChildItem("DPLW_DPSAvgButton");
@@ -70,7 +70,7 @@ public:
 			col.R = 255;
 			col.G = 255;
 			col.B = 255;
-			LogList->CRNormal = col.ARGB;
+			LogList->SetCRNormal(col.ARGB);
 			//Highlight
 			col.R = 255;
 			col.G = 255;
@@ -88,15 +88,19 @@ public:
 			LogList->SetColumnJustification(1,1);//center column 1
 			LogList->SetColumnJustification(2,1);//center column 2
 		}
-		this->Faded = false;
+		this->SetFaded(false);
 		//this->ZLayer = 1;
-		this->CloseOnESC = false;
-		this->Clickable = true;
-		this->Alpha = 0xfF;
-		this->BGColor = 0xFF000000;
-		this->BGType = 1;
-		this->SetStyle(WSF_USEMYALPHA | WSF_SIZABLE | WSF_BORDER | WSF_MINIMIZEBOX | WSF_CLOSEBOX | WSF_TITLEBAR); 
-    }
+		this->SetClickable(true);
+		this->SetAlpha(0xfF);
+		this->SetBGColor(0xFF000000);
+		this->SetBGType(1);//10a6c CWS_QMARK CWS_USEMYALPHA CWS_RESIZEALL CWS_BORDER CWS_MINIMIZE CWS_CLOSE CWS_TITLE
+		//this->SetWindowStyle(CWS_CLIENTMOVABLE | CWS_USEMYALPHA | CWS_RESIZEALL | CWS_BORDER | CWS_MINIMIZE | CWS_CLOSE | CWS_TITLE); 
+		//this->RemoveStyle(CWS_CLOSE); 
+		this->SetWindowStyle(0x10a6c);
+ 		this->SetEscapable(false);
+		this->SetEscapableLocked(false);
+		this->SetNeedsSaving(true);
+   }
 
     ~CDamageParserLogWnd()
     {
@@ -432,7 +436,7 @@ void DPSAverage(PSPAWNINFO pLPlayer, char* szLine)
 	__time64_t calctime = 0;
 	__int64 dps = GetAverageDPS(szMe, &calctime);
 	if (pDamageParserLogWnd) {
-		if (pDamageParserLogWnd->dShow == true)
+		if (pDamageParserLogWnd->IsVisible() == true)
 		{
 			pDamageParserLogWnd->AddLogLine(calctime / 1000, dps, "%s", szMe);
 			return;
@@ -462,15 +466,15 @@ void DPSLog(PSPAWNINFO pLPlayer, char* szLine)
 {
 	if (pDamageParserLogWnd)
 	{
-		if (pDamageParserLogWnd->dShow == false)
+		if (pDamageParserLogWnd->IsVisible() == false)
 		{
-			pDamageParserLogWnd->dShow = true;
+			pDamageParserLogWnd->SetVisible(true);
 			gbShowLogWindow = true;
 			WriteSetting("ShowLogWindow", "1");
 		}
 		else
 		{
-			pDamageParserLogWnd->dShow = false;
+			pDamageParserLogWnd->SetVisible(false);
 			gbShowLogWindow = false;
 			WriteSetting("ShowLogWindow", "0");
 		}
@@ -856,7 +860,7 @@ VOID DestroyDamageParserLogWnd()
     if (pDamageParserLogWnd) 
     { 
 		CHAR szLoc[MAX_STRING] = { 0 };
-		sprintf_s(szLoc, "%d,%d,%d,%d", pDamageParserLogWnd->Location.left, pDamageParserLogWnd->Location.top, pDamageParserLogWnd->Location.right, pDamageParserLogWnd->Location.bottom);
+		sprintf_s(szLoc, "%d,%d,%d,%d", pDamageParserLogWnd->GetLocation().left, pDamageParserLogWnd->GetLocation().top, pDamageParserLogWnd->GetLocation().right, pDamageParserLogWnd->GetLocation().bottom);
 		WriteSetting("LogWindowLoc", szLoc,false);
 		sprintf_s(szLoc, "%d", pDamageParserLogWnd->LogList->GetColumnWidth(0));
 		
@@ -917,10 +921,12 @@ void CreateDamageParserLogWnd()
 			if (pSidlMgr && pSidlMgr->FindScreenPieceTemplate("DamageParserLogWnd")) {
 				if (pDamageParserLogWnd = new CDamageParserLogWnd("DamageParserLogWnd")) {
 					ReadLocSetting("LogWindowLoc", 100,330,710,550, &LogWindowLoc);
-					pDamageParserLogWnd->Location.left = LogWindowLoc.left;
-					pDamageParserLogWnd->Location.top = LogWindowLoc.top;
-					pDamageParserLogWnd->Location.right = LogWindowLoc.right;
-					pDamageParserLogWnd->Location.bottom = LogWindowLoc.bottom;
+					//left top right bottom
+					pDamageParserLogWnd->SetLocation({ LogWindowLoc.left,
+						LogWindowLoc.top,
+						LogWindowLoc.right,
+						LogWindowLoc.bottom });
+					
 					CHAR szTemp[MAX_STRING] = { 0 };
 					ReadStringSetting("TimeColumnWidth","123",szTemp);
 					pDamageParserLogWnd->LogList->SetColumnWidth(0, atoi(szTemp));

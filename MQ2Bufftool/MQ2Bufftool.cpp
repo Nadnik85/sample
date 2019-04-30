@@ -325,16 +325,16 @@ DWORD BuffColor(long Type, long Last) {
 }
 
 long BuffTimer(PCHAR WindowName, PCHAR ButtonName, long SlotID) {
-  if(CXWnd *pWin=FindMQ2Window(WindowName)) {
-    CHAR Temp[MAX_STRING]; sprintf_s(Temp,"%s%d",ButtonName,SlotID);
-    if(CXWnd *pBut=((CSidlScreenWnd*)(pWin))->GetChildItem(Temp)) {
-      GetCXStr(pBut->Tooltip,Temp,MAX_STRING);
-      string Work=Temp;
-      return atoi(Work.substr(Work.find('(')+1,Work.find(':')-Work.find('(')-1).c_str())*60+
-             atoi(Work.substr(Work.find(':')+1,2).c_str());
-    }
-  }
-  return 0;
+	if (CXWnd *pWin = FindMQ2Window(WindowName)) {
+		CHAR Temp[MAX_STRING]; sprintf_s(Temp, "%s%d", ButtonName, SlotID);
+		if (CXWnd *pBut = ((CSidlScreenWnd*)(pWin))->GetChildItem(Temp)) {
+			GetCXStr(pBut->GetTooltip(),Temp,MAX_STRING);
+			string Work = Temp;
+			return atoi(Work.substr(Work.find('(') + 1, Work.find(':') - Work.find('(') - 1).c_str()) * 60 +
+				atoi(Work.substr(Work.find(':') + 1, 2).c_str());
+		}
+	}
+	return 0;
 }
 
 void ClickOff(long ID, long SLOT) {
@@ -435,65 +435,74 @@ void SaveINI() {
 }
 
 void WindowLock(CCustomWnd *MyWin, bool Lock, bool Show) {
-  if(Lock) BitOff(MyWin->WindowStyle,CWS_CLOSE)
-  else BitOn(MyWin->WindowStyle,CWS_CLOSE)
-  if(MyWin->dShow) ((CXWnd*)MyWin)->Show(false,false);
-  if(Show) ((CXWnd*)MyWin)->Show(true,true);
+	if (Lock) {
+		MyWin->RemoveStyle(CWS_CLOSE);
+	}
+	else {
+		MyWin->AddStyle(CWS_CLOSE);
+	}
+  if(MyWin->IsVisible())
+	  ((CXWnd*)MyWin)->Show(false,false);
+  if(Show)
+	  ((CXWnd*)MyWin)->Show(true,true);
 }
 
-void WindowLoad(CCustomWnd *MyWin, PCHAR Title) {
+void WindowLoad(CCustomWnd *MyWin, PCHAR Title)
+{
 	CHAR Section[MAX_STRING] = { 0 };
-  ((CXWnd*)MyWin)->Show(false,false);
-  BitOn(MyWin->WindowStyle,(CWS_MINIMIZE|CWS_RESIZEALL));
-  GetCXStr(MyWin->INIStorageName,Section);
-  SetCXStr(&MyWin->WindowText,Title);
-  MyWin->Location.top    = GetPrivateProfileInt(Section,"Top",         MyWin->Location.top   ,INIWnd);
-  MyWin->Location.bottom = GetPrivateProfileInt(Section,"Bottom",      MyWin->Location.bottom,INIWnd);
-  MyWin->Location.left   = GetPrivateProfileInt(Section,"Left",        MyWin->Location.left  ,INIWnd);
-  MyWin->Location.right  = GetPrivateProfileInt(Section,"Right",       MyWin->Location.right ,INIWnd);
-  MyWin->Fades           = (GetPrivateProfileInt(Section,"Fades",       MyWin->Fades          ,INIWnd) ? true:false);
-  MyWin->FadeDelay   = GetPrivateProfileInt(Section,"Delay",       MyWin->FadeDelay  ,INIWnd);
-  MyWin->FadeDuration    = GetPrivateProfileInt(Section,"Duration",    MyWin->FadeDuration   ,INIWnd);
-  MyWin->Alpha           = GetPrivateProfileInt(Section,"Alpha",       MyWin->Alpha          ,INIWnd);
-  MyWin->FadeToAlpha     = GetPrivateProfileInt(Section,"FadeToAlpha", MyWin->FadeToAlpha    ,INIWnd);
-  MyWin->BGType          = GetPrivateProfileInt(Section,"BGType",      MyWin->BGType         ,INIWnd);
-  ARGBCOLOR col = { 0 };
-  col.A					 = GetPrivateProfileInt(Section,"BGTint.alpha",  255,INIWnd);
-  col.R       = GetPrivateProfileInt(Section,"BGTint.red",  0      ,INIWnd);
-  col.G       = GetPrivateProfileInt(Section,"BGTint.green",0      ,INIWnd);
-  col.B       = GetPrivateProfileInt(Section,"BGTint.blue", 0      ,INIWnd);
-  MyWin->BGColor = col.ARGB;
-  MyWin->Locked          = (GetPrivateProfileInt(Section,"Locked",      MyWin->Locked         ,INIWnd) ? true:false);
-  WindowLock(MyWin,MyWin->Locked?true:false,GetPrivateProfileInt(Section,"Show",0,INIWnd)?true:false);
+	((CXWnd*)MyWin)->Show(false, false);
+	MyWin->AddStyle(CWS_MINIMIZE | CWS_RESIZEALL);
+	//BitOn(MyWin->WindowStyle, (CWS_MINIMIZE | CWS_RESIZEALL));
+	GetCXStr(MyWin->INIStorageName, Section);
+	MyWin->CSetWindowText(Title);
+	MyWin->SetLocation({ (LONG)GetPrivateProfileInt(Section, "Left", MyWin->GetLocation().left, INIWnd),
+		(LONG)GetPrivateProfileInt(Section, "Top", MyWin->GetLocation().top, INIWnd),
+		(LONG)GetPrivateProfileInt(Section, "Right", MyWin->GetLocation().right, INIWnd),
+		(LONG)GetPrivateProfileInt(Section, "Bottom", MyWin->GetLocation().bottom, INIWnd) });
+	
+	MyWin->SetFades(GetPrivateProfileInt(Section, "Fades", MyWin->GetFades(), INIWnd) ? true : false);
+	MyWin->SetFadeDelay(GetPrivateProfileInt(Section, "Delay", MyWin->GetFadeDelay(), INIWnd));
+	MyWin->SetFadeDuration(GetPrivateProfileInt(Section, "Duration", MyWin->GetFadeDuration(), INIWnd));
+	MyWin->SetAlpha(GetPrivateProfileInt(Section, "Alpha", MyWin->GetAlpha(), INIWnd));
+	MyWin->SetFadeToAlpha(GetPrivateProfileInt(Section, "FadeToAlpha", MyWin->GetFadeToAlpha(), INIWnd));
+	MyWin->SetBGType(GetPrivateProfileInt(Section, "BGType", MyWin->GetBGType(), INIWnd));
+	ARGBCOLOR col = { 0 };
+	col.A = GetPrivateProfileInt(Section, "BGTint.alpha", 255, INIWnd);
+	col.R = GetPrivateProfileInt(Section, "BGTint.red", 0, INIWnd);
+	col.G = GetPrivateProfileInt(Section, "BGTint.green", 0, INIWnd);
+	col.B = GetPrivateProfileInt(Section, "BGTint.blue", 0, INIWnd);
+	MyWin->SetBGColor(col.ARGB);
+	MyWin->SetLocked(GetPrivateProfileInt(Section, "Locked", MyWin->IsLocked(), INIWnd) ? true : false);
+	WindowLock(MyWin, MyWin->IsLocked() ? true : false, GetPrivateProfileInt(Section, "Show", 0, INIWnd) ? true : false);
 }
 
 void WindowSave(CCustomWnd *MyWin) {
   if(!MyWin) return;
-  RECT SaveLoc=MyWin->Minimized?MyWin->OldLocation:MyWin->Location;
+  RECT SaveLoc = MyWin->IsMinimized() ? MyWin->GetOldLocation() : MyWin->GetLocation();
   CHAR Buffers[MAX_STRING] = { 0 };
   CHAR Section[MAX_STRING] = { 0 };
   GetCXStr(MyWin->INIStorageName,Section);
-  GetCXStr(MyWin->WindowText,Buffers);
+  GetCXStr(MyWin->CGetWindowText(),Buffers);
   WritePrivateProfileString(Section,NULL,NULL,INIWnd);
   WritePrivateProfileString(Section,"WindowTitle",                               Buffers,INIWnd);
   WritePrivateProfileString(Section,"Top",         SafeItoa(SaveLoc.top,         Buffers,10),INIWnd);
   WritePrivateProfileString(Section,"Bottom",      SafeItoa(SaveLoc.bottom,      Buffers,10),INIWnd);
   WritePrivateProfileString(Section,"Left",        SafeItoa(SaveLoc.left,        Buffers,10),INIWnd);
   WritePrivateProfileString(Section,"Right",       SafeItoa(SaveLoc.right,       Buffers,10),INIWnd);
-  WritePrivateProfileString(Section,"Locked",      SafeItoa(MyWin->Locked,       Buffers,10),INIWnd);
-  WritePrivateProfileString(Section,"Fades",       SafeItoa(MyWin->Fades,        Buffers,10),INIWnd);
-  WritePrivateProfileString(Section,"Delay",       SafeItoa(MyWin->FadeDelay,    Buffers,10),INIWnd);
-  WritePrivateProfileString(Section,"Duration",    SafeItoa(MyWin->FadeDuration, Buffers,10),INIWnd);
-  WritePrivateProfileString(Section,"Alpha",       SafeItoa(MyWin->Alpha,        Buffers,10),INIWnd);
-  WritePrivateProfileString(Section,"FadeToAlpha", SafeItoa(MyWin->FadeToAlpha,  Buffers,10),INIWnd);
-  WritePrivateProfileString(Section,"BGType",      SafeItoa(MyWin->BGType,       Buffers,10),INIWnd);
+  WritePrivateProfileString(Section,"Locked",      SafeItoa(MyWin->IsLocked(),       Buffers,10),INIWnd);
+  WritePrivateProfileString(Section,"Fades",       SafeItoa(MyWin->GetFades(),        Buffers,10),INIWnd);
+  WritePrivateProfileString(Section,"Delay",       SafeItoa(MyWin->GetFadeDelay(),    Buffers,10),INIWnd);
+  WritePrivateProfileString(Section,"Duration",    SafeItoa(MyWin->GetFadeDuration(), Buffers,10),INIWnd);
+  WritePrivateProfileString(Section,"Alpha",       SafeItoa(MyWin->GetAlpha(),        Buffers,10),INIWnd);
+  WritePrivateProfileString(Section,"FadeToAlpha", SafeItoa(MyWin->GetFadeToAlpha(),  Buffers,10),INIWnd);
+  WritePrivateProfileString(Section,"BGType",      SafeItoa(MyWin->GetBGType(),       Buffers,10),INIWnd);
   ARGBCOLOR col = { 0 };
-  col.ARGB = MyWin->BGColor;
+  col.ARGB = MyWin->GetBGColor();
   WritePrivateProfileString(Section,"BGTint.alpha",  SafeItoa(col.A,    Buffers,10),INIWnd);
   WritePrivateProfileString(Section,"BGTint.red",  SafeItoa(col.R,    Buffers,10),INIWnd);
   WritePrivateProfileString(Section,"BGTint.green",SafeItoa(col.G,    Buffers,10),INIWnd);
   WritePrivateProfileString(Section,"BGTint.blue", SafeItoa(col.B,    Buffers,10),INIWnd);
-  WritePrivateProfileString(Section,"Show",        MyWin->dShow?"1":"0"                  ,INIWnd);
+  WritePrivateProfileString(Section, "Show", MyWin->IsVisible() ? "1" : "0", INIWnd);
 }
 
 // ==================================================================
@@ -504,7 +513,7 @@ public:
   CButtonWnd *wBlocLoad, *wBlocSave;
 
   void Updates() {
-    if(this->dShow) {
+    if(this->IsVisible()) {
       if(this->wBlocList) {
         this->wBlocList->DeleteAll();
         CHAR Buffers[MAX_STRING];
@@ -529,8 +538,8 @@ public:
   }
 
   int WndNotification(CXWnd *pWnd, unsigned int Message, void *unknown) {
-    if(Message==XWM_CLOSE && this->Locked) this->Visible(true);
-    else if (Message==20) WindowLock(this,this->Locked?false:true,this->dShow?true:false);
+    if(Message==XWM_CLOSE && this->IsLocked()) this->Visible(true);
+	else if (Message == 20) WindowLock(this, this->IsLocked() ? false : true, this->IsVisible() ? true : false);
     else if(pWnd && (Message==XWM_LCLICK || Message==XWM_RCLICK)) {
       if(pWnd==(CXWnd*)wBlocLoad) ReadINI();
       else if(pWnd==(CXWnd*)wBlocSave) SaveINI();
@@ -554,7 +563,7 @@ public:
 
   void Visible(bool Wanted) {
     ((CXWnd*)this)->Show(Wanted,Wanted);
-    if(dShow) this->Updates();
+    if(IsVisible()) this->Updates();
   }
 
   ~CBlocList() { WindowSave(this); }
@@ -578,7 +587,7 @@ public:
   CListWnd    *wBuffFree, *wBuffShow, *wSongFree, *wBuffList;
 
   void Updates() {
-    if(this->dShow) {
+    if(this->IsVisible()) {
       CHAR Buffers[MAX_STRING];
       MakeBuff(&ListSelf,true,true);
       MakeSong(&ListSelf,false,sSONGS);
@@ -611,8 +620,8 @@ public:
   }
 
   int WndNotification(CXWnd *pWnd, unsigned int Message, void *unknown) {
-    if(Message==XWM_CLOSE && this->Locked) this->Visible(true);
-    else if (Message==20) WindowLock(this,this->Locked?false:true,this->dShow?true:false);
+    if(Message==XWM_CLOSE && this->IsLocked()) this->Visible(true);
+    else if (Message==20) WindowLock(this,this->IsLocked()?false:true,this->IsVisible()?true:false);
     else if(pWnd && (Message==XWM_LCLICK || Message==XWM_RCLICK)) {
       if(pWnd==(CXWnd*)wBuffShow) sSONGS = !sSONGS;
       else if(pWnd==(CXWnd*)wBuffList) {
@@ -655,47 +664,47 @@ public:
   CListWnd *wBuffFree, *wBuffShow, *wBuffList;
 
   void Updates() {
-    if(this->dShow) {
-      if(this->wBuffList) this->wBuffList->DeleteAll();
-      if(this->wBuffFree) this->wBuffFree->DeleteAll();
-      CHAR Buffers[MAX_STRING];
-      MakePets(&ListPets,true,pSONGS);
-      if((long)GetCharInfo()->pSpawn->PetID>0 && pPetInfoWnd) {
-        if(this->wBuffList) {
-          list<bDATA>::iterator CurList=ListPets.begin();
-          list<bDATA>::iterator EndList=ListPets.end();
-          while(CurList!=EndList) {
-            ListFormat(Buffers," <LAST>   <NAME>",CurList->Name,0,0,0,CurList->Last,0);
-            this->wBuffList->AddString(Buffers,BuffColor(CurList->Type,CurList->Last),0,0);
-            CurList++;
-          }
-        }
-        if(this->wBuffShow) {
-           this->wBuffShow->DeleteAll();
-           this->wBuffShow->AddString(pSONGS?"+SONG":"-SONG",pSONGS?0xFF00FF00:0xFFFFFFFF,0,0);
-        }
-        if(this->wBuffFree) {
-          sprintf_s(Buffers,"%02d/%02d",FreePets,MaxiPets);
-          this->wBuffFree->AddString(Buffers,0xFFFFFF00,0,0);
-        }
-      }
-    }
-    NUON_PETS=(long)clock()+PETS_REFRESH;
+	  if (this->IsVisible()) {
+		  if (this->wBuffList) this->wBuffList->DeleteAll();
+		  if (this->wBuffFree) this->wBuffFree->DeleteAll();
+		  CHAR Buffers[MAX_STRING];
+		  MakePets(&ListPets, true, pSONGS);
+		  if ((long)GetCharInfo()->pSpawn->PetID > 0 && pPetInfoWnd) {
+			  if (this->wBuffList) {
+				  list<bDATA>::iterator CurList = ListPets.begin();
+				  list<bDATA>::iterator EndList = ListPets.end();
+				  while (CurList != EndList) {
+					  ListFormat(Buffers, " <LAST>   <NAME>", CurList->Name, 0, 0, 0, CurList->Last, 0);
+					  this->wBuffList->AddString(Buffers, BuffColor(CurList->Type, CurList->Last), 0, 0);
+					  CurList++;
+				  }
+			  }
+			  if (this->wBuffShow) {
+				  this->wBuffShow->DeleteAll();
+				  this->wBuffShow->AddString(pSONGS ? "+SONG" : "-SONG", pSONGS ? 0xFF00FF00 : 0xFFFFFFFF, 0, 0);
+			  }
+			  if (this->wBuffFree) {
+				  sprintf_s(Buffers, "%02d/%02d", FreePets, MaxiPets);
+				  this->wBuffFree->AddString(Buffers, 0xFFFFFF00, 0, 0);
+			  }
+		  }
+	  }
+	  NUON_PETS = (long)clock() + PETS_REFRESH;
   }
 
   int WndNotification(CXWnd *pWnd, unsigned int Message, void *unknown) {
-    if(Message==XWM_CLOSE && this->Locked) this->Visible(true);
-    else if (Message==20) WindowLock(this,this->Locked?false:true,this->dShow?true:false);
-    else if(pWnd && (Message==XWM_LCLICK || Message==XWM_RCLICK)) {
-      if(pWnd==(CXWnd*)wBuffShow) pSONGS = !pSONGS;
-      this->Updates();
-    }
-    return CSidlScreenWnd::WndNotification(pWnd,Message,unknown);
+	  if (Message == XWM_CLOSE && this->IsLocked()) this->Visible(true);
+	  else if (Message == 20) WindowLock(this, this->IsLocked() ? false : true, this->IsVisible() ? true : false);
+	  else if (pWnd && (Message == XWM_LCLICK || Message == XWM_RCLICK)) {
+		  if (pWnd == (CXWnd*)wBuffShow) pSONGS = !pSONGS;
+		  this->Updates();
+	  }
+	  return CSidlScreenWnd::WndNotification(pWnd, Message, unknown);
   }
 
   void Visible(bool Wanted) {
     ((CXWnd*)this)->Show(Wanted,Wanted);
-    if(dShow) this->Updates();
+    if(IsVisible()) this->Updates();
   }
 
   ~CPetsList() { WindowSave(this); }

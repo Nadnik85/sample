@@ -105,6 +105,7 @@
     <Style_Minimizebox>true</Style_Minimizebox>
     <Style_Border>true</Style_Border>
     <Style_Sizable>true</Style_Sizable>
+    <Escapable>false</Escapable>
     <Pieces>DPLW_LogList</Pieces>
     <Pieces>DPLW_DPSAvgButton</Pieces>
     <Pieces>DPLW_DPSResetButton</Pieces>

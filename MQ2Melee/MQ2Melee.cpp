@@ -1487,7 +1487,7 @@ void Announce(unsigned long Wanted, char* Format, ...) {
 #define TargetIT(X) *(PSPAWNINFO*)ppTarget=X
 
 static inline int WinState(CXWnd *Wnd) {
-    return (Wnd && ((PCSIDLWND)Wnd)->dShow);
+    return (Wnd && ((PCSIDLWND)Wnd)->IsVisible());
 }
 
 static inline PSPAWNINFO Target() {
@@ -1581,7 +1581,7 @@ static inline CXWnd* XMLChild(CXWnd* window, char* screenid) {
 }
 
 static inline int XMLEnabled(CXWnd* window) {
-    return (window && ((PCSIDLWND)window)->Enabled);
+    return (window && ((PCSIDLWND)window)->IsEnabled());
 }
 
 static inline PCONTENTS ContAmmo() {
@@ -1907,11 +1907,11 @@ unsigned char PetButtonEnabled(char* pszButtonName)
     {
         if (((PEQPETINFOWINDOW)pPetInfoWnd)->pButton[i])
         {
-            if (((PEQPETINFOWINDOW)pPetInfoWnd)->pButton[i]->Wnd.WindowText->Text[0])
+            if (((PEQPETINFOWINDOW)pPetInfoWnd)->pButton[i]->Wnd.CGetWindowText()->Text[0])
             {
-                if (!_stricmp(((PEQPETINFOWINDOW)pPetInfoWnd)->pButton[i]->Wnd.WindowText->Text, pszButtonName))
+                if (!_stricmp(((PEQPETINFOWINDOW)pPetInfoWnd)->pButton[i]->Wnd.CGetWindowText()->Text, pszButtonName))
                 {
-                    return ((PEQPETINFOWINDOW)pPetInfoWnd)->pButton[i]->Wnd.Enabled;
+                    return ((PEQPETINFOWINDOW)pPetInfoWnd)->pButton[i]->Wnd.IsEnabled();
                 }
             }
         }
@@ -1956,7 +1956,7 @@ PSTR WinTexte(CXWnd *Wnd, char* ScreenID, PSTR Buffer) {
     Buffer[0] = 0;
     if (Wnd)
         if (CXWnd *Child = (CXWnd*)Wnd->GetChildItem(ScreenID))
-            GetCXStr(Child->WindowText, Buffer, MAX_STRING);
+            GetCXStr(Child->CGetWindowText(), Buffer, MAX_STRING);
     return Buffer;
 }
 

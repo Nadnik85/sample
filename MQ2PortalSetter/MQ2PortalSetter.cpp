@@ -90,7 +90,7 @@ class CPortalSetterWindow : public CCustomWnd {
 int CPortalSetterWindow::WndNotification(CXWnd *pWnd, unsigned int Message, void *unknown) {    
   if (pWnd==0) {
     if (Message==XWM_CLOSE) {
-        dShow=1;
+        SetVisible(1);
         return 1;
     }
   }
@@ -377,8 +377,8 @@ CPortalSetterWindow *pCPortalSetterWindow=0;
 void CreatePortalSetterWindow() {
   if (pCPortalSetterWindow) return;
   pCPortalSetterWindow = new CPortalSetterWindow("PortalSetterWindow");
-  pCPortalSetterWindow->dShow = 0;
-  pCPortalSetterWindow->ZLayer = 9999;
+  pCPortalSetterWindow->SetVisible(0);
+  pCPortalSetterWindow->SetZLayer(9999);
 };
 
 void DestroyPortalSetterWindow() {
@@ -451,7 +451,7 @@ static void setPortal() {
       PCONTENTS stone = FindItemByName(portalStoneName, true);
       if(stone) {
         char zNotifyCommand[MAX_STRING];
-        pCPortalSetterWindow->dShow = 0;
+        pCPortalSetterWindow->SetVisible(0);
         SendWndClick("MerchantWnd", "MW_DONE_BUTTON", "leftmouseup");
         sprintf_s(zNotifyCommand, "/itemnotify \"%s\" leftmouseup", portalStoneName);
         EzCommand(zNotifyCommand);
@@ -473,13 +473,13 @@ static void setPortal() {
       } else {
         currentRoutineStep--;
       }
-      if (((PCSIDLWND)pGiveWnd)->dShow && currentRoutineStep == 5) {
+      if (((PCSIDLWND)pGiveWnd)->IsVisible() && currentRoutineStep == 5) {
         currentRoutineStep++;
       }
       break;
     }
     case 6: {
-      if (((PCSIDLWND)pGiveWnd)->dShow) {
+      if (((PCSIDLWND)pGiveWnd)->IsVisible()) {
         SendWndClick("GiveWnd", "GVW_Give_Button", "leftmouseup");
         currentRoutineStep++;
       } else {
@@ -488,7 +488,7 @@ static void setPortal() {
       break;
     }
     case 7: {
-      if(!((PCSIDLWND)pGiveWnd)->dShow) {
+      if(!((PCSIDLWND)pGiveWnd)->IsVisible()) {
         currentRoutineStep = 0;
       }
       break;
@@ -550,15 +550,15 @@ PLUGIN_API VOID OnPulse(VOID)
 	if (!pCPortalSetterWindow) return;
 
 	//-- Check to see if we need to hide / show the portal window
-	if (((PCSIDLWND)pMerchantWnd)->dShow == 1) {
+	if (((PCSIDLWND)pMerchantWnd)->IsVisible() == true) {
 		if (currentRoutineStep < 4) {
-			if(pCPortalSetterWindow->dShow == 0 && inPortalMerchantRange() && isMerchantPortalSetter()) {
-				pCPortalSetterWindow->dShow = 1;
+			if(pCPortalSetterWindow->IsVisible() == false && inPortalMerchantRange() && isMerchantPortalSetter()) {
+				pCPortalSetterWindow->SetVisible(true);
 			}
 		}
 	} else {
-		if(pCPortalSetterWindow->dShow == 1) {
-			pCPortalSetterWindow->dShow = 0;
+		if(pCPortalSetterWindow->IsVisible() == true) {
+			pCPortalSetterWindow->SetVisible(false);
 		}
 	}
 

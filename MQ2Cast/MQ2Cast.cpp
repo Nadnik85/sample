@@ -242,7 +242,7 @@ void Cast(PCHAR zFormat, ...)
 long CastingLeft()
 {
 	long CL = 0;
-	if (pCastingWnd && (PCSIDLWND)pCastingWnd->dShow) {
+	if (pCastingWnd && (PCSIDLWND)pCastingWnd->IsVisible()) {
 		CL = GetCharInfo()->pSpawn->CastingData.SpellETA - GetCharInfo()->pSpawn->TimeStamp;
 		if (CL<1) {
 			CL = 1;
@@ -304,7 +304,7 @@ void ExecuteDly(PCHAR zFormat, ...)
 
 bool Flags()
 {
-	if (!BardClass() && pCastingWnd && (PCSIDLWND)pCastingWnd->dShow) {
+	if (!BardClass() && pCastingWnd && (PCSIDLWND)pCastingWnd->IsVisible()) {
 		if (DEBUGGING) {
 			WriteChatf("MQ2Cast: pCastingWnd=TRUE");
 		}
@@ -424,19 +424,19 @@ BOOL Paused()
 	if (BardClass()) {
 		return false;
 	}
-	if (pLootWnd && (PCSIDLWND)pLootWnd->dShow) {
+	if (pLootWnd && (PCSIDLWND)pLootWnd->IsVisible()) {
 		return true;
 	}
-	if (pBankWnd && (PCSIDLWND)pBankWnd->dShow) {
+	if (pBankWnd && (PCSIDLWND)pBankWnd->IsVisible()) {
 		return true;
 	}
-	if (pMerchantWnd && (PCSIDLWND)pMerchantWnd->dShow) {
+	if (pMerchantWnd && (PCSIDLWND)pMerchantWnd->IsVisible()) {
 		return true;
 	}
-	if (pTradeWnd && (PCSIDLWND)pTradeWnd->dShow) {
+	if (pTradeWnd && (PCSIDLWND)pTradeWnd->IsVisible()) {
 		return true;
 	}
-	if (pGiveWnd && (PCSIDLWND)pGiveWnd->dShow) {
+	if (pGiveWnd && (PCSIDLWND)pGiveWnd->IsVisible()) {
 		return true;
 	}
 	//calling Open is super cpu expensive
@@ -445,14 +445,14 @@ BOOL Paused()
 	if (!TributeMasterWnd) {
 		TributeMasterWnd = FindMQ2Window("TributeMasterWnd");
 	} else {
-		if(TributeMasterWnd->dShow)
+		if(TributeMasterWnd->IsVisible())
 			return true;
 	}
 	if (!GuildBankWnd) {
 		GuildBankWnd = FindMQ2Window("GuildBankWnd");
 	}
 	else {
-		if (GuildBankWnd->dShow)
+		if (GuildBankWnd->IsVisible())
 			return true;
 	}
 	return false;
@@ -777,7 +777,7 @@ public:
 				return true;
 			case Status:
 				Temps[0] = '\0';
-				if (CastingC != NOID || CastF != FLAG_COMPLETE || (pCastingWnd && (PCSIDLWND)pCastingWnd->dShow)) {
+				if (CastingC != NOID || CastF != FLAG_COMPLETE || (pCastingWnd && (PCSIDLWND)pCastingWnd->IsVisible())) {
 					strcat_s(Temps, "C");
 				}
 				if (StopF != FLAG_COMPLETE) strcat_s(Temps, "S");
@@ -827,7 +827,7 @@ public:
 				Dest.Type = pStringType;
 				return true;
 			case Ready:
-				Dest.DWord = (gbInZone && !Flags() && !Paused() && (pSpellBookWnd && !pSpellBookWnd->dShow) && !(GetCharInfo()->Stunned) && SpellReady(Index));
+				Dest.DWord = (gbInZone && !Flags() && !Paused() && (pSpellBookWnd && !pSpellBookWnd->IsVisible()) && !(GetCharInfo()->Stunned) && SpellReady(Index));
 				Dest.Type = pBoolType;
 				return true;
 			case Taken:
@@ -1037,7 +1037,7 @@ void MemoHandle()
 		WriteChatf("[%I64u] MQ2Cast:[Memorize]: Aborting!", GetTickCount642());
 		MemoF = FLAG_COMPLETE;
 	}
-	if (MemoF == FLAG_COMPLETE && (pSpellBookWnd && (PCSIDLWND)pSpellBookWnd->dShow)) {
+	if (MemoF == FLAG_COMPLETE && (pSpellBookWnd && (PCSIDLWND)pSpellBookWnd->IsVisible())) {
 		if (DEBUGGING) {
 			WriteChatf("[%I64u] MQ2Cast:[Memorize]: Closebook.", GetTickCount642());
 		}
@@ -1120,7 +1120,7 @@ void CastHandle()
 
 	// waiting for opportunity to start casting, end if conditions not favorables.
 	if (CastF == FLAG_PROGRESS1) {
-		if (pCastingWnd && (PCSIDLWND)pCastingWnd->dShow) {
+		if (pCastingWnd && (PCSIDLWND)pCastingWnd->IsVisible()) {
 			return; // casting going on
 		}
 		CastingC = CastS->ID;
@@ -1235,10 +1235,10 @@ PLUGIN_API VOID CastDebug(PSPAWNINFO pChar, PCHAR Cmd)
 PLUGIN_API VOID CastCommand(PSPAWNINFO pChar, PCHAR Cmd)
 {
 	Resultat = CAST_DISTRACTED;
-	if (!gbInZone || Flags() || Paused() || (pSpellBookWnd && (PCSIDLWND)pSpellBookWnd->dShow)) {
+	if (!gbInZone || Flags() || Paused() || (pSpellBookWnd && (PCSIDLWND)pSpellBookWnd->IsVisible())) {
 		if (DEBUGGING) {
 			WriteChatf("[%I64u] MQ2Cast:[Casting]: Complete. [%d][%s%s%s%s]", GetTickCount642(), Resultat,
-				gbInZone ? " ZONE " : "", Flags() ? " FLAGS " : "", Paused() ? " PAUSED " : "", (pSpellBookWnd && (PCSIDLWND)pSpellBookWnd->dShow) ? " SHOW " : "");
+				gbInZone ? " ZONE " : "", Flags() ? " FLAGS " : "", Paused() ? " PAUSED " : "", (pSpellBookWnd && (PCSIDLWND)pSpellBookWnd->IsVisible()) ? " SHOW " : "");
 		}
 		return;
 	}
@@ -1341,7 +1341,7 @@ PLUGIN_API VOID DuckCommand(PSPAWNINFO pChar, PCHAR Cmd)
 		if (CastF != FLAG_COMPLETE) {
 			CastR = 0;
 		}
-		if ((pCastingWnd && (PCSIDLWND)pCastingWnd->dShow) && CastingLeft()>500) {
+		if ((pCastingWnd && (PCSIDLWND)pCastingWnd->IsVisible()) && CastingLeft()>500) {
 			DuckF = FLAG_REQUEST;
 			DuckHandle(DuckF);
 		}
@@ -1647,7 +1647,7 @@ PLUGIN_API VOID OnPulse(VOID)
 		CastingD = GetCharInfo()->pSpawn->CastingData.SpellID;
 
 		// casting window currently openened?
-		if (pCastingWnd && (PCSIDLWND)pCastingWnd->dShow) {
+		if (pCastingWnd && (PCSIDLWND)pCastingWnd->IsVisible()) {
 			Casting = true;
 			if (CastingO == NOID) {
 				CastingO = (pTarget) ? ((long)((PSPAWNINFO)pTarget)->SpawnID) : 0;
@@ -1773,8 +1773,8 @@ void WinClick(CXWnd *Wnd, PCHAR ScreenID, PCHAR ClickNotification, DWORD KeyStat
 
 void ClickBack()
 {
-	if (!GetCharInfo2()->pInventoryArray->Inventory.Cursor || (pCastingWnd && (PCSIDLWND)pCastingWnd->dShow) ||
-		(pSpellBookWnd && (PCSIDLWND)pSpellBookWnd->dShow)) {
+	if (!GetCharInfo2()->pInventoryArray->Inventory.Cursor || (pCastingWnd && (PCSIDLWND)pCastingWnd->IsVisible()) ||
+		(pSpellBookWnd && (PCSIDLWND)pSpellBookWnd->IsVisible())) {
 		return;
 	}
 	if (GetCharInfo2()->pInventoryArray->Inventory.Cursor && PulseCount) {

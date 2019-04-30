@@ -179,7 +179,7 @@ int RingBuffer::Read(unsigned char &in)
 	if (r_avail < 0)
 		r_avail = 0;
 	w_avail++;
-	if (w_avail > sz)
+	if (w_avail > (int)sz)
 		w_avail = sz;
 	full = false;
 	return 1;

@@ -1011,7 +1011,7 @@ bool CheckCharState()
 
     if (pCastingWnd) { 
         PCSIDLWND pCastingWindow = (PCSIDLWND)pCastingWnd; 
-        if (pCastingWindow->dShow == 1) 
+        if (pCastingWindow->IsVisible() == true) 
             return false; 
         // Don't try to twist if the casting window is up, it implies the previous song 
         // is still casting, or the user is manually casting a song between our twists 
