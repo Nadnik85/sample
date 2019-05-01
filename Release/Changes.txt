@@ -5,7 +5,7 @@ Apr 30 2019 by EqMule
   From now on call functions to get/put data out/in:
   Example: too many to list see CSW struct.
   I'll list 4 examples:  previously pWnd->XMLIndex now: pWnd->GetXMLIndex()
-                         previously pWnd->IsVisible()==false now: pWnd->IsVisible()==false
+                         previously pWnd->dShow==false now: pWnd->IsVisible()==false
 						 previously pWnd->dShow = true now: pWnd->SetVisible(true)
 						 previously SetCXStr(&pWnd->WindowText,"blah"); now pWnd->CSetWindowText("blah");
 						 previously GetCXStr(pWnd->WindowText,szOut); now GetCXStr(pWnd->CGetWindowText(),szOut);

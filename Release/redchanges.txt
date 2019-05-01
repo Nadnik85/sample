@@ -1,3 +1,21 @@
+Apr 30 2019 by RedGuides
+- MQ2DPSAdv (ChatWithThisName) Update to remove "You" from being displayed instead of yourself when dealing damage.
+-
+Apr 30 2019 by EqMule
+- TBL plavceholder info will again display correctly on the targetwindow if you use mq2targetinfo.
+- Changed a bunch of stuff, plugin authors you have until next patch to update your plugins.
+  No more direct access to the window struct members in prep for moving to classes.
+  From now on call functions to get/put data out/in:
+  Example: too many to list see CSW struct.
+  I'll list 4 examples:  previously pWnd->XMLIndex now: pWnd->GetXMLIndex()
+                         previously pWnd->dShow==false now: pWnd->IsVisible()==false
+						 previously pWnd->dShow = true now: pWnd->SetVisible(true)
+						 previously SetCXStr(&pWnd->WindowText,"blah"); now pWnd->CSetWindowText("blah");
+						 previously GetCXStr(pWnd->WindowText,szOut); now GetCXStr(pWnd->CGetWindowText(),szOut);
+- Added .NoExpendReagentID to the Spell tlo.
+  Usage: /echo ${Spell[Burst of Fire].NoExpendReagentID[x]} where x can be 1-4
+  This returns the ID of the needed Reagent you have to have in your inventory but will not be spent.
+-
 Apr 22 2019 by RedGuides
 - MQ2AFNuke (Jimbob) Fixed Mage and Wizard Dissident spells.
 -
