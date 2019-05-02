@@ -112,7 +112,7 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 	ofstream myfile;
 	myfile.open(newfilename, ios::in);
 	char codetag[MAX_STRING] = { 0 };
-	sprintf_s(codetag, "[CODE=INI]", OurClass);
+	sprintf_s(codetag, "[CODE=INI]");
 	myfile << codetag << endl;
 	myfile.close();
 

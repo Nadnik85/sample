@@ -315,6 +315,14 @@ VOID InitializeMQ2IcExports()
 	IC_MQ2Unload = (fMQ2Unload)GetProcAddress(ghmq2ic, "IC_MQ2Unload");
 	IC_ClassLvl = (fClassLvl)GetProcAddress(ghmq2ic, "IC_ClassLvl");
 }
+VOID DeInitializeMQ2IcExports()
+{
+	IC_GetHashData = 0;
+	IC_SetHashData = 0;
+	IC_LoaderSetLoaded = 0;
+	IC_MQ2Unload = 0;
+	IC_ClassLvl = 0;
+}
 #ifdef ISXEQ
 void LoadMQ2Plugin(PMQPLUGIN hMQ2icplugin, const PCHAR pszFilename, char *modulepath, size_t bufflen, HMODULE *module)
 {
@@ -556,7 +564,7 @@ void __cdecl MQ2Shutdown()
     DebugTry(ShutdownChatHook());
 #ifndef ISXEQ
     DebugTry(ShutdownMQ2Pulse());
-    DebugTry(ShutdownMQ2Plugins());
+//    DebugTry(ShutdownMQ2Plugins());
 #endif
     DebugTry(ShutdownMQ2Windows());
 	DebugTry(MQ2MouseHooks(0));
@@ -565,6 +573,9 @@ void __cdecl MQ2Shutdown()
 	DebugTry(ShutdownParser());
 #endif
     DebugTry(ShutdownMQ2Commands());
+    //needs to be done here
+	DebugTry(ShutdownMQ2Plugins());
+	DebugTry(DeInitializeMQ2IcExports());
     DebugTry(ShutdownMQ2Detours());
     DebugTry(ShutdownMQ2Benchmarks());
 	if (ghLockSpellMap) {
@@ -676,7 +687,8 @@ void ForceUnload()
 	ScreenMode = 3;
 	WriteChatColor(UnloadedString,USERCOLOR_DEFAULT);
 	DebugSpewAlways("ForceUnload() called, this is not good %s", UnloadedString);
-	UnloadMQ2Plugins();
+	//dont do this here ShutdownMQ2Plugins() will do it and its called from MQ2Shutdown();
+	//UnloadMQ2Plugins();
 	MQ2Shutdown();
 	DebugSpew("Shutdown completed");
 	g_Loaded = FALSE;

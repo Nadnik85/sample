@@ -1,3 +1,10 @@
+May 02 2019 by Brainiac
+- Fixed the CXWnd__IsActive_x offset
+-
+May 01 2019 by EqMule
+- Fixed a crash in /caption anon on
+- Fixed a crash in /unload
+-
 Apr 30 2019 by RedGuides
 - MQ2DPSAdv (ChatWithThisName) Update to remove "You" from being displayed instead of yourself when dealing damage.
 -

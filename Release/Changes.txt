@@ -1,6 +1,15 @@
+May 02 2019 by Brainiac
+- Fixed the CXWnd__IsActive_x offset
+-
+May 01 2019 by EqMule
+- Fixed a crash in /caption anon on
+- Fixed a crash in /unload
+-
 Apr 30 2019 by EqMule
 - TBL plavceholder info will again display correctly on the targetwindow if you use mq2targetinfo.
 - Changed a bunch of stuff, plugin authors you have until next patch to update your plugins.
+- If you ned help mail the plugin to me and ill send it back fixed: eqmule@hotmail.com
+  ALL global plugins in builder have been updated by me already, look at them for examples.
   No more direct access to the window struct members in prep for moving to classes.
   From now on call functions to get/put data out/in:
   Example: too many to list see CSW struct.
