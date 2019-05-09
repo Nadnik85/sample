@@ -1,3 +1,27 @@
+May 09 2019 by RedGuides
+- MQ2TributeManager (wired420) Can now set tribute manager to turn tribute on during named fights. 
+  Once you are no longer targeting a named NPC and the timer is close to running out it will turn it back off. 
+-
+May 09 2019 by Brainiac & EqMule
+- Multiple stuff
+- MQ2MoveUtils.cpp needs the following changes: (it's already updated in builder)
+	#include "../MQ2Plugin.h"
+	to
+	#include "../MQ2Plugin.h"
+	#include <fenv.h>
+AND
+	float diststuck = strtof(szTemp,NULL);
+	to
+	fesetround(FE_TONEAREST);
+	float diststuck = (float)atof(szTemp);
+-
+May 07 2019 by EqMule
+- Updated for TEST
+- Events are not caught for system messages anymore.
+-
+May 07 2019 by RedGuides
+- *NEW PLUGIN* MQ2Twitch (EqMule). Chat with Twitch users while you stream, directly from the EverQuest client.
+-
 May 02 2019 by Brainiac
 - Fixed the CXWnd__IsActive_x offset
 -

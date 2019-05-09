@@ -36,15 +36,15 @@ enum UIType CSidlScreenWnd::GetType()
 
 class CXMLData * CXWnd::GetXMLData()
 {
-    if (GetXMLIndex())
-        return ((CXMLDataManager*)&((PCSIDLMGR)pSidlMgr)->pXMLDataMgr)->GetXMLData(GetXMLIndex()>>16,GetXMLIndex()&0xFFFF);
+    if (int xmlindex = GetXMLIndex())
+        return ((CXMLDataManager*)&((PCSIDLMGR)pSidlMgr)->pXMLDataMgr)->GetXMLData(xmlindex >> 16,xmlindex & 0xFFFF);
     //DebugSpew("CXWnd::GetXMLData()=0");
     return 0;
 }
 class CXMLData * CSidlScreenWnd::GetXMLData()
 {
-    if (GetXMLIndex())
-        return ((CXMLDataManager*)&((PCSIDLMGR)pSidlMgr)->pXMLDataMgr)->GetXMLData(GetXMLIndex()>>16,GetXMLIndex()&0xFFFF);
+    if (int xmlindex = GetXMLIndex())
+        return ((CXMLDataManager*)&((PCSIDLMGR)pSidlMgr)->pXMLDataMgr)->GetXMLData(xmlindex >> 16,xmlindex & 0xFFFF);
     //DebugSpew("CSidlScreenWnd::GetXMLData()=0");
     return 0;
 }
@@ -1029,6 +1029,13 @@ FUNCTION_AT_ADDRESS(CChatWindow *CChatManager::GetLockedActiveChatWindow(void),C
 #ifdef CChatManager__SetLockedActiveChatWindow_x
 FUNCTION_AT_ADDRESS(void CChatManager::SetLockedActiveChatWindow(CChatWindow *),CChatManager__SetLockedActiveChatWindow);
 #endif
+#ifdef CChatManager__CreateChatWindow_x
+#if !defined(ROF2EMU) && !defined(UFEMU)
+FUNCTION_AT_ADDRESS(void CChatManager::CreateChatWindow(CXWnd*pParentWnd, int ID, char* Name, int Language, int DefaultChannel, int ChatChannel, char* szTellTarget, int FontStyle, bool bScrollbar, bool bHighLight, COLORREF HighlightColor),CChatManager__CreateChatWindow);
+#else
+FUNCTION_AT_ADDRESS(void CChatManager::CreateChatWindow(char* Name, char *IniName, int Language, int DefaultChannel, int ChatChannel, char* szTellTarget, int FontStyle, bool bScrollbar),CChatManager__CreateChatWindow);
+#endif
+#endif
 #ifdef CChatWindow__GetOutputWnd_x
 FUNCTION_AT_ADDRESS(class CStmlWnd *  CChatWindow::GetOutputWnd(void),CChatWindow__GetOutputWnd);
 #endif
@@ -1051,7 +1058,7 @@ FUNCTION_AT_ADDRESS(void  CChatWindow::HistoryBack(void),CChatWindow__HistoryBac
 FUNCTION_AT_ADDRESS(void  CChatWindow::HistoryForward(void),CChatWindow__HistoryForward);
 #endif
 #ifdef CChatWindow__AddHistory_x
-FUNCTION_AT_ADDRESS(void  CChatWindow::AddHistory(CXStr *pText),CChatWindow__AddHistory);
+FUNCTION_AT_ADDRESS(void CChatWindow::AddHistory(CXStr Text),CChatWindow__AddHistory);
 #endif
 #ifdef CChatWindow__GetInputText_x
 FUNCTION_AT_ADDRESS(class CXStr  CChatWindow::GetInputText(void),CChatWindow__GetInputText);
@@ -5359,6 +5366,9 @@ FUNCTION_AT_ADDRESS( EQObject::EQObject(class EQObject *,class EQPlayer *,char *
 #ifdef EQObject__dEQObject_x
 FUNCTION_AT_ADDRESS( EQObject::~EQObject(void),EQObject__dEQObject);
 #endif
+#ifdef ChatManagerClient__Instance_x
+FUNCTION_AT_ADDRESS(ChatManagerClient& ChatManagerClient::Instance(),ChatManagerClient__Instance);
+#endif
 #ifdef EQPlacedItemManager__Instance_x
 FUNCTION_AT_ADDRESS(EQPlacedItemManager& EQPlacedItemManager::Instance(),EQPlacedItemManager__Instance);
 #endif
@@ -6244,8 +6254,11 @@ FUNCTION_AT_ADDRESS(char *  CEverQuest::stripName(char *),CEverQuest__stripName)
 FUNCTION_AT_ADDRESS(void  CEverQuest::clr_chat_input(void),CEverQuest__clr_chat_input);
 #endif
 #ifdef CEverQuest__dsp_chat_x
-FUNCTION_AT_ADDRESS(void  CEverQuest::dsp_chat(char const *,int,bool,bool),CEverQuest__dsp_chat);
-void CEverQuest::dsp_chat(char const *line, int color, bool bLogisok) { dsp_chat(line, color, bLogisok, true); }
+#if !defined(ROF2EMU) && !defined(UFEMU)
+FUNCTION_AT_ADDRESS(void CEverQuest::dsp_chat(const char  *line,int color,bool bLogIsOk,bool bConvertPercent,char *SomeStr),CEverQuest__dsp_chat);
+#else
+FUNCTION_AT_ADDRESS(void CEverQuest::dsp_chat(const char  *line,int color,bool bLogIsOk,bool bConvertPercent),CEverQuest__dsp_chat);
+#endif
 #endif
 #ifdef CEverQuest__OutputTextToLog_x
 FUNCTION_AT_ADDRESS(void CEverQuest::OutputTextToLog(const char*Text),CEverQuest__OutputTextToLog);
@@ -8012,8 +8025,7 @@ FUNCTION_AT_ADDRESS(void  CXStr::Strip(char),CXStr__Strip);
 //FUNCTION_AT_ADDRESS(void  CXStr::SetEncoding(enum EStringEncoding),CXStr__SetEncoding);
 #endif
 #ifdef CXStr__operator_char_p_x
-FUNCTION_AT_ADDRESS(CXStr::operator const char* (void),CXStr__operator_char_p);
-//FUNCTION_AT_ADDRESS( CXStr::operator char *(void)const ,CXStr__operator_char_p);
+FUNCTION_AT_ADDRESS(CXStr::operator const char* (),CXStr__operator_char_p);
 #endif
 #ifdef CXStr__operator_unsigned_short_p_x
 //FUNCTION_AT_ADDRESS( CXStr::operator unsigned short *(void)const ,CXStr__operator_unsigned_short_p);
@@ -8193,10 +8205,10 @@ FUNCTION_AT_ADDRESS(bool  CListWnd::IsLineEnabled(int)const ,CListWnd__IsLineEna
 FUNCTION_AT_ADDRESS(void CListWnd::EnableLine(int,bool),CListWnd__EnableLine);
 #endif
 #ifdef CListWnd__AddColumn_x
-FUNCTION_AT_ADDRESS(int CListWnd::AddColumn(const CXStr *, int, unsigned __int32, unsigned __int32),CListWnd__AddColumn);
+FUNCTION_AT_ADDRESS(int CListWnd::AddColumn(const CXStr&, int, uint32_t, uint32_t), CListWnd__AddColumn);
 #endif
 #ifdef CListWnd__AddColumn1_x
-FUNCTION_AT_ADDRESS(int CListWnd::AddColumn(const CXStr *Label, CTextureAnimation*pTA, int Width,unsigned __int32 Flags, CXStr Tooltip, unsigned __int32 Type, CTextureAnimation *pTASelected, CTextureAnimation *pTAMouseOver, bool bResizeable, tagSIZE TextureSize, tagPOINT TextureOffset),CListWnd__AddColumn1);
+FUNCTION_AT_ADDRESS(int CListWnd::AddColumn(const CXStr& Label, CTextureAnimation* pTA, int Width, uint32_t Flags, CXStr Tooltip, uint32_t Type, CTextureAnimation* pTASelected, CTextureAnimation* pTAMouseOver, bool bResizeable, tagSIZE TextureSize, tagPOINT TextureOffset), CListWnd__AddColumn1);
 #endif
 #ifdef SLinkInfo__dSLinkInfo_x
 //FUNCTION_AT_ADDRESS( SLinkInfo::~SLinkInfo(void),SLinkInfo__dSLinkInfo);

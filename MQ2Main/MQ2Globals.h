@@ -422,7 +422,6 @@ namespace MQ2Globals
 	EQLIB_VAR PSUB pSubs;
 	EQLIB_VAR PMQCOMMAND pCommands;
 	EQLIB_VAR PMQPLUGIN pPlugins;
-	EQLIB_VAR PMQXMLFILE pXMLFiles;
 
 	EQLIB_VAR fGetLabelFromEQ GetLabelFromEQ;
 
@@ -499,14 +498,14 @@ namespace MQ2Globals
 
 	EQLIB_VAR CXWndManager **ppWndMgr;
 #define pWndMgr (*ppWndMgr)
+#define pItemList GetItemList()
 #if !defined(ROF2EMU) && !defined(UFEMU)
-	#define pItemList GetItemList()
 	#define pKeypressHandler GetKeyPresshandler()
 #else
 	EQLIB_VAR KeypressHandler **ppKeypressHandler;
 	#define pKeypressHandler (*ppKeypressHandler)
-	EQLIB_VAR EQItemList **ppItemList;
-	#define pItemList (*ppItemList)
+//	EQLIB_VAR EQItemList **ppItemList;
+//	#define pItemList (*ppItemList)
 #endif
 	EQLIB_VAR PEQRAID pRaid;
 	EQLIB_VAR DZMEMBER **ppDZMember;
@@ -1079,6 +1078,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD __CastRay2;
 	EQLIB_VAR DWORD __ConvertItemTags;
 	EQLIB_VAR DWORD __CrashHandler;
+	EQLIB_VAR DWORD __DoesFileExist;
 	EQLIB_VAR DWORD __EQGetTime;
 	EQLIB_VAR DWORD __ExecuteCmd;
 	EQLIB_VAR DWORD __FixHeading;
@@ -1098,6 +1098,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD __SaveColors;
 	EQLIB_VAR DWORD __STMLToText;
 	EQLIB_VAR DWORD __ToggleKeyRingItem;
+	EQLIB_VAR DWORD CMemoryMappedFile__SetFile;
 	EQLIB_VAR DWORD CrashDetected;
 	EQLIB_VAR DWORD DrawNetStatus;
 	EQLIB_VAR DWORD Expansion_HoT;
@@ -1160,6 +1161,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD CChatManager__FreeChatWindow;
 	EQLIB_VAR DWORD CChatManager__GetLockedActiveChatWindow;
 	EQLIB_VAR DWORD CChatManager__SetLockedActiveChatWindow;
+	EQLIB_VAR DWORD CChatManager__CreateChatWindow;
 	
 	EQLIB_VAR DWORD CContextMenu__CContextMenu;
 	EQLIB_VAR DWORD CContextMenu__dCContextMenu;
@@ -1183,7 +1185,8 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD CChatWindow__CChatWindow;
 	EQLIB_VAR DWORD CChatWindow__Clear;
 	EQLIB_VAR DWORD CChatWindow__WndNotification;
-
+	EQLIB_VAR DWORD CChatWindow__AddHistory;
+	
 	EQLIB_VAR DWORD CComboWnd__DeleteAll;
 	EQLIB_VAR DWORD CComboWnd__Draw;
 	EQLIB_VAR DWORD CComboWnd__GetCurChoice;
@@ -1629,7 +1632,8 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD RealEstateManagerClient__Instance;
 	EQLIB_VAR DWORD FactionManagerClient__Instance;
 	EQLIB_VAR DWORD FactionManagerClient__HandleFactionMessage;
-
+	
+	EQLIB_VAR DWORD ChatManagerClient__Instance;
 	EQLIB_VAR DWORD EQPlacedItemManager__Instance;
 	EQLIB_VAR DWORD EQPlacedItemManager__GetItemByGuid;
 	EQLIB_VAR DWORD EQPlacedItemManager__GetItemByRealEstateAndRealEstateItemIds;

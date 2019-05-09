@@ -1,3 +1,22 @@
+
+May 09 2019 by Brainiac & EqMule
+- Multiple stuff
+- MQ2MoveUtils.cpp needs the following changes: (it's already updated in builder)
+	#include "../MQ2Plugin.h"
+	to
+	#include "../MQ2Plugin.h"
+	#include <fenv.h>
+AND
+	float diststuck = strtof(szTemp,NULL);
+	to
+	fesetround(FE_TONEAREST);
+	float diststuck = (float)atof(szTemp);
+-
+
+May 07 2019 by EqMule
+- Updated for TEST
+- Events are not caught for system messages anymore.
+-
 May 02 2019 by Brainiac
 - Fixed the CXWnd__IsActive_x offset
 -

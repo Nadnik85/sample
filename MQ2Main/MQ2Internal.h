@@ -197,7 +197,7 @@ namespace MQ2Internal {
     } SWHOSORT, *PSWHOSORT;
 
     typedef struct _CONNECTION {
-        SOCKET socket;
+        unsigned int socket;
         BOOL Auth;
         struct _CONNECTION *pNext;
     } CONNECTION, *PCONNECTION;
@@ -326,13 +326,6 @@ namespace MQ2Internal {
         CHAR szName[MAX_STRING];
         DWORD (__cdecl *fAddress)(PCHAR, PCHAR, PSPAWNINFO);
     } PARMLIST, *PPARMLIST;
-
-    typedef struct _MQXMLFile
-    {
-        char szFilename[MAX_PATH];
-        _MQXMLFile *pLast;
-        _MQXMLFile *pNext;
-    } MQXMLFILE, *PMQXMLFILE;
 
     typedef struct _MQBENCH
     {

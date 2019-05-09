@@ -344,9 +344,9 @@ EQLIB_API VOID DeleteMQ2NewsWindow();
 EQLIB_API VOID InitializeChatHook();
 EQLIB_API VOID ShutdownChatHook();
 #if !defined(ROF2EMU) && !defined(UFEMU)
-EQLIB_API VOID dsp_chat_no_events(const char *, int, bool, bool = 1,int = 0);
+EQLIB_API VOID dsp_chat_no_events(const char *Text, int Color, bool EqLog = true, bool dopercentsubst = true, char *SomeStr = NULL);
 #else
-EQLIB_API VOID dsp_chat_no_events(const char *, int, bool, bool = 1);
+EQLIB_API VOID dsp_chat_no_events(const char *Text, int Color, bool EqLog = true, bool dopercentsubst = true);
 #endif
 
 /* DETOURING API */
@@ -428,10 +428,13 @@ void __stdcall EventBlechCallback(unsigned int ID, void * pData, PBLECHVALUE pVa
 #endif
 #define PMP_ERROR_BADPARM 10000
 LEGACY_API PCHAR ParseMacroParameter(PSPAWNINFO pChar, PCHAR szOriginal, SIZE_T BufferSize);
-template <unsigned int _Size>__declspec(dllexport) PCHAR ParseMacroParameter(PSPAWNINFO pChar, CHAR(&szOriginal)[_Size])
+
+template <unsigned int _Size>
+inline PCHAR ParseMacroParameter(PSPAWNINFO pChar, CHAR(&szOriginal)[_Size])
 {
 	return ParseMacroParameter(pChar, szOriginal, _Size);
 }
+
 #ifndef ISXEQ
 LEGACY_API VOID FailIf(PSPAWNINFO pChar, PCHAR szCommand, int pStartLine, BOOL All = FALSE);
 LEGACY_API VOID InitializeParser();
@@ -575,7 +578,7 @@ typedef struct _krdata
 }krdata, *pkrdata;
 
 namespace EQData {
-	EQLIB_API struct _ITEMINFO *GetItemFromContents(struct _CONTENTS *c);
+	EQLIB_API ITEMINFO *GetItemFromContents(CONTENTS* c);
 };
 #include "MQ2Inlines.h"
 
@@ -616,15 +619,21 @@ EQLIB_API PEQCONTAINERWINDOW FindContainerForContents(PCONTENTS pContents);
 EQLIB_API FLOAT FindSpeed(PSPAWNINFO pSpawn);
 EQLIB_API BOOL IsNamed(PSPAWNINFO pSpawn);
 EQLIB_API VOID GetItemLinkHash(PCONTENTS Item, PCHAR Buffer, SIZE_T BufferSize);
-template <unsigned int _Size>__declspec(dllexport) VOID GetItemLinkHash(PCONTENTS Item, CHAR(&Buffer)[_Size])
+
+template <unsigned int _Size>
+inline void GetItemLinkHash(PCONTENTS Item, CHAR(&Buffer)[_Size])
 {
 	return GetItemLinkHash(Item, Buffer, _Size);
 }
+
 EQLIB_API BOOL GetItemLink(PCONTENTS Item, PCHAR Buffer, SIZE_T BufferSize, BOOL Clickable = TRUE);
-template <unsigned int _Size>__declspec(dllexport) BOOL GetItemLink(PCONTENTS Item, CHAR(&Buffer)[_Size], BOOL Clickable = TRUE)
+
+template <unsigned int _Size>
+inline BOOL GetItemLink(PCONTENTS Item, CHAR(&Buffer)[_Size], BOOL Clickable = TRUE)
 {
 	return GetItemLink(Item, Buffer, _Size, Clickable);
 }
+
 EQLIB_API PCHAR GetLoginName();
 EQLIB_API FLOAT DistanceToPoint(PSPAWNINFO pSpawn, FLOAT xLoc, FLOAT yLoc);
 EQLIB_API FLOAT Distance3DToPoint(PSPAWNINFO pSpawn, FLOAT xLoc, FLOAT yLoc, FLOAT zLoc);
