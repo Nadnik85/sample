@@ -1,6 +1,10 @@
 
 May 09 2019 by Brainiac & EqMule
 - Multiple stuff
+- Fixed a bug in CListWnd::AddString
+  ALL instances of: AddString(&CXStr
+  should be changed to: AddString(CXStr
+-
 - MQ2MoveUtils.cpp needs the following changes: (it's already updated in builder)
 	#include "../MQ2Plugin.h"
 	to
