@@ -24,7 +24,6 @@ PLUGIN_VERSION(PLUGIN_VERS);
 #endif PLUGIN_API
 
 #include "../MQ2Plugin.h"
-#include <fenv.h>
 #include "math.h"
 #include <vector>
 
@@ -7561,8 +7560,7 @@ void LoadConfig()
     GetPrivateProfileString("StuckLogic", "StuckLogic",     STUCK->On            ? "on" : "off", szTemp, MAX_STRING, INIFileName);
     STUCK->On = (!_strnicmp(szTemp, "on", 3));
     GetPrivateProfileString("StuckLogic", "DistStuck",      ftoa_s(STUCK->Dist, szTempF),          szTemp, MAX_STRING, INIFileName);
-	fesetround(FE_TONEAREST);
-	float diststuck = (float)atof(szTemp);
+    float diststuck = (float)atof(szTemp);
     if (diststuck > 0.0f)
     {
         STUCK->Dist = (float)diststuck;

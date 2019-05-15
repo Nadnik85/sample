@@ -1903,19 +1903,23 @@ bool HandleMoveUtils(void)
 unsigned char PetButtonEnabled(char* pszButtonName)
 {
     int i = 0;
+	CHAR *szBuf = new CHAR[MAX_STRING];
     for (i = 0; i < PET_BUTTONS; i++)
     {
         if (((PEQPETINFOWINDOW)pPetInfoWnd)->pButton[i])
         {
-            if (((PEQPETINFOWINDOW)pPetInfoWnd)->pButton[i]->Wnd.CGetWindowText()->Text[0])
+            if (PCXSTR Str = ((PEQPETINFOWINDOW)pPetInfoWnd)->pButton[i]->Wnd.CGetWindowText())
             {
-                if (!_stricmp(((PEQPETINFOWINDOW)pPetInfoWnd)->pButton[i]->Wnd.CGetWindowText()->Text, pszButtonName))
+				GetCXStr(Str, szBuf);
+                if (!_stricmp(szBuf, pszButtonName))
                 {
-                    return ((PEQPETINFOWINDOW)pPetInfoWnd)->pButton[i]->Wnd.IsEnabled();
+					delete szBuf;
+					return ((PEQPETINFOWINDOW)pPetInfoWnd)->pButton[i]->Wnd.IsEnabled();
                 }
             }
         }
     }
+	delete szBuf;
     return 0;
 }
 
@@ -1953,10 +1957,14 @@ unsigned long TimeSince(unsigned long Timer) {
 }
 
 PSTR WinTexte(CXWnd *Wnd, char* ScreenID, PSTR Buffer) {
-    Buffer[0] = 0;
-    if (Wnd)
-        if (CXWnd *Child = (CXWnd*)Wnd->GetChildItem(ScreenID))
-            GetCXStr(Child->CGetWindowText(), Buffer, MAX_STRING);
+    Buffer[0] = '\0';
+	if (Wnd)
+	{
+		if (CXWnd *Child = (CXWnd*)Wnd->GetChildItem(ScreenID))
+		{
+			GetCXStr(Child->CGetWindowText(), Buffer);
+		}
+	}
     return Buffer;
 }
 

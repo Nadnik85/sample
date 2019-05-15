@@ -1,3 +1,17 @@
+May 15 2019 by RedGuides
+- MQ2AutoLoot (Plure) /autoloot barter will now only try to sell to people using an exact match.
+- 
+May 15 2019 by EqMule
+- Updated for LIVE
+-
+May 14 2019 by RedGuides
+- MQ2Nav (brainiac) Fix for potential floating point error when parsing strings in other plugins 
+- MQ2Main (EqMule) update for debugging, changelog to come.
+-
+May 14 2019 by RedGuides
+- MQ2TributeManager (wired420) Now checks both group and raid (x3) main assists for named targets when deciding to turn tribute on and off.
+- MQ2Main (EqMule) update for debugging, changelog to come.
+-
 May 10 2019 by RedGuides
 - Fix for xtarg on ragefire & lockjaw - Redbot
 - Critical update for crashes, changelog to come. -EqMule

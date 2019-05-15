@@ -1,4 +1,7 @@
 
+May 15 2019 by EqMule
+- Updated for LIVE
+-
 May 09 2019 by Brainiac & EqMule
 - Multiple stuff
 - Fixed a bug in CListWnd::AddString
