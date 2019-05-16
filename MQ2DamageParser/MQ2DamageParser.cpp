@@ -42,14 +42,14 @@ void DPSReset(PSPAWNINFO pLPlayer, char* szLine);
 class CDamageParserLogWnd : public CSidlScreenWnd
 {
 public:
-    CDamageParserLogWnd(CXStr *screenpiece):CSidlScreenWnd(0,screenpiece,-1,1,0)
+    CDamageParserLogWnd(CXStr& screenpiece):CSidlScreenWnd(0,screenpiece,-1,1,0)
     {
         CreateChildrenFromSidl();
         pXWnd()->Show(gbShowLogWindow,0);
         ReplacevfTable();
         SetEscapable(true);
     }
-    CDamageParserLogWnd(char *screenpiece):CSidlScreenWnd(0,&CXStr(screenpiece),-1,1,0)
+    CDamageParserLogWnd(char *screenpiece):CSidlScreenWnd(0,CXStr(screenpiece),-1,1,0)
     {
         CreateChildrenFromSidl();
 		pXWnd()->Show(gbShowLogWindow,0);

@@ -2079,7 +2079,7 @@ public:
     CXWnd*            OutWnd;
     struct _CSIDLWND* OutStruct;
 
-    CMoveUtilsWnd(CXStr* Template) : CCustomWnd(Template)
+    CMoveUtilsWnd(CXStr& Template) : CCustomWnd(Template)
     {
         SetWndNotification(CMoveUtilsWnd);
         StmlOut                                     = (CStmlWnd*)GetChildItem("CW_ChatOutput");
@@ -2171,8 +2171,7 @@ protected:
     void NewWnd()
     {
         char szWindowText[MAX_STRING] = {0};
-        class CXStr ChatWnd("ChatWindow");
-        OurWnd = new CMoveUtilsWnd(&ChatWnd);
+        OurWnd = new CMoveUtilsWnd(CXStr("ChatWindow"));
 		//left top right bottom
 		OurWnd->SetLocation({ (LONG)GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "ChatLeft",     10,   INIFileName),
 			(LONG)GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "ChatTop",      10,   INIFileName),
