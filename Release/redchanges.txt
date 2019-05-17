@@ -1,3 +1,8 @@
+May 16 2019 by RedGuides
+- *New Plugin!* MQ2Collections (TypePun) allows macro authors to create stacks, queues, maps, and lists.
+- MQ2Rez (EqMule) updated
+- kissassist1004e15.mac (eqmule version) updated
+-
 May 16 2019 by EqMule
 - Fixed Get Current Mana and Get Current Endurance
 - Fixed MQ2Rez spam (yes really this time)
