@@ -1,3 +1,13 @@
+May 22 2019 by SwiftyMuse & EqMule
+- Fixed ${Me.SpellInCooldown}
+- Fixed some parsing bugs.
+-
+May 21 2019 by EqMule
+- Updated for LIVE
+-
+May 17 2019 by EqMule
+- Updated for TEST
+-
 May 16 2019 by RedGuides
 - *New Plugin!* MQ2Collections (TypePun) allows macro authors to create stacks, queues, maps, and lists.
 - MQ2Rez (EqMule) updated
