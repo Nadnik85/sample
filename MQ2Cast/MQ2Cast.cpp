@@ -1549,7 +1549,7 @@ PLUGIN_API VOID InitializePlugin(VOID)
 #else
     aCastEvent(LIST289, CAST_RESIST, "#*# resisted your #*#!");
 #endif
-	aCastEvent(LIST289, CAST_RESIST, "#*# resisted your #*#!");
+	aCastEvent(LIST289, CAST_RECOVER, "Spell recovery time not yet met#*#");
 	aCastEvent(LIST289, CAST_STANDING, "You must be standing to cast a spell#*#");
 	aCastEvent(LIST289, CAST_STUNNED, "You can't cast spells while stunned#*#");
 	aCastEvent(LIST289, CAST_SUCCESS, "You are already on a mount#*#");
