@@ -1529,10 +1529,10 @@ PLUGIN_API VOID InitializePlugin(VOID)
 	aCastEvent(LIST013, CAST_IMMUNE, "Your target is immune to snare spells#*#");
 	aCastEvent(LIST289, CAST_IMMUNE, "Your target cannot be mesmerized#*#");
 	aCastEvent(UNKNOWN, CAST_IMMUNE, "Your target looks unaffected#*#");
-	aCastEvent(LIST264, CAST_INTERRUPTED, "Your spell is interrupted#*#");
+	aCastEvent(LIST264, CAST_INTERRUPTED, "Your #*# is interrupted#*#");
 	aCastEvent(UNKNOWN, CAST_INTERRUPTED, "Your casting has been interrupted#*#");
-	aCastEvent(LIST289, CAST_FIZZLE, "Your spell fizzles#*#");
-	aCastEvent(LIST289, CAST_FIZZLE, "You miss a note, bringing your song to a close#*#");
+	aCastEvent(LIST289, CAST_FIZZLE, "Your #*# fizzles#*#");
+	aCastEvent(LIST289, CAST_FIZZLE, "You miss a note, bringing your #*# to a close#*#");
 	aCastEvent(LIST289, CAST_NOTARGET, "You must first select a target for this spell#*#");
 	aCastEvent(LIST289, CAST_NOTARGET, "This spell only works on#*#");
 	aCastEvent(LIST289, CAST_NOTARGET, "You must first target a group member#*#");
@@ -1609,6 +1609,20 @@ PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color)
 	CHAR szLine[MAX_STRING] = { 0 };
 	strcpy_s(szLine, Line);
 	if (gbInZone) {
+		if (strchr(szLine, '\x12')) {
+			// Message includes link (item tags/spell), must clean first
+			int len = strlen(Line);
+			if (char *szClean = (char *)LocalAlloc(LPTR, len + 64)) {
+				strncpy_s(szClean, len + 64, Line, len);
+				CXStr out;
+				if (CXStr *str = CleanItemTags(&out, szClean, false)) {
+					GetCXStr(str->Ptr, szClean, len + 64);
+				}
+				strncpy_s(szLine, _countof(szLine), szClean, len + 64);
+				LocalFree(szClean);
+			}
+		}
+
 		if (CastingC != NOID && !Twisting) {
 			Parsed = false;
 			if (DEBUGGING) {
