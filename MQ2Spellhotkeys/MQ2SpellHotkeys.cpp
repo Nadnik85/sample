@@ -176,7 +176,7 @@ PLUGIN_API DWORD OnIncomingChat(CHAR *Line, DWORD Color)
             hit_queue.clear(); // remember to clear hit queue as well 
             am_casting = FALSE; // no longer casting 
             missed = FALSE; 
-        } else if ((strstr(Line, "Your spell is interrupted.") != NULL) || 
+        } else if ((strstr(Line, "Your ") != NULL && strstr(Line, " spell is interrupted.") != NULL) ||
                 (strstr(Line, "Your casting has been interrupted!") != NULL)) { 
             // Not casting anymore 
             // Possible customization here. 

@@ -1328,9 +1328,9 @@ PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color)
         return 0; 
     // DebugSpew("MQ2Twist::OnIncomingChat(%s)",Line); 
     
-    if ( !strcmp(Line,"You miss a note, bringing your song to a close!") || 
+    if ( (strstr(Line,"You miss a note, bringing your ") && strstr(Line," to a close!")) ||
                 !strcmp(Line,"You haven't recovered yet...") || 
-                !strcmp(Line,"Your spell is interrupted.") ) { 
+                (strstr(Line,"Your ") && strstr(Line," spell is interrupted.")) ) {
         DebugSpew("MQ2Twist::OnIncomingChat - Song Interrupt Event"); 
         WriteDebug("MQ2Twist::OnIncomingChat - Song Interrupt Event"); 
         if (!HoldSong) 
