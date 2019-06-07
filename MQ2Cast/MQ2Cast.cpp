@@ -1544,7 +1544,11 @@ PLUGIN_API VOID InitializePlugin(VOID)
 	aCastEvent(LIST289, CAST_OUTDOORS, "You can not summon a mount here#*#");
 	aCastEvent(LIST289, CAST_OUTDOORS, "You must have both the Horse Models and your current Luclin Character Model enabled to summon a mount#*#");
 	aCastEvent(LIST264, CAST_RECOVER, "You haven't recovered yet#*#");
-	aCastEvent(LIST289, CAST_RECOVER, "Spell recovery time not yet met#*#");
+#if defined(UFEMU) || defined(ROF2EMU)
+    aCastEvent(LIST289, CAST_RESIST, "Your target resisted the#*#spell#*#");
+#else
+    aCastEvent(LIST289, CAST_RESIST, "#*# resisted your #*#!");
+#endif
 	aCastEvent(LIST289, CAST_RESIST, "#*# resisted your #*#!");
 	aCastEvent(LIST289, CAST_STANDING, "You must be standing to cast a spell#*#");
 	aCastEvent(LIST289, CAST_STUNNED, "You can't cast spells while stunned#*#");
