@@ -2270,7 +2270,7 @@ public:
                     }
                 }
             }
-            if (TYPE>DISC && !Evaluate("${If[${Cast.Ready[%s]},1,0]}", COMM)) return 0x11; // mq2cast not ready
+            if (TYPE>DISC && ((NULL == PluginEntry("mq2cast", "CastCommand")) || !Evaluate("${If[${Cast.Ready[%s]},1,0]}", COMM))) return 0x11; // mq2cast not ready
             if (TYPE == AA) {
                 if (!AAReady(INDEX))       return 0x13;  // Ability Not Ready
             }
@@ -2797,8 +2797,6 @@ long      onCHALLENGEFOR      = false;        // Challenge Flag? (turn to false 
 long      onENRAGINGKICK      = false;        // Challenge Flag? (turn to false when use once)
 
 unsigned long     NPC_TYPE    = 0x000A;       // NPC TYPE
-char      MeleeKey[32];                       // Plugin Melee Key
-char      RangeKey[32];                       // Plugin Range Key
 unsigned long     SETBINDINGS = 1;            // Set Bindings?
 
 unsigned long     PetInDist   = 0;            // Pet Target in Range
@@ -4758,8 +4756,8 @@ void Bindding(bool BindMode)
         if (!Binded)
         {
             KeyCombo  MeleeCombo, RangeCombo;
-            RemoveMQ2KeyBind("MELEE"); AddMQ2KeyBind("MELEE", KeyMelee); ParseKeyCombo(MeleeKey, MeleeCombo); SetMQ2KeyBind("MELEE", false, MeleeCombo);
-            RemoveMQ2KeyBind("RANGE"); AddMQ2KeyBind("RANGE", KeyRange); ParseKeyCombo(RangeKey, RangeCombo); SetMQ2KeyBind("RANGE", false, RangeCombo);
+            RemoveMQ2KeyBind("MELEE"); AddMQ2KeyBind("MELEE", KeyMelee);
+            RemoveMQ2KeyBind("RANGE"); AddMQ2KeyBind("RANGE", KeyRange);
             Binded = true;
         }
     }
@@ -4870,8 +4868,6 @@ void __stdcall STRIKERESET(unsigned int ID, void *pData, PBLECHVALUE pValues)
 PLUGIN_API void InitializePlugin()
 {
     NPC_TYPE = GetPrivateProfileInt("Settings", "SpawnType", 0x000A, INIFileName);
-    GetPrivateProfileString("Settings", "MeleeKeys", "z", MeleeKey, sizeof(MeleeKey), INIFileName);
-    GetPrivateProfileString("Settings", "RangeKeys", "x", RangeKey, sizeof(RangeKey), INIFileName);
     SETBINDINGS = GetPrivateProfileInt("Settings", "Bindings", 1, INIFileName);
 
     CmdListe.clear();
