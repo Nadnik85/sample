@@ -351,7 +351,7 @@ void Server::SendTo(const char * msg, const char * dest)
 	clients->Unlock();
 }
 
-void Server::SendMSGAll(Client * source, const char * msg, bool cmd)
+void Server::SendMSGAll(Client * source, const char * msg, bool cmd, bool silent)
 {
 	if (!clients) return;
 	clients->Lock();
@@ -365,7 +365,10 @@ void Server::SendMSGAll(Client * source, const char * msg, bool cmd)
 				static char message[MAX_BUF] = { 0 };
 				memset(message, 0, MAX_BUF);
 				//snprintf(message, MAX_BUF, "\tMSGALL\n<%s> %s %s", source->GetName(), client->GetName(), msg);
-				snprintf(message, MAX_BUF, "<%s> %s %s", source->GetName(), client->GetName(), msg);
+				if(silent)
+					snprintf(message, MAX_BUF, "<!%s> %s %s", source->GetName(), client->GetName(), msg);
+				else
+					snprintf(message, MAX_BUF, "<%s> %s %s", source->GetName(), client->GetName(), msg);
 				client->SendBCMessage(message);
 			}
 			else
@@ -461,7 +464,7 @@ void Server::SendNetbotNames(Client * source, const char * msg)
 	fprintf(stderr, "%s Requested Names:%s", source->GetName(), pnamelist);
 }
 
-void Server::SendTell(Client * source, const char * msg, bool bci)
+void Server::SendTell(Client * source, const char * msg, bool bci, bool silent)
 {
 	if (!source->IsAuthenticated()) return;
 	static char message[MAX_BUF];
@@ -476,7 +479,10 @@ void Server::SendTell(Client * source, const char * msg, bool bci)
 		{
 			if ((_strnicmp(name, client->GetName(), strlen(name)) == 0) && (strlen(name) == strlen(client->GetName())))
 			{
-				snprintf(message, MAX_BUF, "%c%s%c %s", bci ? '{' : '[', source->GetName(), bci ? '}' : ']', msg+strlen(name) + 1);
+				if(silent)
+					snprintf(message, MAX_BUF, "%c!%s%c %s", bci ? '{' : '[', source->GetName(), bci ? '}' : ']', msg + strlen(name) + 1);
+				else
+					snprintf(message, MAX_BUF, "%c%s%c %s", bci ? '{' : '[', source->GetName(), bci ? '}' : ']', msg+strlen(name) + 1);
 				client->wbuf->Write(message, strlen(message));
 				return;
 			}
@@ -493,7 +499,10 @@ void Server::SendTell(Client * source, const char * msg, bool bci)
 			{
 				if ((_strnicmp(name, (*it1).c_str(), strlen(name)) == 0) && (strlen(name) == strlen((*it1).c_str())))
 				{
-					snprintf(message, MAX_BUF, "%c%s%c %s", bci ? '{' : '[', source->GetName(), bci ? '}' : ']', msg + strlen(name) + 1);
+					if(silent)
+						snprintf(message, MAX_BUF, "%c!%s%c %s", bci ? '{' : '[', source->GetName(), bci ? '}' : ']', msg + strlen(name) + 1);
+					else
+						snprintf(message, MAX_BUF, "%c%s%c %s", bci ? '{' : '[', source->GetName(), bci ? '}' : ']', msg + strlen(name) + 1);
 					client->wbuf->Write(message, strlen(message));
 					ret = 1;
 				}

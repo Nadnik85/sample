@@ -1,3 +1,52 @@
+Jun 05 2019 by RedGuides
+- KissAssist (Maskoi, ctaylor22) updated to 11.004, small fixes
+- KissAssist EqMule Edition (EqMule) new buff code
+- MQ2EasyFind (EqMule) added a fix for stuck spell gems. /unstickgems
+- MQ2Dan (dannuic) changed observer TLO's (and fixed them), removed delay from `/dobs`, fixed major observer frequency bug
+- MQ2Melee (Alynel) Change defaults on harm touch, FD, and escape
+- MQ2DPSAdv (ChatWithThisName) Fixed crash in SplitStringNonMelee where MobEnd would exceed the size of MobName by ensuring it's within the capacity 
+  of it's container, and false out if it's not.
+-
+Jun 05 2019 by EqMule
+- Fixed a crash in the TEST build.
+-
+Jun 01 2019 by RedGuides
+- MQ2DanNet (dannuic) added zone channel, fixed Version TLO, expanded full names boolean
+-
+Jun 01 2019 by EqMule
+- Fixed Events for text that contain 'x12' tags
+- Added Me.BlockedBuff and Me.BlockedPetBuff both return a pSpellType idea cred: chatwiththisname
+- Usage: /echo ${Me.BlockedBuff[x].ID} where x is 1-40
+-
+May 30 2019 by EqMule
+- Fixed /dosocial
+- Some other stuff I'll documment later.
+-
+May 29 2019 by RedGuides
+- MQ2DanNet (dannuic) fixed null commands, channel commands, group aggregation issues, and added colors
+- KissAssist.mac (maskoi, ctaylor22) Major fix in casting and spiffy new debug routines
+- BAS.mac (ctaylor22) Barter Auto Seller updated to newest version, h/t kaen01
+-
+May 24 2019 by EqMule
+- BuffsPopulated returns 1 for a empty buff list and a number above 1 if there was some buffs received.
+  So if you do /echo ${Target.BuffsPopulated} and it returns 1 it means the target does not have any actual buffs, but the list was received (and it was empty).
+  any number above 1 means the list was not empty...
+  NOTE: Use ${Target.BuffCount} to get the ACTUAL VISIBLE buffs (BuffsPopulated is BuffCount + 1)
+- Some other stuff I'll documment later.
+-
+May 23 2019 by EqMule
+- Added the possibility to login new characters using plaintext credentials, no mq2 login profile needed:
+	Usage:
+	/loginchar servername^login^charname^password
+	AND if you want to stop at charselect don't specify charname:
+	/loginchar servername^login^password
+- Made /quit command work at charselect
+- Added a Syntax Error to the parser when you try to parse strings greater than 2048 instead of crashing you.
+
+May 22 2019 by RedGuides
+- MQ2Rez (ChatWithThisName) completely rewritten. Fixes safe mode, fixes voice notify, reports who rezzed you and the %.
+- KissAssist.mac (Maskoi, ctaylor22) updated, changelog to come.
+-
 May 22 2019 by SwiftyMuse & EqMule
 - Fixed ${Me.SpellInCooldown}
 - Fixed some parsing bugs.

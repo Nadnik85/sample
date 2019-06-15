@@ -613,6 +613,22 @@ void Client::HandleTell(char * data)
 	server->SendTell(this, data);
 }
 
+void Client::HandleSMSGAll(char * data)
+{
+	//fprintf(stderr, "<%s>  [*ALL*] %s", name, data); //SILENCE! I KILL YOU!
+	char message[MAX_BUF] = { 0 };
+	//snprintf(message, MAX_BUF, "\tMSGALL\n<%s> %s", name, data, true);
+	server->SendMSGAll(this, data, true, true);
+	//wbuf->Write(message, strlen(message));
+}
+
+void Client::HandleSTell(char * data)
+{
+	//fprintf(stderr, "<%s> %s", name, data); // No Echo for tell?
+	char message[MAX_BUF] = { 0 };
+	server->SendTell(this, data, false, true);
+}
+
 void Client::HandlePong(char * data)
 {
 	// this wasn't used on the old EQBCS...
@@ -686,6 +702,8 @@ void Client::ProcessCommands(char *data)
 		case COMMAND_BCI: HandleBCI(data); break;
 		case COMMAND_MSGALL: HandleMSGAll(data); break;
 		case COMMAND_TELL: HandleTell(data); break;
+		case COMMAND_SMSGALL: HandleSMSGAll(data); break;
+		case COMMAND_STELL: HandleSTell(data); break;
 		case COMMAND_NBMSG: HandleNetbotMessage(data); break;
 		//case COMMAND_PONG: HandlePong(data); break;
 		//case COMMAND_DISCONNECT: HandleDisconnect(data); break;

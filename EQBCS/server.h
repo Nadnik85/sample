@@ -112,11 +112,11 @@ class Server
 		void SendToAll(const char * msg, Client *source=NULL);
 		void SendTo(const char * msg, const char *dest);
 		void SetEventBase(event_base *base) { m_ev_base=base; };
-		void SendMSGAll(Client * source, const char * msg, bool cmd=false);
+		void SendMSGAll(Client * source, const char * msg, bool cmd=false, bool silent=false);
 		void SendNames(Client *source, const char *msg);
 		void SendNetbotMessage(Client * source, const char * msg);
 		void SendNetbotNames(Client * source, const char * msg);
-		void SendTell(Client *source, const char *msg, bool bci=false);
+		void SendTell(Client *source, const char *msg, bool bci=false, bool silent=false);
 
 	public:
 		bool BindSendSocket(int &sock, char *int_name);

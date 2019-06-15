@@ -48,9 +48,9 @@ class Client
 {
 	public:
 		enum StatusCode { STATUS_IDLE = 0, STATUS_LOGIN, STATUS_MESSAGE, STATUS_EXPLODE, STATUS_NAPTIME };
-		const static int NUM_COMMANDS = 10;
+		const static int NUM_COMMANDS = 12;
 
-		enum CommandType { COMMAND_UNK = 0, COMMAND_NAMES = 1, COMMAND_MSGALL, COMMAND_TELL, COMMAND_DISCONNECT, COMMAND_PONG, COMMAND_LOCALECHO, COMMAND_BCI, COMMAND_CHANNELS, COMMAND_NBMSG, COMMAND_NBNAMES };
+		enum CommandType { COMMAND_UNK = 0, COMMAND_NAMES = 1, COMMAND_MSGALL, COMMAND_TELL, COMMAND_DISCONNECT, COMMAND_PONG, COMMAND_LOCALECHO, COMMAND_BCI, COMMAND_CHANNELS, COMMAND_NBMSG, COMMAND_NBNAMES, COMMAND_SMSGALL, COMMAND_STELL };
 		struct CommandStruct
 		{
 			const char *Token;
@@ -67,7 +67,9 @@ class Client
 			{ "LOCALECHO",	COMMAND_LOCALECHO },
 			{ "BCI",		COMMAND_BCI },
 			{ "NBMSG",		COMMAND_NBMSG },
-			{ "NBNAMES",	COMMAND_NBNAMES }
+			{ "NBNAMES",	COMMAND_NBNAMES },
+			{ "SMSGALL",	COMMAND_SMSGALL },
+			{ "STELL",		COMMAND_STELL }
 		};
 
 	private:
@@ -87,6 +89,8 @@ class Client
 		void HandleNetbotMessage(char * data);
 		void HandleMSGAll(char *data);
 		void HandleTell(char *data);
+		void HandleSMSGAll(char *data);
+		void HandleSTell(char *data);
 		void HandlePong(char *data);
 		void HandleLocalEcho(char *data);
 		void HandleBCI(char *data);
