@@ -1,4 +1,4 @@
-Current Version is: 3.26 (2018-12-01)
+Current Version is: 3.28 (2019-04-16)
 
 == Updating ==
 Download the latest amalgamation source version of SQLite: https://www.sqlite.org/download.html
