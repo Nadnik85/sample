@@ -68,6 +68,7 @@ namespace KnightlySQLite {
 				Message("\ay     ${sqlite.rows[QueryName]} -- Int - The number of rows returned for results");
 				Message("\ay     ${sqlite.clear[QueryName]} -- Clears memory of the query results");
 				Message("\ay     ${sqlite.result[QueryName Row ColumnName]} -- String containing results (or Failed)");
+				Message("\ay     ${sqlite.resultcode[QueryName]} -- Int - SQLite ResultCode (or -1: Active, -2: Query Not Found)");
 				Message("\ayExample:");
 				Message("\ay     /echo ${sqlite.result[myquery 1 Name]}");
 				Message("\ayThe above would return the value of the column named \"Name\" for the first row of results from myquery.");
@@ -220,8 +221,12 @@ PLUGIN_API VOID SQLiteCommand(PSPAWNINFO pSpawn, PCHAR szLine)
 						KnightlySQLite::multimapSQLResult[szParam2]["Metadata"]["Status"] = "Active";
 						// Set the number of rows to 0
 						KnightlySQLite::multimapSQLResult[szParam2]["Metadata"]["Rows"] = "0";
+						// In the event of a long-running query store the result code of "-1" to mean Active
+						KnightlySQLite::multimapSQLResult[szParam2]["Metadata"]["ResultCode"] = "-1";
 						// Execute the SQL Command
 						rc = sqlite3_exec(db, strSQLCommand.c_str(), KnightlySQLite::SQL::callbackSQLite, szParam2, &zErrMsg);
+						// Store the result code
+						KnightlySQLite::multimapSQLResult[szParam2]["Metadata"]["ResultCode"] = std::to_string(rc);
 						if (rc != SQLITE_OK) {
 							KnightlySQLite::Log::Debug("Query '" + std::string(szParam2) + "' Failed: " + std::string(zErrMsg));
 							// Set the status to failed
@@ -260,6 +265,9 @@ class MQ2SQLiteType : public MQ2Type {
 			rows,
 			Result,
 			result,
+			ResultCode,
+			Resultcode,
+			resultcode,
 			Clear,
 			clear
 		};
@@ -271,6 +279,9 @@ class MQ2SQLiteType : public MQ2Type {
 			TypeMember(rows);
 			TypeMember(Result);
 			TypeMember(result);
+			TypeMember(ResultCode);
+			TypeMember(Resultcode);
+			TypeMember(resultcode);
 			TypeMember(Clear);
 			TypeMember(clear);
 		}
@@ -351,6 +362,20 @@ class MQ2SQLiteType : public MQ2Type {
 						strcpy_s(_szBuffer, "Failure:  Need 3 parameters");
 					}
 					Dest.Ptr = &_szBuffer[0];
+					return TRUE;
+				case ResultCode:
+				case Resultcode:
+				case resultcode:
+					Dest.Type = pIntType;
+					// If we have a ResultCode
+					if (KnightlySQLite::multimapSQLResult[Index]["Metadata"].count("ResultCode") == 1)
+					{
+						Dest.Int = std::stoi(KnightlySQLite::multimapSQLResult[Index]["Metadata"]["ResultCode"]);
+					}
+					else {
+						// Set the return to -2 for "Query Not Found"
+						Dest.Int = -2;
+					}
 					return TRUE;
 				case Clear:
 				case clear:
