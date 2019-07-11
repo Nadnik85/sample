@@ -1,3 +1,16 @@
+Jul 11 2019 by RedGuides
+- MQ2Xptracker (ChatWithThisName, dannuic) Updated to follow new XP formula, improved readability of output, more detailed output
+- MQ2AutoLoot (Plure) Fixed bug where no drop items marked destroy won't be destroyed, fixed excludebag issues which allows bags other than 
+  "Extraplanar Trade Satchel" to work.
+- MQ2Rez (ChatWithThisName) Correct /rez settings, or /rez status from outputting the invalid rez command output.
+- MQ2SQLite (Knightly) Upgraded library to 3.28, add ResultCode TLO (req. exspes) that returns the SQLite Result Code or -1 for an Active Query or -2 for Query Not Found.
+-
+Jul 11 2019 by EqMule
+- Updated for TEST
+- Updated for LIVE
+- updated for EMU
+- Fixed a crash when /echo ${InvSlot[enviro1].Item.ID} - cred report kaen01
+-
 Jun 22 2019 by EqMule
 - Updated for TEST
 - Updated for LIVE

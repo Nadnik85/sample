@@ -1619,7 +1619,11 @@ PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color)
 			if (char *szClean = (char *)LocalAlloc(LPTR, len + 64)) {
 				strncpy_s(szClean, len + 64, Line, len);
 				CXStr out;
+#if defined(ROF2EMU) || defined(UFEMU)
+				if (CXStr *str = CleanItemTags(&out, szClean)) {
+#else
 				if (CXStr *str = CleanItemTags(&out, szClean, false)) {
+#endif
 					GetCXStr(str->Ptr, szClean, len + 64);
 				}
 				strncpy_s(szLine, _countof(szLine), szClean, len + 64);
