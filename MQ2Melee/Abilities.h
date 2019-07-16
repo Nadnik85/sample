@@ -202,7 +202,7 @@ DECLARE_ABILITY_OPTION(pEAGLE, "eaglestrike", "[ON/OFF]?", "${If[${Me.Skill[eagl
 
 DECLARE_ABILITY_OPTION(pERAGE, "enrage", "[ON/OFF]?", "1", "${If[${meleemvi[plugin]},1,0]}");
 
-DECLARE_ABILITY_OPTION(pESCAP, "escape", "[#] Life% Below? 0=0ff", "0", "${If[${meleemvi[plugin]} && !${meleemvi[aggro]} && ${Me.AltAbility[escape]},1,0]}");
+DECLARE_ABILITY_OPTION(pESCAP, "escape", "[#] Life% Below? 0=0ff", "${If[${Me.AltAbility[escape]},20,0]}", "${If[${meleemvi[plugin]} && !${meleemvi[aggro]} && ${Me.AltAbility[escape]},1,0]}");
 
 DECLARE_ABILITY_OPTION(pERKCK, "enragingkick", "[#] Life% Below? 0=0ff", "${If[${Me.CombatAbility[Enraging Crescent Kicks]} || ${Me.CombatAbility[Enraging Crescent Kicks Rk. II]} || ${Me.CombatAbility[Enraging Crescent Kicks Rk. III]} || ${Me.CombatAbility[Enraging Heel Kicks]} || ${Me.CombatAbility[Enraging Heel Kicks Rk. II]} || ${Me.CombatAbility[Enraging Heel Kicks Rk. III]} || ${Me.CombatAbility[Enraging Cut Kicks]} || ${Me.CombatAbility[Enraging Cut Kicks Rk. II]} || ${Me.CombatAbility[Enraging Cut Kicks Rk. III]} ,20,0]}", "${If[${meleemvi[plugin]} && !${meleemvi[aggro]} && (${Me.CombatAbility[Enraging Crescent Kicks]} || ${Me.CombatAbility[Enraging Crescent Kicks Rk. II]} || ${Me.CombatAbility[Enraging Crescent Kicks Rk. III]} || ${Me.CombatAbility[Enraging Heel Kicks]} || ${Me.CombatAbility[Enraging Heel Kicks Rk. II]} || ${Me.CombatAbility[Enraging Heel Kicks Rk. III]})|| ${Me.CombatAbility[Enraging Cut Kicks]} || ${Me.CombatAbility[Enraging Cut Kicks Rk. II]} || ${Me.CombatAbility[Enraging Cut Kicks Rk. III]},1,0]}");
 
@@ -210,7 +210,7 @@ DECLARE_ABILITY_OPTION(pEVADE, "evade", "[#] [ON/OFF]?", "${If[${Me.Skill[hide]}
 
 DECLARE_ABILITY_OPTION(pEYEGO, "eyegouge", "[ON/OFF]?", "${If[${Me.AltAbility[eye gouge]},1,0]}", "${If[${meleemvi[plugin]} && ${Me.AltAbility[eye gouge]},1,0]}");
 
-DECLARE_ABILITY_OPTION(pFEIGN, "feigndeath", "[#] Life% Below? 0=0ff", "0", "${If[${meleemvi[plugin]} && !${meleemvi[aggro]} && ${Select[${Me.Class.ShortName},BST,SHD,NEC,MNK]},1,0]}");
+DECLARE_ABILITY_OPTION(pFEIGN, "feigndeath", "[#] Life% Below? 0=0ff", "${If[${Select[${Me.Class.ShortName},BST,SHD,NEC,MNK]},30,0]}", "${If[${meleemvi[plugin]} && !${meleemvi[aggro]} && ${Select[${Me.Class.ShortName},BST,SHD,NEC,MNK]},1,0]}");
 
 DECLARE_ABILITY_OPTION(pFACES, "facing", "[ON/OFF] Face Target (Range)?", "1", "${If[${meleemvi[plugin]} && ${meleemvi[range]},1,0]}");
 
@@ -236,7 +236,7 @@ DECLARE_ABILITY_OPTION(pGORSM, "gorillasmash", "[ON/OFF]?", "${If[${Me.AltAbilit
 
 DECLARE_ABILITY_OPTION(pGBLDE, "gblade", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Gouging Blade]} || ${Me.CombatAbility[Gouging Blade Rk. II]} || ${Me.CombatAbility[Gouging Blade Rk. III]} || ${Me.CombatAbility[Gashing Blade]} || ${Me.CombatAbility[Gashing Blade Rk. II]} || ${Me.CombatAbility[Gashing Blade Rk. III]} || ${Me.CombatAbility[Lacerating Blade]} || ${Me.CombatAbility[Lacerating Blade Rk. II]} || ${Me.CombatAbility[Lacerating Blade Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && ${Me.CombatAbility[Gouging Blade]} || ${Me.CombatAbility[Gouging Blade Rk. II]} || ${Me.CombatAbility[Gouging Blade Rk. III]} || ${Me.CombatAbility[Gashing Blade]} || ${Me.CombatAbility[Gashing Blade Rk. II]} || ${Me.CombatAbility[Gashing Blade Rk. III]} || ${Me.CombatAbility[Lacerating Blade]} || ${Me.CombatAbility[Lacerating Blade Rk. II]} || ${Me.CombatAbility[Lacerating Blade Rk. III]},1,0]}");
 
-DECLARE_ABILITY_OPTION(pHARMT, "harmtouch", "[ON/OFF]?", "0", "${If[${meleemvi[plugin]} && ${Me.AltAbility[harm touch]}   && ${Me.Class.ShortName.Equal[SHD]},1,0]}");
+DECLARE_ABILITY_OPTION(pHARMT, "harmtouch", "[ON/OFF]?", "${If[${Me.AltAbility[harm touch].ID},1,0]}", "${If[${meleemvi[plugin]} && ${Me.AltAbility[harm touch]}   && ${Me.Class.ShortName.Equal[SHD]},1,0]}");
 
 DECLARE_ABILITY_OPTION(pHIDES, "hide", "[ON/OFF]?", "0", "${If[${meleemvi[plugin]} && ${Me.Skill[hide]},1,0]}");
 
