@@ -97,12 +97,12 @@ extern CRITICAL_SECTION gPluginCS;
 //we default to LIVE though...
 #else
 //define LIVE, TEST, EQBETA, ROF2EMU or UFEMU here depending on which eqgame you are building for. -eqmule sep 27 2014
-#define LIVE
+#define TEST
 #endif
 #if defined(LIVE)
 #include "eqgame.h"
 //#define NEWCHARINFO
-#define KNIGHTLYPARSE
+//#define KNIGHTLYPARSE
 #elif defined(TEST)
 #include "eqgame(Test).h"
 //#define NEWCHARINFO
@@ -817,12 +817,11 @@ EQLIB_API void EndAllMacros();
 //                                                                                               //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if defined(KNIGHTLYPARSE) || defined(KNIGHTLYINLINECOMMENTS)
-std::string ReplaceSubstring(std::string strOriginal, std::string strFind, std::string strReplace);
-#endif //KNIGHTLYPARSE || KNIGHTLYINLINECOMMENTS
-#if defined(KNIGHTLYPARSE)
-std::string WrapParseZero(std::string strOriginal);
-#endif //KNIGHTLYPARSE
+#ifdef KNIGHTLYPARSE
+// Parse Operations
+std::string HandleParseParam(const std::string& strOriginal, bool bParseOnce = false);
+std::string ModifyMacroString(const std::string& strOriginal, bool bParseOnce = false, int iOperation = -1);
+#endif
 
 
 LEGACY_API BOOL Calculate(PCHAR szFormula, DOUBLE& Dest);
