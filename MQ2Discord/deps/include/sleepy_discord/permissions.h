@@ -1,12 +1,18 @@
 #pragma once
 #include <string>
+#include <algorithm>
 #include "discord_object_interface.h"
 #include "snowflake.h"
 
 //source: discord api docs | /topics/Permissions.md | Nov 16
 
 namespace SleepyDiscord {
-	enum Permission {
+	struct ServerMember;
+	struct Server;
+	struct Overwrite;
+	struct Channel;
+
+	enum Permission : int64_t {
 		CREATE_INSTANT_INVITE = 0x00000001, //Allows creation of instant invites
 		KICK_MEMBERS    /**/  = 0x00000002, //Allows kicking members
 		BAN_MEMBERS     /**/  = 0x00000004, //Allows banning members
@@ -14,7 +20,8 @@ namespace SleepyDiscord {
 		MANAGE_CHANNELS /**/  = 0x00000010, //Allows management and editing of channels
 		MANAGE_GUILD    /**/  = 0x00000020, //Allows management and editing of the guild
 		ADD_REACTIONS         = 0x00000040, //Allows for the addition of reactions to messages
-		READ_MESSAGES         = 0x00000400, //Allows reading messages in a channel.The channel will not appear for users without this permission
+		VIEW_AUDIT_LOG        = 0x00000080, //Allows for viewing of audit logs
+		VIEW_CHANNEL          = 0x00000400, //Allows guild members to view a channel
 		SEND_MESSAGES         = 0x00000800, //Allows for sending messages in a channel.
 		SEND_TTS_MESSAGES     = 0x00001000, //Allows for sending of /tts messages
 		MANAGE_MESSAGES /**/  = 0x00002000, //Allows for deletion of other users messages
@@ -29,6 +36,7 @@ namespace SleepyDiscord {
 		DEAFEN_MEMBERS        = 0x00800000, //Allows for deafening of members in a voice channel
 		MOVE_MEMBERS          = 0x01000000, //Allows for moving of members between voice channels
 		USE_VAD               = 0x02000000, //Allows for using voice - activity - detection in a voice channel
+		PRIORITY_SPEAKER      = 0x00000100, //Allows for using priority speaker in a voice channel
 		CHANGE_NICKNAME       = 0x04000000, //Allows for modification of own nickname
 		MANAGE_NICKNAMES      = 0x08000000, //Allows for modification of other users nicknames
 		MANAGE_ROLES    /**/  = 0x10000000, //Allows management and editing of roles
@@ -37,11 +45,36 @@ namespace SleepyDiscord {
 		//              /**/ These permissions require the owner account to use two-factor authentication when used on a guild that has server-wide 2FA enabled.
 
 		NONE                  = 0x000000000, //this permission doens't exist, I made it up
+		ALL                   = 0xFFFFFFFFF,
+
+		READ_MESSAGES = VIEW_CHANNEL,
 	};
 	
-	inline Permission operator|(Permission a, Permission b) {
-		return static_cast<Permission>(static_cast<int>(a) | static_cast<int>(b));
+	inline constexpr Permission toPermission(const int64_t& permission) {
+		return static_cast<Permission>(permission);
 	}
+
+	inline constexpr Permission operator|(const Permission& a, const Permission& b) {
+		return static_cast<Permission>(static_cast<int64_t>(a) | static_cast<int64_t>(b));
+	}
+
+	inline constexpr Permission operator&(const Permission& a, const Permission& b) {
+		return static_cast<Permission>(static_cast<int64_t>(a) & static_cast<int64_t>(b));
+	}
+
+	inline constexpr Permission operator^(const Permission& a, const Permission& b) {
+		return static_cast<Permission>(static_cast<int64_t>(a) ^ static_cast<int64_t>(b));
+	}
+	
+	inline constexpr bool hasPermission(const Permission& target, const Permission& permission) {
+		return (target & permission) == permission;
+	}
+
+	Permission getBasePermissions(const Server& server, const ServerMember& member);
+	void handleOverwrite(Permission& target, const Permission& allow, const Permission& deny);
+	void handleOverwrite(Permission& target, const Overwrite& overwrite);
+	Permission overwritePermissions(const Permission basePermissions, const Server& server, const ServerMember& member, const Channel& channel);
+	Permission getPermissions(const Server& server, const ServerMember& member, const Channel& channel);
 
 	/*
 	Role Structure
@@ -56,12 +89,11 @@ namespace SleepyDiscord {
 	managed     bool      whether this role is managed by an integration
 	mentionable bool      whether this role is mentionable
 	*/
-	struct Role : public DiscordObject {
-		Role() {}
+	struct Role : public IdentifiableDiscordObject<Role> {
+		Role();
 		~Role() {}
 		Role(const std::string * rawJson);
 		Role(const std::vector<std::string> values);
-		Snowflake<Role> ID;
 		std::string name;
 		int color;		//I don't know if this should be 64 bit. ask the api server!!!
 		bool hoist;
@@ -69,6 +101,10 @@ namespace SleepyDiscord {
 		Permission permissions;
 		bool managed;
 		bool mantionable;
+
+		inline bool operator==(Role& right) {
+			return ID == right.ID;
+		}
 	private:
 		const static std::initializer_list<const char*const> fields;
 	};

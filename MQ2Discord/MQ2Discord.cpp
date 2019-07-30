@@ -1,9 +1,9 @@
 #include "DiscordClient.h"
-#include <nlohmann\json.hpp>
+#include "Config.h"
 #include <fstream>
 #include <regex>
-
-using nlohmann::json;
+#include <yaml-cpp\yaml.h>
+#include <filesystem>
 
 // Sleepy discord library is compiled with default struct align, MQ2 needs 4 byte
 // Even with this pragma push/pop, having headers for both included in the same cpp causes stack corruption :(
@@ -14,14 +14,6 @@ using nlohmann::json;
 
 PreSetup("MQ2Discord");
 
-json config;
-
-unsigned int __stdcall MQ2DataVariableLookup(char * VarName, char * Value, size_t ValueLen);
-Blech blechAllow('#', '|', MQ2DataVariableLookup);
-Blech blechBlock('#', '|', MQ2DataVariableLookup);
-std::map<std::string, unsigned int> eventsAllow;
-std::map<std::string, unsigned int> eventsBlock;
-
 // MQ2Main isn't nice enough to export this
 unsigned int __stdcall MQ2DataVariableLookup(char * VarName, char * Value, size_t ValueLen)
 {
@@ -31,351 +23,320 @@ unsigned int __stdcall MQ2DataVariableLookup(char * VarName, char * Value, size_
 	return strlen(ParseMacroParameter((PSPAWNINFO)pLocalPlayer, Value, ValueLen));
 }
 
-void __stdcall BlechEvent(unsigned int ID, void * pData, PBLECHVALUE pValues)
-{
-}
+VOID DiscordCmd(PSPAWNINFO pChar, PCHAR szLine);
+void Reload();
 
-void Connect(std::string connectMsg)
-{
-	if (g_pThread)
-	{
-		WriteChatf("[MQ2Discord] Already connected");
-		return;
-	}
-
-	std::string token = config["token"].get<std::string>();
-	std::string channel = config["channel"].get<std::string>();
-	std::string allowedUser = config["user"].get<std::string>();
-
-	if (token == "")
-	{
-		WriteChatf("[MQ2Discord] No token configured");
-		return;
-	}
-	if (channel == "")
-	{
-		WriteChatf("[MQ2Discord] No channel configured");
-		return;
-	}
-	if (allowedUser == "")
-	{
-		WriteChatf("[MQ2Discord] No user configured");
-		return;
-	}
-
-	// Set run flag to true and start thread
-	bRun = true;
-	bFinished = false;
-	g_pThread = new std::thread(DiscordThread, token, channel, allowedUser, connectMsg);
-}
-
-void Disconnect()
-{
-	if (!g_pThread)
-	{
-		WriteChatf("[MQ2Discord] Not connected");
-		return;
-	}
-
-	// Set run flag to false and wait for thread to stop
-	bRun = false;
-	g_pThread->join();
-	g_pThread = nullptr;
-	return;
-}
-
-void SaveConfig(PCHAR szServer, PCHAR szCharName)
-{
-	std::ofstream configFile(std::string(gszINIPath) + "\\MQ2Discord_" + szServer + "_" + szCharName + ".json");
-	if (configFile.is_open())
-		configFile << std::setw(4) << config << std::endl;
-}
-
-void LoadConfig(PCHAR szServer, PCHAR szCharName)
-{
-	std::ifstream configFile(std::string(gszINIPath) + "\\MQ2Discord_" + szServer + "_" + szCharName + ".json");
-	if (configFile.is_open())
-	{
-		configFile >> config;
-		configFile.close();
-		WriteChatf("[MQ2Discord] Loaded config");
-	}
-	else
-	{
-		WriteChatf("[MQ2Discord] Failed to load config");
-	}
-
-	// Set some defaults & save
-	if (config["token"] == nullptr)
-		config["token"] = "";
-	if (config["channel"] == nullptr)
-		config["channel"] = "";
-	if (config["user"] == nullptr)
-		config["user"] = "";
-	if (config["allow"] == nullptr)
-		config["allow"] = { "[MQ2Discord]#*#", "[MQ2]#*#" };
-	if (config["block"] == nullptr)
-		config["block"] = json::array();
-	if (config["autoconnect"] == nullptr)
-		config["autoconnect"] = true;
-
-	SaveConfig(szServer, szCharName);
-	
-	// Load events
-	blechAllow.Reset();
-	blechBlock.Reset();
-	eventsAllow.clear();
-	eventsBlock.clear();
-
-	for each (auto jEvent in config["allow"])
-		eventsAllow[jEvent.get<std::string>()] = blechAllow.AddEvent(jEvent.get<std::string>().c_str(), BlechEvent);
-	for each (auto jEvent in config["block"])
-		eventsBlock[jEvent.get<std::string>()] = blechBlock.AddEvent(jEvent.get<std::string>().c_str(), BlechEvent);
-}
-
-VOID DiscordCmd(PSPAWNINFO pChar, PCHAR szLine)
-{
-	// I wonder how many std::strings I create unnecessarily in this function...
-	char buffer[MAX_STRING] = { 0 };
-
-	GetArg(buffer, szLine, 1);
-
-	if (!_stricmp(buffer, "connect"))
-	{
-		Connect(std::string("Connected: ") + pChar->Name);
-		return;
-	}
-
-	if (!_stricmp(buffer, "disconnect"))
-	{
-		return Disconnect();
-	}
-
-	if (!_stricmp(buffer, "autoconnect"))
-	{
-		char * setting = GetNextArg(szLine, 1);
-		if (setting && *setting && !_stricmp(setting, "on"))
-		{
-			config["autoconnect"] = true;
-			SaveConfig(EQADDR_SERVERNAME, pChar->Name);
-		}
-		else if (setting && *setting && !_stricmp(setting, "off"))
-		{
-			config["autoconnect"] = false;
-			SaveConfig(EQADDR_SERVERNAME, pChar->Name);
-		}
-		
-		WriteChatf("[MQ2Discord] Autoconnect: %s", config["autoconnect"].get<bool>() ? "true" : "false");
-
-		return;
-	}
-
-	if (!_stricmp(buffer, "allow"))
-	{
-		char * szEvent = GetNextArg(szLine, 1);
-
-		if (szEvent && *szEvent)
-		{
-			if (!eventsAllow.count(szEvent))
-			{
-				// Add event if it doesn't exist. Goes in 3 places, the config, blech, and our map of text to blech id (for later removal)
-				eventsAllow[szEvent] = blechAllow.AddEvent(szEvent, BlechEvent);
-				config["allow"] += szEvent;
-				WriteChatf("[MQ2Discord] Added allow event: %s", szEvent);
-			}
-			else
-			{
-				// Remove it if it does
-				blechAllow.RemoveEvent(eventsAllow[szEvent]);
-				eventsAllow.erase(szEvent);
-				for (int i = 0; i < config["allow"].size(); i++) // No nice remove method on json array, and I couldn't get std::find working
-					if (config["allow"][i] == szEvent)
-					{
-						config["allow"].erase(i);
-						break;
-					}
-
-				WriteChatf("[MQ2Discord] Removed allow event: %s", szEvent);
-			}
-
-			SaveConfig(EQADDR_SERVERNAME, pChar->Name);
-		}
-		else
-		{
-			WriteChatf("[MQ2Discord] Allowing the following events:");
-			for each (auto kvp in eventsAllow)
-			{
-				WriteChatf("[MQ2Discord] %s", kvp.first.c_str());
-			}
-		}
-		return;
-	}
-
-	if (!_stricmp(buffer, "block"))
-	{
-		char * szEvent = GetNextArg(szLine, 1);
-
-		if (szEvent && *szEvent)
-		{
-			// Add event if it doesn't exist. Goes in 3 places, the config, blech, and our map of text to blech id (for later removal)
-			if (!eventsBlock.count(szEvent))
-			{
-				eventsBlock[szEvent] = blechBlock.AddEvent(szEvent, BlechEvent);
-				config["block"] += szEvent;
-				SaveConfig(EQADDR_SERVERNAME, pChar->Name);
-				WriteChatf("[MQ2Discord] Added block event: %s", szEvent);
-			}
-			else
-			{
-				// Remove it if it does
-				blechBlock.RemoveEvent(eventsBlock[szEvent]);
-				eventsBlock.erase(szEvent);
-				for (int i = 0; i < config["allow"].size(); i++)
-					if (config["allow"][i] == szEvent)
-					{
-						config["allow"].erase(i);
-						break;
-					}
-				SaveConfig(EQADDR_SERVERNAME, pChar->Name);
-				WriteChatf("[MQ2Discord] Removed block event: %s", szEvent);
-			}
-		}
-		else
-		{
-			WriteChatf("[MQ2Discord] Blocking the following events:");
-			for each (auto kvp in eventsBlock)
-			{
-				WriteChatf("[MQ2Discord] %s", kvp.first.c_str());
-			}
-		}
-		return;
-	}
-
-	if (!_stricmp(buffer, "token"))
-	{
-		char * szToken = GetNextArg(szLine, 1);
-
-		if (szToken && *szToken)
-		{
-			config["token"] = szToken;
-			SaveConfig(EQADDR_SERVERNAME, pChar->Name);
-		}
-
-		WriteChatf("[MQ2Discord] Token: %s", config["token"].get<std::string>().c_str());
-
-		return;
-	}
-
-	if (!_stricmp(buffer, "channel"))
-	{
-		char * szChannel = GetNextArg(szLine, 1);
-
-		if (szChannel && *szChannel)
-		{
-			config["channel"] = szChannel;
-			SaveConfig(EQADDR_SERVERNAME, pChar->Name);
-		}
-
-		WriteChatf("[MQ2Discord] Channel: %s", config["channel"].get<std::string>().c_str());
-
-		return;
-	}
-
-	if (!_stricmp(buffer, "user"))
-	{
-		char * szUser = GetNextArg(szLine, 1);
-
-		if (szUser && *szUser)
-		{
-			config["user"] = szUser;
-			SaveConfig(EQADDR_SERVERNAME, pChar->Name);
-		}
-
-		WriteChatf("[MQ2Discord] User: %s", config["user"].get<std::string>().c_str());
-
-		return;
-	}
-
-	WriteChatf("[MQ2Discord] Usage:");
-	WriteChatf("[MQ2Discord] /discord [connect|disconnect] - Connect or disconnect from discord server");
-	WriteChatf("[MQ2Discord] /discord autoconnect [on|off] - Set or display autoconnect on load");
-	WriteChatf("[MQ2Discord] /discord token [<token>] - Set or display token used to authenticate");
-	WriteChatf("[MQ2Discord] /discord channel [<channel id>] - Set or display channel id to output messages to");
-	WriteChatf("[MQ2Discord] /discord user [<user id>] - Set or display user id to accept commands from");
-	WriteChatf("[MQ2Discord] /discord allow|block [<event>] - Toggle or list events (MQ2 syntax) for output in discord");
-}
+std::unique_ptr<MQ2Discord::DiscordClient> client;
+bool disabled = false;
+std::queue<std::string> commands;
+std::mutex commandsMutex;
+std::queue<std::string> messages;
+std::mutex messagesMutex;
+DWORD mainThreadId;
 
 PLUGIN_API VOID InitializePlugin(VOID)
 {
+	mainThreadId = GetCurrentThreadId();
 	AddCommand("/discord", DiscordCmd, 0, 0, 1);
 }
 
 PLUGIN_API VOID ShutdownPlugin(VOID)
 {
-	if (g_pThread)
-		Disconnect();
+	if (client)
+		client.reset();
 	RemoveCommand("/discord");
 }
 
 PLUGIN_API VOID OnPulse(VOID)
 {
-	// Process any received messages
-	std::string msg;
-	while (fromDiscord.tryDequeue(msg))
+	// Execute any queued commands
+	while (true)
 	{
-		WriteChatf("[MQ2Discord] %s", msg.c_str());
+		char command[MAX_STRING] = {0};
+		{
+			std::lock_guard<std::mutex> lock(commandsMutex);
 
-		if (msg[0] == '/')
-			DoCommand((PSPAWNINFO)pLocalPlayer, (PCHAR)msg.c_str());
+			if (commands.empty())
+				break;
+
+			strcpy_s(command,commands.front().c_str());
+			commands.pop();
+		}
+		DoCommand((PSPAWNINFO)pCharSpawn, command);
 	}
 
-	// Check our thead - if we want to run, and it's not running, it's disconnected for whatever reason. Reconnect it
-	if (bRun && bFinished && config["autoconnect"].get<bool>() && GetGameState() == GAMESTATE_INGAME)
+	// Output any queued messages
+	while (true)
 	{
-		Disconnect();
-		Connect(std::string("Reconnected: ") + ((PSPAWNINFO)pLocalPlayer)->Name);
+		char message[MAX_STRING] = { 0 };
+		{
+			std::lock_guard<std::mutex> lock(messagesMutex);
+
+			if (messages.empty())
+				break;
+
+			strcpy_s(message, messages.front().c_str());
+			messages.pop();
+		}
+		disabled = true;
+		WriteChatf(message);
+		disabled = false;
 	}
-}
 
-
-void EnqueueIfMatch(const PCHAR Line)
-{
-	char buffer[MAX_STRING] = { 0 };
-	
-	// Remove any colours
-	StripMQChat(Line, buffer);
-
-	// Remove any item links
-	std::regex re("\x12[A-F0-9]{56}([^\x12]*)\x12");
-	strcpy_s(buffer, std::regex_replace(buffer, re, "$1").c_str());
-	
-	if (bRun.load() && blechAllow.Feed(buffer) && !blechBlock.Feed(buffer))
-		toDiscord.enqueue(buffer);
 }
 
 PLUGIN_API DWORD OnWriteChatColor(PCHAR Line, DWORD Color, DWORD Filter)
 {
-	EnqueueIfMatch(Line);
+	if (client && !disabled)
+		client->enqueueIfMatch(Line);
     return 0;
 }
 
 PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color)
 {
-	EnqueueIfMatch(Line);
+	if (client && !disabled)
+		client->enqueueIfMatch(Line);
     return 0;
 }
 
 PLUGIN_API VOID SetGameState(DWORD GameState)
 {
 	if (GameState == GAMESTATE_INGAME)
+		Reload();
+	else
 	{
-		LoadConfig(EQADDR_SERVERNAME, ((PSPAWNINFO)pLocalPlayer)->Name);
+		if (client)
+		{
+			client->enqueueAll("Disconnecting, no longer in game");
+			client.reset();
+		}
+	}
+}
 
-		if (config["autoconnect"].get<bool>())
-			Connect(std::string("Connected: ") + ((PSPAWNINFO)pLocalPlayer)->Name);
+std::string ParseMacroDataString(const std::string& input)
+{
+	char buffer[MAX_STRING] = { 0 };
+	strcpy_s(buffer, input.c_str());
+	ParseMacroData(buffer, MAX_STRING);
+	return buffer;
+}
+
+void OnCommand(std::string command)
+{
+	std::lock_guard<std::mutex> _lock(commandsMutex);
+	commands.emplace(command);
+}
+
+void OutputMessage(const char * prepend, const char * format, va_list args)
+{
+	char output[MAX_STRING];
+	strcpy_s(output, prepend);
+	vsprintf_s(&output[strlen(output)], sizeof(output) - strlen(output) - 1, format, args);
+
+	// If we're on the main thread write direct, otherwise queue it
+	if (GetCurrentThreadId() == mainThreadId)
+	{
+		disabled = true;
+		WriteChatf(output);
+		disabled = false;
 	}
 	else
 	{
-		Disconnect();
+		std::lock_guard<std::mutex>	lock(messagesMutex);
+		messages.emplace(output);
+	}
+}
+
+void OutputError(const char * format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	OutputMessage("\ag[MQ2Discord] \arError: \aw ", format, args);
+	va_end(args);
+}
+
+void OutputWarning(const char * format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	OutputMessage("\ag[MQ2Discord] \ayWarning: \aw ", format, args);
+	va_end(args);
+}
+
+void OutputNormal(const char * format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	OutputMessage("\ag[MQ2Discord] \aw ", format, args);
+	va_end(args);
+}
+
+void SetDefaults(DiscordConfig& config)
+{
+	config.token = "YourTokenHere";
+	config.user_ids.emplace_back("YourUserIdHere");
+
+	// A channel for just this character that relays all echoes
+	ChannelConfig charChannel;
+	charChannel.name = "CharChannel (This field is ignored)";
+	charChannel.id = "YourCharacterChannelHere";
+	charChannel.prefix = "";
+	charChannel.allowed.emplace_back("[MQ2]#*#");
+	charChannel.allow_commands = true;
+	charChannel.show_command_response = 2000;
+	config.characters[ParseMacroDataString("${EverQuest.Server}_${Me.Name}")].push_back(charChannel);
+
+	// A channel for a group of characters that relays deaths
+	ChannelConfig groupChannel;
+	groupChannel.name = "Deaths";
+	groupChannel.id = "YourGroupChannelHere";
+	groupChannel.prefix = "[${Me.Name}]";
+	groupChannel.allowed.emplace_back("You have been slain by");
+	groupChannel.allow_commands = false;
+	groupChannel.show_command_response = 0;
+	GroupConfig group;
+	group.name = "YourGroup";
+	group.characters.emplace_back(ParseMacroDataString("${EverQuest.Server}_${Me.Name}"));
+	group.characters.emplace_back("server_OtherCharInGroup");
+	group.characters.emplace_back("server_OneMore");
+	group.channels.emplace_back(groupChannel);
+	config.groups.emplace_back(group);
+
+	// A channel for all characters that relays tells. 
+	ChannelConfig tellsChannel;
+	tellsChannel.name = "TellsChannel";
+	tellsChannel.id = "YourChannelForTellsHere";
+	tellsChannel.prefix = "[${EverQuest.Server}_${Me.Name}]";
+	tellsChannel.allowed.emplace_back("tells you");
+	tellsChannel.blocked.emplace_back("|${Me.Pet.DisplayName}| tells you#*#");
+	tellsChannel.allow_commands = false;
+	tellsChannel.show_command_response = 0;
+	config.all.emplace_back(tellsChannel);
+}
+
+void Reload()
+{
+	if (client)
+		client.reset();
+	 
+	DiscordConfig config;
+
+	// Load existing config if it exists
+	std::string configFile = std::string(gszINIPath) + "\\MQ2Discord.yaml";
+	if (std::experimental::filesystem::exists(configFile))
+	{
+		try
+		{
+			config = YAML::LoadFile(std::string(gszINIPath) + "\\MQ2Discord.yaml").as<DiscordConfig>();
+		}
+		catch (std::exception& e)
+		{
+			OutputError("Failed to load config, %s", e.what());
+			return;
+		}
+	}
+	else
+	{
+		// Otherwise, create a default config
+		try
+		{
+			SetDefaults(config);
+			YAML::Node node;
+			node = config;
+			{
+				std::ofstream fout(configFile);
+				fout << node;
+			}
+			OutputNormal("Created a default configuration. Edit this, then do \ag/discord reload");
+			return;
+
+		}
+		catch (std::exception& e)
+		{
+			OutputError("Failed to create default config, %s", e.what());
+		}
+		return;
+	}
+
+	for (const auto& warning : config.warnings())
+		OutputWarning(warning.c_str());
+
+	auto errors = config.errors();
+	for (const auto& error : errors)
+		OutputError(error.c_str());
+
+	if (!errors.empty())
+	{
+		OutputNormal("Config not loaded due to errors, please fix them and \ag/discord reload");
+		return;
+	}
+
+	//const std::string server = EQADDR_SERVERNAME;
+	//const std::string server_character = server + "_" + GetCharInfo()->Name;
+	//const std::string classShortName = pEverQuest->GetClassThreeLetterCode(((PSPAWNINFO)pCharSpawn)->mActorClient.Class);
+
+	const std::string server = ParseMacroDataString("${EverQuest.Server}");
+	const std::string server_character = server + "_" + ParseMacroDataString("${Me.Name}");
+	const std::string classShortName = ParseMacroDataString("${Me.Class.ShortName}");
+
+	std::vector<ChannelConfig> channels;
+
+	// Character's own channels
+	if (config.characters.find(server_character) != config.characters.end())
+		channels.insert(channels.end(), config.characters[server_character].begin(), config.characters[server_character].end());
+
+	// Server channels
+	if (config.servers.find(EQADDR_SERVERNAME) != config.servers.end())
+		channels.insert(channels.end(), config.servers[EQADDR_SERVERNAME].begin(), config.servers[EQADDR_SERVERNAME].end());
+
+	// Class channels
+	if (config.classes.find(classShortName) != config.classes.end())
+		channels.insert(channels.end(), config.classes[classShortName].begin(), config.classes[classShortName].end());
+
+	// Groups
+	for (const auto& group : config.groups)
+		if (std::find(group.characters.begin(), group.characters.end(), server_character) != group.characters.end())
+			channels.insert(channels.end(), group.channels.begin(), group.channels.end());
+
+	// Global
+	channels.insert(channels.end(), config.all.begin(), config.all.end());
+
+	if (channels.empty())
+	{
+		OutputWarning("No channels configured for this character");
+		return;
+	}
+
+	for (auto &channel : channels)
+	{
+		// Make prefixes end with a space if they don't already
+		if (*channel.prefix.end() != ' ')
+			channel.prefix.push_back(' ');
+		channel.prefix = ParseMacroDataString(channel.prefix);
+
+		// Add #*# at the start/end of any filters that don't have it already
+		for (auto& filter : channel.allowed)
+			if (filter.substr(0, 3) != "#*#" && filter.substr(filter.length() - 3, 3) != "#*#")
+				filter = "#*#" + filter + "#*#";
+		for (auto& filter : channel.blocked)
+			if (filter.substr(0, 3) != "#*#" && filter.substr(filter.length() - 3, 3) != "#*#")
+				filter = "#*#" + filter + "#*#";
+		for (auto& filter : channel.notify)
+			if (filter.substr(0, 3) != "#*#" && filter.substr(filter.length() - 3, 3) != "#*#")
+				filter = "#*#" + filter + "#*#";
+	}
+
+	client = std::make_unique<MQ2Discord::DiscordClient>(config.token, config.user_ids, channels, OnCommand, ParseMacroDataString, OutputError, OutputWarning, OutputNormal);
+}
+
+VOID DiscordCmd(PSPAWNINFO pChar, PCHAR szLine)
+{
+	char buffer[MAX_STRING] = { 0 };
+
+	GetArg(buffer, szLine, 1);
+
+	if (!_stricmp(buffer, "reload"))
+	{
+		Reload();
 	}
 }

@@ -64,6 +64,9 @@
 # include <openssl/e_os2.h>
 
 # if defined(OPENSSL_SYS_WINDOWS)
+#ifndef _WINSOCKAPI_
+#define _WINSOCKAPI_
+#endif
 #  include <windows.h>
 # endif
 
