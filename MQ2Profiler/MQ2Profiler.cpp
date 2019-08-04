@@ -19,7 +19,7 @@ DETOUR_TRAMPOLINE_EMPTY(VOID __cdecl Call_T(PSPAWNINFO pChar, PCHAR szLine));
 DETOUR_TRAMPOLINE_EMPTY(VOID __cdecl Return_T(PSPAWNINFO pChar, PCHAR szLine));
 DETOUR_TRAMPOLINE_EMPTY(VOID __cdecl EndMacro_T(PSPAWNINFO pChar, PCHAR szLine));
 DETOUR_TRAMPOLINE_EMPTY(VOID __cdecl DoEvents_T(PSPAWNINFO pChar, PCHAR szLine));
-DETOUR_TRAMPOLINE_EMPTY(BOOL __cdecl DoNextCommand_T(PMACROBLOCK pMacroBlock));
+DETOUR_TRAMPOLINE_EMPTY(BOOL __cdecl DoNextCommand_T(PMACROBLOCK pMacroBlock) noexcept);
 
 VOID __cdecl Call_D(PSPAWNINFO pChar, PCHAR szLine);
 VOID __cdecl Return_D(PSPAWNINFO pChar, PCHAR szLine);
@@ -399,7 +399,9 @@ VOID __cdecl DoEvents_D(PSPAWNINFO pChar, PCHAR szLine)
 
 BOOL __cdecl DoNextCommand_D(PMACROBLOCK pMacroBlock)
 {
-	if (DoNextCommand_T(pMacroBlock))
+	BOOL (* __cdecl trampoline)(PMACROBLOCK) = DoNextCommand_T;
+
+	if (trampoline(pMacroBlock))
 	{
 		commandCount++;
 		return TRUE;

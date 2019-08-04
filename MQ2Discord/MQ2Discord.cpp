@@ -13,6 +13,7 @@
 #pragma pack(pop)
 
 PreSetup("MQ2Discord");
+PLUGIN_VERSION(1.0);
 
 // MQ2Main isn't nice enough to export this
 unsigned int __stdcall MQ2DataVariableLookup(char * VarName, char * Value, size_t ValueLen)
@@ -214,47 +215,93 @@ void SetDefaults(DiscordConfig& config)
 	config.all.emplace_back(tellsChannel);
 }
 
+void WriteConfig(const DiscordConfig& config, const std::string& filename)
+{
+	YAML::Node node;
+	node = config;
+	std::ofstream fout(filename);
+	fout << node;
+}
+
+DiscordConfig GetConfig()
+{
+	// Load existing config if it exists
+	const auto configFile = std::string(gszINIPath) + "\\MQ2Discord.yaml";
+	if (std::experimental::filesystem::exists(configFile))
+		return YAML::LoadFile(configFile).as<DiscordConfig>();
+
+	// If old .json configs exist, convert them
+	std::map<std::string, YAML::Node> jsonConfigs;
+	for (const auto & file : std::experimental::filesystem::directory_iterator(gszINIPath))
+	{
+		const auto filename = file.path().filename().string();
+		const std::regex re("MQ2Discord_(.*)\\.json");
+		std::smatch matches;
+		if (std::regex_match(filename, matches, re))
+			jsonConfigs[matches[1]] = YAML::LoadFile(file.path().string());
+	}
+
+	if (!jsonConfigs.empty())
+	{
+		auto imported = false;
+		DiscordConfig config;
+		for (const auto & kvp : jsonConfigs)
+		{
+			// Skip if there's no channel id
+			if (kvp.second["channel"].as<std::string>() == "")
+				continue;
+
+			imported = true;
+
+			// Create a channel and add it to characters
+			ChannelConfig channel;
+			channel.name = kvp.first;
+			channel.id = kvp.second["channel"].as<std::string>();
+			channel.allow_commands = true;
+			channel.show_command_response = 2000;
+			for (const auto & filter : kvp.second["allow"].as<std::vector<std::string>>())
+				channel.allowed.push_back(filter);
+			for (const auto & filter : kvp.second["block"].as<std::vector<std::string>>())
+				channel.blocked.push_back(filter);
+
+			config.characters[kvp.first].push_back(channel);
+
+			// Set the token & add the user id to the allowed list
+			config.token = kvp.second["token"].as<std::string>();
+			if (std::find(config.user_ids.begin(), config.user_ids.end(), kvp.second["user"].as<std::string>()) != config.user_ids.end())
+				config.user_ids.push_back(kvp.second["user"].as<std::string>());
+
+			OutputNormal("Imported config for %s", kvp.first.c_str());
+		}
+
+		if (imported)
+		{
+			WriteConfig(config, configFile);
+			return config;
+		}
+	}
+
+	// Otherwise, create a default config
+	DiscordConfig config;
+	SetDefaults(config);
+	WriteConfig(config, configFile);
+	OutputNormal("Created a default configuration. Edit this, then do \ag/discord reload");
+	return config;
+}
+
 void Reload()
 {
 	if (client)
 		client.reset();
-	 
+
 	DiscordConfig config;
-
-	// Load existing config if it exists
-	std::string configFile = std::string(gszINIPath) + "\\MQ2Discord.yaml";
-	if (std::experimental::filesystem::exists(configFile))
+	try
 	{
-		try
-		{
-			config = YAML::LoadFile(std::string(gszINIPath) + "\\MQ2Discord.yaml").as<DiscordConfig>();
-		}
-		catch (std::exception& e)
-		{
-			OutputError("Failed to load config, %s", e.what());
-			return;
-		}
+		config = GetConfig();
 	}
-	else
+	catch (std::exception& e)
 	{
-		// Otherwise, create a default config
-		try
-		{
-			SetDefaults(config);
-			YAML::Node node;
-			node = config;
-			{
-				std::ofstream fout(configFile);
-				fout << node;
-			}
-			OutputNormal("Created a default configuration. Edit this, then do \ag/discord reload");
-			return;
-
-		}
-		catch (std::exception& e)
-		{
-			OutputError("Failed to create default config, %s", e.what());
-		}
+		OutputError("Failed to load config, %s", e.what());
 		return;
 	}
 

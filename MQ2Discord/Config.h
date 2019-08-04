@@ -8,7 +8,7 @@
 
 struct ChannelConfig
 {
-	ChannelConfig() { }
+	ChannelConfig() : allow_commands(false), send_connected(true), show_command_response(2000) { }
 
 	std::string name;
 	std::string id;
@@ -16,6 +16,7 @@ struct ChannelConfig
 	std::vector<std::string> blocked;
 	std::vector<std::string> notify;
 	std::string prefix;
+	bool send_connected;
 	bool allow_commands;
 	uint32_t show_command_response;
 };
@@ -129,6 +130,7 @@ namespace YAML {
 			node["blocked"] = rhs.blocked;
 			node["notify"] = rhs.notify;
 			node["prefix"] = rhs.prefix;
+			node["send_connected"] = rhs.send_connected;
 			node["allow_commands"] = rhs.allow_commands;
 			node["show_command_response"] = rhs.show_command_response;
 			return node;
@@ -146,6 +148,8 @@ namespace YAML {
 				rhs.notify = node["notify"].as<std::vector<std::string>>();
 			if (node["prefix"])
 				rhs.prefix = node["prefix"].as<std::string>();
+			if (node["send_connected"])
+				rhs.send_connected = node["send_connected"].as<bool>();
 			if (node["allow_commands"])
 				rhs.allow_commands = node["allow_commands"].as<bool>();
 			if (node["show_command_response"])

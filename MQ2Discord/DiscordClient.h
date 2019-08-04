@@ -52,7 +52,10 @@ namespace MQ2Discord
 
 			// Create background thread, this starts it too
 			_thread = std::thread{ &DiscordClient::threadStart, this };
-			enqueueAll("Connected");
+
+			for (const auto &channel : _channels)
+				if (channel.send_connected)
+					enqueue(channel.id, "Connected");
 		}
 
 		~DiscordClient()
@@ -77,10 +80,10 @@ namespace MQ2Discord
 			_filterMatches.clear();
 			for (auto channelIt = _channels.begin(); channelIt != _channels.end(); ++channelIt)
 				_filterMatches[&(*channelIt)] = FilterMatch::None;
-
-			// Feed the message through the parser
+			;
+			// Feed the message through the parser. Colour codes are removed beforehand.
 			char buffer[2048] = { 0 };
-			strcpy_s(buffer, message.c_str());
+			strcpy_s(buffer, std::regex_replace(message, std::regex("\a\\-?."), "").c_str());
 			_blech.Feed(buffer);
 
 			// Send to any channels that matched
@@ -393,9 +396,12 @@ namespace MQ2Discord
 					o << "\\";
 				o << c;
 			}
-			// Clean up colour codes
+			// Clean up colour codes. First try to put anything between a colour code and a cancel in backticks e.g. \awStuff\ax -> `Stuff`
 			auto result = std::regex_replace(o.str(), std::regex("\a([^\\-x]|\\-[^x])([^\a]+)\ax"), "`$2`");
+			// Then remove any codes left over
 			result = std::regex_replace(result, std::regex("\a."), "");
+			// Then make sure there's no consecutive backticks as it makes things look funny
+			result = std::regex_replace(result, std::regex("``"), "` `");
 			return result;
 		}
 
