@@ -9,17 +9,19 @@
 #include <chrono>
 #include <ctime>
 #include <filesystem>
+#include <Psapi.h>
 
 PreSetup("MQ2Profiler");
 
-#define MQ2Main__ImageBase		0x3000000
-#define MQ2Main__DoNextCommand	0x312F280
+// 55 8B EC 81 EC ? ? 00 00 53 C7 45 ? 00 00 00 00
+const unsigned char * DoNextCommandPattern = (const unsigned char *)"\x55\x8B\xEC\x81\xEC\x00\x00\x00\x00\x53\xC7\x45\x00\x00\x00\x00\x00";
+const char * DoNextCommandPatternMask = "xxxxx??xxxxx?xxxx";
 
 DETOUR_TRAMPOLINE_EMPTY(VOID __cdecl Call_T(PSPAWNINFO pChar, PCHAR szLine));
 DETOUR_TRAMPOLINE_EMPTY(VOID __cdecl Return_T(PSPAWNINFO pChar, PCHAR szLine));
 DETOUR_TRAMPOLINE_EMPTY(VOID __cdecl EndMacro_T(PSPAWNINFO pChar, PCHAR szLine));
 DETOUR_TRAMPOLINE_EMPTY(VOID __cdecl DoEvents_T(PSPAWNINFO pChar, PCHAR szLine));
-DETOUR_TRAMPOLINE_EMPTY(BOOL __cdecl DoNextCommand_T(PMACROBLOCK pMacroBlock));
+DETOUR_TRAMPOLINE_EMPTY(BOOL __cdecl DoNextCommand_T(PMACROBLOCK pMacroBlock) noexcept);
 
 VOID __cdecl Call_D(PSPAWNINFO pChar, PCHAR szLine);
 VOID __cdecl Return_D(PSPAWNINFO pChar, PCHAR szLine);
@@ -212,13 +214,18 @@ PLUGIN_API VOID InitializePlugin()
 	returnAddr = FixJump((DWORD)GetProcAddress(hMQ2Main, "Return"));
 	endMacroAddr = FixJump((DWORD)GetProcAddress(hMQ2Main, "EndMacro"));
 	doEventsAddr = FixJump((DWORD)GetProcAddress(hMQ2Main, "DoEvents"));
-	doNextCommandAddr = (DWORD)hMQ2Main + MQ2Main__DoNextCommand - MQ2Main__ImageBase;
+
+	MODULEINFO MQ2ModuleInfo = { 0 };
+	GetModuleInformation(GetCurrentProcess(), hMQ2Main, &MQ2ModuleInfo, sizeof(MODULEINFO));
+
+	doNextCommandAddr = FindPattern((uintptr_t)MQ2ModuleInfo.lpBaseOfDll, MQ2ModuleInfo.SizeOfImage, DoNextCommandPattern, DoNextCommandPatternMask);
 
 	EzDetour(callAddr, Call_D, Call_T);
 	EzDetour(returnAddr, Return_D, Return_T);
 	EzDetour(endMacroAddr, EndMacro_D, EndMacro_T);
 	EzDetour(doEventsAddr, DoEvents_D, DoEvents_T);
-	EzDetour(doNextCommandAddr, DoNextCommand_D, DoNextCommand_T);
+	if (doNextCommandAddr)
+		EzDetour(doNextCommandAddr, DoNextCommand_D, DoNextCommand_T);
 
 	AddCommand("/profile", ProfileCommand);
 }
@@ -229,7 +236,8 @@ PLUGIN_API VOID ShutdownPlugin()
 	RemoveDetour(returnAddr);
 	RemoveDetour(endMacroAddr);
 	RemoveDetour(doEventsAddr);
-	RemoveDetour(doNextCommandAddr);
+	if (doNextCommandAddr)
+		RemoveDetour(doNextCommandAddr);
 
 	RemoveCommand("/profile");
 }
