@@ -17,9 +17,11 @@ CPluginToolWnd::CPluginToolWnd(CPluginTree *tree) : CCustomWnd("PluginManagerWin
 	InitListView();
 	isWndActive = true;
 }
+
 CPluginToolWnd::~CPluginToolWnd()
 {
 }
+
 void CPluginToolWnd::ToggleVisibility()
 {
 	if(isWndActive)
@@ -31,10 +33,12 @@ void CPluginToolWnd::ToggleVisibility()
 		ShowWnd();
 	}
 }
+
 void CPluginToolWnd::RefreshPluginList()
 {
 	SetPluginListItems();
 }
+
 void CPluginToolWnd::ShowWnd()
 {
 	if(isWndActive)
@@ -44,6 +48,7 @@ void CPluginToolWnd::ShowWnd()
 	isWndActive = true;
 	((CXWnd *)this)->Show(1,1);
 }
+
 void CPluginToolWnd::HideWnd()
 {
 	if(!isWndActive)
@@ -53,10 +58,12 @@ void CPluginToolWnd::HideWnd()
 	isWndActive = false;
 	((CXWnd *)this)->Show(0,0);
 }
+
 bool CPluginToolWnd::IsActive()
 {
 	return isWndActive;
 }
+
 int CPluginToolWnd::WndNotification(CXWnd *pWnd, unsigned int Message, void *unknown)
 { 
 	CHAR szTemp[MAX_STRING]={0}, szBuffer[MAX_STRING]={0}, szMessageThing[MAX_STRING]={0};
@@ -104,6 +111,7 @@ int CPluginToolWnd::WndNotification(CXWnd *pWnd, unsigned int Message, void *unk
 	}
 	return CSidlScreenWnd::WndNotification(pWnd,Message,unknown); 
 }
+
 bool CPluginToolWnd::checkXML()
 {
 	bool checkflag = true;
@@ -113,10 +121,11 @@ bool CPluginToolWnd::checkXML()
 	}
 	return checkflag;
 }
+
 void CPluginToolWnd::SetPluginListItems()
 {
 	PluginListBox->DeleteAll();
-	vector<CPluginInfo *> v = PluginTree->GetCurrentPluginList();
+	std::vector<CPluginInfo *> v = PluginTree->GetCurrentPluginList();
 	unsigned int i;
 	unsigned int maxWidthCol1 = 0;
 	unsigned int maxWidthCol2 = 0;
@@ -148,6 +157,7 @@ void CPluginToolWnd::SetPluginListItems()
 		}
 	}
 }
+
 void CPluginToolWnd::InitListView()
 {
 	if(!PluginTree)
@@ -156,4 +166,19 @@ void CPluginToolWnd::InitListView()
 		return;
 	}
 	SetPluginListItems();
+}
+
+PMQPLUGIN FindMQ2Plugin(PCHAR szLine)
+{
+	PMQPLUGIN pPlugin = pPlugins;
+	while (pPlugin)
+	{
+		if (!_stricmp(szLine, pPlugin->szFilename))
+		{
+			return pPlugin;
+		}
+
+		pPlugin = pPlugin->pNext;
+	}
+	return nullptr;
 }
