@@ -3024,7 +3024,7 @@ bool MQ2CharacterType::GETMEMBER()
 			}
 			else
 			{
-				for (unsigned long nBuff = 0; nBuff < 0x29; nBuff++)
+				for (unsigned long nBuff = 0; nBuff < 0x28; nBuff++)
 				{
 					if (int spellid = pCharnew->BlockedPetSpell[nBuff])
 					{
@@ -3064,7 +3064,7 @@ bool MQ2CharacterType::GETMEMBER()
 			}
 			else
 			{
-				for (unsigned long nBuff = 0; nBuff < 0x29; nBuff++)
+				for (unsigned long nBuff = 0; nBuff < 0x28; nBuff++)
 				{
 					if (int spellid = pCharnew->BlockedSpell[nBuff])
 					{
