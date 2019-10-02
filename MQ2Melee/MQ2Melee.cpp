@@ -2270,7 +2270,14 @@ public:
                     }
                 }
             }
-            if (TYPE>DISC && !Evaluate("${If[${Cast.Ready[%s]},1,0]}", COMM)) return 0x11; // mq2cast not ready
+			//mq2cast
+			if (TYPE > DISC) {
+				if (FindMQ2DataType("Cast")) {
+					if (!Evaluate("${If[${Cast.Ready[%s]},1,0]}", COMM)) {
+						return 0x11; // mq2cast not ready
+					}
+				}
+			}
             if (TYPE == AA) {
                 if (!AAReady(INDEX))       return 0x13;  // Ability Not Ready
             }

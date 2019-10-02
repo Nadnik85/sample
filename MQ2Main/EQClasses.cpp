@@ -2128,7 +2128,7 @@ FUNCTION_AT_ADDRESS(class CXStr  CItemDisplayWnd::CreateModString(class EQ_Equip
 FUNCTION_AT_ADDRESS(class CXStr  CItemDisplayWnd::CreateEquipmentStatusString(class EQ_Item *),CItemDisplayWnd__CreateEquipmentStatusString);
 #endif
 #ifdef CItemDisplayWnd__SetSpell_x
-FUNCTION_AT_ADDRESS(void  CItemDisplayWnd::SetSpell(int SpellID,bool HasSpellDescr,int),CItemDisplayWnd__SetSpell);
+FUNCTION_AT_ADDRESS(void CItemDisplayWnd::SetSpell(int SpellID,bool HasSpellDescr,int),CItemDisplayWnd__SetSpell);
 #endif
 #ifdef CJournalCatWnd__CJournalCatWnd_x
 FUNCTION_AT_ADDRESS( CJournalCatWnd::CJournalCatWnd(class CXWnd *),CJournalCatWnd__CJournalCatWnd);
@@ -3016,6 +3016,12 @@ FUNCTION_AT_ADDRESS(int CTaskWnd::UpdateTaskTimers(unsigned long),CTaskWnd__Upda
 #endif
 #ifdef CTaskManager__GetEntry_x
 FUNCTION_AT_ADDRESS(CTaskEntry *CTaskManager::GetEntry(int Index, int System, bool bCheckEmpty), CTaskManager__GetEntry);
+#endif
+#ifdef CTaskManager__GetTaskStatus_x
+FUNCTION_AT_ADDRESS(PCTaskStatus * CTaskManager::GetTaskStatus(PcClient *pMe, int Index, TaskSystemType System),CTaskManager__GetTaskStatus);
+#endif
+#ifdef CTaskManager__GetElementDescription_x
+FUNCTION_AT_ADDRESS(void CTaskManager::GetElementDescription(const CTaskElement *pElement, char *Out),CTaskManager__GetElementDescription);
 #endif
 #ifdef CTextEntryWnd__CTextEntryWnd_x
 FUNCTION_AT_ADDRESS( CTextEntryWnd::CTextEntryWnd(class CXWnd *),CTextEntryWnd__CTextEntryWnd);
