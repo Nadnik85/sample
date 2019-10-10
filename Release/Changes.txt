@@ -1,3 +1,11 @@
+Oct 09 2019 by Eqmule
+- Updated for TEST
+-
+Oct 09 2019 by Chatwiththisname
+- Added two new /mapfilter options for CampRadius and PullRadius.
+- They add two new circles that work like SpellRadius except it's stationary where set.
+- Type /mapfilter for help.
+-
 Oct 02 2019 by Eqmule
 - Made some changes to the ${Task} TLO
 - It's likely some macros will break due to these changes, but
