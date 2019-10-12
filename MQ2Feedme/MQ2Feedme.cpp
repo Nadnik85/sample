@@ -15,6 +15,7 @@
 //    Incorporated IsCasting(), AbilityInUse(), and CursorHasItem()
 //    from moveitem.h.  Now moveitem.h no longer required.
 // 4.0 edited by: Eqmule 07/26/2016 to add string safety
+// 4.1 edited by: Sic 10/9/2019 to add a campcheck, so we don't interrupt camping to eat
 //****************************************************************//
 // It will eat food and drink from lists you specify if your hunger
 // or thirst levels fall below the thresholds you specifiy.  These 
@@ -61,6 +62,8 @@ list<string> Thirst;                             // Thirst Fix List
 int          bAnnLevels = 1;                     // Announce Levels
 int          bFoodWarn = 0;                      // Announce No Food
 int          bDrinkWarn = 0;                     // Announce No Drink
+
+bool IAmCamping = false;						 // Defining if we are camping out or not
 
 const char* PLUGIN_NAME = "MQ2FeedMe";
 
@@ -115,6 +118,7 @@ bool GoodToFeed()
   if(!WindowOpen("BigBankWnd"))                  // not banking
   if(!WindowOpen("BankWnd"))                     // not banking
   if(!WindowOpen("LootWnd"))                     // not looting
+  if(!IAmCamping)                                // not camping
     return true;                                 // then return true
   return false;                                  // otherwise false
 }
@@ -339,6 +343,25 @@ template <unsigned int _Size>LPSTR SafeItoa(int _Value,char(&_Buffer)[_Size], in
 	}
 	return "";
 }
+
+PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color)
+{
+   if (!IAmCamping && strstr(Line, "It will take you about 30 seconds to prepare your camp.")) {
+		IAmCamping = true;
+	}
+	else if (IAmCamping && strstr(Line, "You abandon your preparations to camp.")) {
+		IAmCamping = false;
+	}
+    return 0;
+}
+
+PLUGIN_API VOID OnZoned(VOID)
+{
+    //If I switch characters and IAmCamping is still true and I finish zoning, and the gamestate is ingame...
+    if (IAmCamping && GetGameState() == GAMESTATE_INGAME)
+        IAmCamping = false;
+}
+
 PLUGIN_API void SetGameState(DWORD GameState)
 {
     if (GetGameState() == GAMESTATE_INGAME) {
