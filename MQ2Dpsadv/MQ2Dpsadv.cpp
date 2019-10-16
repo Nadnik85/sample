@@ -7,7 +7,7 @@ PreSetup("MQ2DPSAdv");
 #include <vector>
 #include "MQ2DPSAdv.h"
 
-#define DPSVERSION "1.2.06"
+#define DPSVERSION "1.2.07"
 //#define DPSDEV
 
 /*
@@ -292,6 +292,7 @@ CDPSAdvWnd::CDPSAdvWnd():CCustomWnd("DPSAdvWnd") {
    int CheckUI = false;
    if (!(Tabs = (CTabWnd*)GetChildItem("DPS_Tabs"))) CheckUI = true;
    if (!(LTopList = (CListWnd*)GetChildItem("DPS_TopList"))) CheckUI = true;
+   if (!CheckUI) LTopList->bColumnSizable = true;
    if (!(CMobList = (CComboWnd*)GetChildItem("DPS_MobList"))) CheckUI = true;
    if (!(CShowMeTop = (CCheckBoxWnd*)GetChildItem("DPS_ShowMeTopBox"))) CheckUI = true;
    if (!(CShowMeMin = (CCheckBoxWnd*)GetChildItem("DPS_ShowMeMinBox"))) CheckUI = true;
@@ -303,18 +304,8 @@ CDPSAdvWnd::CDPSAdvWnd():CCustomWnd("DPSAdvWnd") {
    if (!(TEntTO = (CTextEntryWnd*)GetChildItem("DPS_EntTOInput"))) CheckUI = true;
    if (!(CShowTotal = (CComboWnd*)GetChildItem("DPS_ShowTotal"))) CheckUI = true;
    //if (!(LFightList = (CListWnd*)GetChildItem("DPS_FightList"))) CheckUI = true;
-   this->SetBGColor(0xFF000000);
-   Tabs->SetBGColor(0xFF000000);
-   LTopList->SetBGColor(0xFF000000);
-   CShowMeTop->SetBGColor(0xFF000000);
-   CShowMeMin->SetBGColor(0xFF000000);
-   TShowMeMin->SetBGColor(0xFF000000);
-   CUseRaidColors->SetBGColor(0xFF000000);
-   CLiveUpdate->SetBGColor(0xFF000000);
-   TFightIA->SetBGColor(0xFF000000);
-   TFightTO->SetBGColor(0xFF000000);
-   TEntTO->SetBGColor(0xFF000000);
-   CShowTotal->SetBGColor(0xFF000000);
+   this->SetBGColor(0xFF000000);//Setting this here sets it for the entire window. Setting everything individually was blacking out the checkboxes.
+
    if (CheckUI) {
       WriteChatf("\ar[MQ2DPSAdv] Incorrect UI File in use. Please update to latest and reload plugin.");
       WrongUI = true;
@@ -322,16 +313,9 @@ CDPSAdvWnd::CDPSAdvWnd():CCustomWnd("DPSAdvWnd") {
    
    LoadLoc();
    SetWndNotification(CDPSAdvWnd);
-   //LTopList->SetColors(0xFFFFFFFF, 0xFFCC3333, 0xFF666666);
-   //LFightList->SetColors(0xFFFFFFFF, 0xFFCC3333, 0xFF666666);
    CMobList->SetColors(0xFFCC3333, 0xFF666666, 0xFF000000);
    Tabs->UpdatePage();
    DrawCombo();
-   //LFightList->AddString(&CXStr("1"), 0, 0, 0);
-   //LFightList->AddString(&CXStr("2"), 0, 0, 0);
-   //LFightList->AddString(&CXStr("3"), 0, 0, 0);
-   //LFightList->ExtendSel(1);
-   //LFightList->ExtendSel(2);
 }
 
 CDPSAdvWnd::~CDPSAdvWnd() {}
@@ -425,6 +409,11 @@ void CDPSAdvWnd::DrawList(bool DoDead) {
 	  sprintf_s(szTemp, "%I64is", Ent->Damage.Last - Ent->Damage.First);
 	  LTopList->SetItemText(LineNum, 4, &CXStr(szTemp));
 	  if (ThisMe) LTopList->SetItemText(ShowMeLineNum, 4, &CXStr(szTemp));
+	  //Percentage of Damage?
+	  sprintf_s(szTemp, "%2.0f", (((float)Ent->Damage.Total / (float)CurListMob->Damage.Total)*100.0f));
+	  strcat_s(szTemp, "%");
+	  LTopList->SetItemText(LineNum, 5, &CXStr(szTemp));
+	  if (ThisMe) LTopList->SetItemText(ShowMeLineNum, 5, &CXStr(szTemp));
 	  
    }
    if (ShowTotal == TOTALBOTTOM) {
@@ -1029,7 +1018,10 @@ void CreateDPSWindow() {
    if (DPSWnd) DestroyDPSWindow();
    if (pSidlMgr->FindScreenPieceTemplate("DPSAdvWnd")) {
       DPSWnd = new CDPSAdvWnd();
-      if (DPSWnd->IsVisible()) ((CXWnd*)DPSWnd)->Show(1,1);
+	  if (DPSWnd->IsVisible()) {
+		  ((CXWnd*)DPSWnd)->Show(1, 1);
+		  //((CXWnd*)DPSWnd)->SetEscapable(true);
+	  }
       char szTitle[MAX_STRING];
       sprintf_s(szTitle, "DPS Advanced v%s", DPSVERSION);
       DPSWnd->CSetWindowText(szTitle);
@@ -1375,36 +1367,3 @@ PLUGIN_API VOID OnEndZone(VOID) {
    Zoning = false;
    CheckActive();
 }
-
-/*this exist in MQ2Utilities, no need to call it here
-bool Anonymize(char *name)
-{
-	if (GetGameState() != GAMESTATE_INGAME || !pLocalPlayer)
-		return 0;
-	BOOL bisTarget = false;
-	BOOL isRmember = false;
-	BOOL isGmember = false;
-	bool bChange = false;
-	int ItsMe = _stricmp(((PSPAWNINFO)pLocalPlayer)->Name, name);
-	if (ItsMe != 0)//well if it is me, then there is no point in checking if its a group member
-		isGmember = IsGroupMember(name);
-	if (!isGmember && ItsMe != 0)//well if it is me or a groupmember, then there is no point in checking if its a raid member
-		isRmember = IsRaidMember(name);
-	if (ItsMe != 0 && !isGmember && isRmember==-1) {
-		//my target?
-		if (pTarget && ((PSPAWNINFO)pTarget)->Type != SPAWN_NPC) {
-			if (!_stricmp(((PSPAWNINFO)pTarget)->Name, name)) {
-				bisTarget = true;
-			}
-		}
-	}
-	if (ItsMe == 0 || isGmember || isRmember!=-1 || bisTarget) {
-		int len = strlen(name);
-		bChange = true;
-		for (int i = 1; i < len - 1; i++) {
-			name[i] = '*';
-		}
-	}
-	return bChange;
-}
-*/
