@@ -267,7 +267,7 @@ CXW_NO_VTABLE_BEGIN \
 /*0x0084*/ void   *TitlePiece2; \
 /*0x0088*/ int		VScrollPos; \
 /*0x008C*/ RECT		Location; \
-/*0x009C*/ bool		CloseOnESC;     /* found in CSidlScreenWnd__StoreIniInfo_x, close when ESC is pressed */ \
+/*0x009C*/ bool		bBorder; \
 /*0x00A0*/ LONG		BlinkStartTimer; \
 /*0x00A4*/ bool		ValidCXWnd; /* IsValid has this one */ \
 /*0x00A5*/ bool		Unlockable;     /* found in CSidlScreenWnd__LoadIniInfo_x related to Locked */ \
@@ -311,7 +311,7 @@ CXW_NO_VTABLE_BEGIN \
 /*0x0130*/ tagSIZE	MaxClientSize; \
 /*0x0138*/ int		BlinkState; \
 /*0x013C*/ BYTE     bResizableMask; \
-/*0x013D*/ bool		bEscapableLocked; \
+/*0x013D*/ bool		bCaptureTitle; \
 /*0x013E*/ BYTE		TargetAlpha; \
 /*0x013F*/ bool		Minimized; \
 /*0x0140*/ UINT		TransitionDuration; \
@@ -341,9 +341,9 @@ CXW_NO_VTABLE_BEGIN \
 /*0x01C4*/ void* pTipTextObject; \
 /*0x01C8*/ DWORD	LastTimeMouseOver; \
 /*0x01CC*/ bool		Enabled; \
-/*0x01CD*/ bool		bBorder; \
+/*0x01CD*/ bool		bEscapableLocked; \
 /*0x01D0*/ void   *TitlePiece; \
-/*0x01D4*/ bool		bCaptureTitle; \
+/*0x01D4*/ bool		CloseOnESC;     /* found in CSidlScreenWnd__StoreIniInfo_x, close when ESC is pressed */ \
 /*0x01D5*/ bool		Faded; \
 /*0x01D6*/ bool		bRightAnchoredToLeft; \
 /*0x01D7*/ bool		MouseOver; /* found in CXWnd__SetMouseOver_x */ \
@@ -1577,23 +1577,23 @@ enum eAdvLootState
 //size is 0x88 see 0x48AB44 in Dec 10 2018 live -eqmule
 typedef struct _LOOTITEM
 {
-/*0x00*/ UINT	ItemID;
-/*0x04*/ CHAR	Name[0x40];
-/*0x44*/ int	IconID;
-/*0x48*/ bool   bStackable;
-/*0x4c*/ DWORD  MaxStack;
-/*0x50*/ BYTE   NoDrop;
-/*0x51*/ BYTE   Unknown0x51[0x3];
-/*0x54*/ DWORD  ComboID;
-/*0x58*/ DWORD  LootID;
-/*0x5c*/ eAdvLootState State;
-/*0x60*/ BYTE	bAutoRoll;
-/*0x61*/ BYTE	ActivelyManaged; // User has the manage Window up
-/*0x62*/ BYTE	ContextMenu;     // item has a context menu
-/*0x63*/ BYTE	AskRandomMode; //item is in AskRandom mode
-/*0x64*/ BYTE   CLootInProgress;
-/*0x65*/ BYTE   PLootInProgress;
-/*0x68*/ EQArray<LOOTDETAILS>LootDetails;
+/*0x00*/ __int64	ItemID;
+/*0x08*/ CHAR	Name[0x40];
+/*0x48*/ int	IconID;
+/*0x4C*/ bool   bStackable;
+/*0x50*/ DWORD  MaxStack;
+/*0x54*/ BYTE   NoDrop;
+/*0x55*/ BYTE   Unknown0x55[0x3];
+/*0x58*/ DWORD  ComboID;
+/*0x5c*/ DWORD  LootID;
+/*0x60*/ eAdvLootState State;
+/*0x64*/ BYTE	bAutoRoll;
+/*0x65*/ BYTE	ActivelyManaged; // User has the manage Window up
+/*0x66*/ BYTE	ContextMenu;     // item has a context menu
+/*0x67*/ BYTE	AskRandomMode; //item is in AskRandom mode
+/*0x68*/ BYTE   CLootInProgress;
+/*0x69*/ BYTE   PLootInProgress;
+/*0x6c*/ EQArray<LOOTDETAILS>LootDetails;
 /*0x7c*/ DWORD	AskTimer;
 /*0x80*/ BYTE	AutoRoll;
 /*0x81*/ BYTE	FG;
@@ -1765,7 +1765,12 @@ typedef struct _CTARGETWND {
 /*0x03c0*/ struct _CBUTTONWND * pTargetBuff[NUM_BUFF_SLOTS]; // buff icons
 /*0x0544*/ int          BuffSpellID[NUM_BUFF_SLOTS]; // 0xffffffff if no buff
 /*0x06c8*/ DWORD        BuffTimer[NUM_BUFF_SLOTS];
-/*0x084c*/ BYTE         Unknown0x084c[0x24];
+/*0x084c*/ int			LastBuffRecievedTime;
+/*0x0850*/ UINT			Timer;
+/*0x0854*/ HashTable<PCXSTR> Casters;
+/*0x0864*/ int			ContextMenuID;
+/*0x0868*/ PCXWND		RequestingWnd;
+/*0x086c*/ bool			bRemovedBuffBlockMenuItem;
 /*0x0870*/ DWORD        Type;              // 1 = self, 4 = group member, 5 = PC, 7 = NPC
 /*0x0874*/ BYTE         Unknown0x0874[0x4c];
 /*0x08c0*/
