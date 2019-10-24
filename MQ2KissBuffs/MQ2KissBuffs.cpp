@@ -8,25 +8,27 @@ int PulseDelay = 15;
 // This is called every time MQ pulses
 PLUGIN_API VOID OnPulse(VOID)
 {
-#ifdef BugsUser
-	if (!Authorized) return;
-#endif
 	if (!InGame()) return;
 	if (++Pulse < PulseDelay) return;
 	Pulse = 0;
+	if (!InGame() || WriteBuffsTimer + 30000 > GetTickCount64()) return;
+	WriteBuffs();
+}
+
+PLUGIN_API VOID OnZoned(VOID)
+{
+	if (!InGame()) return;
 	WriteBuffs();
 }
 
 void WriteBuffs() {
-	if (!InGame() || WriteBuffsTimer + 30000 > GetTickCount64()) return;
-
 	char BuffINI[MAX_STRING] = "";
 	sprintf_s(BuffINI, MAX_STRING, "%s\\Macros\\KissAssist_Buffs.ini", gszINIPath);
 	char WriteBuffList[MAX_STRING] = { 0 };
 	char myid[MAX_STRING] = { 0 };
 	_itoa_s(Me()->SpawnID, myid, MAX_STRING, 10);
 
-	CleanBuffsFile();
+	CleanBuffsFile();//Doesn't currently do anything. Need to look into how KissAssist.mac does this.
 
 	time_t now = time(0);
 	struct tm localTime;
@@ -46,9 +48,49 @@ void WriteBuffs() {
 	WritePrivateProfileString(myid, "Zone", ZoneID, BuffINI);
 	VerifyINI(myid, "Buffs", "", BuffINI);
 	VerifyINI(myid, "Blockedbuffs", "", BuffINI);
-	VerifyINI(myid, "AmILooting", "0", BuffINI);
-	VerifyINI(myid, "MyRole", "Assist", BuffINI);
-	//Write all current buffs to Kissassist_buffs.ini file
+	//Am I running a macro.
+	if (gMacroStack && strlen(gszMacroName)) {
+		if (strstr(gszMacroName, "kiss")) {
+			//Let us get the role we are in from the macro
+			if (IsDefined("Role")) {
+				char theRole[64] = "${Role}";
+				ParseMacroData(theRole, 64);
+				WritePrivateProfileString(myid, "MyRole", theRole, BuffINI);
+			}
+			else if (GetGroupMainAssistTargetID() == atoi(myid)) {
+				//if for whatever reason the macro is kiss but ${Role} isn't defined. Lets see if I'm the MA. 
+				WritePrivateProfileString(myid, "MyRole", "tank", BuffINI);
+			}
+			else {
+				//if for whatever reason the macro is kiss but ${Role} isn't defined. If I'm not the MA, then I should be assist.
+				WritePrivateProfileString(myid, "MyRole", "assist", BuffINI);
+			}
+			//Lets get AmILooting from the macro
+			if (IsDefined("AmILooting")) {
+				char AmILooting[64] = "${AmILooting}";
+				ParseMacroData(AmILooting, 64);
+				WritePrivateProfileString(myid, "AmILooting", AmILooting, BuffINI);
+			}
+			else {
+				//if the macro is Kiss but AmILooting isn't defined, then set it to 0.
+				VerifyINI(myid, "AmILooting", "0", BuffINI);
+			}
+			
+		}
+	}
+	else {
+		//if I'm not running Kissassist then AmILooting is 0
+		VerifyINI(myid, "AmILooting", "0", BuffINI);
+
+		//If no macro is running and I am the MainAssist, then my role is tank.
+		if (GetGroupMainAssistTargetID() == atoi(myid)) {
+			VerifyINI(myid, "MyRole", "tank", BuffINI);
+		}
+		else {
+			VerifyINI(myid, "MyRole", "assist", BuffINI);
+		}
+	}
+	//Get all our buffs and put them on a string.
 	for (int i = 0; i < NUM_LONG_BUFFS; i++) {
 		if (GetCharInfo2() && GetCharInfo2()->Buff) {
 			if (PSPELL pBuff = GetSpellByID(GetCharInfo2()->Buff[i].SpellID)) {
@@ -58,14 +100,13 @@ void WriteBuffs() {
 			}
 		}
 	}
-	//Write the buffs to the file
+	//Write the buffs to the \Macros\KissAssist_Buffs.ini
 	WritePrivateProfileString(myid, "Buffs", WriteBuffList, BuffINI);
 	WriteBuffsTimer = GetTickCount64();
 
-
+	//Now lets write our blocked buffs.
 	if (WriteBlockedBuffsTimer + 120000 > GetTickCount64()) return;
 	char BlockedBuffList[MAX_STRING] = { 0 };
-	//Now lets write our blocked buffs.
 	for (int i = 0; i < 40; i++) {
 		if (MyBlockedBuff(i)) {
 			strcat_s(BlockedBuffList, MyBlockedBuff(i)->Name);
@@ -77,7 +118,10 @@ void WriteBuffs() {
 }
 
 void CleanBuffsFile() {
-
+	//Todo, sort out cleaning the buffs file out.
+	//Ideally if you're running this plugin, you're running
+	//Kissassist on at least one character and it would 
+	//clean the KissAssist_Buffs.ini file if anyone is out of date. 
 }
 
 PSPELL MyBlockedBuff(int i) {
@@ -109,6 +153,8 @@ PSPAWNINFO Me()
 		return me;
 	return false;
 }
+
+//I only want to write the things passed through here if it doesn't already have a value.
 void VerifyINI(char Section[MAX_STRING], char Key[MAX_STRING], char Default[MAX_STRING], char ININame[MAX_STRING])
 {
 	char temp[MAX_STRING] = { 0 };
@@ -116,4 +162,8 @@ void VerifyINI(char Section[MAX_STRING], char Key[MAX_STRING], char Default[MAX_
 	{
 		WritePrivateProfileString(Section, Key, Default, ININame);
 	}
+}
+//Check to see if a macro variable is defined.
+bool IsDefined(PCHAR szLine) {
+	return (FindMQ2DataVariable(szLine) != 0);
 }
