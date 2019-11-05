@@ -45,6 +45,7 @@
 		</Size>
 	</Page>
 
+	<!--Check Boxes start here -->
 	<Button item="Zerker_Checkbox0">
 		<ScreenID>Zerker_Checkbox0</ScreenID>
 		<Font>2</Font>
@@ -840,6 +841,235 @@
 		<AlignRight>false</AlignRight>
 	</Label>
 
+	<Button item="Zerker_Checkbox15">
+		<ScreenID>Zerker_Checkbox15</ScreenID>
+		<Font>2</Font>
+		<Location>
+			<X>305</X>
+			<Y>65</Y>
+		</Location>
+		<Size>
+			<CX>12</CX>
+			<CY>12</CY>
+		</Size>
+		<TextColor>
+			<Alpha>255</Alpha>
+			<R>0</R>
+			<G>0</G>
+			<B>0</B>
+		</TextColor>
+		<Style_VScroll>false</Style_VScroll>
+		<Style_HScroll>false</Style_HScroll>
+		<Style_Transparent>false</Style_Transparent>
+		<Style_Border>false</Style_Border>
+		<Style_Checkbox>true</Style_Checkbox>
+		<ButtonDrawTemplate>
+		<Normal>A_CheckBoxNormal</Normal>
+		<Pressed>A_CheckBoxPressed</Pressed>
+		<Flyby>A_CheckBoxNormal</Flyby>
+		<Disabled>A_CheckBoxNormal</Disabled>
+		<PressedFlyby>A_CheckBoxPressed</PressedFlyby>
+		</ButtonDrawTemplate>
+	</Button>
+	<Label item="Zerker_CheckboxLabel15">
+		<ScreenID>Zerker_CheckboxLabel15</ScreenID>
+		<Font>3</Font>
+		<RelativePosition>true</RelativePosition>
+		<Location>
+			<X>325</X>
+			<Y>65</Y>
+		</Location>
+		<Size>
+			<CX>150</CX>
+			<CY>20</CY>
+		</Size>
+		<Text>CheckBox 15</Text>
+		<TextColor>
+			<R>255</R>
+			<G>255</G>
+			<B>255</B>
+		</TextColor>
+		<NoWrap>true</NoWrap>
+		<AlignCenter>false</AlignCenter>
+		<AlignRight>false</AlignRight>
+	</Label>
+	<!--Check Boxes End Here-->
+	
+	<!--Input Boxes start here -->
+	<Label item="Zerker_InputBox_Label0">
+		<ScreenID>Zerker_InputBox_Label0</ScreenID>
+		<Font>3</Font>
+		<RelativePosition>true</RelativePosition>
+		<Location>
+			<X>350</X>
+			<Y>85</Y>
+		</Location>
+		<Size>
+			<CX>150</CX>
+			<CY>20</CY>
+		</Size>
+		<Text>InputBox0</Text>
+		<TextColor>
+			<R>255</R>
+			<G>255</G>
+			<B>255</B>
+		</TextColor>
+		<NoWrap>true</NoWrap>
+		<AlignCenter>false</AlignCenter>
+		<AlignRight>false</AlignRight>
+	</Label>
+	<Editbox item="Zerker_InputBox_Input0">
+		<ScreenID>Zerker_InputBox_Input0</ScreenID>
+		<DrawTemplate>WDT_Inner</DrawTemplate>
+		<Style_Border>true</Style_Border>
+		<Font>3</Font>
+		<RelativePosition>true</RelativePosition>
+		<Location>
+			<X>305</X>
+			<Y>85</Y>
+		</Location>
+		<Size>
+			<CX>40</CX>
+			<CY>20</CY>
+		</Size>
+		<TextColor>
+			<R>255</R>
+			<G>255</G>
+			<B>255</B>
+		</TextColor>
+	</Editbox>
+
+	<Label item="Zerker_InputBox_Label1">
+		<ScreenID>Zerker_InputBox_Label1</ScreenID>
+		<Font>3</Font>
+		<RelativePosition>true</RelativePosition>
+		<Location>
+			<X>350</X>
+			<Y>105</Y>
+		</Location>
+		<Size>
+			<CX>150</CX>
+			<CY>20</CY>
+		</Size>
+		<Text>InputBox1</Text>
+		<TextColor>
+			<R>255</R>
+			<G>255</G>
+			<B>255</B>
+		</TextColor>
+		<NoWrap>true</NoWrap>
+		<AlignCenter>false</AlignCenter>
+		<AlignRight>false</AlignRight>
+	</Label>
+	<Editbox item="Zerker_InputBox_Input1">
+		<ScreenID>Zerker_InputBox_Input1</ScreenID>
+		<DrawTemplate>WDT_Inner</DrawTemplate>
+		<Style_Border>true</Style_Border>
+		<Font>3</Font>
+		<RelativePosition>true</RelativePosition>
+		<Location>
+			<X>305</X>
+			<Y>105</Y>
+		</Location>
+		<Size>
+			<CX>40</CX>
+			<CY>20</CY>
+		</Size>
+		<TextColor>
+			<R>255</R>
+			<G>255</G>
+			<B>255</B>
+		</TextColor>
+	</Editbox>
+
+	<Label item="Zerker_InputBox_Label2">
+		<ScreenID>Zerker_InputBox_Label2</ScreenID>
+		<Font>3</Font>
+		<RelativePosition>true</RelativePosition>
+		<Location>
+			<X>350</X>
+			<Y>125</Y>
+		</Location>
+		<Size>
+			<CX>150</CX>
+			<CY>20</CY>
+		</Size>
+		<Text>InputBox2</Text>
+		<TextColor>
+			<R>255</R>
+			<G>255</G>
+			<B>255</B>
+		</TextColor>
+		<NoWrap>true</NoWrap>
+		<AlignCenter>false</AlignCenter>
+		<AlignRight>false</AlignRight>
+	</Label>
+	<Editbox item="Zerker_InputBox_Input2">
+		<ScreenID>Zerker_InputBox_Input2</ScreenID>
+		<DrawTemplate>WDT_Inner</DrawTemplate>
+		<Style_Border>true</Style_Border>
+		<Font>3</Font>
+		<RelativePosition>true</RelativePosition>
+		<Location>
+			<X>305</X>
+			<Y>125</Y>
+		</Location>
+		<Size>
+			<CX>40</CX>
+			<CY>20</CY>
+		</Size>
+		<TextColor>
+			<R>255</R>
+			<G>255</G>
+			<B>255</B>
+		</TextColor>
+	</Editbox>
+
+	<Label item="Zerker_InputBox_Label3">
+		<ScreenID>Zerker_InputBox_Label3</ScreenID>
+		<Font>3</Font>
+		<RelativePosition>true</RelativePosition>
+		<Location>
+			<X>350</X>
+			<Y>145</Y>
+		</Location>
+		<Size>
+			<CX>150</CX>
+			<CY>20</CY>
+		</Size>
+		<Text>InputBox3</Text>
+		<TextColor>
+			<R>255</R>
+			<G>255</G>
+			<B>255</B>
+		</TextColor>
+		<NoWrap>true</NoWrap>
+		<AlignCenter>false</AlignCenter>
+		<AlignRight>false</AlignRight>
+	</Label>
+	<Editbox item="Zerker_InputBox_Input3">
+		<ScreenID>Zerker_InputBox_Input3</ScreenID>
+		<DrawTemplate>WDT_Inner</DrawTemplate>
+		<Style_Border>true</Style_Border>
+		<Font>3</Font>
+		<RelativePosition>true</RelativePosition>
+		<Location>
+			<X>305</X>
+			<Y>145</Y>
+		</Location>
+		<Size>
+			<CX>40</CX>
+			<CY>20</CY>
+		</Size>
+		<TextColor>
+			<R>255</R>
+			<G>255</G>
+			<B>255</B>
+		</TextColor>
+	</Editbox>
+	<!--InputBoxes End Here-->
+	
+	<!--Combo Boxes start here -->
 	<Combobox item="Zerker_Mode_ComboBox">
 		<ScreenID>Zerker_Mode</ScreenID>
 		<Font>1</Font>
@@ -851,7 +1081,7 @@
 			<Y>125</Y>
 		</Location>
 		<Size>
-			<CX>125</CX>
+			<CX>80</CX>
 			<CY>18</CY>
 		</Size>
 
@@ -873,7 +1103,7 @@
 			<Y>125</Y>
 		</Location>
 		<Size>
-			<CX>150</CX>
+			<CX>50</CX>
 			<CY>20</CY>
 		</Size>
 		<Text>Mode</Text>
@@ -887,6 +1117,54 @@
 		<AlignRight>false</AlignRight>
 	</Label>
 
+	<Combobox item="Zerker_RaidAssist_ComboBox">
+		<ScreenID>Zerker_RaidAssist_ComboBox</ScreenID>
+		<Font>1</Font>
+		<DrawTemplate>WDT_Inner</DrawTemplate>
+
+		<RelativePosition>true</RelativePosition>
+		<Location>
+			<X>220</X>
+			<Y>125</Y>
+		</Location>
+		<Size>
+			<CX>40</CX>
+			<CY>18</CY>
+		</Size>
+
+		<ListHeight>90</ListHeight>
+		<Button>BDT_Combo</Button>
+		<Style_Border>true</Style_Border>
+		<TextColor>
+			<R>255</R>
+			<G>255</G>
+			<B>255</B>
+		</TextColor>
+	</Combobox>
+	<Label item="Zerker_RaidAssist_Label">
+		<ScreenID>Zerker_RaidAssist_Label</ScreenID>
+		<Font>3</Font>
+		<RelativePosition>true</RelativePosition>
+		<Location>
+			<X>155</X>
+			<Y>125</Y>
+		</Location>
+		<Size>
+			<CX>60</CX>
+			<CY>20</CY>
+		</Size>
+		<Text>RaidAssist</Text>
+		<TextColor>
+			<R>255</R>
+			<G>255</G>
+			<B>255</B>
+		</TextColor>
+		<NoWrap>true</NoWrap>
+		<AlignCenter>false</AlignCenter>
+		<AlignRight>false</AlignRight>
+	</Label>
+		
+	<!--Combo Boxes End Here-->
 
 	<Page item="Zerker_Settings">
 		<ScreenID>Zerker_Settings</ScreenID>
@@ -959,8 +1237,26 @@
 		<Pieces>Zerker_Checkbox14</Pieces>
 		<Pieces>Zerker_CheckboxLabel14</Pieces>
 		
-		<Pieces>Zerker_Mode_ComboBox</Pieces>
+		<Pieces>Zerker_Checkbox15</Pieces>
+		<Pieces>Zerker_CheckboxLabel15</Pieces>
+		
+		<Pieces>Zerker_InputBox_Input0</Pieces>
+		<Pieces>Zerker_InputBox_Label0</Pieces>
+		
+		<Pieces>Zerker_InputBox_Input1</Pieces>
+		<Pieces>Zerker_InputBox_Label1</Pieces>
+		
+		<Pieces>Zerker_InputBox_Input2</Pieces>
+		<Pieces>Zerker_InputBox_Label2</Pieces>
+		
+		<Pieces>Zerker_InputBox_Input3</Pieces>
+		<Pieces>Zerker_InputBox_Label3</Pieces>
+		
 		<Pieces>Zerker_Mode_Label</Pieces>
+		<Pieces>Zerker_Mode_ComboBox</Pieces>
+		
+		<Pieces>Zerker_RaidAssist_Label</Pieces>
+		<Pieces>Zerker_RaidAssist_ComboBox</Pieces>
 	</Page>
 
 	<TabBox item="Zerker_Tabs">
