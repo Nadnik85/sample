@@ -2277,6 +2277,12 @@ public:
 						return 0x11; // mq2cast not ready
 					}
 				}
+				else {
+					if (!Evaluate("${Me.SpellReady}"))
+					{
+						return 0x11;
+					}
+				}
 			}
             if (TYPE == AA) {
                 if (!AAReady(INDEX))       return 0x13;  // Ability Not Ready
