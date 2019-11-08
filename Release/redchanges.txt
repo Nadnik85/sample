@@ -1,3 +1,11 @@
+Nov 07 2019 by Eqmule
+- Fixed /useitem for the emu build
+- Fixed a crash in pPCData->GetCombatAbilityTimer for emu
+-
+Nov 07 2019 by RedGuides
+- MQ2Relocate (Sic) add lobby, blood, evac, teleport, and translocate to /relocate, and add /translocate command
+- MQ2Status (Sic) added /status aa and /status merc
+- 
 Nov 07 2019
 - Updated for BETA
 -
