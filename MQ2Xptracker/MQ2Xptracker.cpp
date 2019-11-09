@@ -36,7 +36,7 @@
 //		Updated to add some additional color while I was in here to the /xp command for the averages and time to ding etc output. 
 //		Updated to change variable types to match each other so as to cutback on the multiple types of variables doing math with each other to reduce the chance of issues
 //			in calculations.
-//		Update to fix "/xp reset" not resetting totals. 
+//		Update to fix "/xp reset" not resetting Totals.
 //		Potentially TODO: Update GetTickCount() to use GetTickCount64() as recommended by VS. 
 //  07-03-19
 //		Update to reflect gaining multiple AA's per kill.
