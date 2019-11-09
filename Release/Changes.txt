@@ -1,3 +1,101 @@
+Nov 08 2019
+- Updated for BETA
+- Activated NEWCHARINFO for BETA, this is a chance for you to fix your plugins.
+  I will activate it for live next patch because we have tested it for a year and
+  and im confident in it now.
+  I will then just remove the old charinfo which is just half filled anyway.
+- Plugins I know for sure needs fixes:
+  MQ2AutoLoot,MQ2Posse
+-
+Nov 07 2019
+- Updated for BETA
+-
+Nov 06 2019
+- Updated for BETA
+-
+Nov 05 2019
+- Updated for BETA
+- Right Clicking the Lucy button on the item display window will now open Lucy in your external default browser.
+  Left Click opens it inside of eq as usual.
+- 
+Nov 04 2019
+- Updated for BETA
+- Task TLO can now be accessed by index to make iteration possible.
+  Example: /echo ${Task[2].Title}
+  NOTE: THIS INDEX IS NOT THE SAME INDEX AS THE ONE YOU SEE IN THE QUEST WINDOW LIST.
+        We are iterating through the IN MEMORY quest entries, we are NOT
+		iterating the window list, if you want to do that, use the Window TLO.
+- Added .WindowIndex to the Task TLO it returns the Quest Window List Index. (if the window actually have the list filled...)
+  Usage: /echo ${Task[3].WindowIndex}
+  Usage: /echo ${Task[Into The Muck].WindowIndex}
+-
+Nov 03 2019
+- Updated for BETA
+- Fixed a bug in emu compile
+-
+Nov 02 2019
+- Updated for BETA
+- Added item search by number to the ${Ground} TLO
+- Example: /echo ${Ground[4]} will return the 4th closest item it finds.
+- You should probably check that there actually are 4 items on the ground 
+  with ${GroundItemCount} though, or it will obviously return NULL if there is'nt.
+  I don't know how useful this feature is since we can iterate through .Next anyway, but someone asked for it so...
+-
+Nov 01 2019
+- Updated for BETA
+- Added ${Me.Origin} which returns a pZoneType of your starting city.
+-
+Oct 31 2019
+- Updated for BETA
+-
+Oct 30 2019 by Eqmule
+- Updated for BETA
+- Fixed a bug in macroquest2.exe that would prevent loading live clients. (I am focused on beta this month)
+-
+Oct 29 2019 by Eqmule
+- Updated for BETA
+-
+Oct 28 2019 by Eqmule
+- Updated for BETA
+-
+Oct 27 2019 by Eqmule
+- Updated for BETA
+-
+Oct 26 2019 by Eqmule
+- Updated for BETA
+-
+Oct 26 2019 by SwiftyMUSE
+- Fixed ${Spawn.State} so DEAD spawns don't show as STUN
+-
+Oct 25 2019 by Eqmule
+- Updated for BETA
+-
+Oct 24 2019 by Eqmule
+- Updated for BETA
+-
+Oct 23 2019 by Eqmule
+- Updated for BETA
+- Updated for TEST
+-
+Oct 22 2019 by Eqmule
+- Updated for BETA
+- Fixed ${Task[blah].Select}
+-
+Oct 21 2019 by Eqmule
+- Updated for BETA
+- Fixed SetEscapable and SetEscapableLocked
+-
+Oct 20 2019 by Chatwiththisname
+- More /caption anon fixes.
+-
+Oct 20 2019 by Eqmule
+- Updated for BETA
+-
+Oct 16 2019 by Eqmule
+- Updated for LIVE
+- I am aware the .Select for the task tlo needs a fix, I can't get that in right now but will be looking at a fix the next couple days.
+- Use the window tlo meanwhile if u need to select in that window.
+- 
 Oct 10 2019 by Eqmule
 - Fixed ${Me.Buff for TEST
 -

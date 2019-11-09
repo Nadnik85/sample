@@ -1225,6 +1225,7 @@ public:
 		BlockedBuff = 276,
 		BlockedPetBuff = 277,
 		LastZoned = 278,
+		Origin = 279,
 	};
 	enum CharacterMethods
 	{
@@ -1505,6 +1506,8 @@ public:
 		TypeMember(BlockedBuff);
 		TypeMember(BlockedPetBuff);
 		TypeMember(LastZoned);
+		TypeMember(Origin);
+		
 		TypeMethod(Stand);
 		TypeMethod(Sit);
 		TypeMethod(Dismount);
@@ -3231,10 +3234,28 @@ public:
 
 	bool ToString(MQ2VARPTR VarPtr, PCHAR Destination)
 	{
-		if (VarPtr.Ptr && ((PCSIDLWND)VarPtr.Ptr)->IsVisible())
-			strcpy_s(Destination,MAX_STRING, "TRUE");
-		else
-			strcpy_s(Destination,MAX_STRING, "FALSE");
+		if (CXWnd*pWnd = (CXWnd*)VarPtr.Ptr)
+		{
+			if (VarPtr.HighPart==24)
+			{
+				if (CXMLData *pXMLData = pWnd->GetXMLData())
+				{
+					if (GetCXStr(pXMLData->Name.Ptr, Destination, MAX_STRING))
+					{
+						return true;
+					}
+				}
+				return false;
+			}
+			if (((PCSIDLWND)VarPtr.Ptr)->IsVisible())
+			{
+				strcpy_s(Destination, MAX_STRING, "TRUE");
+			}
+			else
+			{
+				strcpy_s(Destination, MAX_STRING, "FALSE");
+			}
+		}
 		return true;
 	}
 
@@ -5356,6 +5377,7 @@ public:
 		Type = 10,
 		MemberList = 11,
 		ID = 12,
+		WindowIndex = 13,
 	};
 	enum TaskMethods
 	{
@@ -5375,6 +5397,7 @@ public:
 		TypeMember(Type);
 		TypeMember(MemberList);
 		TypeMember(ID);
+		TypeMember(WindowIndex);
 
 		TypeMethod(Select);
 	}

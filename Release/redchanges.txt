@@ -1,3 +1,300 @@
+Nov 07 2019 by Eqmule
+- Fixed /useitem for the emu build
+- Fixed a crash in pPCData->GetCombatAbilityTimer for emu
+-
+Nov 07 2019 by RedGuides
+- MQ2Relocate (Sic) add lobby, blood, evac, teleport, and translocate to /relocate, and add /translocate command
+- MQ2Status (Sic) added /status aa and /status merc
+- 
+Nov 07 2019
+- Updated for BETA
+-
+Nov 06 2019
+- Updated for BETA
+-
+Nov 05 2019
+- Updated for BETA
+- Right Clicking the Lucy button on the item display window will now open Lucy in your external default browser.
+  Left Click opens it inside of eq as usual.
+-
+Nov 04 2019
+- Updated for BETA
+- Task TLO can now be accessed by index to make iteration possible.
+  Example: /echo ${Task[2].Title}
+  NOTE: THIS INDEX IS NOT THE SAME INDEX AS THE ONE YOU SEE IN THE QUEST WINDOW LIST.
+        We are iterating through the IN MEMORY quest entries, we are NOT
+		iterating the window list, if you want to do that, use the Window TLO.
+- Added .WindowIndex to the Task TLO it returns the Quest Window List Index. (if the window actually have the list filled...)
+  Usage: /echo ${Task[3].WindowIndex}
+  Usage: /echo ${Task[Into The Muck].WindowIndex}
+-
+Nov 03 2019
+- Updated for BETA
+- Fixed a bug in emu compile
+-
+Nov 02 2019 by RedGuides
+- MQ2Relocate (Sic) Updated Starting City check to /relocate Origin tp use (GetCharInfo()->StartingCity)
+- 
+Nov 02 2019
+- Updated for BETA
+- Added item search by number to the ${Ground} TLO
+- Example: /echo ${Ground[4]} will return the 4th closest item it finds.
+- You should probably check that there actually are 4 items on the ground 
+  with ${GroundItemCount} though, or it will obviously return NULL if there is'nt.
+  I don't know how useful this feature is since we can iterate through .Next anyway, but someone asked for it so...
+-
+Nov 01 2019 by RedGuides
+- New plugin! MQ2Relocate (Sic) Quick travel to zones based on your unlimited use travel items/AA's
+-
+Nov 01 2019 by Eqmule
+- Renamed Kissassist1004e15.mac to MuleAssist.mac
+-
+Nov 01 2019
+- Updated for BETA
+- Added ${Me.Origin} which returns a pZoneType of your starting city.
+-
+Oct 31 2019 by RedGuides
+- CWTN Plugins (ChatWithThisName) updated
+-
+Oct 31 2019 by Eqmule
+- Updated for BETA
+-
+Oct 30 2019 by Eqmule
+- Updated for BETA
+- Fixed a bug in macroquest2.exe that would prevent loading live clients. (I am focused on beta this month)
+-
+Oct 29 2019 by Eqmule
+- Updated for BETA
+-
+Oct 28 2019 by RedGuides
+- KissAssist (ctaylor22, Maskoi) Bard Twisting fix. Changed events so twist no longer gets paused.
+- MQ2Log (wired420)  Added log command with custom file name. /mqlogcustom filename "Log message goes here"
+-
+Oct 28 2019 by Eqmule
+- Updated for BETA
+-
+Oct 27 2019 by RedGuides
+- MQ2Autoforage (ChatWithThisName, Sic) No longer requires a hotkey in "Actions" to use forage. Added new functions MyUseAbility, 
+  AbilityReady, atob, InGame and VerifyINI. Defaults to on.
+-
+Oct 27 2019 by Eqmule
+- Updated for BETA
+-
+Oct 26 2019 by Eqmule
+- Updated for BETA
+-
+Oct 26 2019 by SwiftyMUSE
+- Fixed ${Spawn.State} so DEAD spawns don't show as STUN
+-
+Oct 25 2019 by Eqmule
+- Updated for BETA
+-
+Oct 24 2019 by RedGuides
+- MQ2KissBuffs (ChatWithThisName) updates KissAssist_Buffs.ini regardless of the macro or plugin you're using to run a character.
+-
+Oct 24 2019 by Eqmule
+- Updated for BETA
+-
+Oct 23 2019 by Eqmule
+- Updated for BETA
+- Updated for TEST
+-
+Oct 22 2019 by RedGuides
+- KissAssist (ctaylor22, Makoi) Fix for /dquery spam in Check Cures and switched up some Bool[] with If[] functions.
+- MQ2AFNuke & MQ2Heals (Jimbob) Added an option to enable/disable fades in MQ2AFNuke and MQ2Heals.
+- MQ2XPTracker (ChatWithThisName) LossFromDeath fixes, new colors, "/xp reset" command fix
+- MQ2DPSAdv (ChatWithThisName) Added comma delimited outputs. Added new checkbox in settings menu to use "TBMK" Numbers
+  e.g. instead of "1,500,439,068" total damage it will show "1.5 bil". Fixed more anonymous issues. New UI xml, grab it from gitlab
+  or the Very Vanilla release.
+-
+Oct 22 2019 by Eqmule
+- Updated for BETA
+- Fixed ${Task[blah].Select}
+-
+Oct 21 2019 by Eqmule
+- Updated for BETA
+- Fixed SetEscapable and SetEscapableLocked
+-
+Oct 20 2019 by Chatwiththisname
+- More /caption anon fixes.
+-
+Oct 20 2019 by Eqmule
+- Updated for BETA
+-
+Oct 16 2019 by RedGuides
+- MQ2AutoLoot (Plure) Fixed a bug when distributing loot and no one wanted the item, it would screw up the next item to be looted.
+- MQ2Rez (ChatWithThisName) Will now Anonymize the name of the person rezing you if "/caption anon on" is active.
+  Add ReleaseToBind toggle using /rez Release. 0/1/on/off as options. Allows immediate release to bind. 
+  Will still accept rez's. Accept must be on!
+- MQ2Status (Sic) Allows searching for items on your person, as well as stat reports. usage:
+  '/status item itemname' and '/status stat statname'
+- MQ2DPSAdv (ChatWithThisName) Fixed Anonymizing names in the DPSAdv window. While it was in fact changing them, it was also somehow 
+  changing your caption, and if you turned off anon the modification was remaining using Anonymize function of MQ2Utilities.
+  Added new Column "%", will output your percentage of the total damage done to the NPC. 
+- MQ2AutoForage (Sic) Fixed the plugin from not working if we went to a char screen or swapped characters - the IAmCamping had nothing 
+  to reset it to "false". I noticed this because I just did this with the update to mq2feedme
+- CWTN Plugins (ChatWithThisName) including MQ2Berserker and MQ2Rogue updated
+-
+Oct 16 2019 by Eqmule
+- Updated for LIVE
+-
+Oct 10 2019 by RedGuides
+- MQ2Feedme (Sic) -Updated MQ2Feedme.cpp to include a check if you are camping, so you don't interrupt camping out to eat/drink
+-
+Oct 10 2019 by Eqmule
+- Fixed ${Me.Buff for TEST
+-
+Oct 09 2019 by RedGuides
+- New Plugin! MQ2Status (ChatWithThisName, Sic) Outputs if a class Plugin (CWTN's) is running, and if a macro is running. usage: /status
+  Check out the video in our Resource section, search for "MQ2Status"
+- New Plugin! MQ2Py (brainiac) a python interpreter
+- New Plugin! MQ2Sql (dencelle) an ODBC connector to connect to your outside database (most commonly MySQL)
+- MQ2DPSAdv (ChatWithThisName) Add Timer for individuals and total, including matching color scheme for outputs to the window. 
+- UI Files - the updater will maintain a uifiles/default folder for your MQ2-based UI's. 
+-
+Oct 09 2019 by Eqmule
+- Updated for TEST
+-
+Oct 09 2019 by Chatwiththisname
+- Added two new /mapfilter options for CampRadius and PullRadius.
+- They add two new circles that work like SpellRadius except it's stationary where set.
+- Type /mapfilter for help.
+-
+Oct 02 2019 by RedGuides
+- KissAssist (ctaylor22, Maskoi) updated to fix the "melee jiggle dance", fix for pet buffs, cure|me fixed, DanNet compatibility fixes
+- CWTN's plugins: MQ2Eskay, MQ2Rogue, MQ2Berzerker updated
+- MQ2XPTracker (ChatWithThisName) Fix loss of XP from death showing incorrect amount of negative XP. 
+- MQ2Collections (TypePun) Change Find and Firsts to return temporary iterator. Implement Clone method on iterators.
+-
+Oct 02 2019 by Eqmule
+- Made some changes to the ${Task} TLO
+- It's likely some macros will break due to these changes, but
+  I felt the upside with not having to rely on the window warrants that.
+  -
+- New Feature: It's no longer needed to have the task window open to access the TLO.
+- Added .Type to the TaskObjective TLO
+  It returns a string that can be one of the following:
+  Unknown,None,Deliver,Kill,Loot,Hail,Explore,Tradeskill,Fishing,
+  Foraging,Cast,UseSkill,DZSwitch,DestroyObject,Collect,Dialogue
+- Added .CurrentCount which returns the current count of the .Type needed to complete a objective.
+- Added .RequiredCount which returns the required count of the .Type needed to complete a objective.
+- Added .Optional which returns true or false if a objective is optional
+- Added .RequiredItem which returns a string of the required item to complete a objective.
+- Added .RequiredSkill which returns a string of the required skill to complete a objective.
+- Added .RequiredSpell which returns a string of the required spell to complete a objective.
+- Added .DZSwitchID which returns a int of the switch used in a objective.
+- Example: /echo ${Task[The Grand Illusion].Objective[1].CurrentCount}
+- Added .ID to the ${Task} TLO it returns an int of the task ID
+- Example: /echo ${Task[The Grand Illusion].ID}
+- Ok so fair warning, the taskwindow doesn't add items by index, unless sorted by first column,
+  and even then, it can be "off" (because reasons)
+  so... if you are smart don't use ${Task[1].ID} and expect it to be whatever is the first list item.
+  ALWAYS refer to taks by their NAME.
+  so like: ${Task[The Grand Illusion].Step.Index} WILL absolutely always return the correct index
+  as returned by the taskmanager, but it might not be the index you "see" in the window.
+  Bottomline, we should not rely on the window anymore.
+  It's useful to look up the name of the tasks, basically.
+-
+Sep 18 2019 by RedGuides
+- KissAssist (Ctaylor22, Maskoi) updated to 11.005 new features include MQ2DanNet support, full changelog available in the kissassist resource.
+  We would like to thank our testers for the recent features and improvements: @Sic, @SusanTN, @Gnits, and @Enine
+- MQ2Nav (brainiac) updated to 1.3.2. Crash fixes, new TLO's, and a new command to change your .ini without reloading: /nav ini <key> <value>
+- CWTN plugins (ChatWithThisName) mq2berzerker and mq2rogue now include raid options. MQ2EsKay is now available while in beta.
+-
+Sep 18 2019 by Eqmule
+- Updated for LIVE
+-
+Sep 10 2019 by Eqmule
+- Updated for TEST
+-
+Aug 29 2019 by RedGuides
+- MQ2PluginManager (ChatWithThisName) addressed issues from code review. Thanks to brainiac for review and dencelle for original code. 
+-
+Aug 27 2019 by RedGuides
+- New Plugin! MQ2PluginManager (ChatWithThisName) a friendly GUI to load, unload and manage your plugins
+-
+Aug 27 2019 by Eqmule
+- Updated for TEST
+-
+Aug 26 2019 by Knightly
+- Removed #knightlyparse
+- New TLO ${MacroQuest.Parser}
+- New slash command /engine parser <x> [noauto]      (where X is the version of the parser, right now 1 or 2 and noauto if you don't want it in your ini)
+- New macro command #engine parser <x> 
+- Parser gets reset to the default in your ini whenever a macro ends
+- Full documentation at https://gitlab.com/Knightly1/mq2-parser-changes
+-
+Aug 23 2019 by RedGuides
+- MQ2TargetInfo (EqMule) fixes for MQ2DanNet
+- MQ2AutoForage (ChatWithThisName) Add new bool "IAmCamping" to fix an issue with camping, thanks Sicprofundus for the report
+-
+Aug 21 2019 by EqMule
+- Updated for LIVE
+-
+Aug 16 2019 by EqMule
+- #knightlyparse is now a macro keyword, add it to the top of your macros if you want to use this version of the parser.
+- Previously Fixed: EQGroundItemListManager
+-
+Aug 15 2019 by RedGuides 
+- MQ2DanNet (plure) let other plugins check if someone is connected to mq2dannet
+- MQ2Posse (plure) white listed people in your group and those connected to mq2dannet. added new TLO ${Posse.FriendNames} 
+  Added ability to ignore characters in your fellowship. Now recognizes new friends and strangers on the fly.
+  Fixed a bug where if you ignored your guild and then became guild-less, you'd ignore everyone not in a guild.
+-
+Aug 15 2019 by EqMule
+- Fixed a zoning crash
+- Fixed a crash on TEST in mq2itemdisplay when inspecting spells.
+-
+Aug 13 2019 by RedGuides
+- MQ2AASpend (ChatWithThisName) AASpend will now look for the "You have reached the AA Point cap" string, reducing wasted AA EXP
+- MQ2Profiler (Alynel) Fixed, and replaced offset with a pattern so it won't need updating each patch
+- MQ2DotNet (Alynel) Updated to 1.0.2, first major release
+- MQ2Collections (TypePun) updated to 1.1.0.1, Add Delimiter property to list, enhances strings to support quoted strings and escaped characters.
+-
+Aug 13 2019 by EqMule
+- Updated for TEST
+-
+Jul 31 2019 by RedGuides
+- MQ2DanNet (dannuic) Added format definitions.
+- 
+Jul 31 2019 by EqMule
+- Fixed a clear target bug in mq2targetinfo -dannuic -knighty
+- Next release:
+- TODO: Fix EQGroundItemListManager so we can get /itemtarget working for guild objects again.
+-
+Jul 27 2019 by EqMule
+- Turned on Knightlyparse.
+- Added support for mq2dannet to mq2targetinfo.
+- You can now confgure the mimic me feature in mq2targetinfo.ini to use dannet (or any other plugin u use for it's commands.)
+- Added ${Me.LastZoned} to the character TLO. It returns a timestamp of last time you zoned.
+- Removed EQ_END_ZONE and EQ_BEGIN_ZONE.
+- Added new detours for zonechange detection.
+- ${Me.Zoning} is depreciated, use ${Me.LastZoned} or just wait for ${Zone.ID} to change.
+-
+Jul 22 2019 by RedGuides
+- dumpaa.mac (hellfyre) updated to include the Focus tab 
+- MQ2Main (ctaylor22) Changed BlockedBuff and BlockedPetBuff in the Character TLO to allow use the Buff/spell name as well as the index, like Me.Buff works.
+-
+Jul 20 2019 by RedGuides
+- MQ2Main Knightlyparse (Knightly) Fixed bugs in /noparse and /multiline, cleaned up code
+-
+Jul 17 2019 by RedGuides
+- MQ2Netbots (Woobs) major fixes
+- MQ2Autoloot (Plure) Fixed for the new loot message when passing out loot
+- Knightlyparse (Knightly) Removed temporarily
+-
+Jul 17 2019 by EqMule
+- Updated for LIVE
+-
+Jul 15 2019 by RedGuides
+- MQ2AutoLoot (Plure) Fixed a bug that would cause MQ2AutoLoot to initialize only during the first login on an account per session.
+- MQ2Melee (EqMule) fixed some issues with escape, feigndeath and harmtouch
+- MQ2XPTracker (ChatWithThisName) will no longer track wacky max values for AA's
+- MQ2DanNet (dannuic) fixed bug associated with high CPU usage, added keepalive with frequency options, and added options for expire and evasive timeouts
+- 
+Jul 15 2019 by EqMule
+- Updated for TEST
+-
 Jul 11 2019 by RedGuides
 - MQ2Xptracker (ChatWithThisName, dannuic) Updated to follow new XP formula, improved readability of output, more detailed output
 - MQ2AutoLoot (Plure) Fixed bug where no drop items marked destroy won't be destroyed, fixed excludebag issues which allows bags other than 

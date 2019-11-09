@@ -21,6 +21,7 @@
 #ifndef ISXEQ
 #include "../MQ2Plugin.h"
 #include "resource.h"
+#include <Shellapi.h>
 PreSetup("MQ2ItemDisplay");
 #else
 #include "../ISXEQClient.h"
@@ -1194,7 +1195,27 @@ public:
 	int WndNotification_Detour(CXWnd* pWnd, unsigned __int32 Message, void* pData)
     {
 #if !defined(ROF2EMU) && !defined(UFEMU)
-		if (Message == XWM_LCLICK)
+		if (Message == XWM_RCLICK)
+		{
+			std::map<CButtonWnd*, ButtonInfo>::iterator i = ButtonMap.find((CButtonWnd*)pWnd);
+			if (i != ButtonMap.end()) {
+				switch (i->second.ID)
+				{
+					case 6://open in lucy
+					{
+						if (PITEMINFO pItem = GetItemFromContents(i->second.ItemDisplayWnd->pCurrentItem)) {
+							std::string url = "http://lucy.allakhazam.com/item.html?id=";
+							CHAR szID[64] = { 0 };
+							_itoa_s(pItem->ItemNumber, szID, 10);
+							url.append(szID);
+							ShellExecute(NULL, "open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
+						}
+						return 0;
+					}
+				}
+			}
+		}
+		else if (Message == XWM_LCLICK)
 		{
 			std::map<CButtonWnd*, ButtonInfo>::iterator i = ButtonMap.find((CButtonWnd*)pWnd);
 			if (i != ButtonMap.end()) {
@@ -3101,6 +3122,10 @@ void CreateCompareTipWnd()
 			"You can retry again by /plugin mq2itemdisplay unload and then /plugin mq2itemdisplay", "MQ2ItemDisplay", MB_OK | MB_SYSTEMMODAL);
 	}
 }
+bool DirectoryExists(LPCTSTR lpszPath) {
+	DWORD dw = ::GetFileAttributes(lpszPath);
+	return (dw != INVALID_FILE_ATTRIBUTES && (dw & FILE_ATTRIBUTE_DIRECTORY) != 0);
+}
 // Called once, when the plugin is to initialize
 PLUGIN_API VOID InitializePlugin(VOID)
 {
@@ -3134,7 +3159,7 @@ PLUGIN_API VOID InitializePlugin(VOID)
 	pDisplayItemType = new MQ2DisplayItemType;
 	AddMQ2Data("DisplayItem", dataLastItem);
 	AddMQ2Data("GearScore", dataGearScore);
-
+	//MessageBox(NULL, "", "load in now", MB_SYSTEMMODAL | MB_OK);
 	if (!IsXMLFilePresent("MQUI_CompareTipWnd.xml"))
 	{
 		HMODULE hMe = nullptr;
@@ -3152,7 +3177,18 @@ PLUGIN_API VOID InitializePlugin(VOID)
 					// save it to the default mq uifiles dir
 					DWORD ressize = SizeofResource(hMe, hRes);
 					FILE* File = nullptr;
-
+					CHAR szDirname[MAX_PATH] = { 0 };
+					sprintf_s(szDirname, "%s\\uifiles", gszINIPath);
+					if (!DirectoryExists(szDirname))
+					{
+						CreateDirectory(szDirname, NULL);
+					}
+					sprintf_s(szDirname, "%s\\uifiles\\default", gszINIPath);
+					if (!DirectoryExists(szDirname))
+					{
+						CreateDirectory(szDirname, NULL);
+					}
+					
 					CHAR szFilename[MAX_PATH] = { 0 };
 					sprintf_s(szFilename, "%s\\uifiles\\default\\MQUI_CompareTipWnd.xml", gszINIPath);
 

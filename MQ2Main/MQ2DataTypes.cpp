@@ -1542,7 +1542,7 @@ bool MQ2SpawnType::GETMEMBER()
 	case State:
 		DataTypeTemp[0] = '\0';
 		Dest.Type = pStringType;
-		if (pSpawn->PlayerState & 0x20)
+		if ((pSpawn->PlayerState & 0x20) && (pSpawn->StandState != STANDSTATE_DEAD))
 		{
 			strcpy_s(DataTypeTemp, "STUN");
 		}
@@ -2889,6 +2889,13 @@ bool MQ2CharacterType::GETMEMBER()
 		Dest.Ptr = &DataTypeTemp[0];
 		return true;
 	}
+	case Origin:
+		Dest.Type = pZoneType;
+		if (pChar->StartingCity > 0 && pChar->StartingCity < MAX_ZONES) {
+				Dest.Ptr = ((PWORLDDATA)pWorldData)->ZoneArray[pChar->StartingCity];
+				return true;
+		}
+		return false;
 	case Exp:
 		Dest.Int64 = pChar->Exp;
 		Dest.Type = pInt64Type;
@@ -3005,7 +3012,11 @@ bool MQ2CharacterType::GETMEMBER()
 		Dest.Type = pSpellType;
 		if (!ISINDEX())
 			return false;
+#ifdef NEWCHARINFO
+		if (PCHARINFO pCharnew = GetCharInfo()) {
+#else
 		if (PCHARINFONEW pCharnew = (PCHARINFONEW)GetCharInfo()) {
+#endif
 			if (ISNUMBER())
 			{
 				int nBuff = GETNUMBER() - 1;
@@ -3045,13 +3056,17 @@ bool MQ2CharacterType::GETMEMBER()
 		Dest.Type = pSpellType;
 		if (!ISINDEX())
 			return false;
+#ifdef NEWCHARINFO
+		if (PCHARINFO pCharnew = GetCharInfo()) {
+#else
 		if (PCHARINFONEW pCharnew = (PCHARINFONEW)GetCharInfo()) {
+#endif
 			if (ISNUMBER())
 			{
 				int nBuff = GETNUMBER() - 1;
 				if (nBuff < 0)
 					nBuff = 0;
-				if(nBuff > 0x28)
+				if(nBuff > NUM_BLOCKED_BUFFS)
 					return false;
 				if (int spellid = pCharnew->BlockedSpell[nBuff])
 				{
@@ -3064,7 +3079,7 @@ bool MQ2CharacterType::GETMEMBER()
 			}
 			else
 			{
-				for (unsigned long nBuff = 0; nBuff < 0x28; nBuff++)
+				for (unsigned long nBuff = 0; nBuff < NUM_BLOCKED_BUFFS; nBuff++)
 				{
 					if (int spellid = pCharnew->BlockedSpell[nBuff])
 					{
@@ -3090,7 +3105,7 @@ bool MQ2CharacterType::GETMEMBER()
 			{
 				int nBuff = GETNUMBER() - 1;
 				if (nBuff < 0)
-					return false;
+					nBuff = 0;
 				if (nBuff >= NUM_LONG_BUFFS)
 					return false;
 				if (pChar2->Buff[nBuff].SpellID <= 0)
@@ -3750,18 +3765,24 @@ bool MQ2CharacterType::GETMEMBER()
 						if (PSPELL pSpell = GetSpellByID(pPCData->GetCombatAbility(nCombatAbility)))
 						{
 							DWORD timeNow = (DWORD)time(NULL);
+							DWORD timer = timeNow;
 							#if !defined(ROF2EMU) && !defined(UFEMU)
-							if (pPCData->GetCombatAbilityTimer(pSpell->ReuseTimerIndex, pSpell->SpellGroup) > timeNow)
+							timer = pPCData->GetCombatAbilityTimer(pSpell->ReuseTimerIndex, pSpell->SpellGroup);
+							if (timer > timeNow)
 							#else
-							if (pPCData->GetCombatAbilityTimer(pSpell->ReuseTimerIndex) > timeNow)
+							if (pSpell->ReuseTimerIndex == -1 || pSpell->ReuseTimerIndex > 20)
+							{
+								//if we don't check this on emu servers we will crash
+								//the fix should happen on the server but no one has fixed it so...
+								return true;
+							}
+							timer = pPCData->GetCombatAbilityTimer(pSpell->ReuseTimerIndex);
+							if (timer > timeNow)
 							#endif
 							{
-								#if !defined(ROF2EMU) && !defined(UFEMU)
-								Dest.Int = pPCData->GetCombatAbilityTimer(pSpell->ReuseTimerIndex, pSpell->SpellGroup) - timeNow + 6;
-								#else
-								Dest.Int = pPCData->GetCombatAbilityTimer(pSpell->ReuseTimerIndex) - timeNow + 6;
-								#endif
-								Dest.Int /= 6;
+								Dest.Int = timer - timeNow + 6;
+								if(Dest.Int != 0)
+									Dest.Int /= 6;
 							}
 							return true;
 						}
@@ -3779,18 +3800,22 @@ bool MQ2CharacterType::GETMEMBER()
 							if (!_stricmp(GETFIRST(), pSpell->Name))
 							{
 								DWORD timeNow = (DWORD)time(NULL);
+								DWORD timer = timeNow;
 								#if !defined(ROF2EMU) && !defined(UFEMU)
-								if (pPCData->GetCombatAbilityTimer(pSpell->ReuseTimerIndex, pSpell->SpellGroup) > timeNow)
+								timer = pPCData->GetCombatAbilityTimer(pSpell->ReuseTimerIndex, pSpell->SpellGroup);
+								if (timer > timeNow)
 								#else
-								if (pPCData->GetCombatAbilityTimer(pSpell->ReuseTimerIndex) > timeNow)
+								if (pSpell->ReuseTimerIndex == -1 || pSpell->ReuseTimerIndex > 20)
+								{
+									return true;
+								}
+								timer = pPCData->GetCombatAbilityTimer(pSpell->ReuseTimerIndex);
+								if (timer > timeNow)
 								#endif
 								{
-									#if !defined(ROF2EMU) && !defined(UFEMU)
-									Dest.Int = pPCData->GetCombatAbilityTimer(pSpell->ReuseTimerIndex, pSpell->SpellGroup) - timeNow + 6;
-									#else
-									Dest.Int = pPCData->GetCombatAbilityTimer(pSpell->ReuseTimerIndex) - timeNow + 6;
-									#endif
-									Dest.Int /= 6;
+									Dest.Int = timer - timeNow + 6;
+									if(Dest.Int != 0)
+										Dest.Int /= 6;
 								}
 								return true;
 							}
@@ -3799,7 +3824,7 @@ bool MQ2CharacterType::GETMEMBER()
 				}
 			}
 		}
-		return false;
+		return true;
 	case CombatAbilityReady:
 		Dest.DWord = 0;
 		Dest.Type = pBoolType;
@@ -3815,10 +3840,18 @@ bool MQ2CharacterType::GETMEMBER()
 						if (PSPELL pSpell = GetSpellByID(pPCData->GetCombatAbility(nCombatAbility)))
 						{
 							DWORD timeNow = (DWORD)time(NULL);
+							DWORD timer = timeNow;
 							#if !defined(ROF2EMU) && !defined(UFEMU)
-							if (pPCData->GetCombatAbilityTimer(pSpell->ReuseTimerIndex, pSpell->SpellGroup) < timeNow)
+							timer = pPCData->GetCombatAbilityTimer(pSpell->ReuseTimerIndex, pSpell->SpellGroup);
+							if (timer < timeNow)
 							#else
-							if (pPCData->GetCombatAbilityTimer(pSpell->ReuseTimerIndex) < timeNow)
+							if (pSpell->ReuseTimerIndex == -1 || pSpell->ReuseTimerIndex > 20)
+							{
+								Dest.DWord = 1;
+								return true;
+							}
+							timer = pPCData->GetCombatAbilityTimer(pSpell->ReuseTimerIndex);
+							if (timer < timeNow)
 							#endif
 							{
 								Dest.DWord = 1;
@@ -3839,10 +3872,18 @@ bool MQ2CharacterType::GETMEMBER()
 							if (!_stricmp(GETFIRST(), pSpell->Name))
 							{
 								DWORD timeNow = (DWORD)time(NULL);
+								DWORD timer = timeNow;
 								#if !defined(ROF2EMU) && !defined(UFEMU)
-								if (pPCData->GetCombatAbilityTimer(pSpell->ReuseTimerIndex, pSpell->SpellGroup) < timeNow)
+								timer = pPCData->GetCombatAbilityTimer(pSpell->ReuseTimerIndex, pSpell->SpellGroup);
+								if (timer < timeNow)
 								#else
-								if (pPCData->GetCombatAbilityTimer(pSpell->ReuseTimerIndex) < timeNow)
+								if (pSpell->ReuseTimerIndex == -1 || pSpell->ReuseTimerIndex > 20)
+								{
+									Dest.DWord = 1;
+									return true;
+								}
+								timer = pPCData->GetCombatAbilityTimer(pSpell->ReuseTimerIndex);
+								if (timer < timeNow)
 								#endif
 								{
 									Dest.DWord = 1;
@@ -5914,8 +5955,8 @@ bool MQ2CharacterType::GETMEMBER()
 			if (int zoneid = ((PSPAWNINFO)pLocalPlayer)->GetZoneID())
 			{
 				if (WORD instance = HIWORD(zoneid))
-					Dest.DWord = true;
-			}
+				Dest.DWord = true;
+		}
 		}
 		Dest.Type = pBoolType;
 		return true;
@@ -5992,7 +6033,11 @@ bool MQ2CharacterType::GETMEMBER()
 		return true;
 	case GuildID:
 	{
+#ifdef NEWCHARINFO
+		Dest.UInt64 = pChar->GuildID.GUID;
+#else
 		Dest.UInt64 = pChar->GuildID;
+#endif
 		Dest.Type = pInt64Type;
 		return true;
 	}
@@ -6222,7 +6267,7 @@ bool MQ2CharacterType::GETMEMBER()
 
 bool MQ2SpellType::GETMEMBER()
 {
-#define pSpell ((PSPELL)VarPtr.Ptr)
+	PSPELL pSpell = (PSPELL)VarPtr.Ptr;
 	if (!VarPtr.Ptr)
 		return false;
 	if (IsBadReadPtr((void*)pSpell, 4))
@@ -6547,7 +6592,7 @@ bool MQ2SpellType::GETMEMBER()
 		{
 			if (CharacterZoneClient*pCZC = (CharacterZoneClient*)((PSPAWNINFO)pLocalPlayer)->GetCharacter())
 			{
-				EQ_Affect eff = { 0 };
+			EQ_Affect eff = { 0 };
 				eff.ID = tmpSpell->ID;
 				eff.CasterLevel = ((PSPAWNINFO)pLocalPlayer)->Level;
 				eff.Type = 2;
@@ -6585,6 +6630,7 @@ bool MQ2SpellType::GETMEMBER()
 						if (GetSpellDuration(buffSpell, (PSPAWNINFO)pLocalPlayer) >= 0xFFFFFFFE) {
 							buffduration = 99999 + 1;
 						}
+						if (buffSpell == pSpell) WriteChatf("Spell.Stacks(%d:%d,%d)", buffSpell->ID, duration, buffduration);
 						if (!BuffStackTest(pSpell, buffSpell, TRUE) || ((buffSpell == pSpell) && (buffduration > duration))) {
 							Dest.DWord = false;
 							return true;
@@ -6671,10 +6717,10 @@ bool MQ2SpellType::GETMEMBER()
 			{
 				if (pTarget)
 				{
-					if (PCHARINFO pMe = GetCharInfo())
-					{
-						EQ_Affect pAffects[NUM_BUFF_SLOTS] = { 0 };
-						int j = 0;
+				if (PCHARINFO pMe = GetCharInfo())
+				{
+					EQ_Affect pAffects[NUM_BUFF_SLOTS] = { 0 };
+					int j = 0;
 
 						std::map<int, std::map<int, cTargetBuff>>::iterator i = CachedBuffsMap.find(pTarget->Data.SpawnID);
 						if (i != CachedBuffsMap.end())
@@ -6701,23 +6747,23 @@ bool MQ2SpellType::GETMEMBER()
 						{
 
 							int buffID = 0;
-							for (int i = 0; i < NUM_BUFF_SLOTS; i++) {
-								if (buffID = ((PCTARGETWND)pTargetWnd)->BuffSpellID[i]) {
-									if (PSPELL pBuff = GetSpellByID((DWORD)buffID)) {
+					for (int i = 0; i < NUM_BUFF_SLOTS; i++) {
+						if (buffID = ((PCTARGETWND)pTargetWnd)->BuffSpellID[i]) {
+							if (PSPELL pBuff = GetSpellByID((DWORD)buffID)) {
 										pAffects[j].Type = 2;
-										pAffects[j].ID = pBuff->ID;
-										pAffects[j].Activatable = 0;// pBuff->Activated;
+								pAffects[j].ID = pBuff->ID;
+								pAffects[j].Activatable = 0;// pBuff->Activated;
 #if !defined(ROF2EMU) && !defined(UFEMU)
-										pAffects[j].CasterGuid = pMe->Guid;
+								pAffects[j].CasterGuid = pMe->Guid;
 #else
-										pAffects[j].CasterID = ((PSPAWNINFO)pLocalPlayer)->SpawnID;
+								pAffects[j].CasterID = ((PSPAWNINFO)pLocalPlayer)->SpawnID;
 #endif
-										pAffects[j].CasterLevel = ((PSPAWNINFO)pLocalPlayer)->Level;
-										pAffects[j].BaseDmgMod = 1.0;
-										j++;
-									}
-								}
+								pAffects[j].CasterLevel = ((PSPAWNINFO)pLocalPlayer)->Level;
+								pAffects[j].BaseDmgMod = 1.0;
+								j++;
 							}
+						}
+					}
 						}
 						int SlotIndex = -1;
 						EQ_Affect*ret = pCZC->FindAffectSlot(pSpell->ID, (PSPAWNINFO)pLocalPlayer, &SlotIndex, true, ((PSPAWNINFO)pLocalPlayer)->Level, pAffects, j, false);
@@ -6774,6 +6820,24 @@ bool MQ2SpellType::GETMEMBER()
 		Dest.DWord = BuffStackTest(pSpell, tmpSpell, TRUE);
 		return true;
 	}
+	/*case WillStack:
+	{
+		Dest.DWord = false;
+		Dest.Type = pBoolType;
+
+		if (!ISINDEX())
+			return true;
+		PSPELL tmpSpell = NULL;
+		if (ISNUMBER())
+			tmpSpell = GetSpellByID(GETNUMBER());
+		else
+			tmpSpell = GetSpellByName(GETFIRST());
+		if (!tmpSpell)
+			return true;
+
+		Dest.DWord = BuffStackTest(pSpell, tmpSpell);
+		return true;
+	}*/
 	case MyRange:
 	{
 		VePointer<CONTENTS> n;
@@ -7260,9 +7324,9 @@ bool MQ2SpellType::GETMEMBER()
 		return false;
 	}
 	}
-#undef pSpell
 	return false;
 }
+
 bool MQ2ItemSpellType::GETMEMBER()
 {
 	if (!VarPtr.Ptr)
@@ -9419,6 +9483,23 @@ bool MQ2CurrentZoneType::GETMEMBER()
 		Dest.DWord = pZone->SkyType;
 		Dest.Type = pIntType;
 		return true;
+#if 0
+	case SafeN:
+	case SafeY:
+		Dest.Float = pZone->SafeYLoc;
+		Dest.Type = pFloatType;
+		return true;
+	case SafeW:
+	case SafeX:
+		Dest.Float = pZone->SafeXLoc;
+		Dest.Type = pFloatType;
+		return true;
+	case SafeU:
+	case SafeZ:
+		Dest.Float = pZone->SafeZLoc;
+		Dest.Type = pFloatType;
+		return true;
+#endif
 	case MinClip:
 		Dest.Float = pZone->MinClip;
 		Dest.Type = pFloatType;
@@ -9453,7 +9534,7 @@ bool MQ2ZoneType::GETMEMBER()
 {
 	if (!VarPtr.Ptr)
 		return false;
-#define pZone ((PZONELIST)VarPtr.Ptr)
+	PZONELIST pZone = (PZONELIST)VarPtr.Ptr;
 	PMQ2TYPEMEMBER pMember = MQ2ZoneType::FindMember(Member);
 	if (!pMember)
 		return false;
@@ -9483,7 +9564,6 @@ bool MQ2ZoneType::GETMEMBER()
 		return true;
 	}
 	return false;
-#undef pZone
 }
 
 bool MQ2BodyType::GETMEMBER()
@@ -10511,7 +10591,7 @@ bool MQ2EverQuestType::GETMEMBER()
 		Dest.Type = pStringType;
 		if (EQADDR_SERVERNAME[0])
 		{
-			strcpy_s(DataTypeTemp, EQADDR_SERVERNAME);
+				strcpy_s(DataTypeTemp, EQADDR_SERVERNAME);
 			Dest.Ptr = &DataTypeTemp[0];
 			return true;
 		}
@@ -10681,6 +10761,7 @@ bool MQ2EverQuestType::GETMEMBER()
 		Dest.Type = pWindowType;
 		if (PCXWNDMGR pwndmgr = (PCXWNDMGR)pWndMgr) {
 			Dest.Ptr = pwndmgr->LastMouseOver;
+			Dest.HighPart = 24;
 			return true;
 		}
 		return false;
@@ -11241,12 +11322,9 @@ bool MQ2MerchantType::GETMEMBER()
 		return true;
 	}
 	case Markup:
-	{
-		
 		Dest.Float = pMerch->Markup;
 		Dest.Type = pFloatType;
 		return true;
-	}
 	case Full://todo: check manually for uf
 		Dest.DWord = 0;
 		Dest.Type = pBoolType;
@@ -14634,8 +14712,8 @@ bool MQ2TaskObjectiveType::GETMEMBER()
 		break;
 	};
 	CHAR szOut[MAX_STRING] = { 0 };
-	switch ((TaskObjectiveTypeMembers)pMember->ID)
-	{
+		switch ((TaskObjectiveTypeMembers)pMember->ID)
+		{
 		case Instruction:
 		{
 			tm->GetElementDescription(&entry->Elements[Elementindex], szOut);
@@ -14766,13 +14844,13 @@ bool MQ2TaskObjectiveType::GETMEMBER()
 			Dest.DWord = entry->Elements[Elementindex].DZSwitchID;
 			Dest.Type = pIntType;
 			return true;
-	}
-	if (szOut[0] != '\0') {
-		strcpy_s(DataTypeTemp, szOut);
-		Dest.Ptr = &DataTypeTemp[0];
-		Dest.Type = pStringType;
-		return true;
-	}
+		}
+		if (szOut[0] != '\0') {
+			strcpy_s(DataTypeTemp, szOut);
+			Dest.Ptr = &DataTypeTemp[0];
+			Dest.Type = pStringType;
+			return true;
+		}
 	return false;
 }
 bool MQ2TaskMemberType::GETMEMBER()
@@ -14834,13 +14912,41 @@ bool MQ2TaskType::GETMEMBER()
 			{
 				Dest.DWord = 0;
 				Dest.Type = pBoolType;
-				CHAR szOut[255] = { 0 };
-				if (CListWnd *clist = (CListWnd *)pTaskWnd->GetChildItem("TASK_TaskList")) {
-					if (SendListSelect2((CXWnd*)clist, index)) {
-						Dest.DWord = 1;
+				CHAR szTask[MAX_STRING] = { 0 };
+				switch (type)
+				{
+					case TST_SoloQuest:
+						if (CTaskEntry *entry = &tm->QuestEntries[index])
+						{
+							strcpy_s(szTask, entry->TaskTitle);
+						}
+						break;
+					case TST_SharedQuest:
+						if (CTaskEntry *entry = &tm->SharedTaskEntries[0])
+						{
+							strcpy_s(szTask, entry->TaskTitle);
+						}
+						break;
+				};
+				if (szTask[0])
+				{
+					CHAR szOut[MAX_STRING] = { 0 };
+					if (CListWnd *clist = (CListWnd *)pTaskWnd->GetChildItem("TASK_TaskList")) {
+						CXStr str;
+						for (int i = 0; i < clist->ItemsArray.Count; i++)
+						{
+							clist->GetItemText(&str, i, 2);
+							GetCXStr(str.Ptr, szOut);
+							if (!_stricmp(szTask, szOut))
+							{
+								if (SendListSelect2((CXWnd*)clist, i)) {
+									Dest.DWord = 1;
+								}
+							}
+						}
 					}
+					return true;
 				}
-				return true;
 			};
 		}
 		return false;
@@ -14851,13 +14957,13 @@ bool MQ2TaskType::GETMEMBER()
 	PTASKMEMBER pTaskmember = (PTASKMEMBER)pTaskMember;
 	switch ((TaskTypeMembers)pMember->ID)
 	{
-		case Address:
-			Dest.DWord = (DWORD)pTaskmember;
-			Dest.Type = pIntType;
-			return true;
-		case Type:
-		{
-			Dest.Type = pStringType;
+	case Address:
+		Dest.DWord = (DWORD)pTaskmember;
+		Dest.Type = pIntType;
+		return true;
+	case Type:
+	{
+		Dest.Type = pStringType;
 			switch (type)
 			{
 			case TST_SoloQuest:
@@ -14873,35 +14979,70 @@ bool MQ2TaskType::GETMEMBER()
 				Dest.Ptr = &DataTypeTemp[0];
 				break;
 			};
-			return true;
-		}
-		case xIndex:
-			Dest.Int = index+1;//hate this but the users are used to indexes starting at 1... so we got to continue that...
-			Dest.Type = pIntType;
-			return true;
-		case Leader:
+				return true;
+			}
+	case xIndex:
+		Dest.Int = index+1;//hate this but the users are used to indexes starting at 1... so we got to continue that...
+		Dest.Type = pIntType;
+		return true;
+	case WindowIndex:
+	{
+		CHAR szTask[MAX_STRING] = { 0 };
+		switch (type)
 		{
-			strcpy_s(DataTypeTemp, "NULL");
-			for (int i = 1; pTaskmember && i<7; pTaskmember = pTaskmember->pNext, i++) {
-				if (pTaskmember->IsLeader) {
-					strcpy_s(DataTypeTemp, pTaskmember->Name);
-					break;
+			case TST_SoloQuest:
+				if (CTaskEntry *entry = &tm->QuestEntries[index])
+				{
+					strcpy_s(szTask, entry->TaskTitle);
+			}
+				break;
+			case TST_SharedQuest:
+				if (CTaskEntry *entry = &tm->SharedTaskEntries[0])
+				{
+					strcpy_s(szTask, entry->TaskTitle);
+				}
+				break;
+		};
+		CHAR szOut[MAX_STRING] = { 0 };
+		if (CListWnd *clist = (CListWnd *)pTaskWnd->GetChildItem("TASK_TaskList")) {
+			CXStr str;
+			for (int i = 0; i < clist->ItemsArray.Count; i++)
+			{
+				clist->GetItemText(&str, i, 2);
+				GetCXStr(str.Ptr, szOut);
+				if (!_stricmp(szTask, szOut))
+				{
+					Dest.DWord = i+1;
+					Dest.Type = pIntType;
+					return true;
 				}
 			}
-			Dest.Ptr = &DataTypeTemp[0];
-			Dest.Type = pStringType;
-			return true;
 		}
-		case Title:
+		return false;
+	}
+	case Leader:
+	{
+		strcpy_s(DataTypeTemp, "NULL");
+		for (int i = 1; pTaskmember && i<7; pTaskmember = pTaskmember->pNext, i++) {
+			if (pTaskmember->IsLeader) {
+				strcpy_s(DataTypeTemp, pTaskmember->Name);
+				break;
+			}
+		}
+		Dest.Ptr = &DataTypeTemp[0];
+		Dest.Type = pStringType;
+		return true;
+	}
+	case Title:
+	{
+		strcpy_s(DataTypeTemp, "NULL");
+		switch (type)
 		{
-			strcpy_s(DataTypeTemp, "NULL");
-			switch (type)
-			{
 			case TST_SoloQuest:
 				if (CTaskEntry *entry = &tm->QuestEntries[index])
 				{
 					strcpy_s(DataTypeTemp, entry->TaskTitle);
-				}
+			}
 				break;
 			case TST_SharedQuest:
 				if (CTaskEntry *entry = &tm->SharedTaskEntries[0])
@@ -14909,15 +15050,15 @@ bool MQ2TaskType::GETMEMBER()
 					strcpy_s(DataTypeTemp, entry->TaskTitle);
 				}
 				break;
-			};
-			Dest.Ptr = &DataTypeTemp[0];
-			Dest.Type = pStringType;
-			return true;
-		}
-		case Timer:
-		{
-			Dest.UInt64 = 0;
-			Dest.Type = pTimeStampType;
+		};
+		Dest.Ptr = &DataTypeTemp[0];
+		Dest.Type = pStringType;
+		return true;
+	}
+	case Timer:
+	{
+		Dest.UInt64 = 0;
+		Dest.Type = pTimeStampType;
 			PCTaskStatus*ts = 0;
 			CTaskEntry * entry = 0;
 			switch (type)
@@ -14943,41 +15084,41 @@ bool MQ2TaskType::GETMEMBER()
 				sprintf_s(szTime, "%02d:%02d:%02d", timer / 3600, (timer % 3600) / 60, timer % 60);
 				WriteChatf("%s", szTime);
 				Dest.UInt64 = timer * 1000;
-				return true;
-			}
-			return false;
-		}
-		case xMember:
-			Dest.Type = pTaskMemberType;
-			if (!ISINDEX())
+					return true;
+				}
 				return false;
-			if (ISNUMBER())
-			{
-				for (int i = 1; pTaskmember && i<7; pTaskmember = pTaskmember->pNext, i++) {
-					if (i == GETNUMBER()) {
-						Dest.Ptr = pTaskmember;
-						return true;
-					}
-				}
 			}
-			else {
-				for (; pTaskmember; pTaskmember = pTaskmember->pNext) {
-					if (!_stricmp(pTaskmember->Name, GETFIRST())) {
-						Dest.Ptr = pTaskmember;
-						return true;
-					}
-				}
-			}
+	case xMember:
+		Dest.Type = pTaskMemberType;
+		if (!ISINDEX())
 			return false;
-		case Members:
-			Dest.DWord = 0;
-			Dest.Type = pIntType;
-			for (; pTaskmember && Dest.DWord<6; pTaskmember = pTaskmember->pNext, Dest.DWord++) {
-			}
-			return true;
-		case ID:
+		if (ISNUMBER())
 		{
-			Dest.Int = 0;
+			for (int i = 1; pTaskmember && i<7; pTaskmember = pTaskmember->pNext, i++) {
+				if (i == GETNUMBER()) {
+					Dest.Ptr = pTaskmember;
+					return true;
+				}
+			}
+		}
+		else {
+			for (; pTaskmember; pTaskmember = pTaskmember->pNext) {
+				if (!_stricmp(pTaskmember->Name, GETFIRST())) {
+					Dest.Ptr = pTaskmember;
+					return true;
+				}
+			}
+		}
+		return false;
+	case Members:
+		Dest.DWord = 0;
+		Dest.Type = pIntType;
+		for (; pTaskmember && Dest.DWord<6; pTaskmember = pTaskmember->pNext, Dest.DWord++) {
+		}
+		return true;
+		case ID:
+	{
+		Dest.Int = 0;
 			Dest.Type = pIntType;
 			CTaskEntry * entry = 0;
 			switch (type)
@@ -15014,41 +15155,41 @@ bool MQ2TaskType::GETMEMBER()
 			};
 			if (ts && entry)
 			{
-				int stepindex = -1;
-				if (ISNUMBER()) {
-					stepindex = GETNUMBER();
-					stepindex--;
-					if (stepindex < 0) {
-						stepindex = 0;
-					}
+			int stepindex = -1;
+			if (ISNUMBER()) {
+				stepindex = GETNUMBER();
+				stepindex--;
+				if (stepindex < 0) {
+					stepindex = 0;
+				}
 					if (stepindex > 19) {
 						stepindex = 19;
 					}
-				}
-				else {
-					CHAR szOut[MAX_STRING] = { 0 };			
-					CHAR szTemp[MAX_STRING] = { 0 };
-					strcpy_s(szTemp, GETFIRST());
-					_strlwr_s(szTemp);
+			}
+			else {
+				CHAR szOut[MAX_STRING] = { 0 };
+				CHAR szTemp[MAX_STRING] = { 0 };
+				strcpy_s(szTemp, GETFIRST());
+				_strlwr_s(szTemp);
 					for (int i = 0; i < 20; i++) {
 						tm->GetElementDescription(&entry->Elements[i], szOut);
-						_strlwr_s(szOut);
-						if (strstr(szOut, szTemp)) {
-							stepindex = i;
-							break;
-						}
+					_strlwr_s(szOut);
+					if (strstr(szOut, szTemp)) {
+						stepindex = i;
+						break;
 					}
 				}
+			}
 				Dest.DWord = (int)MAKELPARAM(type, index);
 				Dest.HighPart = stepindex;
-				return true;
-			}
-			return false;
+			return true;
 		}
-		case Step://gets the first step thats not Done in the task objective.
-		{
-			Dest.Int = 0;
-			Dest.Type = pTaskObjectiveType;
+		return false;
+	}
+	case Step://gets the first step thats not Done in the task objective.
+	{
+		Dest.Int = 0;
+		Dest.Type = pTaskObjectiveType;
 			PCTaskStatus*ts = 0;
 			CTaskEntry * entry = 0;
 			switch (type)
@@ -15074,12 +15215,12 @@ bool MQ2TaskType::GETMEMBER()
 					{
 						Dest.DWord = (int)MAKELPARAM(type, index);
 						Dest.HighPart = i;
-						return true;
-					}
+					return true;
 				}
 			}
-			return false;
 		}
+		return false;
+	}
 	}
 	return false;
 }

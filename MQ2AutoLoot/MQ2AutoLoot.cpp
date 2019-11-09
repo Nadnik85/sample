@@ -1423,11 +1423,19 @@ DWORD FindItemCount(CHAR* pszItemName)
 		}
 	}
 	PCHARINFO pCharInfo = GetCharInfo();
+#if defined(NEWCHARINFO)
+	if (pCharInfo && pCharInfo->BankItems.Items.Size) //checking bank slots
+	{
+		for (nPack = 0; nPack < NUM_BANK_SLOTS; nPack++)
+		{
+			if (PCONTENTS pPack = pCharInfo->BankItems.Items[nPack].pObject)
+#else
 	if (pCharInfo && pCharInfo->pBankArray) //checking bank slots
 	{
 		for (nPack = 0; nPack < NUM_BANK_SLOTS; nPack++)
 		{
 			if (PCONTENTS pPack = pCharInfo->pBankArray->Bank[nPack])
+#endif
 			{
 				if (GetItemFromContents(pPack)->Type != ITEMTYPE_PACK)  //It isn't a pack! we should see if this item is what we are looking for
 				{
@@ -1516,11 +1524,19 @@ DWORD FindItemCount(CHAR* pszItemName)
 			}
 		}
 	}
+#if defined(NEWCHARINFO)
+	if (pCharInfo && pCharInfo->SharedBankItems.Items.Size) //checking shared bank slots
+	{
+		for (nPack = 0; nPack < NUM_SHAREDBANK_SLOTS; nPack++)
+		{
+			if (PCONTENTS pPack = pCharInfo->SharedBankItems.Items[nPack].pObject)
+#else
 	if (pCharInfo && pCharInfo->pSharedBankArray) //checking shared bank slots
 	{
 		for (nPack = 0; nPack < NUM_SHAREDBANK_SLOTS; nPack++)
 		{
 			if (PCONTENTS pPack = pCharInfo->pSharedBankArray->SharedBank[nPack])
+#endif
 			{
 				if (GetItemFromContents(pPack)->Type != ITEMTYPE_PACK)  //It isn't a pack! we should see if this item is what we are looking for
 				{
@@ -1689,6 +1705,7 @@ DWORD __stdcall PassOutLoot(PVOID pData)
 										if (DistributeLoot(pRaid->RaidMember[nMember].Name, pShareItem, k))
 										{
 											LootTimer = pluginclock::now() + std::chrono::milliseconds(200);
+											bDistributeItemFailed = false;
 											return 0;
 										}
 
@@ -1718,6 +1735,7 @@ DWORD __stdcall PassOutLoot(PVOID pData)
 											if (DistributeLoot(pChar->pGroupInfo->pMember[nMember]->pSpawn->Name, pShareItem, k))
 											{
 												LootTimer = pluginclock::now() + std::chrono::milliseconds(200);
+												bDistributeItemFailed = false;
 												return 0;
 											}
 										}
@@ -1742,7 +1760,6 @@ DWORD __stdcall PassOutLoot(PVOID pData)
 						CreateLogEntry(szTemp);
 					}
 					pAdvancedLootWnd->DoSharedAdvLootAction(pShareItem, &CXStr(pChar->Name), 1, pShareItem->LootDetails.m_array[0].StackCount); // Leaving the item on the corpse
-					bDistributeItemFailed = false;
 				}
 				else
 				{
@@ -1756,13 +1773,12 @@ DWORD __stdcall PassOutLoot(PVOID pData)
 		}
 	}
 	LootTimer = pluginclock::now() + std::chrono::milliseconds(200);
+	bDistributeItemFailed = false;
 	return 0;
 }
 
 bool DistributeLoot(CHAR* szName, PLOOTITEM pShareItem, LONG ItemIndex)
 {
-	bDistributeItemSucceeded = false;
-	bDistributeItemFailed = false;
 	if (!InGameOK()) 
 	{ 
 		return true; 
@@ -2711,7 +2727,6 @@ PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color)
 			if (strstr(Line, PassingOutLootText))
 			{
 				bDistributeItemSucceeded = true;
-				//bDistributeItemFailed = false; // this shouldn't be necessary, but it may be
 				return(0);
 			}
 		}

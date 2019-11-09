@@ -501,6 +501,7 @@ enum MOUSE_DATA_TYPES {
 #define NUM_SHORT_BUFFS                 0x37
 #define NUM_RACES                       17
 #define NUM_SLOTDATA                    0x6
+#define NUM_BLOCKED_BUFFS               40
 
 #define EQ_EXPANSION(x)                 (1 << (x - 1))
 #define EXPANSION_RoK                   EQ_EXPANSION(1)
@@ -528,7 +529,8 @@ enum MOUSE_DATA_TYPES {
 #define EXPANSION_EoK                   EQ_EXPANSION(23)
 #define EXPANSION_RoS                   EQ_EXPANSION(24)
 #define EXPANSION_TBL                   EQ_EXPANSION(25)
-#define NUM_EXPANSIONS                  25
+#define EXPANSION_TOV                   EQ_EXPANSION(26)
+#define NUM_EXPANSIONS                  26
 
 #if _MSC_VER < 1600
 #define nullptr                         NULL
@@ -949,7 +951,7 @@ public:
 /*0xb8*/
 };
 
-//Actual Size: 0x158 (see 0x611A9C in eqgame.exe Test dated Oct  7 2019) - eqmule
+//Actual Size: 0x158 (see 0x611FCC in eqgame.exe Test dated Oct 22 2019) - eqmule
 typedef struct _CONTENTS {
 /*0x0000*/ void*	vtable;
 /*0x0004*/ mutable int	RefCount;
@@ -1007,8 +1009,8 @@ typedef struct _CONTENTS {
 /*0x0150*/ struct _CXSTR *ClientString;
 /*0x0154*/ BYTE Filler0x0154[0x4];
 /*0x0158*/
-EQLIB_OBJECT _CONTENTS* GetContent(UINT index);
-EQLIB_OBJECT ItemGlobalIndex2& GetGlobalIndex();
+EQLIB_OBJECT _CONTENTS *GetContent(UINT index);
+EQLIB_OBJECT ItemGlobalIndex2 &GetGlobalIndex();
 } CONTENTS, *PCONTENTS;
 
 #pragma pack(push)
@@ -2774,13 +2776,8 @@ typedef struct _CHARINFONEW {
 /*0x2968*/ TSafeString<0x40>	VehicleName;
 /*0x29a8*/ BYTE         Stunned;//CharBaseBegin+104
 /*0x29a9*/ BYTE         Unknown0x29a9[0x3];
-union {
-/*0x29ac*/ int          zoneId;//CharBaseBegin+108 Zone_0
-struct {
-/*0x29ac*/ WORD         Unknown0x29ac;
+/*0x29ac*/ WORD         zoneId;//CharBaseBegin+108 Zone_0
 /*0x29ae*/ WORD         instance;
-};
-};
 /*0x29b0*/ BYTE         standstate;//CharBaseBegin+10c
 /*0x29b4*/ RaidData     raidData;//size 0xdc
 /*0x2a90*/ DWORD        ExpansionFlags;//CharBaseBegin+464
@@ -3661,7 +3658,7 @@ typedef struct _SPAWNINFO {
 /*0x0f7c*/ UINT		ParticleCastStartTime;
 /*0x0f80*/ UINT		ParticleCastDuration;
 /*0x0f84*/ int		ParticleVisualSpellNum;
-/*0x0f88*/ int		Filler0x0f88;
+/*0x0f88*/ BYTE		Filler0x0f88[0x4];
 /*0x0f8c*/ ActorClient	mActorClient;          // start of ActorClient struct  size 0x1BC?
 /*0x1148*/ PlayerAnimationBase *pAnimation;
 /*0x114c*/ FLOAT	MeleeRadius;      // used by GetMeleeRange

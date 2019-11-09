@@ -97,7 +97,7 @@ extern CRITICAL_SECTION gPluginCS;
 //we default to LIVE though...
 #else
 //define LIVE, TEST, EQBETA, ROF2EMU or UFEMU here depending on which eqgame you are building for. -eqmule sep 27 2014
-#define LIVE
+#define EQBETA
 #endif
 #if defined(LIVE)
 #include "eqgame.h"
@@ -107,7 +107,7 @@ extern CRITICAL_SECTION gPluginCS;
 //#define NEWCHARINFO
 #elif defined(EQBETA)
 #include "eqgame(beta).h"
-//#define NEWCHARINFO
+#define NEWCHARINFO
 #elif defined(ROF2EMU)
 #include "eqgame(emu).h"
 //#define NEWCHARINFO
@@ -126,6 +126,7 @@ extern CRITICAL_SECTION gPluginCS;
 #define MountWindowList "KRW_Mounts_List"
 #define IllusionWindowList "KRW_Illusions_List"
 #define FamiliarWindowList "KRW_Familiars_list"
+#define HeroForgeWindowList "KRW_HeroForge_List"
 #define KeyRingTab "KRW_Subwindows"
 
 #if defined(ROF2EMU) || defined(UFEMU)
@@ -920,7 +921,7 @@ EQLIB_API AggroMeterManagerClient *GetAggroInfo();
 EQLIB_API ClientSOIManager *GetAuraMgr();
 EQLIB_API CBroadcast *GetTextOverlay();
 EQLIB_API MercenaryAlternateAdvancementManagerClient *GetMercAltAbilities();
-EQLIB_API bool Anonymize(char *name, int maxlen, int LootFlag = 0);
+EQLIB_API bool Anonymize(char *name, int maxlen, int NameFlag = 0);
 EQLIB_API void UpdatedMasterLooterLabel();
 //EQLIB_API EQGroundItemListManager *GetItemList();
 

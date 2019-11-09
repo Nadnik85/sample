@@ -5,3 +5,8 @@ void StatusCmd(PSPAWNINFO pChar, PCHAR szLine);
 PMQPLUGIN FindPlugin(PCHAR szLine);
 bool IsDefined(PCHAR szLine);
 bool HaveAlias(PCHAR ShortCommand);
+void ReverseString(PCHAR szLine);
+void PutCommas(PCHAR szLine);
+inline float PercentHealth(PSPAWNINFO& pSpawn);
+inline float PercentEndurance(PSPAWNINFO& pSpawn);
+inline float PercentMana(PSPAWNINFO& pSpawn);

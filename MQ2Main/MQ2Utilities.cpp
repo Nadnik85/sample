@@ -4156,6 +4156,18 @@ PCHAR ParseSpellEffect(PSPELL pSpell, int i, PCHAR szBuffer, SIZE_T BufferSize, 
 	case 510: //Resist Incoming
 		strcat_s(szBuff, FormatCount(spelleffectname, value, szTemp2));
 		break;
+	case 518: //Attack Accuracy Max Percent
+		strcat_s(szBuff, FormatPercent(spelleffectname, value, finish, szTemp2));
+		break;
+	case 511: //Focus Timer Min
+	case 512: //Proc Timer Modifier
+	case 513: //Mana Max Percent
+	case 514: //Endurance Max Percent
+	case 515: //AC Avoidance Max Percent
+	case 516: //AC Mitigation Max Percent
+	case 517: //Attack Offense Max Percent
+	case 519: //Luck Amt
+	case 520: //Luck Percent
 	default: //undefined effect
 		sprintf_s(szTemp, "%s (base=%d, base2=%d, max=%d, calc=%d, value=%d)", spelleffectname, base, base2, max, calc, value);
 		strcat_s(szBuff, szTemp);
@@ -6114,14 +6126,18 @@ PCHAR ParseSearchSpawnArgs(PCHAR szArg, PCHAR szRest, PSEARCHSPAWN pSearchSpawn)
 			pSearchSpawn->bLight = TRUE;
 		}
 		else if (!_stricmp(szArg, "guild")) {
+#ifdef NEWCHARINFO
+			pSearchSpawn->GuildID = GetCharInfo()->GuildID.GUID;
+#else
 			pSearchSpawn->GuildID = GetCharInfo()->GuildID;
+#endif
 		}
 		else if (!_stricmp(szArg, "guildname")) {
-			#if !defined(ROF2EMU) && !defined(UFEMU)
+#if !defined(ROF2EMU) && !defined(UFEMU)
 			__int64 GuildID = -1;
-			#else
+#else
 			DWORD GuildID = -1;
-			#endif
+#endif
 			GetArg(szArg, szRest, 1);
 			if (szArg[0] != 0)
 				GuildID = GetGuildIDByName(szArg);
@@ -7390,7 +7406,7 @@ DWORD GetSpellGemTimer(DWORD nGem)
 {
 	return GetSpellGemTimer2(nGem);
 /*	_EQCASTSPELLGEM *g = ((PEQCASTSPELLWINDOW)pCastSpellWnd)->SpellSlots[nGem];
-#if !defined(UFEMU)//todo: check manually
+#if !defined(ROF2EMU) && !defined(UFEMU) //todo: check manually
 	if (g->Wnd.CoolDownBeginTime) {
 		UINT cSpellCompletion = g->Wnd.CoolDownBeginTime + g->Wnd.CoolDownDuration;
 		DWORD now = EQGetTime();
@@ -7806,8 +7822,11 @@ PCONTENTS FindItemByName(PCHAR pName, BOOL bExact)
 		for (unsigned long nSlot = 0; nSlot < NUM_INV_SLOTS; nSlot++) {
 			if (PCONTENTS pItem = pChar2->pInventoryArray->InventoryArray[nSlot]) {
 				if (bExact) {
-					if (!_stricmp(Name, GetItemFromContents(pItem)->Name)) {
-						return pItem;
+					if (PITEMINFO pItemi = GetItemFromContents(pItem))
+					{
+						if (!_stricmp(Name, pItemi->Name)) {
+							return pItem;
+						}
 					}
 				}
 				else {
@@ -11094,18 +11113,21 @@ int GetRaidMemberClassByIndex(int N)
 }
 bool Anonymize(char *name, int maxlen, int NameFlag)
 {
-	if(GetGameState()!=GAMESTATE_INGAME || !pLocalPlayer)
+	if(GetGameState()!=GAMESTATE_INGAME || !pLocalPlayer || !strlen(name))
 		return 0;
-	BOOL bisTarget = false;
+	bool itsMe = false;	
+	int isGmember = false;
 	int isRmember = -1;
-	BOOL isGmember = false;
+	bool bisTarget = false;
 	bool bChange = false;
-	int ItsMe = _stricmp(((PSPAWNINFO)pLocalPlayer)->Name, name);
-	if(ItsMe!=0)//well if it is me, then there is no point in checking if its a group member
+	
+	if (strstr(name, ((PSPAWNINFO)pLocalPlayer)->Name))//Do I find my name as a substring in name (nessesary for surname consideration in Player window.)
+		itsMe = true;
+	if(!itsMe)//well if it is me, then there is no point in checking if its a group member
 		isGmember = IsGroupMember(name);
-	if(!isGmember && ItsMe!=0)//well if it is me or a groupmember, then there is no point in checking if its a raid member
+	if(!isGmember && !itsMe)//well if it is me or a groupmember, then there is no point in checking if its a raid member
 		isRmember = IsRaidMember(name);
-	if (ItsMe != 0 && !isGmember && isRmember==-1) {
+	if (!itsMe && !isGmember && isRmember==-1) {
 		//my target?
 		if (pTarget && ((PSPAWNINFO)pTarget)->Type!=SPAWN_NPC)
 		{
@@ -11115,7 +11137,7 @@ bool Anonymize(char *name, int maxlen, int NameFlag)
 			}
 		}
 	}
-	if (ItsMe==0 || isGmember || isRmember!=-1 || (bisTarget && pTarget)) {
+	if (itsMe || isGmember || isRmember!=-1 || (bisTarget && pTarget)) {
 		if (NameFlag==1) {
 			char buffer[L_tmpnam] = { 0 };
 			tmpnam_s(buffer);
@@ -11130,8 +11152,10 @@ bool Anonymize(char *name, int maxlen, int NameFlag)
 			return true;
 		}
 		if (gAnonymizeFlag == EAF_Class)
-		{
-			if (ItsMe == 0)
+		{	
+
+			//decide how to change the name w/class desc or just asterix. 
+			if (itsMe)
 			{
 				strncpy_s(name, 16, GetClassDesc(((PSPAWNINFO)pLocalPlayer)->mActorClient.Class), 15);
 				if (NameFlag == 2)
@@ -11187,34 +11211,10 @@ void UpdatedMasterLooterLabel()
 	{
 		if (CLabelWnd*MasterLooterLabel = (CLabelWnd*)pAdvancedLootWnd->GetChildItem("ADLW_CalculatedMasterLooter"))
 		{
-			CHAR szText[MAX_STRING];
-			bool bFound = false;
-			if (PCHARINFO pChar = GetCharInfo())
-			{
-				if (pChar->pGroupInfo)
-				{
-					for (int i = 0; i < 6; i++)
-					{
-						if (pChar->pGroupInfo->pMember[i])
-						{
-							if (pChar->pGroupInfo->pMember[i]->MasterLooter)
-							{
-								GetCXStr(pChar->pGroupInfo->pMember[i]->pName, szText);
-								if (gAnonymize)
-								{
-									Anonymize(szText, MAX_STRING);
-								}
-								bFound = true;
-								break;
-							}
-						}
-					}
-				}
-			}
-			if (bFound)
-			{
+			char szText[MAX_STRING] = { 0 };
+			GetCXStr(MasterLooterLabel->Text, szText);
+			if (gAnonymize && Anonymize(szText, MAX_STRING)) {
 				((CXWnd*)MasterLooterLabel)->SetWindowTextA(szText);
-				//SetCXStr(&(MasterLooterLabel->WindowText), szText);
 			}
 		}
 		//delete szText;
@@ -11386,6 +11386,7 @@ ItemGlobalIndex2& CONTENTS::GetGlobalIndex()
 }
 
 #if defined(LIVE)
+//#pragma warning(disable : 4091)
 #include <DbgHelp.h>
 //PFINDFILEINPATHCALLBACK Pfindfileinpathcallback;
 

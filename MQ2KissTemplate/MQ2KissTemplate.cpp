@@ -55,8 +55,8 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
 
 PLUGIN_API VOID SetGameState(DWORD GameState)
 {
-    //if (GameState==GAMESTATE_INGAME)
-    // create custom windows if theyre not set up, etc
+	//if (GameState==GAMESTATE_INGAME)
+	// create custom windows if theyre not set up, etc
 }
 
 
@@ -83,9 +83,10 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 	ParseArg(Arg2);
 	ParseArg(Arg3);
 	ParseArg(Arg4);
-	
+	char KAVersion[32] = { 0 };
 
-	
+
+
 	sprintf_s(filename, "%s\\Macros\\Kissassist_%s.ini", gszINIPath, pChar->Name);
 	if (useClass)
 		sprintf_s(OurClass, "%s", tempClass);
@@ -118,6 +119,7 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 
 	//General Section
 	GetINI("General", "KissAssistVer", 0, filename);
+	GetPrivateProfileString("General", "KissAssistVer", "0", KAVersion, 32, filename);
 	if (oldCond) {
 		WritePrivateProfileString("General", "ConditionsOn", "2", newfilename);
 		//useConditions = 2;
@@ -135,8 +137,8 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 	//Buff Section
 	if (GetPrivateProfileInt("Buffs", "BuffsOn", 0, filename) != 0) {
 		GetINI("Buffs", "BuffsOn", 0, filename);
-		if (oldCond) 
-			if (useConditions) 
+		if (oldCond)
+			if (useConditions)
 				GetINI("Buffs", "BuffsCOn", 0, filename);
 		GetINI("Buffs", "BuffsSize", 0, filename);
 		GetINILoop("Buffs", "Buffs", 0, filename);
@@ -161,7 +163,7 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 	//DPS Section
 	if (GetPrivateProfileInt("DPS", "DPSOn", 0, filename) != 0) {
 		GetINI("DPS", "DPSOn", 0, filename);
-		if (oldCond) 
+		if (oldCond)
 			if (useConditions)
 				GetINI("DPS", "DPSCOn", 0, filename);
 		GetINI("DPS", "DPSSize", 0, filename);
@@ -174,7 +176,7 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 	//Aggro Section
 	if (GetPrivateProfileInt("Aggro", "AggroOn", 0, filename)) {
 		GetINI("Aggro", "AggroOn", 0, filename);
-		if (oldCond) 
+		if (oldCond)
 			if (useConditions)
 				GetINI("Aggro", "AggroCOn", 0, filename);
 		GetINI("Aggro", "AggroSize", 0, filename);
@@ -186,12 +188,12 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 		if (GetPrivateProfileString("Pull", "PullWith", 0, temp, MAX_STRING, filename) != 0)
 			GetINI("Pull", "PullWith", 0, filename);
 	}
-	
+
 
 	//Heals Section
 	if (GetPrivateProfileInt("Heals", "HealsOn", 0, filename) != 0) {
 		GetINI("Heals", "HealsOn", 0, filename);
-		if (oldCond) 
+		if (oldCond)
 			if (useConditions)
 				GetINI("Heals", "HealsCOn", 0, filename);
 		GetINI("Heals", "HealsSize", 0, filename);
@@ -244,7 +246,7 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 		}
 	}
 	//Burn Section
-	if (oldCond) 
+	if (oldCond)
 		if (useConditions)
 			GetINI("Burn", "BurnCOn", 0, filename);
 	GetINI("Burn", "BurnSize", 0, filename);
@@ -265,8 +267,33 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 	GetINILoop("KConditions", "Cond", 0, filename);
 
 
-	//MySpells - Need to figure out how to handle this.
-	GetINILoop("MySpells", "Gem", 0, filename);
+	//MySpells
+	float fKAVersion = 0.0f;
+	if (strlen(KAVersion)) {
+		fKAVersion = atof(KAVersion);
+		if (fKAVersion) WriteChatf("KAVersion: %2.3f", fKAVersion);//DEBUG REMOVE ME!
+	}
+	if (fKAVersion && fKAVersion > 11.004) {
+		char temp[MAX_STRING] = "NULL";
+		char gemNum[8] = "NULL";
+
+		for (int i = 1; i < 15; i++) {
+			sprintf_s(gemNum, 8, "Gem%i", i);
+			if (GetPrivateProfileString("Spells", gemNum, 0, temp, MAX_STRING, filename) == 0) {
+				if (GetPrivateProfileString("MySpells", gemNum, 0, temp, MAX_STRING, filename) != 0) {
+					WritePrivateProfileString("Spells", gemNum, temp, newfilename);
+					WriteChatf("Converting MySpells to Spells");
+				}
+			}
+			else if (GetPrivateProfileString("Spells", gemNum, 0, temp, MAX_STRING, filename) != 0) {
+				WritePrivateProfileString("Spells", gemNum, "NULL", newfilename);
+				WriteChatf("Copying Spells section.");
+			}
+		}
+	}
+	else {
+		GetINILoop("MySpells", "Gem", 0, filename);
+	}
 
 	//Lets close the code tags now. Open newfilename to append to the end of it with ios::app
 	myfile.open(newfilename, ios::app);
@@ -332,15 +359,15 @@ void GetINILoop(char Section[MAX_STRING], char Key[MAX_STRING], char Default[MAX
 				//if converting to old conditions, remove |Cond## from the end of the string. 
 				//WriteChatf("oldCond: %d, condFound: %d", oldCond, condFound);
 				if (oldCond && condFound) {
-					char *p = strrchr(temp, '|');
+					char* p = strrchr(temp, '|');
 					if (p) p[0] = 0;
 					p += 5;
-					if (p) sprintf_s(szCondNumber,"%s",p);
+					if (p) sprintf_s(szCondNumber, "%s", p);
 					//WriteChatf("CondNumber: %s", szCondNumber);
 				}
 				WritePrivateProfileString(Section, KeyNum, temp, newfilename);
 				//does it already have the KA11 Condition style. 
-				
+
 				//If the section isn't KConditions - Lets process conditions.
 				if (_stricmp(Section, "KConditions")) {
 					//If Section, KeyCond# has a value  and we didn't find a |Cond# in the key in our current condition file, then lets see about copying some things.
@@ -367,7 +394,7 @@ void GetINILoop(char Section[MAX_STRING], char Key[MAX_STRING], char Default[MAX
 						if (GetPrivateProfileString("KConditions", condTemp, 0, tempCond, MAX_STRING, filename) != 0) {
 							WritePrivateProfileString(Section, KeyNumCond, tempCond, newfilename);
 						}
-						
+
 					}
 				}
 			}
@@ -386,28 +413,33 @@ void ParseArg(CHAR Arg[MAX_STRING])
 			if (_stricmp(Arg, "BRD") && _stricmp(Arg, "BST") && _stricmp(Arg, "BER") && _stricmp(Arg, "CLR") && _stricmp(Arg, "DRU") && _stricmp(Arg, "ENC") && _stricmp(Arg, "MAG") && _stricmp(Arg, "MNK") && _stricmp(Arg, "NEC") && _stricmp(Arg, "PAL") && _stricmp(Arg, "RNG") && _stricmp(Arg, "ROG") && _stricmp(Arg, "SHD") && _stricmp(Arg, "SHM") && _stricmp(Arg, "WAR") && _stricmp(Arg, "WIZ") && _stricmp(Arg, "old") && _stricmp(Arg, "pull")) {
 				WriteChatf("You've provided %s as a class to emulate, but that doesn't appear to be one of the 16 playable classes.", Arg);
 				return;
-			} else if (_stricmp(Arg, "old") && _stricmp(Arg, "pull")) {
+			}
+			else if (_stricmp(Arg, "old") && _stricmp(Arg, "pull")) {
 				sprintf_s(tempClass, Arg);
 				if (debugging) WriteChatf("\aySetting useClass to true");
 				useClass = true;
-			} else if (!_stricmp(Arg, "old")) {
+			}
+			else if (!_stricmp(Arg, "old")) {
 				oldCond = true;
-			} else if (!_stricmp(Arg, "pull")) {
+			}
+			else if (!_stricmp(Arg, "pull")) {
 				if (debugging) WriteChatf("\aySetting pulling to true");
 				pulling = true;
 			}
-		} else {
+		}
+		else {
 			if (debugging) WriteChatf("Arg is: %d", atoi(Arg));
 			if (atoi(Arg) < 0 || atoi(Arg) > 110) {
 				WriteChatf("You've provided %s as a level to emulate, but it is not between 1 and 110", tempLevel);
 				return;
-			} else {
+			}
+			else {
 				sprintf_s(tempLevel, Arg);
 				if (debugging) WriteChatf("\aySetting useLevel to true");
 				useLevel = true;
 			}
 		}
-	}	
+	}
 }
 
 inline bool InGame()
