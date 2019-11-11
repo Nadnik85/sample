@@ -268,26 +268,23 @@ void TemplateCommand(PSPAWNINFO pChar, PCHAR szLine)
 
 
 	//MySpells
-	float fKAVersion = 0.0f;
+	double fKAVersion = 0.0f;
 	if (strlen(KAVersion)) {
 		fKAVersion = atof(KAVersion);
-		if (fKAVersion) WriteChatf("KAVersion: %2.3f", fKAVersion);//DEBUG REMOVE ME!
 	}
 	if (fKAVersion && fKAVersion > 11.004) {
 		char temp[MAX_STRING] = "NULL";
 		char gemNum[8] = "NULL";
-
+		
 		for (int i = 1; i < 15; i++) {
 			sprintf_s(gemNum, 8, "Gem%i", i);
 			if (GetPrivateProfileString("Spells", gemNum, 0, temp, MAX_STRING, filename) == 0) {
 				if (GetPrivateProfileString("MySpells", gemNum, 0, temp, MAX_STRING, filename) != 0) {
 					WritePrivateProfileString("Spells", gemNum, temp, newfilename);
-					WriteChatf("Converting MySpells to Spells");
 				}
 			}
 			else if (GetPrivateProfileString("Spells", gemNum, 0, temp, MAX_STRING, filename) != 0) {
-				WritePrivateProfileString("Spells", gemNum, "NULL", newfilename);
-				WriteChatf("Copying Spells section.");
+				WritePrivateProfileString("Spells", gemNum, temp, newfilename);
 			}
 		}
 	}
