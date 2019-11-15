@@ -16,7 +16,7 @@ If the issue is a security concern, please report here:
 https://www.redguides.com/community/misc/contact/
 
 # How to Build and Test Very Vanilla
-1) Install Visual Studio 2017 (community edition is free!)
+1) Install Visual Studio (community edition is free!)
 
 2) Team -> Manage Connections
 
