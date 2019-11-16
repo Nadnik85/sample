@@ -41,6 +41,9 @@ Specify a local folder to place the files, and click "Clone". If it's your first
 
 12) You did it! You'll find the goodies in the release directory. If you want MQ2Nav it needs to be compiled on its own, see brainiac's instructions on github.
 
+## Known Issues
+MQ2Autoloot, MQ2Autolootsort and MQ2Speaker require older SDKs and platforms to build. For these three, we recommend Windows SDK 10.0.16299.0 and Platform Toolset v141.
+
 ## Git Guide
 We have a guide on using Git with Visual Studio here:
 https://www.redguides.com/community/threads/using-git-with-visual-studio-2017-absolute-beginners.55499/
