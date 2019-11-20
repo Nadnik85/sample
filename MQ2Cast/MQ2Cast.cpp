@@ -21,6 +21,10 @@
 // 10.05 edited by: eqmule 2/17/2016  new spell system
 // 11.0 - Eqmule 07-22-2016 - Added string safety.
 // 11.1 - Eqmule 08-22-2017 - Dont check Twisting if Mq2Twist is NOT loaded and some other tweaks to improve performance.
+// 11.2 - SwiftyMUSE 11-20-2017 - Increased delay_cast to handle casting not happening for spells loading delays
+//    Added blocked spell handling.
+//    Fixed compile typecast warning.
+// 11.3 - SwiftyMUSE 11-17-2019 - Fixed: Casting interrupted identification on Live
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
 
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
@@ -31,10 +35,10 @@ bool DEBUGGING = false;
 #include "../MQ2Plugin.h"
 #include "../Blech/Blech.h"
 PreSetup("MQ2Cast");
-PLUGIN_VERSION(11.1);
+PLUGIN_VERSION(11.3);
 #endif
 
-#define         DELAY_CAST    12000
+#define         DELAY_CAST    16000
 #define         DELAY_STOP     4000
 #define         DELAY_PULSE     125
 
@@ -83,14 +87,14 @@ PLUGIN_VERSION(11.1);
 #define         NOID             -1
 
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
-long         DELAY_MEMO = 10000;
+long         DELAY_MEMO = 13000;
 
 bool         BardBeta = true;
-bool         Immobile = false;        // Immobile?
-bool         Invisible = false;        // Invisibility Check?
-bool         Twisting = false;        // Twisting?
-bool         Casting = false;        // Casting Window was opened?
-long         Resultat = CAST_SUCCESS; // Resultat
+bool         Immobile = false;          // Immobile?
+bool         Invisible = false;         // Invisibility Check?
+bool         Twisting = false;          // Twisting?
+bool         Casting = false;           // Casting Window was opened?
+long         Resultat = CAST_SUCCESS;   // Resultat
 ULONGLONG    ImmobileT = 0;             // Estimate when it be immobilized!
 
 long         CastingD = NOID;           // Casting Spell Detected
@@ -120,7 +124,7 @@ long         MemoE = DONE_SUCCESS;      // Memo Event Exit
 ULONGLONG    MemoM = 0;                 // Memo Event Mark 
 
 long         ItemF = FLAG_COMPLETE;     // Item Flag
-long         ItemA[NUM_INV_SLOTS];         // Item Arrays
+long         ItemA[NUM_INV_SLOTS];      // Item Arrays
 
 long         DuckF = FLAG_COMPLETE;     // Duck Flag
 ULONGLONG    DuckM = 0;                 // Duck Time Stamp
@@ -128,44 +132,44 @@ ULONGLONG    DuckM = 0;                 // Duck Time Stamp
 long         CastF = FLAG_COMPLETE;     // Cast Flag
 long         CastE = CAST_SUCCESS;      // Cast Exit Return value
 long         CastG = NOID;              // Cast Gem ID
-void         *CastI = NULL;              // Cast ID   [spell/alt/item]
+void         *CastI = NULL;             // Cast ID   [spell/alt/item]
 long         CastK = NOID;              // Cast Kind [spell/alt/item]
 long         CastT = 0;                 // Cast Time [spell/alt/item]
 ULONGLONG    CastM = 0;                 // Cast TimeMark Start Casting
 long         CastR = 0;                 // Cast Retry Counter
 long         CastW = 0;                 // Cast Retry Type
-char         CastB[MAX_STRING];       // Cast Bandolier In
-char         CastC[MAX_STRING];       // Cast SpellType
-char         CastN[MAX_STRING];       // Cast SpellName
-PSPELL         CastS = NULL;              // Cast Spell Pointer
+char         CastB[MAX_STRING];         // Cast Bandolier In
+char         CastC[MAX_STRING];         // Cast SpellType
+char         CastN[MAX_STRING];         // Cast SpellName
+PSPELL       CastS = NULL;              // Cast Spell Pointer
 
 char         zOutputDly[MAX_STRING] = { 0 };    //Delayed command for item casting
-const unsigned long EX_DELAY = 125;        //The amount of time to delay for the item casting
-ULONGLONG   ulTimer = 0;        //Delay timer
-unsigned long   ulTimerR = 0;        //Delay timer 2
-bool         cPendingEq = false;    //Pending equipment cast
+const unsigned long EX_DELAY = 125;     //The amount of time to delay for the item casting
+ULONGLONG    ulTimer = 0;               //Delay timer
+unsigned long   ulTimerR = 0;           //Delay timer 2
+bool         cPendingEq = false;        //Pending equipment cast
 
 bool         Parsed = false;            // BTree List Found Flags
-Blech         LIST013('#');            // BTree List for OnChat Message on Color  13
-Blech         LIST264('#');            // BTree List for OnChat Message on Color 264
-Blech         LIST289('#');            // BTree List for OnChat Message on Color 289
-Blech         UNKNOWN('#');            // BTree List for OnChat Message on UNKNOWN Yet Color
-Blech         SUCCESS('#');            // BTree List for OnChat Message on SUCCESS Detection
+Blech        LIST013('#');              // BTree List for OnChat Message on Color  13
+Blech        LIST264('#');              // BTree List for OnChat Message on Color 264
+Blech        LIST289('#');              // BTree List for OnChat Message on Color 289
+Blech        UNKNOWN('#');              // BTree List for OnChat Message on UNKNOWN Yet Color
+Blech        SUCCESS('#');              // BTree List for OnChat Message on SUCCESS Detection
 
-PCONTENTS      fPACK = 0;                 // ItemFound/ItemSearch - Find Pack Contents
-PCONTENTS      fITEM = 0;                 // ItemFound/ItemSearch - Find Item Contents
+PCONTENTS    fPACK = 0;                 // ItemFound/ItemSearch - Find Pack Contents
+PCONTENTS    fITEM = 0;                 // ItemFound/ItemSearch - Find Item Contents
 long         fSLOT = 0;                 // ItemFound/ItemSearch - Find Item SlotID
-long         SwapSlot = 0;                // Item Swapped to slot#
-int            PulseCount = 0;
+long         SwapSlot = 0;              // Item Swapped to slot#
+int          PulseCount = 0;
 
-PSPELL        fFIND;                   // SpellFind - Casting Spell Effect
-void         *fINFO;                   // SpellFind - Casting Type Structure
-int           fTYPE;                   // SpellFind - Casting Type
-int           fTIME;                   // SpellFind - Casting Time
-PCHAR         fNAME;                   // SpellFind - Casting Name
+PSPELL       fFIND;                     // SpellFind - Casting Spell Effect
+void         *fINFO;                    // SpellFind - Casting Type Structure
+int          fTYPE;                     // SpellFind - Casting Type
+int          fTIME;                     // SpellFind - Casting Time
+PCHAR        fNAME;                     // SpellFind - Casting Name
 
-SPELLFAVORITE SpellToMemorize;         // Favorite Spells Array
-long          SpellTotal;              // Favorite Spells Total
+SPELLFAVORITE SpellToMemorize;          // Favorite Spells Array
+long          SpellTotal;               // Favorite Spells Total
 void WinClick(CXWnd *Wnd, PCHAR ScreenID, PCHAR ClickNotification, DWORD KeyState);
 void ClickBack();
 
@@ -654,7 +658,7 @@ bool SpellReady(PCHAR szSpellName)
 	}
 	if (szSpellName[0] == 'M' && strlen(szSpellName) == 1) {
 		if (FindMQ2DataType("Twist"))
-			Twisting = (bool)Evaluate("${If[${Twist.Twisting},1,0]}");
+			Twisting = Evaluate("${If[${Twist.Twisting},1,0]}") ? true : false;
 		return !Twisting ? true : false;
 	}
 	char zName[MAX_STRING];
@@ -1524,15 +1528,17 @@ PLUGIN_API VOID InitializePlugin(VOID)
 	aCastEvent(LIST289, CAST_DISTRACTED, "You can't cast spells while invulnerable#*#");
 	aCastEvent(LIST289, CAST_DISTRACTED, "You *CANNOT* cast spells, you have been silenced#*#");
 	aCastEvent(LIST289, CAST_IMMUNE, "Your target has no mana to affect#*#");
+	aCastEvent(LIST289, CAST_IMMUNE, "Your target looks unaffected#*#");
 	aCastEvent(LIST013, CAST_IMMUNE, "Your target is immune to changes in its attack speed#*#");
 	aCastEvent(LIST013, CAST_IMMUNE, "Your target is immune to changes in its run speed#*#");
 	aCastEvent(LIST013, CAST_IMMUNE, "Your target is immune to snare spells#*#");
 	aCastEvent(LIST289, CAST_IMMUNE, "Your target cannot be mesmerized#*#");
 	aCastEvent(UNKNOWN, CAST_IMMUNE, "Your target looks unaffected#*#");
-	aCastEvent(LIST264, CAST_INTERRUPTED, "Your #*# is interrupted#*#");
+	aCastEvent(LIST289, CAST_INTERRUPTED, "Your #*# is interrupted#*#");
+	aCastEvent(LIST264, CAST_INTERRUPTED, "Your spell is interrupted#*#");
 	aCastEvent(UNKNOWN, CAST_INTERRUPTED, "Your casting has been interrupted#*#");
-	aCastEvent(LIST289, CAST_FIZZLE, "Your #*# fizzles#*#");
-	aCastEvent(LIST289, CAST_FIZZLE, "You miss a note, bringing your #*# to a close#*#");
+	aCastEvent(LIST289, CAST_FIZZLE, "Your spell fizzles#*#");
+	aCastEvent(LIST289, CAST_FIZZLE, "You miss a note, bringing your song to a close#*#");
 	aCastEvent(LIST289, CAST_NOTARGET, "You must first select a target for this spell#*#");
 	aCastEvent(LIST289, CAST_NOTARGET, "This spell only works on#*#");
 	aCastEvent(LIST289, CAST_NOTARGET, "You must first target a group member#*#");
@@ -1550,9 +1556,13 @@ PLUGIN_API VOID InitializePlugin(VOID)
     aCastEvent(LIST289, CAST_RESIST, "#*# resisted your #*#!");
 #endif
 	aCastEvent(LIST289, CAST_RECOVER, "Spell recovery time not yet met#*#");
+	aCastEvent(LIST289, CAST_RESIST, "Your target resisted the#*#spell#*#");
+	aCastEvent(LIST289, CAST_RESIST, "#*#avoided your#*#!#*#");
 	aCastEvent(LIST289, CAST_STANDING, "You must be standing to cast a spell#*#");
 	aCastEvent(LIST289, CAST_STUNNED, "You can't cast spells while stunned#*#");
 	aCastEvent(LIST289, CAST_SUCCESS, "You are already on a mount#*#");
+	aCastEvent(LIST289, CAST_TAKEHOLD, "#*#spell did not take hold. (Blocked by#*#");
+	aCastEvent(LIST289, CAST_TAKEHOLD, "#*#spell did not take hold on#*#(Blocked by#*#");
 	aCastEvent(LIST289, CAST_TAKEHOLD, "Your spell did not take hold#*#");
 	aCastEvent(LIST289, CAST_TAKEHOLD, "Your spell would not have taken hold#*#");
 	aCastEvent(LIST289, CAST_TAKEHOLD, "Your spell is too powerfull for your intended target#*#");

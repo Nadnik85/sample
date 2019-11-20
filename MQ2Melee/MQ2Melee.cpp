@@ -2241,8 +2241,8 @@ public:
 				#endif
             }
             if ((long)EFFECT->ReagentID[0]>0 && (long)CountItemByID(EFFECT->ReagentID[0]) < (long)EFFECT->ReagentCount[0])        return 0x0A;  // out of reagent
-            if (EFFECT->EnduranceCost && GetCharInfo2()->Endurance < EFFECT->EnduranceCost)                                       return 0x0B;  // out of endurance
-            if (EFFECT->ManaCost && GetCharInfo2()->Mana < EFFECT->ManaCost)                                                      return 0x0C;  // out of mana
+            if (EFFECT->EnduranceCost && (int)GetCharInfo2()->Endurance < EFFECT->EnduranceCost)                                       return 0x0B;  // out of endurance
+            if (EFFECT->ManaCost && (int)GetCharInfo2()->Mana < EFFECT->ManaCost)                                                      return 0x0C;  // out of mana
             if (!EFFECT->SpellType)
             {
                 if (!pTarget)                                                                                                     return 0x0D;  // no target
