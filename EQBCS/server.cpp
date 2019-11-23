@@ -198,7 +198,7 @@ bool Server::CreateSocket(int &sock, int port)
 	if (!ip_address[0])
 		tcp_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	else
-		tcp_addr.sin_addr.s_addr = inet_addr(ip_address);
+		inet_pton(AF_INET, ip_address, &tcp_addr.sin_addr.s_addr);
 	tcp_addr.sin_port=htons(port);
 	int option=1;
 #ifndef WIN32
