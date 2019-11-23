@@ -1,3 +1,103 @@
+Nov 23 2019
+- MQ2Main (ChatWithThisName) Add /removelev command. typing /removelev will remove any levitation in the buff or shortbuff window. 
+
+Nov 23 2019
+- Updated for BETA
+
+Nov 22 2019
+- Updated for BETA
+- Fixed a bug where /aa wouldn't parse input
+
+Nov 21 2019
+- Updated for BETA
+
+Nov 20 2019
+- Fixed ${Me.SpellInCooldown} for LIVE
+- Fixed ${Me.InInstance} for LIVE
+
+Nov 20 2019 by RedGuides
+- MQ2Autogroup (plure) Fixed a couple bugs
+- CWTNCommons, MQ2Berzerker (ChatWithThisName) various updates, no changelog
+- MQ2DotNet removed for repair.
+
+Nov 20 2019
+- Updated for BETA
+- Added .LeaderFlagged to the DynamicZoneType TLO it returns true if the dzleader can successfully enter the dz (this also means the dz is actually Loaded.)
+- Usage: ${DynamicZone.LeaderFlagged}
+- Added .Flagged to the DZMemberType TLO it returns true if the dzmember can successfully enter the dz.
+- Usage: ${DynamicZone.Member[x].Flagged} where x is either index or the name.
+
+Nov 19 2019
+- Updated for BETA
+
+Nov 18 2019
+- Updated for BETA
+
+Nov 18 2019 by SwiftyMUSE
+- MQ2Cast Fixes:
+- Increased delay_cast to handle casting not happening for spells loading delays
+- Added blocked spell handling.
+- Fixed compile typecast warning.
+
+Nov 17 2019
+- Updated for BETA
+
+Nov 16 2019
+- MQ2Dpsadv (ChatWithThisName) Add SDPS (DPS over duration of fight), debug changes, more color information.
+- MQ2Relocate (Sic) Updated /relocate fellowship to make you visible before clicking fellowship insignia
+
+Nov 16 2019
+- Updated for BETA
+
+Nov 15 2019
+- Updated for BETA
+
+Nov 14 2019
+- Updated for BETA
+
+Nov 14 2019 by brainiac
+- Re-fixed EQINVSLOTWND
+- Added ALT_MEMBER_GETTER macro that defines an alternate name that a member can be
+  accessed with, thereby removing the need to immediately update all code to use new
+  variable names.
+- You can now use the old, or the new names for Slot1, Slot2, Slot3, Location and *suprise* Wnd.
+
+Nov 13 2019 by RedGuides
+- MQ2AutoGroup (Plure) added MQ2DanNet compatibility, fixed a bug with suspending mercs that you want to keep around.
+- MQ2AutoForage (Sic) Lowered PulseDelay to better avoid conflicts with other plugins and macros
+
+Nov 13 2019
+- Updated for BETA
+- Fixed EQINVSLOTWND.
+- Renamed WindowType in the EQINVSLOTWND struct to Location
+- Renamed InvSlot in the EQINVSLOTWND struct to Slot1
+- Renamed BagSlot in the EQINVSLOTWND struct to Slot2
+- Renamed GlobalSlot in the EQINVSLOTWND struct to Slot3
+
+Nov 12 2019 by RedGuides
+- New utility! MeshUpdater.exe (wired420) keep all of your nav meshes up to date. Find it in Very Vanilla's root folder.
+- MQ2MyButtons (ChatWithThisName, Knightly) hover over a button to get a tooltip of the command, various bug fixes
+- Ninjadvloot.inc (Maskoi) Renamed a zdist variable to avoid conflicts with Kiss.
+-
+Nov 12 2019
+- Updated for BETA
+- Updated for TEST
+-
+Nov 11 2019 by RedGuides
+- MQ2Status (Sic) Corrected an Else statement with /status merc
+- MQ2KissTemplate (ChatWithThisName) Various bugfixes, correct NULL in Spells section to copy the item from GetPrivateProfile
+-
+Nov 11 2019
+- Updated for BETA
+-
+Nov 10 2019 by RedGuides
+- MQ2Status (Sic) added commands: help, merc
+- MQ2DPSAdv (ChatWithThisName) wrong UI fix
+- MQ2XPTracker (ChatWithThisName) fixed conflict with other plugins
+-
+Nov 10 2019
+- Updated for BETA
+-
 Nov 09 2019 by Eqmule
 - Fixed MQ2ItemDisplay for emu
 - Added Lucy Button to MQ2ItemDisplay for emu

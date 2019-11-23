@@ -188,7 +188,7 @@ VOID DiscordCmd(PSPAWNINFO pChar, PCHAR szLine)
 				// Remove it if it does
 				blechAllow.RemoveEvent(eventsAllow[szEvent]);
 				eventsAllow.erase(szEvent);
-				for (int i = 0; i < config["allow"].size(); i++) // No nice remove method on json array, and I couldn't get std::find working
+				for (int i = 0; i < (int)config["allow"].size(); i++) // No nice remove method on json array, and I couldn't get std::find working
 					if (config["allow"][i] == szEvent)
 					{
 						config["allow"].erase(i);
@@ -230,7 +230,7 @@ VOID DiscordCmd(PSPAWNINFO pChar, PCHAR szLine)
 				// Remove it if it does
 				blechBlock.RemoveEvent(eventsBlock[szEvent]);
 				eventsBlock.erase(szEvent);
-				for (int i = 0; i < config["allow"].size(); i++)
+				for (int i = 0; i < (int)config["allow"].size(); i++)
 					if (config["allow"][i] == szEvent)
 					{
 						config["allow"].erase(i);

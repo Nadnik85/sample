@@ -12547,8 +12547,10 @@ bool MQ2AltAbilityType::GETMEMBER()
 		}
 		return false;
 	case ShortName:
+		//what is this even for? need to check -eqmule
 		Dest.Type = pStringType;
-		if (char *ptr = pStringTable->getString(pAbility->nShortName, 0))
+		//if (char *ptr = pStringTable->getString(pAbility->nShortName,0))
+		if (char *ptr = pCDBStr->GetString(pAbility->nName, 2, NULL))
 		{
 			strcpy_s(DataTypeTemp, ptr);
 			Dest.Ptr = &DataTypeTemp[0];
@@ -13524,7 +13526,7 @@ bool MQ2DynamicZoneType::GETMEMBER()
 	{
 		Dest.DWord = 0;
 		Dest.Type = pIntType;
-		PDZMEMBER pDynamicZoneMember = pDynamicZone->pMemberList;
+		PDZMEMBER pDynamicZoneMember = pDynamicZone->pFirstMember;
 		while (pDynamicZoneMember)
 		{
 			Dest.DWord++;
@@ -13548,7 +13550,7 @@ bool MQ2DynamicZoneType::GETMEMBER()
 		Dest.Type = pDZMemberType;
 		if (ISINDEX())
 		{
-			PDZMEMBER pDynamicZoneMember = pDynamicZone->pMemberList;
+			PDZMEMBER pDynamicZoneMember = pDynamicZone->pFirstMember;
 			if (ISNUMBER())
 			{
 				int Count = GETNUMBER();
@@ -13582,7 +13584,7 @@ bool MQ2DynamicZoneType::GETMEMBER()
 	case Leader:
 	{
 		Dest.Type = pDZMemberType;
-		PDZMEMBER pDynamicZoneMember = pDynamicZone->pMemberList;
+		PDZMEMBER pDynamicZoneMember = pDynamicZone->pFirstMember;
 		for (int i = 0; i<pDynamicZone->MaxPlayers && pDynamicZoneMember; i++)
 		{
 			if (!strcmp(pDynamicZoneMember->Name, (char*)instExpeditionLeader))
