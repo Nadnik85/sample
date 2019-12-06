@@ -444,45 +444,58 @@ BOOL ItemFound(char *ItemName)
 void MQ2TwistDoCommand(PSPAWNINFO pChar, PCHAR szLine) 
 { 
     WriteDebug("MQ2Twist::MQ2TwistDoCommand(pChar, %s)", szLine);
-    HideDoCommand(pChar, szLine, FromPlugin); 
+	DebugSpew("MQ2Twist::MQ2TwistDoCommand(pChar, %s)", szLine);
+    HideDoCommand(pChar, szLine, false); // We want to execute these commands immediately... If for some reason we want the commands delayed we will need to add a bool to deal with it
 } 
 
-void DoSwapOut() 
+void DoSwapOut()
 { 
-    char szTemp[MAX_STRING]; 
-    if (SwappedOutItem[0]) { 
-        sprintf_s(szTemp,"/exchange \"%s\" %s",SwappedOutItem,SwappedOutSlot); 
-        WriteDebug("MQ2Twist::DoSwapOut() = '%s'", szTemp);
-        MQ2TwistDoCommand(NULL, szTemp); 
-        SwappedOutItem[0]=0; 
-    } 
+	if (GetCharInfo())
+	{
+		if (GetCharInfo()->pSpawn)
+		{
+			char szTemp[MAX_STRING];
+			if (SwappedOutItem[0]) 
+			{
+				sprintf_s(szTemp, "/exchange \"%s\" %s", SwappedOutItem, SwappedOutSlot);
+				WriteDebug("MQ2Twist::DoSwapOut() = '%s'", szTemp);
+				MQ2TwistDoCommand(GetCharInfo()->pSpawn, szTemp);
+				SwappedOutItem[0] = 0;
+			}
+		}
+	}
 } 
 
-void DoSwapIn(unsigned int Index) 
+void DoSwapIn(unsigned int Index)
 { 
-    char szTemp[MAX_STRING]; 
-
-    WriteDebug("MQ2Twist::DoSwapIn(%d)", Index);
-    if(Index >= ItemClick.size()) {
-        WriteDebug("MQ2Twist::DoSwapIn(%d) = Item not found in array, returning!", Index);
-        return;
-    }
-    _ITEMCLICK& vr = ItemClick[Index];
-    if (!_stricmp(vr.slot,"AA")) {
-        WriteDebug("MQ2Twist::DoSwapIn(%d) = Item entry is AA, returning!", Index);
-        return; 
-    }
-    if (_strnicmp(vr.slot,"DISABLED",8)) { 
-        sprintf_s(szTemp,"${InvSlot[%s].Item",vr.slot); 
-        ParseMacroData(szTemp, sizeof(szTemp)); 
-        strcpy_s(SwappedOutItem,szTemp); 
-        strcpy_s(SwappedOutSlot,vr.slot); 
-        WriteDebug("MQ2Twist::DoSwapIn(%d) = '%s'", Index, szTemp);
-        sprintf_s(szTemp,"/exchange \"%s\" %s",vr.name,vr.slot); 
-        MQ2TwistDoCommand(NULL, szTemp); 
-    }
-    else
-        WriteDebug("MQ2Twist::DoSwapIn(%d) = Fell through, no action taken!", Index);
+	if (GetCharInfo())
+	{
+		if (GetCharInfo()->pSpawn)
+		{
+			char szTemp[MAX_STRING];
+			WriteDebug("MQ2Twist::DoSwapIn(%d)", Index);
+			if (Index >= ItemClick.size()) {
+				WriteDebug("MQ2Twist::DoSwapIn(%d) = Item not found in array, returning!", Index);
+				return;
+			}
+			_ITEMCLICK& vr = ItemClick[Index];
+			if (!_stricmp(vr.slot, "AA")) {
+				WriteDebug("MQ2Twist::DoSwapIn(%d) = Item entry is AA, returning!", Index);
+				return;
+			}
+			if (_strnicmp(vr.slot, "DISABLED", 8)) {
+				sprintf_s(szTemp, "${InvSlot[%s].Item", vr.slot);
+				ParseMacroData(szTemp, sizeof(szTemp));
+				strcpy_s(SwappedOutItem, szTemp);
+				strcpy_s(SwappedOutSlot, vr.slot);
+				WriteDebug("MQ2Twist::DoSwapIn(%d) = '%s'", Index, szTemp);
+				sprintf_s(szTemp, "/exchange \"%s\" %s", vr.name, vr.slot);
+				MQ2TwistDoCommand(GetCharInfo()->pSpawn, szTemp);
+			}
+			else
+				WriteDebug("MQ2Twist::DoSwapIn(%d) = Fell through, no action taken!", Index);
+		}
+	}
 } 
 
 bool GemReady(unsigned int GemNum) // Gem 1 to NUM_SPELL_GEMS
@@ -602,7 +615,7 @@ void SingCommand(PSPAWNINFO pChar, PCHAR szLine)
         HoldSong = Index; 
         bTwist=true; 
         CastDue = -1; 
-        WriteChatf("\arMQ2Twist\au::\atHolding Twist and casting gem \ag%d\at.", HoldSong); 
+        WriteChatf("\arMQ2Twist\au::\atHolding Twist and casting gem \ag%d\at.", HoldSong);
         MQ2TwistDoCommand(pChar,"/stopsong"); 
         if (Index > NUM_SPELL_GEMS) { //item? 
             fInd = ItemClick.size();
@@ -630,7 +643,7 @@ void StopTwistCommand(PSPAWNINFO pChar, PCHAR szLine)
     char szTemp[MAX_STRING]={0}; 
     GetArg(szTemp,szLine,1);
     bTwist=false; 
-    HoldSong=0; 
+    HoldSong=0;
     MQ2TwistDoCommand(pChar,"/stopsong"); 
     if(_strnicmp(szTemp,"silent",6))
         WriteChatf("\arMQ2Twist\au::\atStopping Twist."); 
@@ -985,16 +998,20 @@ bool CheckCharState()
     if (!bTwist) 
         return false; 
 
-    if (GetCharInfo()) { 
+    if (GetCharInfo()) 
+	{ 
+		if (!GetCharInfo()->pSpawn)
+			return false;
         if (GetCharInfo()->Stunned==1) 
             return false; 
-        switch (GetCharInfo()->standstate) { 
+        switch (GetCharInfo()->standstate) 
+		{ 
             case STANDSTATE_SIT: 
                 WriteChatf("\arMQ2Twist\au::\ayStopping Twist."); 
                 bTwist = false; 
                 return false; 
             case STANDSTATE_FEIGN: 
-                MQ2TwistDoCommand(NULL,"/stand"); 
+                MQ2TwistDoCommand(GetCharInfo()->pSpawn,"/stand");
                 return false; 
             case STANDSTATE_DEAD: 
                 WriteChatf("\arMQ2Twist\au::\ayStopping Twist."); 
@@ -1167,9 +1184,9 @@ PLUGIN_API VOID OnPulse(VOID)
                     return;
                 }
                 DebugSpew("MQ2Twist::Pulse - Single Song (Casting Gem %d)", SongTodo); 
-                WriteDebug("MQ2Twist::Pulse - Single Song (Casting Gem %d)", SongTodo); 
+                WriteDebug("MQ2Twist::Pulse - Single Song (Casting Gem %d)", SongTodo);
                 sprintf_s(szTemp,"/multiline ; /stopsong ; /cast %d", SongTodo); 
-                MQ2TwistDoCommand(NULL,szTemp); 
+                MQ2TwistDoCommand(GetCharInfo()->pSpawn,szTemp);
                 CastDue = GetTime()+CAST_TIME; 
             } 
             else { 
@@ -1198,7 +1215,7 @@ PLUGIN_API VOID OnPulse(VOID)
                         DebugSpew("MQ2Twist::Pulse - Single Song (Casting Item %d - %s)", SongTodo, ItemClick[itemID].name); 
                         WriteDebug("MQ2Twist::Pulse - Single Song (Casting Item %d - %s)", SongTodo, ItemClick[itemID].name); 
                         if(ItemFound(ItemClick[itemID].name)) {
-                            DoSwapIn(itemID); 
+                            DoSwapIn(itemID);
                             sprintf_s(szTemp,"/multiline ; /stopsong ; /nomodkey /itemnotify ${FindItem[%s].InvSlot} rightmouseup", ItemClick[itemID].name); 
                         }
                         else {
@@ -1207,7 +1224,7 @@ PLUGIN_API VOID OnPulse(VOID)
                         }
                     } 
                     if(Found) {
-                        MQ2TwistDoCommand(NULL,szTemp); 
+                        MQ2TwistDoCommand(GetCharInfo()->pSpawn,szTemp);
                         ItemClick[itemID].castdue = ItemClick[itemID].recast ? (GetTime()+ItemClick[itemID].cast_time+ItemClick[itemID].recast) : (GetTime()+CAST_TIME); 
                         CastDue = ItemClick[itemID].castdue; 
                     }
@@ -1226,8 +1243,8 @@ PLUGIN_API VOID OnPulse(VOID)
             DoSwapOut(); 
             if (SongTodo <= NUM_SPELL_GEMS) { 
                 if (SongNextCast[CurrSong-1]-GetTime() <= 0) { 
-                    DebugSpew("MQ2Twist::OnPulse - Next Song = %s", szTemp); 
-                    WriteDebug("MQ2Twist::OnPulse - Next Song = %s", szTemp); 
+                    DebugSpew("MQ2Twist::OnPulse - Next Song = %d", SongTodo);
+                    WriteDebug("MQ2Twist::OnPulse - Next Song = %d", SongTodo);
                     sprintf_s(szTemp,"/multiline ; /stopsong ; /cast %d", SongTodo); 
                     if (altTwist) { 
                         LastAltSong=SongTodo; 
@@ -1240,7 +1257,7 @@ PLUGIN_API VOID OnPulse(VOID)
                         PrepNextSong();
                         return;
                     }
-                    MQ2TwistDoCommand(NULL,szTemp); 
+                    MQ2TwistDoCommand(GetCharInfo()->pSpawn,szTemp);
                     pSpell=GetSpellByID(GetCharInfo2()->MemorizedSpells[Song[CurrSong-1]-1]); 
                     if(!pSpell) { 
                         WriteChatf("\arMQ2Twist\au::\arSongs not present - suspending twist.  /twist to resume."); 
@@ -1298,7 +1315,7 @@ PLUGIN_API VOID OnPulse(VOID)
                         WriteDebug("MQ2Twist::Pulse - Next Song (Casting Item %d - %s)", SongTodo, ItemClick[itemID].name); 
                         WriteDebug("MQ2Twist::Pulse - Calling DoSwapIn(%d)", itemID);
                         if(ItemFound(ItemClick[itemID].name)) {
-                            DoSwapIn(itemID); 
+                            DoSwapIn(itemID);
                             sprintf_s(szTemp,"/multiline ; /stopsong ; /nomodkey /itemnotify ${FindItem[%s].InvSlot} rightmouseup", ItemClick[itemID].name); 
                         }
                         else {
@@ -1307,8 +1324,8 @@ PLUGIN_API VOID OnPulse(VOID)
                         }
                     } 
                     if(Found) {
-                        WriteDebug("MQ2Twist::Pulse - Calling MQ2TwistDoCommand(NULL, %s)", szTemp);
-                        MQ2TwistDoCommand(NULL,szTemp); 
+                        WriteDebug("MQ2Twist::Pulse - Calling MQ2TwistDoCommand(GetCharInfo()->pSpawn, %s)", szTemp);
+                        MQ2TwistDoCommand(GetCharInfo()->pSpawn,szTemp);
                         ItemClick[itemID].castdue = ItemClick[itemID].recast ? (GetTime()+ItemClick[itemID].cast_time+ItemClick[itemID].recast) : (GetTime()+CAST_TIME); 
                         CastDue = GetTime()+ItemClick[itemID].cast_time; 
                     }
