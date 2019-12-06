@@ -7,6 +7,10 @@
 
 #undef CINTERFACE
 
+// Prevents Packing Mistmatch errors due to Windows headers expecting a different
+// struct packing byte alignment than MQ2
+#define WINDOWS_IGNORE_PACKING_MISMATCH
+
 #include <sapi.h>
 #include <Shobjidl.h>
 #include <windows.h>
