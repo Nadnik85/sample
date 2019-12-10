@@ -4,7 +4,7 @@
 	v 1.0 - 12/10/2019
 
 	Purpose: Equipping your Tradeskill Trophies when opening an environmental crafting container.
-	Actions: This plugin will see what you already have in your ammo slot, 
+	Actions: This plugin will see what you already have in your ammo slot,
 		then swap out to the correct trophy for the environmental container you have open
 		and then when you leave the environmental window, it will swap back to what you already had equipped.
 
@@ -16,22 +16,22 @@
 #include "Variables.h"
 
 PreSetup("MQ2TSTrophy");
-PLUGIN_VERSION(1.0f);
+PLUGIN_VERSION(1.1f);
 
 PLUGIN_API VOID InitializePlugin(VOID)
 {
-    DebugSpewAlways("Initializing MQ2TSTrophy");
+	DebugSpewAlways("Initializing MQ2TSTrophy");
 	if (gGameState != GAMESTATE_INGAME || !pCharSpawn) return;
 }
 
 PLUGIN_API VOID ShutdownPlugin(VOID)
 {
-    DebugSpewAlways("Shutting down MQ2TSTrophy");
+	DebugSpewAlways("Shutting down MQ2TSTrophy");
 
-    //Remove commands, MQ2Data items, hooks, etc.
-    //RemoveMQ2Benchmark(bmMyBenchmark);
-    //RemoveCommand("/mycommand");
-    //RemoveXMLFile("MQUI_MyXMLFile.xml");
+	//Remove commands, MQ2Data items, hooks, etc.
+	//RemoveMQ2Benchmark(bmMyBenchmark);
+	//RemoveCommand("/mycommand");
+	//RemoveXMLFile("MQUI_MyXMLFile.xml");
 }
 
 PLUGIN_API VOID OnPulse(VOID)
@@ -51,6 +51,9 @@ PLUGIN_API VOID OnPulse(VOID)
 	if (containerfound) {
 		if (!ammoDefault && FindAmmoDefault()) {
 			ammoDefault = FindAmmoDefault();
+		}
+		if (!primaryDefault && FindPrimaryDefault()) {
+			primaryDefault = FindPrimaryDefault();
 		}
 		if (strstr(szContainerName, "Alchemy Table")) {
 			//equip alchemy trophy
@@ -72,11 +75,10 @@ PLUGIN_API VOID OnPulse(VOID)
 			//equip Jewelry trophy
 			SwapToTrophy(&JewelerTrophy);
 		}
-		//else if (strstr(szContainerName, "Fly Making Bench")) {
-		//	//equip Fishing trophy
-		//	//SwapToTrophy(&FishingTrophy);
-		//	return;
-		//}
+		else if (strstr(szContainerName, "Fly Making Bench")) {
+			//equip Fishing trophy
+			SwapToRod(&FishingTrophy);
+		}
 		else if (strstr(szContainerName, "Kiln") || strstr(szContainerName, "Pottery Wheel")) {
 			//equip Pottery trophy
 			SwapToTrophy(&PotteryTrophy);
@@ -114,6 +116,18 @@ PLUGIN_API VOID OnPulse(VOID)
 		}
 		else if (ammoDefault && FindAmmoDefault() && ammoDefault == FindAmmoDefault()) {
 			ammoDefault = 0;
+			iStep = 1;
+		}
+		if ((primaryDefault && FindPrimaryDefault() && primaryDefault != FindAmmoDefault()) || (primaryDefault && !FindPrimaryDefault())) {
+			// we need to switch back to primaryDefault
+			SwapToRod(&primaryDefault);
+			if (iStep == 4) {
+				primaryDefault = 0;
+				iStep = 1;
+			}
+		}
+		else if (primaryDefault && FindPrimaryDefault() && primaryDefault == FindPrimaryDefault()) {
+			primaryDefault = 0;
 			iStep = 1;
 		}
 	}
@@ -205,6 +219,13 @@ void UpdateTrophies() {
 		bPoisonTrophy = true;
 	}
 
+	//Fishing Rod "Trophy"
+	strcpy_s(buffer, MAX_STRING, "The Bone Rod");
+	UpdateTrophyGroup(&FishingTrophy, buffer, "FishingRod");
+	if (FishingTrophy) {
+		bFishingTrophy = true;
+	}
+
 }
 
 void UpdateTrophyGroup(PCONTENTS* group, char list[MAX_STRING], char groupname[MAX_STRING]) {
@@ -276,6 +297,28 @@ void SwapToTrophy(PCONTENTS* Trophy) {
 	}
 }
 
+void SwapToRod(PCONTENTS* Trophy) {
+	if (*Trophy) {
+		if (PITEMINFO item = GetItemFromContents(*Trophy)) {
+			if (!FindPrimaryDefault() || FindPrimaryDefault() != *Trophy) {
+				char szBuffer[MAX_STRING] = { 0 };
+				if (iStep == 1) {
+					sprintf_s(szBuffer, MAX_STRING, "/nomodkey /shiftkey /itemnotify \"%s\" leftmouseup", item->Name);
+					EzCommand(szBuffer);
+					iStep = 2;
+					return;
+				}
+				if (iStep == 2 && ItemOnCursor() && Cursor() && Cursor() == *Trophy) {
+					sprintf_s(szBuffer, MAX_STRING, "/nomodkey /shiftkey /itemnotify 13 leftmouseup");
+					EzCommand(szBuffer);
+					iStep = 3;
+					return;
+				}
+			}
+		}
+	}
+}
+
 PCONTENTS Cursor() {
 	PCHARINFO2 pChar2 = GetCharInfo2();
 	if (pChar2 && pChar2->pInventoryArray && pChar2->pInventoryArray->Inventory.Cursor) {
@@ -289,6 +332,17 @@ PCONTENTS FindAmmoDefault() {
 	if (PCHARINFO2 pChar2 = GetCharInfo2()) {
 		if (pChar2->pInventoryArray && pChar2->pInventoryArray->InventoryArray) {
 			if (PCONTENTS item = pChar2->pInventoryArray->InventoryArray[22]) {
+				return item;
+			}
+		}
+	}
+	return nullptr;
+}
+
+PCONTENTS FindPrimaryDefault() { // inventory slot 13 is primary
+	if (PCHARINFO2 pChar2 = GetCharInfo2()) {
+		if (pChar2->pInventoryArray && pChar2->pInventoryArray->InventoryArray) {
+			if (PCONTENTS item = pChar2->pInventoryArray->InventoryArray[13]) {
 				return item;
 			}
 		}
