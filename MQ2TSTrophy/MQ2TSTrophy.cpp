@@ -3,6 +3,9 @@
 
 	v 1.0 - 12/10/2019
 	v 1.1 - 12/10/2019 - Consolidated functions / clean function checks per Brainiac review
+	v 1.2 - 12/12/2019 - Re-Write per Brainiac review
+					   - moved variables.h and prototypes.h into mq2tstrophy.cpp, corrected errors per review (inline use, superfluous nesting, updated to const char* where possible, etc)
+					   - updated comma delimited list to a vector
 
 	Purpose: Equipping your Tradeskill Trophies when opening an environmental crafting container.
 	Actions: This plugin will see what you already have in your ammo slot,
@@ -12,11 +15,27 @@
 	Future: Look for, and add any additional environmental crafting containers
 **/
 #include "../MQ2Plugin.h"
-#include "Prototypes.h"
-#include "Variables.h"
 
 PreSetup("MQ2TSTrophy");
 PLUGIN_VERSION(1.2f);
+
+void UpdateTrophyGroup(PCONTENTS* group, const std::vector<std::string>& itemList, const char* groupname);
+void UpdateTrophies();
+void UpdateTrophy(PCONTENTS* TrophyVariable, const char* item, const char* Typename);
+void WorldContainerCheck();
+void SwapSlot(PCONTENTS* Trophy, int slot);
+void PluginOn();
+bool InGame();
+PCONTENTS FindSlotDefault(int slot);
+PCONTENTS Cursor();
+
+PCONTENTS BakingTrophy = 0, AlchemistTrophy = 0, BrewingTrophy = 0, FletchingTrophy = 0, JewelerTrophy = 0, TinkeringTrophy = 0, PotteryTrophy = 0, ResearchTrophy = 0, BlacksmithTrophy = 0, TailorTrophy = 0, PoisonTrophy = 0, ammoDefault = 0, FishingTrophy = 0, primaryDefault = 0;
+
+bool  bActivated = false, containerfound = false;
+
+int iStep = 1, iPulse = 0;
+
+char szContainerName[MAX_STRING] = { 0 };
 
 PLUGIN_API VOID InitializePlugin(VOID)
 {
@@ -31,8 +50,8 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
 
 PLUGIN_API VOID OnPulse(VOID)
 {
+	int iPulseDelay = 20;
 	if (!InGame()) return;
-	//If the plugin hasn't been activated, do that.
 	if (++iPulse < iPulseDelay) return;
 	iPulse = 0;
 	if (!bActivated) PluginOn();
@@ -42,8 +61,10 @@ PLUGIN_API VOID OnPulse(VOID)
 		EzCommand("/autoinv");
 		iStep = 4;
 	}
+
 	PCONTENTS ammoItem = FindSlotDefault(22);
 	PCONTENTS priItem = FindSlotDefault(13);
+
 	if (containerfound) {
 
 		if (!ammoDefault && ammoItem) {
@@ -97,7 +118,7 @@ PLUGIN_API VOID OnPulse(VOID)
 			SwapSlot(&TailorTrophy, 22);
 		}
 		else if (strstr(szContainerName, "Tinkering")) {
-			//equip Pottery trophy
+			//equip Tinkering trophy
 			SwapSlot(&TinkeringTrophy, 22);
 		}
 		if (iStep == 4) {
@@ -105,27 +126,32 @@ PLUGIN_API VOID OnPulse(VOID)
 		}
 	}
 	else {
-		if (ammoDefault != ammoItem || (ammoDefault && !ammoItem)) {
-			// we need to switch back to ammoDefault
+		if ((ammoDefault != NULL && ammoDefault != ammoItem) || (ammoDefault && !ammoItem)) {
+			// we need to switch back to primaryDefault
+			PITEMINFO itemdefault = GetItemFromContents(ammoDefault);
+			PITEMINFO itemtest = GetItemFromContents(ammoItem);
 			SwapSlot(&ammoDefault, 22);
 			if (iStep == 4) {
 				ammoDefault = 0;
 				iStep = 1;
 			}
+			return;
 		}
-		else if (ammoDefault == ammoItem) {
+		else if (!Cursor() && ammoDefault && ammoDefault == ammoItem) {
 			ammoDefault = 0;
 			iStep = 1;
+			return;
 		}
-		if (primaryDefault != priItem || (primaryDefault && !priItem)) {
+		if ((primaryDefault && primaryDefault != priItem) || (primaryDefault && !priItem)) {
 			// we need to switch back to primaryDefault
 			SwapSlot(&primaryDefault, 13);
 			if (iStep == 4) {
 				primaryDefault = 0;
 				iStep = 1;
 			}
+			return;
 		}
-		else if (primaryDefault == priItem) {
+		else if (!Cursor() && primaryDefault && primaryDefault == priItem) {
 			primaryDefault = 0;
 			iStep = 1;
 		}
@@ -138,77 +164,160 @@ void PluginOn() {
 }
 
 void UpdateTrophies() {
-	if (!InGame()) return;
-	char buffer[MAX_STRING] = { 0 };
 
 	//Alchemist Trophy
-	strcpy_s(buffer, MAX_STRING, "Mundunugu Medicine Stick,Master Alchemist Trophy,Expert Alchemist Trophy,Journeyman Alchemist Trophy,Freshman Alchemist Trophy,Apprentice Alchemist Trophy,Beginner Alchemist Trophy");
-	UpdateTrophyGroup(&AlchemistTrophy, buffer, "AlchemistTrophy");
-	
+	std::vector<std::string> itemList = {
+		"Mundunugu Medicine Stick",
+		"Master Alchemist Trophy",
+		"Expert Alchemist Trophy",
+		"Journeyman Alchemist Trophy",
+		"Freshman Alchemist Trophy",
+		"Apprentice Alchemist Trophy",
+		"Beginner Alchemist Trophy"
+	};
+	UpdateTrophyGroup(&AlchemistTrophy, itemList, "AlchemistTrophy");
+
 	//Baking Trophy
-	strcpy_s(buffer, MAX_STRING, "Denmother's Rolling Pin,Master Baker Trophy,Expert Baker Trophy,Journeyman Baker Trophy,Freshman Baker Trophy,Apprentice Baker Trophy,Beginner Baker Trophy");
-	UpdateTrophyGroup(&BakingTrophy, buffer, "BakingTrophy");
+	itemList = {
+		"Denmother's Rolling Pin",
+		"Master Baker Trophy",
+		"Expert Baker Trophy",
+		"Journeyman Baker Trophy",
+		"Freshman Baker Trophy",
+		"Apprentice Baker Trophy",
+		"Beginner Baker Trophy"
+	};
+	UpdateTrophyGroup(&BakingTrophy, itemList, "BakingTrophy");
 
-	//Brewer Trophy
-	strcpy_s(buffer, MAX_STRING, "Brewmaster's Mug,Master Brewer Trophy,Expert Brewer Trophy,Journeyman Brewer Trophy,Freshman Brewer Trophy,Apprentice Brewer Trophy,Beginner Brewer Trophy");
-	UpdateTrophyGroup(&BrewingTrophy, buffer, "BrewingTrophy");
+	////Brewer Trophy
+	itemList = {
+		"Brewmaster's Mug",
+		"Master Brewer Trophy",
+		"Expert Brewer Trophy",
+		"Journeyman Brewer Trophy",
+		"Freshman Brewer Trophy",
+		"Apprentice Brewer Trophy",
+		"Beginner Brewer Trophy"
+	};
+	UpdateTrophyGroup(&BrewingTrophy, itemList, "BrewingTrophy");
 
-	//Fletcher Trophy
-	strcpy_s(buffer, MAX_STRING, "Fletcher's Arrow,Master Fletcher Trophy,Expert Fletcher Trophy,Journeyman Fletcher Trophy,Freshman Fletcher Trophy,Apprentice Fletcher Trophy,Beginner Fletcher Trophy");
-	UpdateTrophyGroup(&FletchingTrophy, buffer, "FletchingTrophy");
+	////Fletcher Trophy
+	itemList = {
+		"Fletcher's Arrow",
+		"Master Fletcher Trophy",
+		"Expert Fletcher Trophy",
+		"Journeyman Fletcher Trophy",
+		"Freshman Fletcher Trophy",
+		"Apprentice Fletcher Trophy",
+		"Beginner Fletcher Trophy"
+	};
+	UpdateTrophyGroup(&FletchingTrophy, itemList, "FletchingTrophy");
 
-	//Jeweler Trophy
-	strcpy_s(buffer, MAX_STRING, "Intricate Jewelers Glass,Master Jeweler Trophy,Expert Jeweler Trophy,Journeyman Jeweler Trophy,Freshman Jeweler Trophy,Apprentice Jeweler Trophy,Beginner Jeweler Trophy");
-	UpdateTrophyGroup(&JewelerTrophy, buffer, "JewelerTrophy");
+	////Jeweler Trophy
+	itemList = {
+		"Intricate Jewelers Glass",
+		"Master Jeweler Trophy",
+		"Expert Jeweler Trophy",
+		"Journeyman Jeweler Trophy",
+		"Freshman Jeweler Trophy",
+		"Apprentice Jeweler Trophy",
+		"Beginner Jeweler Trophy"
+	};
+	UpdateTrophyGroup(&JewelerTrophy, itemList, "JewelerTrophy");
 
-	//Tinkering Trophy
-	strcpy_s(buffer, MAX_STRING, "Hovering Contraption,Master Mechanist Trophy,Expert Mechanist Trophy,Journeyman Mechanist Trophy,Freshman Mechanist Trophy,Apprentice Mechanist Trophy,Beginner Mechanist Trophy");
-	UpdateTrophyGroup(&TinkeringTrophy, buffer, "TinkeringTrophy");
+	////Tinkering Trophy
+	itemList = {
+		"Hovering Contraption",
+		"Master Mechanist Trophy",
+		"Expert Mechanist Trophy",
+		"Journeyman Mechanist Trophy",
+		"Freshman Mechanist Trophy",
+		"Apprentice Mechanist Trophy",
+		"Beginner Mechanist Trophy"
+	};
+	UpdateTrophyGroup(&TinkeringTrophy, itemList, "TinkeringTrophy");
 
-	//Pottery Trophy
-	strcpy_s(buffer, MAX_STRING, "Clay Flinger's Loop,Master Potter Trophy,Expert Potter Trophy,Journeyman Potter Trophy,Freshman Potter Trophy,Apprentice Potter Trophy,Beginner Potter Trophy");
-	UpdateTrophyGroup(&PotteryTrophy, buffer, "PotteryTrophy");
+	////Pottery Trophy
+	itemList = {
+		"Clay Flinger's Loop",
+		"Master Potter Trophy",
+		"Expert Potter Trophy",
+		"Journeyman Potter Trophy",
+		"Freshman Potter Trophy",
+		"Apprentice Potter Trophy",
+		"Beginner Potter Trophy"
+	};
+	UpdateTrophyGroup(&PotteryTrophy, itemList, "PotteryTrophy");
 
-	//Research Trophy
-	strcpy_s(buffer, MAX_STRING, "Ethereal Quill,Master Researcher Trophy,Expert Researcher Trophy,Journeyman Researcher Trophy,Freshman Researcher Trophy,Apprentice Researcher Trophy,Beginner Researcher Trophy");
-	UpdateTrophyGroup(&ResearchTrophy, buffer, "ResearchTrophy");
+	////Research Trophy
+	itemList = {
+		"Ethereal Quill",
+		"Master Researcher Trophy",
+		"Expert Researcher Trophy",
+		"Journeyman Researcher Trophy",
+		"Freshman Researcher Trophy",
+		"Apprentice Researcher Trophy",
+		"Beginner Researcher Trophy"
+	};
+	UpdateTrophyGroup(&ResearchTrophy, itemList, "ResearchTrophy");
 
-	//Blacksmithing Trophy
-	strcpy_s(buffer, MAX_STRING, "Blacksmith's Adamantine Hammer,Master Smith Trophy,Expert Smith Trophy,Journeyman Smith Trophy,Freshman Smith Trophy,Apprentice Smith Trophy,Beginner Smith Trophy");
-	UpdateTrophyGroup(&BlacksmithTrophy, buffer, "BlacksmithTrophy");
+	////Blacksmithing Trophy
+	itemList = {
+		"Blacksmith's Adamantine Hammer",
+		"Master Smith Trophy",
+		"Expert Smith Trophy",
+		"Journeyman Smith Trophy",
+		"Freshman Smith Trophy",
+		"Apprentice Smith Trophy",
+		"Beginner Smith Trophy"
+	};
+	UpdateTrophyGroup(&BlacksmithTrophy, itemList, "BlacksmithTrophy");
 
-	//Tailor Trophy
-	strcpy_s(buffer, MAX_STRING, "Mystical Bolt,Master Tailor Trophy,Expert Tailor Trophy,Journeyman Tailor Trophy,Freshman Tailor Trophy,Apprentice Tailor Trophy,Beginner Tailor Trophy");
-	UpdateTrophyGroup(&TailorTrophy, buffer, "TailorTrophy");
+	////Tailor Trophy
+	itemList = {
+		"Mystical Bolt",
+		"Master Tailor Trophy",
+		"Expert Tailor Trophy",
+		"Journeyman Tailor Trophy",
+		"Freshman Tailor Trophy",
+		"Apprentice Tailor Trophy",
+		"Beginner Tailor Trophy"
+	};
+	UpdateTrophyGroup(&TailorTrophy, itemList, "TailorTrophy");
 
-	//Poison Trophy
-	strcpy_s(buffer, MAX_STRING, "Peerless Pestle,Master Toxicologist Trophy,Expert Toxicologist Trophy,Journeyman Toxicologist Trophy,Freshman Toxicologist Trophy,Apprentice Toxicologist Trophy,Beginner Toxicologist Trophy");
-	UpdateTrophyGroup(&PoisonTrophy, buffer, "PoisonTrophy");
+	////Poison Trophy
+	itemList = {
+		"Peerless Pestle",
+		"Master Toxicologist Trophy",
+		"Expert Toxicologist Trophy",
+		"Journeyman Toxicologist Trophy",
+		"Freshman Toxicologist Trophy",
+		"Apprentice Toxicologist Trophy",
+		"Beginner Toxicologist Trophy"
+	};
+	UpdateTrophyGroup(&PoisonTrophy, itemList, "PoisonTrophy");
 
-	//Fishing Rod "Trophy"
-	strcpy_s(buffer, MAX_STRING, "The Bone Rod");
-	UpdateTrophyGroup(&FishingTrophy, buffer, "FishingRod");
+	////Fishing Rod "Trophy"
+	itemList = {
+		"The Bone Rod"
+	};
+	UpdateTrophyGroup(&FishingTrophy, itemList, "FishingTrophy");
 
 }
 
-void UpdateTrophyGroup(PCONTENTS* group, char list[MAX_STRING], char groupname[MAX_STRING]) {
-	for (int i = 1; i < 30; i++) {
-		char Current[MAX_STRING] = "";
-		GetArg(Current, list, i, 0, 0, 0, ',', 0);
-		if (!strlen(Current)) break;
-		UpdateTrophy(group, Current, groupname);
+void UpdateTrophyGroup(PCONTENTS* group, const std::vector<std::string>& itemList, const char* groupname)
+{
+	for (const std::string& name : itemList)
+	{
+		UpdateTrophy(group, name.c_str(), groupname);
 		if (*group) break;
 	}
 }
 
-void UpdateTrophy(PCONTENTS* TrophyVariable, PCHAR szLine, PCHAR Typename) {
-	if (!InGame())
-		return;
-	PCONTENTS temp = 0;
-	if (*TrophyVariable) {
-		return;
-	}
-	if (PCONTENTS theTrophy = FindItemByName(szLine)) {
+void UpdateTrophy(PCONTENTS* TrophyVariable, const char* item, const char* Typename) {
+	if (!InGame()) return;
+
+	if (PCONTENTS theTrophy = FindItemByName((char*)item)) {
 		if (PITEMINFO thisItem = GetItemFromContents(theTrophy)) {
 			*TrophyVariable = theTrophy;
 			if (*TrophyVariable) {
@@ -235,22 +344,22 @@ void WorldContainerCheck() {
 	}
 }
 
-void SwapSlot(PCONTENTS* Trophy,int slot) { // slot 22 is Ammo; slot 13 is Primary
+void SwapSlot(PCONTENTS* Trophy, int slot) { // slot 22 is Ammo; slot 13 is Primary
 	if (*Trophy) {
-		if (PITEMINFO trophy = GetItemFromContents(*Trophy)) {
+		if (PITEMINFO item = GetItemFromContents(*Trophy)) {
 			if (!FindSlotDefault(slot) || FindSlotDefault(slot) != *Trophy) {
 				char szBuffer[MAX_STRING] = { 0 };
 				if (iStep == 1) {
-					sprintf_s(szBuffer, MAX_STRING, "/squelch /nomodkey /shiftkey /itemnotify \"%s\" leftmouseup", trophy->Name);
+					//WriteChatf("\ayPicking up: \ap%s", item->Name);
+					sprintf_s(szBuffer, MAX_STRING, "/squelch /nomodkey /shiftkey /itemnotify \"%s\" leftmouseup", item->Name);
 					EzCommand(szBuffer);
 					iStep = 2;
-					return;
 				}
-				if (iStep == 2 && ItemOnCursor() && Cursor() == *Trophy) {
+				else if (iStep == 2 && Cursor() == *Trophy) {
+					//WriteChatf("\aySwapping \ap%s\aw into slot: \ay%i",item->Name, slot);
 					sprintf_s(szBuffer, MAX_STRING, "/squelch /nomodkey /shiftkey /itemnotify %i leftmouseup", slot);
 					EzCommand(szBuffer);
 					iStep = 3;
-					return;
 				}
 			}
 		}
@@ -267,11 +376,10 @@ PCONTENTS Cursor() {
 }
 
 PCONTENTS FindSlotDefault(int slot) {
-	if (PCHARINFO2 pChar2 = GetCharInfo2()) {
-		if (pChar2->pInventoryArray && pChar2->pInventoryArray->InventoryArray) {
-			if (PCONTENTS item = pChar2->pInventoryArray->InventoryArray[slot]) {
-				return item;
-			}
+	PCHARINFO2 pChar2 = GetCharInfo2();
+	if (pChar2->pInventoryArray && pChar2->pInventoryArray->InventoryArray) {
+		if (PCONTENTS item = pChar2->pInventoryArray->InventoryArray[slot]) {
+			return item;
 		}
 	}
 	return nullptr;
