@@ -426,6 +426,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2Status", "MQ2Status\MQ2S
 		{2A0A06A4-E9C6-4229-82EE-BD2D4E0A7221} = {2A0A06A4-E9C6-4229-82EE-BD2D4E0A7221}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2AutoClaim", "MQ2AutoClaim\MQ2AutoClaim.vcxproj", "{2E7C685B-5301-4FBA-A463-AB7B178731AE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -1432,6 +1434,16 @@ Global
 		{EC16959E-D478-4BF0-B40A-EF78DFAE89EA}.xDebug|Win32.Build.0 = Debug|Win32
 		{EC16959E-D478-4BF0-B40A-EF78DFAE89EA}.xDebug|x64.ActiveCfg = Release|Win32
 		{EC16959E-D478-4BF0-B40A-EF78DFAE89EA}.xDebug|x64.Build.0 = Release|Win32
+		{2E7C685B-5301-4FBA-A463-AB7B178731AE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2E7C685B-5301-4FBA-A463-AB7B178731AE}.Debug|Win32.Build.0 = Debug|Win32
+		{2E7C685B-5301-4FBA-A463-AB7B178731AE}.Debug|x64.ActiveCfg = Debug|Win32
+		{2E7C685B-5301-4FBA-A463-AB7B178731AE}.Release|Win32.ActiveCfg = Release|Win32
+		{2E7C685B-5301-4FBA-A463-AB7B178731AE}.Release|Win32.Build.0 = Release|Win32
+		{2E7C685B-5301-4FBA-A463-AB7B178731AE}.Release|x64.ActiveCfg = Release|Win32
+		{2E7C685B-5301-4FBA-A463-AB7B178731AE}.xDebug|Win32.ActiveCfg = Debug|Win32
+		{2E7C685B-5301-4FBA-A463-AB7B178731AE}.xDebug|Win32.Build.0 = Debug|Win32
+		{2E7C685B-5301-4FBA-A463-AB7B178731AE}.xDebug|x64.ActiveCfg = Release|Win32
+		{2E7C685B-5301-4FBA-A463-AB7B178731AE}.xDebug|x64.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
