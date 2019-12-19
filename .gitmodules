@@ -1,0 +1,12 @@
+[submodule "MQ2Collections"]
+	url = https://github.com/TypePun/MQ2Collections
+[submodule "MQ2Dan"]
+	url = https://github.com/dannuic/MQ2Dan
+[submodule "MQ2DotNet"]
+	url = https://gitlab.com/alynel/MQ2DotNet
+[submodule "MQ2Nav"]
+	url = https://github.com/brainiac/MQ2Nav
+[submodule "MQ2Py"]
+	url = https://github.com/brainiac/MQ2Py
+[submodule "MQ2Sql"]
+	url = https://github.com/dencelle/MQ2Sql
