@@ -1227,6 +1227,34 @@ public:
 		LastZoned = 278,
 		Origin = 279,
 		SubscriptionDays = 280,
+		SilverTokens = 281,
+		GoldTokens = 282,
+		McKenzie = 283,
+		Bayle = 284,
+		Reclamation = 285,
+		Brellium = 286,
+		Motes = 287,
+		RebellionChits = 288,
+		DiamondCoins = 289,
+		BronzeFiats = 290,
+		Voucher = 291,
+		VeliumShards = 292,
+		CrystallizedFear = 293,
+		ShadowStones = 294,
+		DreadStones = 295,
+		MarksOfValor = 296,
+		MedalsOfHeroism = 297,
+		RemnantOfTranquility = 298,
+		BifurcatedCoin = 299,
+		AdoptiveCoin = 300,
+		SathirsTradeGems = 301,
+		AncientSebilisianCoins = 302,
+		BathezidTradeGems = 303,
+		AncientDraconicCoin = 304,
+		FetterredIfritCoins = 305,
+		EntwinedDjinnCoins = 306,
+		CrystallizedLuck = 307
+
 	};
 	enum CharacterMethods
 	{
@@ -1509,6 +1537,33 @@ public:
 		TypeMember(LastZoned);
 		TypeMember(Origin);
 		TypeMember(SubscriptionDays);
+		TypeMember(SilverTokens);//281,
+		TypeMember(GoldTokens);//282,
+		TypeMember(McKenzie);//283,
+		TypeMember(Bayle);//284,
+		TypeMember(Reclamation);//285,
+		TypeMember(Brellium);//286,
+		TypeMember(Motes);//287,
+		TypeMember(RebellionChits);//288,
+		TypeMember(DiamondCoins);//289,
+		TypeMember(BronzeFiats);//290,
+		TypeMember(Voucher);//291,
+		TypeMember(VeliumShards);//292,
+		TypeMember(CrystallizedFear);//293,
+		TypeMember(ShadowStones);//294,
+		TypeMember(DreadStones);//295,
+		TypeMember(MarksOfValor);//296,
+		TypeMember(MedalsOfHeroism);//297,
+		TypeMember(RemnantOfTranquility);//298,
+		TypeMember(BifurcatedCoin);//299,
+		TypeMember(AdoptiveCoin);//300,
+		TypeMember(SathirsTradeGems);//301,
+		TypeMember(AncientSebilisianCoins);//302,
+		TypeMember(BathezidTradeGems);//303,
+		TypeMember(AncientDraconicCoin);//304,
+		TypeMember(FetterredIfritCoins);//305,
+		TypeMember(EntwinedDjinnCoins);//306,
+		TypeMember(CrystallizedLuck);//307
 		
 		TypeMethod(Stand);
 		TypeMethod(Sit);
@@ -2832,7 +2887,7 @@ public:
 			int sz = pcm->PageHandlers.Begin->pObject->ItemContainer.m_length;
 			if (sz) {
 				if (VarPtr.Int >= 0 && VarPtr.Int < sz) {
-					strcpy_s(Destination, MAX_STRING, pcm->PageHandlers.Begin->pObject->ItemContainer.m_array[VarPtr.Int].pCont->Item2->Name);
+					strcpy_s(Destination, MAX_STRING, GetItemFromContents(pcm->PageHandlers.Begin->pObject->ItemContainer.m_array[VarPtr.Int].pCont)->Name);
 					return true;
 				}
 			}
@@ -4837,7 +4892,7 @@ public:
 		return false;
 	}
 };
-
+extern bool        IsEvolvingItem(PCONTENTS pCont);
 class MQ2EvolvingItemType : public MQ2Type
 {
 public:
@@ -4864,7 +4919,7 @@ public:
 
 	bool ToString(MQ2VARPTR VarPtr, PCHAR Destination)
 	{
-		if (VarPtr.Ptr && ((PCONTENTS)VarPtr.Ptr)->IsEvolvingItem)
+		if (VarPtr.Ptr && IsEvolvingItem((PCONTENTS)VarPtr.Ptr))
 			strcpy_s(Destination,MAX_STRING, "TRUE");
 		else
 			strcpy_s(Destination,MAX_STRING, "FALSE");
