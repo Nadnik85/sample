@@ -23,12 +23,30 @@
 		<Template>BDT_BigNormal</Template>
 	</Button>
 	
-	
+	<Button item="EasternWastesTwoButton">
+	<ScreenID>EasternWastesTwoButton</ScreenID>
+	<Location>
+		<X>10</X>
+		<Y>40</Y>
+	</Location>
+	<Size>
+		<CX>240</CX>
+		<CY>24</CY>
+	</Size>
+	<Text>Eastern Wastes</Text>
+	<TextColor>
+		<R>255</R>
+		<G>255</G>
+		<B>255</B>
+	</TextColor>
+	<Template>BDT_BigNormal</Template>
+	</Button>
+  
   <Button item="StratosButton">
     <ScreenID>OStratosButton</ScreenID>
     <Location>
       <X>10</X>
-      <Y>44</Y>
+      <Y>70</Y>
     </Location>
     <Size>
       <CX>240</CX>
@@ -48,7 +66,7 @@
     <ScreenID>OverthereButton</ScreenID>
     <Location>
       <X>10</X>
-      <Y>78</Y>
+      <Y>100</Y>
     </Location>
     <Size>
       <CX>240</CX>
@@ -67,7 +85,7 @@
     <ScreenID>LceaniumButton</ScreenID>
     <Location>
       <X>10</X>
-      <Y>112</Y>
+      <Y>130</Y>
     </Location>
     <Size>
       <CX>240</CX>
@@ -87,11 +105,11 @@
 		<ScreenID>KattaCastrumDelugeButton</ScreenID>
 		<Location>
 			<X>10</X>
-			<Y>146</Y>
+			<Y>165</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
-			<CY>32</CY>
+			<CY>18</CY>
 		</Size>
 		<Text>Katta Castrum: Deluge</Text>
 		<TextColor>
@@ -107,11 +125,11 @@
 		<ScreenID>WestKaranaButton</ScreenID>
 		<Location>
 			<X>135</X>
-			<Y>146</Y>
+			<Y>165</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
-			<CY>32</CY>
+			<CY>18</CY>
 		</Size>
 		<Text>Ethernere Tainted West Karana</Text>
 		<TextColor>
@@ -624,6 +642,7 @@
 		<Style_Border>true</Style_Border>
 		<Style_Sizable>false</Style_Sizable>
 		
+		<Pieces>EasternWastesTwoButton</Pieces>
 		<Pieces>StratosButton</Pieces>
 		<Pieces>OverthereButton</Pieces>
 		<Pieces>LceaniumButton</Pieces>
