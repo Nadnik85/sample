@@ -41,12 +41,11 @@ Specify a local folder to place the files, and click "Clone". If it's your first
 
 12) You did it! You'll find the goodies in the release directory. If you want MQ2Nav it needs to be compiled on its own, see brainiac's instructions on github.
 
-## Git Guide
-We have a guide on using Git with Visual Studio here:
-https://www.redguides.com/community/threads/using-git-with-visual-studio-2017-absolute-beginners.55499/
+## Contributing
+We love contributions! If you have something to add to Very Vanilla, please use the "Forking X" workflow as described here,
+https://www.redguides.com/community/threads/git-very-vanilla-forking-x-workflow.70582/
 
-If you want more detail, GitLab has a nice little tutorial:
-https://docs.gitlab.com/ee/gitlab-basics/
+If you'd like to contribute privately or work on something that isn't included in this repo, please contact Redbot. We're always happy to have help!
 
 
 
