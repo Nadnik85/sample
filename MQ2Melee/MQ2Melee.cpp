@@ -398,7 +398,7 @@ throat3 = { 10970  ,3 },        // disc: throat jab rk iii
 
 #pragma region Cleric - Class 2
 yaulp = { 489    ,4 },        // aa: yaulp
-#pragma endregion 
+#pragma endregion Updated to ToV
 
 #pragma region Paladin - Class 3
 honor1 =  { 10173  ,5 },        // spell: challenge for honor
@@ -624,7 +624,7 @@ terror30 = { 55691  ,5 },        // spell: Terror of Kra'Du Rk. III
 #pragma endregion
 
 #pragma region Druid - Class 6
-#pragma endregion
+#pragma endregion - Empty
 
 #pragma region Monk - Class 7
 cloud1 = { 25914  ,3 },        // disc: Cloud of Fists Lv 87 mnk HoT
@@ -700,7 +700,7 @@ boastful = { 199    ,4 },        // aa: boastful bellow
 
 selos = { 8205   ,4 },        // aa: selos
 
-#pragma endregion
+#pragma endregion Updated to ToV
 
 #pragma region Rogue - Class 9
 assault1 =  { 22540  ,3 },        // disc: Assault Lv 85 rog UF
@@ -866,22 +866,22 @@ twisted = { 670    ,4 },        // aa: twisted shank
 #pragma endregion Updated to ToV
 
 #pragma region Shaman - Class 10
-#pragma endregion
+#pragma endregion - Empty
 
 #pragma region Necromancer - Class 11
 feign_n1 = { 25662  ,5 },        // spell: Scapegoat
 feign_n2 = { 25663  ,5 },        // spell: Scapegoat rk ii
 feign_n3 = { 25664  ,5 },        // spell: Scapegoat rk iii
-#pragma endregion
+#pragma endregion - Updated to ToV
 
 #pragma region Wizard - Class 12
-#pragma endregion
+#pragma endregion - Empty
 
 #pragma region Mage - Class 13
-#pragma endregion
+#pragma endregion - Empty
 
 #pragma region Enchanter - Class 14
-#pragma endregion
+#pragma endregion - Empty
 
 #pragma region Beastlord - Class 15
 asp = { 986    ,4 },        // aa: bite of the asp
