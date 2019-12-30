@@ -159,6 +159,112 @@ infodata
 //Everyone
 tstone =  { 5225   ,3 },        // disc: throw stone
 btlleap = { 611    ,4 },        // aa: battle leap
+#pragma region Nec/Mag/Bst
+mendpet1 = { 58     ,4 },        // aa: mend companion
+mendpet2 = { 418    ,4 },        // aa: replenish companion
+#pragma endregion
+
+#pragma region Potions
+potfast0 = { 77789  ,7 },        // potion: Distillate of Divine Healing I
+potfast1 = { 77790  ,7 },        // potion: Distillate of Divine Healing II
+potfast2 = { 77791  ,7 },        // potion: Distillate of Divine Healing III
+potfast3 = { 77792  ,7 },        // potion: Distillate of Divine Healing IV
+potfast4 = { 77793  ,7 },        // potion: Distillate of Divine Healing V
+potfast5 = { 77794  ,7 },        // potion: Distillate of Divine Healing VI
+potfast6 = { 77795  ,7 },        // potion: Distillate of Divine Healing VII
+potfast7 = { 77796  ,7 },        // potion: Distillate of Divine Healing VIII
+potfast8 = { 77797  ,7 },        // potion: Distillate of Divine Healing IX
+potfast9 = { 77798  ,7 },        // potion: Distillate of Divine Healing X
+potfast10 = { 35930  ,7 },        // potion: Distillate of Divine Healing XI
+potfast11 = { 35935  ,7 },        // potion: Distillate of Divine Healing XII
+potfast12 = { 35940  ,7 },        // potion: Distillate of Divine Healing XIII
+potfast13 = { 40554  ,7 },        // potion: Distillate of Divine Healing XIV
+potfast14 = { 56941  ,7 },        // potion: Distillate of Divine Healing XV
+potfast15 = { 64612  ,7 },        // potion: Distillate of Divine Healing XVI
+potfast16 = { 135337 ,7 },        // potion: Distillate of Divine Healing XVII
+
+potover0 = { 77779  ,7 },        // potion: Distillate of Celestial Healing I
+potover1 = { 77780  ,7 },        // potion: Distillate of Celestial Healing II
+potover2 = { 77781  ,7 },        // potion: Distillate of Celestial Healing III
+potover3 = { 77782  ,7 },        // potion: Distillate of Celestial Healing IV
+potover4 = { 77783  ,7 },        // potion: Distillate of Celestial Healing V
+potover5 = { 77784  ,7 },        // potion: Distillate of Celestial Healing VI
+potover6 = { 77785  ,7 },        // potion: Distillate of Celestial Healing VII
+potover7 = { 77786  ,7 },        // potion: Distillate of Celestial Healing VIII
+potover8 = { 77787  ,7 },        // potion: Distillate of Celestial Healing IX
+potover9 = { 77788  ,7 },        // potion: Distillate of Celestial Healing X
+potover10 = { 35931  ,7 },        // potion: Distillate of Celestial Healing XI
+potover11 = { 35936  ,7 },        // potion: Distillate of Celestial Healing XII
+potover12 = { 35941  ,7 },        // potion: Distillate of Celestial Healing XIII
+potover13 = { 40555  ,7 },        // potion: Distillate of Celestial Healing XIV
+potover14 = { 56942  ,7 },        // potion: Distillate of Celestial Healing XV
+potover15 = { 64613  ,7 },        // potion: Distillate of Celestial Healing XVI
+potover16 = { 135338 ,7 },        // potion: Distillate of Celestial Healing XVII
+#pragma endregion
+
+#pragma region Pal/Shd
+steely1 = { 19137  ,5 },        //spell Steely Stance lv 84 pal/shd UF
+steely2 = { 19138  ,5 },        //spell Steely Stance Rk. II
+steely3 = { 19139  ,5 },        //spell Steely Stance Rk. III
+steely4 = { 25270  ,5 },        //spell Stubborn Stance lv 89 pal/shd HoT
+steely5 = { 25271  ,5 },        //spell Stubborn Stance Rk. II
+steely6 = { 25272  ,5 },        //spell Stubborn Stance Rk. III
+steely7 = { 28314  ,5 },        //spell Stoic Stance lv 94 pal/shd VoA
+steely8 = { 28315  ,5 },        //spell Stoic Stance Rk. II
+steely9 = { 28316  ,5 },        //spell Stoic Stance Rk. III
+steely10 = { 34320  ,5 },        //spell Steadfast Stance lv 99 pal/shd RoF
+steely11 = { 34321  ,5 },        //spell Steadfast Stance Rk. II
+steely12 = { 34322  ,5 },        //spell Steadfast Stance Rk. III
+steely13 = { 43289  ,5 },        //spell Staunch Stance lv 104 pal/shd TDS
+steely14 = { 43290  ,5 },        //spell Staunch Stance Rk. II
+steely15 = { 43291  ,5 },        //spell Staunch Stance Rk. III
+steely16 = { 55320  ,5 },        // spell: Defiant Stance Lv 109 Pal/Shd RoS
+steely17 = { 55321  ,5 },        // spell: Defiant Stance Rk. II
+steely18 = { 55322  ,5 },        // spell: Defiant Stance Rk. III
+
+withstand1 = { 19131  ,3 },        // disc: Withstand Lv 83 pal/sk UF
+withstand2 = { 19132  ,3 },        // disc: Withstand Rk. II
+withstand3 = { 19133  ,3 },        // disc: Withstand Rk. III
+withstand4 = { 25264  ,3 },        // disc: Defy Lv 88 pal/sk HoT
+withstand5 = { 25265  ,3 },        // disc: Defy Rk. II
+withstand6 = { 25266  ,3 },        // disc: Defy Rk. III
+withstand7 = { 28308  ,3 },        // disc: Renounce Lv 93 pal/sk VoA
+withstand8 = { 28309  ,3 },        // disc: Renounce Rk. II
+withstand9 = { 28310  ,3 },        // disc: Renounce Rk. III
+withstand10 = { 34314  ,3 },        // disc: Reprove Lv 98 pal/sk VoA
+withstand11 = { 34315  ,3 },        // disc: Reprove Rk. II
+withstand12 = { 34316  ,3 },        // disc: Reprove Rk. III
+withstand13 = { 43283  ,3 },        // disc: Repel Lv 103 pal/sk TDS
+withstand14 = { 43284  ,3 },        // disc: Repel Rk. II
+withstand15 = { 43285  ,3 },        // disc: Repel Rk. III
+withstand16 = { 55317  ,3 },        // disc: Spurn Lv 108 Pal/Sk RoS
+withstand17 = { 55318  ,3 },        // disc: Spurn Rk. II
+withstand18 = { 55319  ,3 },        // dics: Spurn Rk. III
+#pragma endregion Pal/Shd
+
+#pragma region Abilities
+sbkstab = { 8      ,2 },        // skill: backstab
+sbash = { 10     ,2 },        // skill: bash
+sbegging = { 67     ,2 },        // skill: begging
+sdisarm = { 16     ,2 },        // skill: disarm
+sdrpunch = { 21     ,2 },        // skill: dragon punch
+sestrike = { 23     ,2 },        // skill: eagle strike
+sfeign = { 25     ,2 },        // skill: feign death
+sflykick = { 26     ,2 },        // skill: flying kick
+sforage = { 27     ,2 },        // skill: forage
+sfrenzy = { 74     ,2 },        // skill: frenzy
+shide = { 29     ,2 },        // skill: hide
+sintim = { 71     ,2 },        // skill: intimidation
+skick = { 30     ,2 },        // skill: kick
+smend = { 32     ,2 },        // skill: mend
+sppocket = { 48     ,2 },        // skill: pick pockets
+srndkick = { 38     ,2 },        // skill: round kick
+ssensetr = { 62     ,2 },        // skill: sense trap
+sslam = { 111    ,2 },        // skill: slam
+ssneak = { 42     ,2 },        // skill: sneak
+staunt = { 73     ,2 },        // skill: taunt
+stigclaw = { 52     ,2 },        // skill: tigerclaw
+#pragma endregion Abilities
 
 #pragma region Warrior - Class 1
 callchal = { 552    ,4 },        // aa: call of challenge
@@ -766,15 +872,15 @@ feign_bst = { 11073  ,4 },        // aa: playing possum
 
 feral1 = { 247    ,4 },        // aa: feral swipe
 
-fclaw1 = { 27119  ,3 },        // disc: flurry of claws lv 87 BST HoT
-fclaw2 = { 27120  ,3 },        // disc: flurry of claws rk. ii
-fclaw3 = { 27121  ,3 },        // disc: flurry of claws rk. iii
-fclaw4 = { 30271  ,3 },        // disc: Tumult of claws lv 92 BST Voa
-fclaw5 = { 30272  ,3 },        // disc: Tumult of claws rk. ii
-fclaw6 = { 30273  ,3 },        // disc: Tumult of claws rk. iii
-fclaw7 = { 36346  ,3 },        // disc: Clamor of Claws lv 97 BST Rof
-fclaw8 = { 36347  ,3 },        // disc: Clamor of Claws rk. ii
-fclaw9 = { 36348  ,3 },        // disc: Clamor of Claws rk. iii
+fclaw1 =  { 27119  ,3 },        // disc: flurry of claws lv 87 BST HoT
+fclaw2 =  { 27120  ,3 },        // disc: flurry of claws rk. ii
+fclaw3 =  { 27121  ,3 },        // disc: flurry of claws rk. iii
+fclaw4 =  { 30271  ,3 },        // disc: Tumult of claws lv 92 BST Voa
+fclaw5 =  { 30272  ,3 },        // disc: Tumult of claws rk. ii
+fclaw6 =  { 30273  ,3 },        // disc: Tumult of claws rk. iii
+fclaw7 =  { 36346  ,3 },        // disc: Clamor of Claws lv 97 BST Rof
+fclaw8 =  { 36347  ,3 },        // disc: Clamor of Claws rk. ii
+fclaw9 =  { 36348  ,3 },        // disc: Clamor of Claws rk. iii
 fclaw10 = { 40516  ,3 },        // disc: Focused Clamor of Claws lv 98 BST Rof
 fclaw11 = { 40517  ,3 },        // disc: Focused Clamor of Claws rk. ii
 fclaw12 = { 40518  ,3 },        // disc: Focused Clamor of Claws rk. iii
@@ -787,15 +893,15 @@ fclaw18 = { 57388  ,3 },        // disc: Storm of Claws Rk. III
 
 gorillasmash = { 988    ,4 },        // aa: gorilla smash
 
-rake1 = { 8782   ,3 },        // disc: rake
-rake2 = { 14158  ,3 },        // disc: harrow
-rake3 = { 14159  ,3 },        // disc: harrow rk. ii
-rake4 = { 14160  ,3 },        // disc: harrow rk. iii
-rake5 = { 18170  ,3 },        // disc: foray Lv 85 bst UF
-rake6 = { 18171  ,3 },        // disc: foray rk. ii
-rake7 = { 18172  ,3 },        // disc: foray rk. iii
-rake8 = { 27219  ,3 },        // disc: rush Lv 90 bst Hot
-rake9 = { 27220  ,3 },        // disc: rush rk. ii
+rake1 =  { 8782   ,3 },        // disc: rake
+rake2 =  { 14158  ,3 },        // disc: harrow
+rake3 =  { 14159  ,3 },        // disc: harrow rk. ii
+rake4 =  { 14160  ,3 },        // disc: harrow rk. iii
+rake5 =  { 18170  ,3 },        // disc: foray Lv 85 bst UF
+rake6 =  { 18171  ,3 },        // disc: foray rk. ii
+rake7 =  { 18172  ,3 },        // disc: foray rk. iii
+rake8 =  { 27219  ,3 },        // disc: rush Lv 90 bst Hot
+rake9 =  { 27220  ,3 },        // disc: rush rk. ii
 rake10 = { 27221  ,3 },        // disc: rush rk. iii
 rake11 = { 30368  ,3 },        // disc: Barrage Lv 95 bst Hot
 rake12 = { 30369  ,3 },        // disc: Barrage rk. ii
@@ -812,15 +918,15 @@ rake22 = { 57452  ,3 },        // disc: Mangle Rk. III
 
 joltbst1 = { 362    ,4 },        // aa: roar of thunder
 
-jltkicks1 = { 10086  ,3 },        // disc: jolting kicks
-jltkicks2 = { 10087  ,3 },        // disc: jolting kicks rk ii
-jltkicks3 = { 10088  ,3 },        // disc: jolting kicks rk iii
-jltkicks4 = { 15020  ,3 },        // disc: Jolting Snapkicks
-jltkicks5 = { 15021  ,3 },        // disc: Jolting Snapkicks rk ii
-jltkicks6 = { 15022  ,3 },        // disc: Jolting Snapkicks rk iii
-jltkicks7 = { 19152  ,3 },        // disc: Jolting Frontkicks Lv 82 rng UF
-jltkicks8 = { 19153  ,3 },        // disc: Jolting Frontkicks rk ii
-jltkicks9 = { 19154  ,3 },        // disc: Jolting Frontkicks rk iii
+jltkicks1 =  { 10086  ,3 },        // disc: jolting kicks
+jltkicks2 =  { 10087  ,3 },        // disc: jolting kicks rk ii
+jltkicks3 =  { 10088  ,3 },        // disc: jolting kicks rk iii
+jltkicks4 =  { 15020  ,3 },        // disc: Jolting Snapkicks
+jltkicks5 =  { 15021  ,3 },        // disc: Jolting Snapkicks rk ii
+jltkicks6 =  { 15022  ,3 },        // disc: Jolting Snapkicks rk iii
+jltkicks7 =  { 19152  ,3 },        // disc: Jolting Frontkicks Lv 82 rng UF
+jltkicks8 =  { 19153  ,3 },        // disc: Jolting Frontkicks rk ii
+jltkicks9 =  { 19154  ,3 },        // disc: Jolting Frontkicks rk iii
 jltkicks10 = { 25432  ,3 },        // disc: Jolting Hook kicks Lv Lv 87 rng HoT
 jltkicks11 = { 25433  ,3 },        // disc: Jolting Hook kicks rk ii
 jltkicks12 = { 25434  ,3 },        // disc: Jolting Hook kicks rk iii
@@ -841,15 +947,15 @@ ravens = { 987    ,4 },        // aa: raven's claw
 #pragma endregion
 
 #pragma region Berserker - Class 16
-bloodlust1 = { 22506  ,3 },        // Disc: Shared Bloodlust Lv 85 ber UF
-bloodlust2 = { 22507  ,3 },        // Disc: Shared Bloodlust  Rk. II
-bloodlust3 = { 22508  ,3 },        // Disc: Shared Bloodlust  Rk. III
-bloodlust4 = { 27317  ,3 },        // Disc: Shared Brutality Lv 90 ber HoT
-bloodlust5 = { 27318  ,3 },        // Disc: Shared Brutality Rk. II
-bloodlust6 = { 27319  ,3 },        // Disc: Shared Brutality Rk. III
-bloodlust7 = { 30475  ,3 },        // Disc: Shared Savagery Lv 95 ber VoA
-bloodlust8 = { 30476  ,3 },        // Disc: Shared Savagery Rk. II
-bloodlust9 = { 30477  ,3 },        // Disc: Shared Savagery Rk. III
+bloodlust1 =  { 22506  ,3 },        // Disc: Shared Bloodlust Lv 85 ber UF
+bloodlust2 =  { 22507  ,3 },        // Disc: Shared Bloodlust  Rk. II
+bloodlust3 =  { 22508  ,3 },        // Disc: Shared Bloodlust  Rk. III
+bloodlust4 =  { 27317  ,3 },        // Disc: Shared Brutality Lv 90 ber HoT
+bloodlust5 =  { 27318  ,3 },        // Disc: Shared Brutality Rk. II
+bloodlust6 =  { 27319  ,3 },        // Disc: Shared Brutality Rk. III
+bloodlust7 =  { 30475  ,3 },        // Disc: Shared Savagery Lv 95 ber VoA
+bloodlust8 =  { 30476  ,3 },        // Disc: Shared Savagery Rk. II
+bloodlust9 =  { 30477  ,3 },        // Disc: Shared Savagery Rk. III
 bloodlust10 = { 36541  ,3 },        // Disc: Shared Viciousness Lv 100 ber RoF
 bloodlust11 = { 36542  ,3 },        // Disc: Shared Viciousness Rk. II
 bloodlust12 = { 36543  ,3 },        // Disc: Shared Viciousness Rk. III
@@ -932,15 +1038,15 @@ joltber29 = { 60772  ,3 },        // Disc: Jarring Strike - Level 114 - TOV
 joltber30 = { 60773  ,3 },
 joltber31 = { 60774  ,3 },
 
-opfrenzy1 = { 16918  ,3 },        // Disc: Overpowering Frenzy lv 81 ber UF
-opfrenzy2 = { 16919  ,3 },        // Disc: Overpowering Frenzy Rk. II
-opfrenzy3 = { 16920  ,3 },        // Disc: Overpowering Frenzy Rk. III
-opfrenzy4 = { 27260  ,3 },        // Disc: Overwhelming Frenzy  Lv 86 ber Hot
-opfrenzy5 = { 27261  ,3 },        // Disc: Overwhelming Frenzy Rk. II
-opfrenzy6 = { 27262  ,3 },        // Disc: Overwhelming Frenzy Rk. III
-opfrenzy7 = { 30409  ,3 },        // Disc: Conquering Frenzy  Lv 91 ber VoA
-opfrenzy8 = { 30410  ,3 },        // Disc: Conquering Frenzy Rk. II
-opfrenzy9 = { 30411  ,3 },        // Disc: Conquering Frenzy Rk. III
+opfrenzy1 =  { 16918  ,3 },        // Disc: Overpowering Frenzy lv 81 ber UF
+opfrenzy2 =  { 16919  ,3 },        // Disc: Overpowering Frenzy Rk. II
+opfrenzy3 =  { 16920  ,3 },        // Disc: Overpowering Frenzy Rk. III
+opfrenzy4 =  { 27260  ,3 },        // Disc: Overwhelming Frenzy  Lv 86 ber Hot
+opfrenzy5 =  { 27261  ,3 },        // Disc: Overwhelming Frenzy Rk. II
+opfrenzy6 =  { 27262  ,3 },        // Disc: Overwhelming Frenzy Rk. III
+opfrenzy7 =  { 30409  ,3 },        // Disc: Conquering Frenzy  Lv 91 ber VoA
+opfrenzy8 =  { 30410  ,3 },        // Disc: Conquering Frenzy Rk. II
+opfrenzy9 =  { 30411  ,3 },        // Disc: Conquering Frenzy Rk. III
 opfrenzy10 = { 36502  ,3 },        // Disc: Vanquishing Frenzy  Lv 96 ber RoF
 opfrenzy11 = { 36503  ,3 },        // Disc: Vanquishing Frenzy Rk. II
 opfrenzy12 = { 36504  ,3 },        // Disc: Vanquishing Frenzy Rk. III
@@ -986,11 +1092,11 @@ slapface1 =  { 27269  ,3 },        // Disc: slap in the face Lv 87 ber HoT
 slapface2 =  { 27270  ,3 },        // Disc: slap in the face rk. ii
 slapface3 =  { 27271  ,3 },        // Disc: slap in the face rk. iii
 slapface4 =  { 30418  ,3 },        // Disc: Kick in the Teeth Lv 92 ber VoA
-slapface5 =  { 30419  ,3 },        // Disc: Kick in the Teeth rk. ii
-slapface6 =  { 30420  ,3 },        // Disc: Kick in the Teeth rk. iii
-slapface7 =  { 36508  ,3 },        // Disc: Punch in the Throat  Lv 97 ber RoF
-slapface8 =  { 36509  ,3 },        // Disc: Punch in the Throat rk. ii
-slapface9 =  { 36510  ,3 },        // Disc: Punch in the Throat rk. iii
+slapface5 = { 30419  ,3 },        // Disc: Kick in the Teeth rk. ii
+slapface6 = { 30420  ,3 },        // Disc: Kick in the Teeth rk. iii
+slapface7 = { 36508  ,3 },        // Disc: Punch in the Throat  Lv 97 ber RoF
+slapface8 = { 36509  ,3 },        // Disc: Punch in the Throat rk. ii
+slapface9 = { 36510  ,3 },        // Disc: Punch in the Throat rk. iii
 slapface10 = { 45227  ,3 },        // Disc: Kick in the Shins  Lv 102 ber TDS
 slapface11 = { 45228  ,3 },        // Disc: Kick in the Shins rk. ii
 slapface12 = { 45229  ,3 },        // Disc: Kick in the Shins rk. iii
@@ -1001,15 +1107,15 @@ slapface16 = { 60734  ,3 },		   // Disc: Rabbit Punch - Level 112 - ToV
 slapface17 = { 60735  ,3 },
 slapface18 = { 60736  ,3 },
 
-stunber1 =  { 4931   ,3 },        // Disc: head strike
-stunber2 =  { 4932   ,3 },        // Disc: head pummel
-stunber3 =  { 4933   ,3 },        // Disc: head crush
-stunber4 =  { 6170   ,3 },        // Disc: mind strike
-stunber5 =  { 10917  ,3 },        // Disc: temple blow
-stunber6 =  { 10918  ,3 },        // Disc: temple blow rk. ii
-stunber7 =  { 10919  ,3 },        // Disc: temple blow rk. iii
-stunber8 =  { 14183  ,3 },        // Disc: temple strike
-stunber9 =  { 14184  ,3 },        // Disc: temple strike rk. ii
+stunber1 = { 4931   ,3 },        // Disc: head strike
+stunber2 = { 4932   ,3 },        // Disc: head pummel
+stunber3 = { 4933   ,3 },        // Disc: head crush
+stunber4 = { 6170   ,3 },        // Disc: mind strike
+stunber5 = { 10917  ,3 },        // Disc: temple blow
+stunber6 = { 10918  ,3 },        // Disc: temple blow rk. ii
+stunber7 = { 10919  ,3 },        // Disc: temple blow rk. iii
+stunber8 = { 14183  ,3 },        // Disc: temple strike
+stunber9 = { 14184  ,3 },        // Disc: temple strike rk. ii
 stunber10 = { 14185  ,3 },        // Disc: temple strike rk. iii
 stunber11 = { 18204  ,3 },        // Disc: Temple Bash Lv 83 ber UF
 stunber12 = { 18205  ,3 },        // Disc: Temple Bash rk. ii
@@ -1033,15 +1139,15 @@ stunber29 = { 60760  ,3 },        // Disc: Temple Crack - Level 113 - TOV
 stunber30 = { 60761  ,3 },
 stunber31 = { 60762  ,3 },
 
-volley1 =  { 6754   ,3 },        // Disc: rage volley
-volley2 =  { 6729   ,3 },        // Disc: destroyer's volley
-volley3 =  { 10926  ,3 },        // Disc: giant slayer's volley
-volley4 =  { 10927  ,3 },        // Disc: giant slayer's volley rk ii
-volley5 =  { 10928  ,3 },        // Disc: giant slayer's volley rk iii
-volley6 =  { 11928  ,3 },        // Disc: annihilator's volley
-volley7 =  { 11929  ,3 },        // Disc: annihilator's volley rk ii
-volley8 =  { 11930  ,3 },        // Disc: annihilator's volley rk iii
-volley9 =  { 14195  ,3 },        // Disc: decimator's volley
+volley1 = { 6754   ,3 },        // Disc: rage volley
+volley2 = { 6729   ,3 },        // Disc: destroyer's volley
+volley3 = { 10926  ,3 },        // Disc: giant slayer's volley
+volley4 = { 10927  ,3 },        // Disc: giant slayer's volley rk ii
+volley5 = { 10928  ,3 },        // Disc: giant slayer's volley rk iii
+volley6 = { 11928  ,3 },        // Disc: annihilator's volley
+volley7 = { 11929  ,3 },        // Disc: annihilator's volley rk ii
+volley8 = { 11930  ,3 },        // Disc: annihilator's volley rk iii
+volley9 = { 14195  ,3 },        // Disc: decimator's volley
 volley10 = { 14196  ,3 },        // Disc: decimator's volley rk ii
 volley11 = { 14197  ,3 },        // Disc: decimator's volley rk iii
 volley12 = { 18216  ,3 },        // Disc: Eradicator's Volley Lv 84 ber UF
@@ -1086,115 +1192,10 @@ vigber17 = { 57532  ,3 },        // Disc: Mangling Axe Throw Rk. II
 vigber18 = { 57533  ,3 },        // Disc: Mangling Axe Throw Rk. III
 vigber19 = { 60757  ,3 },        // Disc: Vindicating Axe Throw - Level 
 vigber20 = { 60758  ,3 },
-vigber21 = { 60759  ,3 },
+vigber21 = { 60759  ,3 };
 #pragma endregion
 
-#pragma region Nec/Mag/Bst
-mendpet1 = { 58     ,4 },        // aa: mend companion
-mendpet2 = { 418    ,4 },        // aa: replenish companion
-#pragma endregion
 
-#pragma region Potions
-potfast0 = { 77789  ,7 },        // potion: Distillate of Divine Healing I
-potfast1 = { 77790  ,7 },        // potion: Distillate of Divine Healing II
-potfast2 = { 77791  ,7 },        // potion: Distillate of Divine Healing III
-potfast3 = { 77792  ,7 },        // potion: Distillate of Divine Healing IV
-potfast4 = { 77793  ,7 },        // potion: Distillate of Divine Healing V
-potfast5 = { 77794  ,7 },        // potion: Distillate of Divine Healing VI
-potfast6 = { 77795  ,7 },        // potion: Distillate of Divine Healing VII
-potfast7 = { 77796  ,7 },        // potion: Distillate of Divine Healing VIII
-potfast8 = { 77797  ,7 },        // potion: Distillate of Divine Healing IX
-potfast9 = { 77798  ,7 },        // potion: Distillate of Divine Healing X
-potfast10 = { 35930  ,7 },        // potion: Distillate of Divine Healing XI
-potfast11 = { 35935  ,7 },        // potion: Distillate of Divine Healing XII
-potfast12 = { 35940  ,7 },        // potion: Distillate of Divine Healing XIII
-potfast13 = { 40554  ,7 },        // potion: Distillate of Divine Healing XIV
-potfast14 = { 56941  ,7 },        // potion: Distillate of Divine Healing XV
-potfast15 = { 64612  ,7 },        // potion: Distillate of Divine Healing XVI
-potfast16 = { 135337 ,7 },        // potion: Distillate of Divine Healing XVII
-
-potover0 = { 77779  ,7 },        // potion: Distillate of Celestial Healing I
-potover1 = { 77780  ,7 },        // potion: Distillate of Celestial Healing II
-potover2 = { 77781  ,7 },        // potion: Distillate of Celestial Healing III
-potover3 = { 77782  ,7 },        // potion: Distillate of Celestial Healing IV
-potover4 = { 77783  ,7 },        // potion: Distillate of Celestial Healing V
-potover5 = { 77784  ,7 },        // potion: Distillate of Celestial Healing VI
-potover6 = { 77785  ,7 },        // potion: Distillate of Celestial Healing VII
-potover7 = { 77786  ,7 },        // potion: Distillate of Celestial Healing VIII
-potover8 = { 77787  ,7 },        // potion: Distillate of Celestial Healing IX
-potover9 = { 77788  ,7 },        // potion: Distillate of Celestial Healing X
-potover10 = { 35931  ,7 },        // potion: Distillate of Celestial Healing XI
-potover11 = { 35936  ,7 },        // potion: Distillate of Celestial Healing XII
-potover12 = { 35941  ,7 },        // potion: Distillate of Celestial Healing XIII
-potover13 = { 40555  ,7 },        // potion: Distillate of Celestial Healing XIV
-potover14 = { 56942  ,7 },        // potion: Distillate of Celestial Healing XV
-potover15 = { 64613  ,7 },        // potion: Distillate of Celestial Healing XVI
-potover16 = { 135338 ,7 },        // potion: Distillate of Celestial Healing XVII
-#pragma endregion
-
-#pragma region Pal/Shd
-steely1        = { 19137  ,5 },        //spell Steely Stance lv 84 pal/shd UF
-steely2        = { 19138  ,5 },        //spell Steely Stance Rk. II
-steely3        = { 19139  ,5 },        //spell Steely Stance Rk. III
-steely4        = { 25270  ,5 },        //spell Stubborn Stance lv 89 pal/shd HoT
-steely5        = { 25271  ,5 },        //spell Stubborn Stance Rk. II
-steely6        = { 25272  ,5 },        //spell Stubborn Stance Rk. III
-steely7        = { 28314  ,5 },        //spell Stoic Stance lv 94 pal/shd VoA
-steely8        = { 28315  ,5 },        //spell Stoic Stance Rk. II
-steely9        = { 28316  ,5 },        //spell Stoic Stance Rk. III
-steely10       = { 34320  ,5 },        //spell Steadfast Stance lv 99 pal/shd RoF
-steely11       = { 34321  ,5 },        //spell Steadfast Stance Rk. II
-steely12       = { 34322  ,5 },        //spell Steadfast Stance Rk. III
-steely13       = { 43289  ,5 },        //spell Staunch Stance lv 104 pal/shd TDS
-steely14       = { 43290  ,5 },        //spell Staunch Stance Rk. II
-steely15       = { 43291  ,5 },        //spell Staunch Stance Rk. III
-steely16       = { 55320  ,5 },        // spell: Defiant Stance Lv 109 Pal/Shd RoS
-steely17       = { 55321  ,5 },        // spell: Defiant Stance Rk. II
-steely18       = { 55322  ,5 },        // spell: Defiant Stance Rk. III
-
-withstand1 = { 19131  ,3 },        // disc: Withstand Lv 83 pal/sk UF
-withstand2 = { 19132  ,3 },        // disc: Withstand Rk. II
-withstand3 = { 19133  ,3 },        // disc: Withstand Rk. III
-withstand4 = { 25264  ,3 },        // disc: Defy Lv 88 pal/sk HoT
-withstand5 = { 25265  ,3 },        // disc: Defy Rk. II
-withstand6 = { 25266  ,3 },        // disc: Defy Rk. III
-withstand7 = { 28308  ,3 },        // disc: Renounce Lv 93 pal/sk VoA
-withstand8 = { 28309  ,3 },        // disc: Renounce Rk. II
-withstand9 = { 28310  ,3 },        // disc: Renounce Rk. III
-withstand10 = { 34314  ,3 },        // disc: Reprove Lv 98 pal/sk VoA
-withstand11 = { 34315  ,3 },        // disc: Reprove Rk. II
-withstand12 = { 34316  ,3 },        // disc: Reprove Rk. III
-withstand13 = { 43283  ,3 },        // disc: Repel Lv 103 pal/sk TDS
-withstand14 = { 43284  ,3 },        // disc: Repel Rk. II
-withstand15 = { 43285  ,3 },        // disc: Repel Rk. III
-withstand16 = { 55317  ,3 },        // disc: Spurn Lv 108 Pal/Sk RoS
-withstand17 = { 55318  ,3 },        // disc: Spurn Rk. II
-withstand18 = { 55319  ,3 },        // dics: Spurn Rk. III
-#pragma endregion Pal/Shd
-
-#pragma region Abilities
-sbkstab        = { 8      ,2 },        // skill: backstab
-sbash          = { 10     ,2 },        // skill: bash
-sbegging       = { 67     ,2 },        // skill: begging
-sdisarm        = { 16     ,2 },        // skill: disarm
-sdrpunch       = { 21     ,2 },        // skill: dragon punch
-sestrike       = { 23     ,2 },        // skill: eagle strike
-sfeign         = { 25     ,2 },        // skill: feign death
-sflykick       = { 26     ,2 },        // skill: flying kick
-sforage        = { 27     ,2 },        // skill: forage
-sfrenzy        = { 74     ,2 },        // skill: frenzy
-shide          = { 29     ,2 },        // skill: hide
-sintim         = { 71     ,2 },        // skill: intimidation
-skick          = { 30     ,2 },        // skill: kick
-smend          = { 32     ,2 },        // skill: mend
-sppocket       = { 48     ,2 },        // skill: pick pockets
-srndkick       = { 38     ,2 },        // skill: round kick
-ssensetr       = { 62     ,2 },        // skill: sense trap
-sslam          = { 111    ,2 },        // skill: slam
-ssneak         = { 42     ,2 },        // skill: sneak
-staunt         = { 73     ,2 },        // skill: taunt
-stigclaw       = { 52     ,2 };        // skill: tigerclaw
-#pragma endregion Abilities
 
 #define DECLARE_ABILITY_OPTION( __var, __key, __help, __default, __show) char* __var[]  = {\
                                                                                   __key, \
