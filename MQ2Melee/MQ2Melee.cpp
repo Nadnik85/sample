@@ -31,7 +31,7 @@
 //							| 2019-02-01: Updated Immobile flags to return false for a litte after being summoned
 //							| 2019-02-07: Fixed Two Handed Bash skills... + saar zerker tbl disc...
 //							| 2019-11-14: Updated by Sic/CWTN Yaulp to default to "off"
-//							| 2019-12-29: Updated by ChatWithThisname-> Added Berserker discs for ToV.
+//							| 2019-12-29: Updated by ChatWithThisname-> Added Warrior, Berserker, Rogue discs for ToV. Rearranged information by class instead of alphabetically.
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
 // SHOW_ABILITY:    0=0ff, 1=Display every ability that plugin use.
 // SHOW_ATTACKING:  0=0ff, 1=Display Attacking Target
