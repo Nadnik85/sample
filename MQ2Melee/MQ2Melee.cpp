@@ -31,6 +31,7 @@
 //							| 2019-02-01: Updated Immobile flags to return false for a litte after being summoned
 //							| 2019-02-07: Fixed Two Handed Bash skills... + saar zerker tbl disc...
 //							| 2019-11-14: Updated by Sic/CWTN Yaulp to default to "off"
+//							| 2019-12-29: Updated by ChatWithThisname-> Added Berserker discs for ToV.
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
 // SHOW_ABILITY:    0=0ff, 1=Display every ability that plugin use.
 // SHOW_ATTACKING:  0=0ff, 1=Display Attacking Target
@@ -203,25 +204,6 @@ bleed16        = { 56303  ,3 },        // disc: Slice Lv 108 rog RoS
 bleed17        = { 56304  ,3 },        // disc: Slice Rk. II
 bleed18        = { 56305  ,3 },        // disc: Slice Rk. III
 
-bloodlust1     = { 22506  ,3 },        // disc: Shared Bloodlust Lv 85 ber UF
-bloodlust2     = { 22507  ,3 },        // disc: Shared Bloodlust  Rk. II
-bloodlust3     = { 22508  ,3 },        // disc: Shared Bloodlust  Rk. III
-bloodlust4     = { 27317  ,3 },        // disc: Shared Brutality Lv 90 ber HoT
-bloodlust5     = { 27318  ,3 },        // disc: Shared Brutality Rk. II
-bloodlust6     = { 27319  ,3 },        // disc: Shared Brutality Rk. III
-bloodlust7     = { 30475  ,3 },        // disc: Shared Savagery Lv 95 ber VoA
-bloodlust8     = { 30476  ,3 },        // disc: Shared Savagery Rk. II
-bloodlust9     = { 30477  ,3 },        // disc: Shared Savagery Rk. III
-bloodlust10    = { 36541  ,3 },        // disc: Shared Viciousness Lv 100 ber RoF
-bloodlust11    = { 36542  ,3 },        // disc: Shared Viciousness Rk. II
-bloodlust12    = { 36543  ,3 },        // disc: Shared Viciousness Rk. III
-bloodlust13    = { 45278  ,3 },        // disc: Shared Cruelty Lv 105 ber TDS
-bloodlust14    = { 45279  ,3 },        // disc: Shared Cruelty Rk. II
-bloodlust15    = { 45280  ,3 },        // disc: Shared Cruelty Rk. III
-bloodlust16    = { 57558  ,3 },        // disc: Shared Ruthlessness Lv 110 Ber RoS
-bloodlust17    = { 57559  ,3 },        // disc: Shared Ruthlessness Rk. II
-bloodlust18    = { 57560  ,3 },        // disc: Shared Ruthlessness Rk. III
-
 bvivi1         = { 27098  ,3 },        // disc: Bestial Vivisection lv 86 BST HoT
 bvivi2         = { 27099  ,3 },        // disc: Bestial Vivisection Rk. II
 bvivi3         = { 27100  ,3 },        // disc: Bestial Vivisection Rk. III
@@ -246,39 +228,7 @@ cloud4         = { 40229  ,3 },        // disc: Phantom Partisan Lv 100 mnk HoT
 cloud5         = { 40230  ,3 },        // disc: Phantom Partisan rk. ii
 cloud6         = { 40231  ,3 },        // disc: Phantom Partisan rk. iii
 
-cripple1       = { 4928   ,3 },        // disc: leg strike
-cripple2       = { 4929   ,3 },        // disc: leg cut
-cripple3       = { 4930   ,3 },        // disc: leg slice
-cripple4       = { 8205   ,3 },        // disc: crippling strike
-cripple5       = { 10908  ,3 },        // disc: tendon cleave
-cripple6       = { 10909  ,3 },        // disc: tendon cleave rk. ii
-cripple7       = { 10910  ,3 },        // disc: tendon cleave rk. iii
-cripple8       = { 14177  ,3 },        // disc: tendon sever
-cripple9       = { 14178  ,3 },        // disc: tendon sever rk. ii
-cripple10      = { 14179  ,3 },        // disc: tendon sever rk. iii
-cripple11      = { 18198  ,3 },        // disc: tendon shear Lv 81 ber UF
-cripple12      = { 18199  ,3 },        // disc: tendon shear rk. ii
-cripple13      = { 18200  ,3 },        // disc: tendon shear rk. iii
-cripple14      = { 27263  ,3 },        // disc: tendon lacerate Lc 86 ber HoT
-cripple15      = { 27264  ,3 },        // disc: tendon lacerate rk. ii
-cripple16      = { 27265  ,3 },        // disc: tendon lacerate rk. iii
-cripple17      = { 30412  ,3 },        // disc: Tendon Slash Lv 91 ber VoA
-cripple18      = { 30413  ,3 },        // disc: Tendon Slash rk. ii
-cripple19      = { 30414  ,3 },        // disc: Tendon Slash rk. iii
-cripple20      = { 36505  ,3 },        // disc: Tendon Gash Lv 96 ber RoF
-cripple21      = { 36506  ,3 },        // disc: Tendon Gash Rk. II
-cripple22      = { 36507  ,3 },        // disc: Tendon Gash Rk. III
-cripple23      = { 45224  ,3 },        // disc: Tendon Tear Lv 101 ber TDS
-cripple24      = { 45225  ,3 },        // disc: Tendon Tear Rk. II
-cripple25      = { 45226  ,3 },        // disc: Tendon Tear Rk. III
-cripple26      = { 57516  ,3 },        // disc: Tendon Rupture Lv 106 Ber RoS
-cripple27      = { 57517  ,3 },        // disc: Tendon Rupture Rk. II
-cripple28      = { 57518  ,3 },        // disc: Tendon Rupture Rk. III
 
-cryhavoc1      = { 8003   ,3 },        // disc: cry havoc
-cryhavoc2      = { 36556  ,3 },        // disc: Cry Carnage lev 98 Rof
-cryhavoc3      = { 36557  ,3 },        // disc: Cry Carnage Rk. II 
-cryhavoc4      = { 36558  ,3 },        // disc: Cry Carnage Rk. III
 
 cstrike        = { 11080  ,4 },        // aa: Chameleon Strike
 
@@ -435,34 +385,7 @@ honor22        = { 55353  ,5 },        // spell: Refute for Honor Lv 107 Pal RoS
 honor23        = { 55354  ,5 },        // spell: Refute for Honor Rk. II
 honor24        = { 55355  ,5 },        // spell: Refute for Honor Rk. III
 
-joltber1       = { 4934   ,3 },        // disc: diversive strike
-joltber2       = { 4935   ,3 },        // disc: distracting strike
-joltber3       = { 4936   ,3 },        // disc: confusing strike
-joltber4       = { 6171   ,3 },        // disc: baffling strike
-joltber5       = { 10920  ,3 },        // disc: jarring strike
-joltber6       = { 10921  ,3 },        // disc: jarring strike rk ii
-joltber7       = { 10922  ,3 },        // disc: jarring strike rk iii
-joltber8       = { 14186  ,3 },        // disc: jarring smash
-joltber9       = { 14187  ,3 },        // disc: jarring smash rk ii
-joltber10      = { 14188  ,3 },        // disc: jarring smash rk iii
-joltber11      = { 18207  ,3 },        // disc: Jarring Clash Lev 85 ber UF
-joltber12      = { 18208  ,3 },        // disc: Jarring Clash rk ii
-joltber13      = { 18209  ,3 },        // disc: Jarring Clash rk iii
-joltber14      = { 27290  ,3 },        // disc: Jarring Slam Lv 89 ber HoT
-joltber15      = { 27291  ,3 },        // disc: Jarring Slam rk ii
-joltber16      = { 27292  ,3 },        // disc: Jarring Slam rk iii
-joltber17      = { 30445  ,3 },        // disc: Jarring Blow Lv 94 ber VoA
-joltber18      = { 30446  ,3 },        // disc: Jarring Blow rk ii
-joltber19      = { 30447  ,3 },        // disc: Jarring Blow rk iii
-joltber20      = { 36526  ,3 },        // disc: Jarring Crush Lv 99 ber RoF
-joltber21      = { 36527  ,3 },        // disc: Jarring Crush rk ii
-joltber22      = { 36528  ,3 },        // disc: Jarring Crush rk iii
-joltber23      = { 45266  ,3 },        // disc: Jarring Smite Lv 104 ber TDS
-joltber24      = { 45267  ,3 },        // disc: Jarring Smite rk ii
-joltber25      = { 45268  ,3 },        // disc: Jarring Smite rk iii
-joltber26      = { 57549  ,3 },        // disc: Jarring Jolt Lv 109 Ber RoS
-joltber27      = { 57550  ,3 },        // disc: Jarring Jolt Rk. II
-joltber28      = { 57551  ,3 },        // disc: Jarring Jolt Rk. III
+
 
 joltbst1       = { 362    ,4 },        // aa: roar of thunder
 
@@ -558,24 +481,7 @@ monkey1        = { 22525  ,3 },        // disc: Drunken Monkey Style Lv 85 mnk U
 monkey2        = { 22526  ,3 },        // disc: Drunken Monkey Style rk .ii
 monkey3        = { 22527  ,3 },        // disc: Drunken Monkey Style rk iii
 
-opfrenzy1      = { 16918  ,3 },        // disc: Overpowering Frenzy lv 81 ber UF
-opfrenzy2      = { 16919  ,3 },        // disc: Overpowering Frenzy Rk. II
-opfrenzy3      = { 16920  ,3 },        // disc: Overpowering Frenzy Rk. III
-opfrenzy4      = { 27260  ,3 },        // disc: Overwhelming Frenzy  Lv 86 ber Hot
-opfrenzy5      = { 27261  ,3 },        // disc: Overwhelming Frenzy Rk. II
-opfrenzy6      = { 27262  ,3 },        // disc: Overwhelming Frenzy Rk. III
-opfrenzy7      = { 30409  ,3 },        // disc: Conquering Frenzy  Lv 91 ber VoA
-opfrenzy8      = { 30410  ,3 },        // disc: Conquering Frenzy Rk. II
-opfrenzy9      = { 30411  ,3 },        // disc: Conquering Frenzy Rk. III
-opfrenzy10     = { 36502  ,3 },        // disc: Vanquishing Frenzy  Lv 96 ber RoF
-opfrenzy11     = { 36503  ,3 },        // disc: Vanquishing Frenzy Rk. II
-opfrenzy12     = { 36504  ,3 },        // disc: Vanquishing Frenzy Rk. III
-opfrenzy13     = { 45221  ,3 },        // disc: Demolishing Frenzy  Lv 101 ber TDS
-opfrenzy14     = { 45222  ,3 },        // disc: Demolishing Frenzy Rk. II
-opfrenzy15     = { 45223  ,3 },        // disc: Demolishing Frenzy Rk. III
-opfrenzy16     = { 57513  ,3 },        // disc: Mangling Frenzy Lv 106 Ber RoS
-opfrenzy17     = { 57514  ,3 },        // disc: Mangling Frenzy Rk. II
-opfrenzy18     = { 57515  ,3 },        // disc: Mangling Frenzy Rk. III
+
 
 opstrke1       = { 15375  ,3 },        // disc: Opportunistic Strike Lv 78 war
 opstrke2       = { 15376  ,3 },        // disc: Opportunistic Strike rk ii
@@ -628,7 +534,7 @@ potfast12      = { 35940  ,7 },        // potion: Distillate of Divine Healing X
 potfast13      = { 40554  ,7 },        // potion: Distillate of Divine Healing XIV
 potfast14      = { 56941  ,7 },        // potion: Distillate of Divine Healing XV
 potfast15      = { 64612  ,7 },        // potion: Distillate of Divine Healing XVI
-potfast16      = { 135337 ,7 },       // potion: Distillate of Divine Healing XVII
+potfast16      = { 135337 ,7 },        // potion: Distillate of Divine Healing XVII
 
 potover0       = { 77779  ,7 },        // potion: Distillate of Celestial Healing I
 potover1       = { 77780  ,7 },        // potion: Distillate of Celestial Healing II
@@ -746,31 +652,256 @@ rake20         = { 57450  ,3 },        // disc: Mangle Lv 109 Bst RoS
 rake21         = { 57451  ,3 },        // disc: Mangle Rk. II
 rake22         = { 57452  ,3 },        // disc: Mangle Rk. III
 
-rallos1        = { 19741  ,3 },        // disc: Axe of Rallos Lv 85 ber UF
-rallos2        = { 19742  ,3 },        // disc: Axe of Rallos Rk. II
-rallos3        = { 19743  ,3 },        // disc: Axe of Rallos Rk. III
-rallos4        = { 27293  ,3 },        // disc: Axe of Graster Lv 90 ber HoT
-rallos5        = { 27294  ,3 },        // disc: Axe of Graster Rk. II
-rallos6        = { 27295  ,3 },        // disc: Axe of Graster Rk. III
-rallos7        = { 30448  ,3 },        // disc: Axe of Illdaera Lv 95 ber VoA
-rallos8        = { 30449  ,3 },        // disc: Axe of Illdaera Rk. II
-rallos9        = { 30450  ,3 },        // disc: Axe of Illdaera Rk. III
-rallos10       = { 30658  ,3 },        // disc: Axe of Zurel Lv 100 ber VoA
-rallos11       = { 30659  ,3 },        // disc: Axe of Zurel Rk. II
-rallos12       = { 30660  ,3 },        // disc: Axe of Zurel Rk. III
-rallos13       = { 45284  ,3 },        // disc: Axe of Numicia Lv 105 ber TDS
-rallos14       = { 45285  ,3 },        // disc: Axe of Numicia Rk. II
-rallos15       = { 45286  ,3 },        // disc: Axe of Numicia Rk. III
-rallos16       = { 50371  ,3 },        // disc: Axe of the Aeons ber 103 eok
-rallos17       = { 50372  ,3 },        // disc: Axe of the Aeons Rk. II
-rallos18       = { 50373  ,3 },        // disc: Axe of the Aeons Rk. III
-rallos19       = { 58273  ,3 },        // disc: Axe of Empyr 107 ber TBL
-rallos20       = { 58274  ,3 },        // disc: Axe of Empyr Rk. II
-rallos21       = { 58275  ,3 },        // disc: Axe of Empyr Rk. III
-rallos22       = { 57564  ,3 },        // disc: Axe of Rekatok Lv 110 Ber RoS
-rallos23       = { 57565  ,3 },        // disc: Axe of Rekatok Rk. II
-rallos24       = { 57566  ,3 },        // disc: Axe of Rekatok Rk. III
+//Berserker - Class 16
 
+bloodlust1 = { 22506  ,3 },        // Disc: Shared Bloodlust Lv 85 ber UF
+bloodlust2 = { 22507  ,3 },        // Disc: Shared Bloodlust  Rk. II
+bloodlust3 = { 22508  ,3 },        // Disc: Shared Bloodlust  Rk. III
+bloodlust4 = { 27317  ,3 },        // Disc: Shared Brutality Lv 90 ber HoT
+bloodlust5 = { 27318  ,3 },        // Disc: Shared Brutality Rk. II
+bloodlust6 = { 27319  ,3 },        // Disc: Shared Brutality Rk. III
+bloodlust7 = { 30475  ,3 },        // Disc: Shared Savagery Lv 95 ber VoA
+bloodlust8 = { 30476  ,3 },        // Disc: Shared Savagery Rk. II
+bloodlust9 = { 30477  ,3 },        // Disc: Shared Savagery Rk. III
+bloodlust10 = { 36541  ,3 },        // Disc: Shared Viciousness Lv 100 ber RoF
+bloodlust11 = { 36542  ,3 },        // Disc: Shared Viciousness Rk. II
+bloodlust12 = { 36543  ,3 },        // Disc: Shared Viciousness Rk. III
+bloodlust13 = { 45278  ,3 },        // Disc: Shared Cruelty Lv 105 ber TDS
+bloodlust14 = { 45279  ,3 },        // Disc: Shared Cruelty Rk. II
+bloodlust15 = { 45280  ,3 },        // Disc: Shared Cruelty Rk. III
+bloodlust16 = { 57558  ,3 },        // Disc: Shared Ruthlessness Lv 110 Ber RoS
+bloodlust17 = { 57559  ,3 },        // Disc: Shared Ruthlessness Rk. II
+bloodlust18 = { 57560  ,3 },        // Disc: Shared Ruthlessness Rk. III
+bloodlust19 = { 60781  ,3 },        //Disc: Shared Svagery - Level 115 - TOV
+bloodlust20 = { 60782  ,3 },
+bloodlust21 = { 60783  ,3 },
+
+cripple1 =  { 4928   ,3 },        // Disc: leg strike
+cripple2 =  { 4929   ,3 },        // Disc: leg cut
+cripple3 =  { 4930   ,3 },        // Disc: leg slice
+cripple4 =  { 8205   ,3 },        // Disc: crippling strike
+cripple5 =  { 10908  ,3 },        // Disc: tendon cleave
+cripple6 =  { 10909  ,3 },        // Disc: tendon cleave rk. ii
+cripple7 =  { 10910  ,3 },        // Disc: tendon cleave rk. iii
+cripple8 =  { 14177  ,3 },        // Disc: tendon sever
+cripple9 =  { 14178  ,3 },        // Disc: tendon sever rk. ii
+cripple10 = { 14179  ,3 },        // Disc: tendon sever rk. iii
+cripple11 = { 18198  ,3 },        // Disc: tendon shear Lv 81 ber UF
+cripple12 = { 18199  ,3 },        // Disc: tendon shear rk. ii
+cripple13 = { 18200  ,3 },        // Disc: tendon shear rk. iii
+cripple14 = { 27263  ,3 },        // Disc: tendon lacerate Lc 86 ber HoT
+cripple15 = { 27264  ,3 },        // Disc: tendon lacerate rk. ii
+cripple16 = { 27265  ,3 },        // Disc: tendon lacerate rk. iii
+cripple17 = { 30412  ,3 },        // Disc: Tendon Slash Lv 91 ber VoA
+cripple18 = { 30413  ,3 },        // Disc: Tendon Slash rk. ii
+cripple19 = { 30414  ,3 },        // Disc: Tendon Slash rk. iii
+cripple20 = { 36505  ,3 },        // Disc: Tendon Gash Lv 96 ber RoF
+cripple21 = { 36506  ,3 },        // Disc: Tendon Gash Rk. II
+cripple22 = { 36507  ,3 },        // Disc: Tendon Gash Rk. III
+cripple23 = { 45224  ,3 },        // Disc: Tendon Tear Lv 101 ber TDS
+cripple24 = { 45225  ,3 },        // Disc: Tendon Tear Rk. II
+cripple25 = { 45226  ,3 },        // Disc: Tendon Tear Rk. III
+cripple26 = { 57516  ,3 },        // Disc: Tendon Rupture Lv 106 Ber RoS
+cripple27 = { 57517  ,3 },        // Disc: Tendon Rupture Rk. II
+cripple28 = { 57518  ,3 },        // Disc: Tendon Rupture Rk. III
+cripple29 = { 60730  ,3 },	      // Disc: Tendon Rip - Level 111 - TOV
+cripple30 = { 60731  ,3 },
+cripple31 = { 60732  ,3 },
+
+cryhavoc1 = { 8003   ,3 },        // Disc: cry havoc
+cryhavoc2 = { 36556  ,3 },        // Disc: Cry Carnage lev 98 Rof
+cryhavoc3 = { 36557  ,3 },        // Disc: Cry Carnage Rk. II 
+cryhavoc4 = { 36558  ,3 },        // Disc: Cry Carnage Rk. III
+
+joltber1 =  { 4934   ,3 },        // Disc: diversive strike
+joltber2 =  { 4935   ,3 },        // Disc: distracting strike
+joltber3 =  { 4936   ,3 },        // Disc: confusing strike
+joltber4 =  { 6171   ,3 },        // Disc: baffling strike
+joltber5 =  { 10920  ,3 },        // Disc: jarring strike
+joltber6 =  { 10921  ,3 },        // Disc: jarring strike rk ii
+joltber7 =  { 10922  ,3 },        // Disc: jarring strike rk iii
+joltber8 =  { 14186  ,3 },        // Disc: jarring smash
+joltber9 =  { 14187  ,3 },        // Disc: jarring smash rk ii
+joltber10 = { 14188  ,3 },        // Disc: jarring smash rk iii
+joltber11 = { 18207  ,3 },        // Disc: Jarring Clash Lev 85 ber UF
+joltber12 = { 18208  ,3 },        // Disc: Jarring Clash rk ii
+joltber13 = { 18209  ,3 },        // Disc: Jarring Clash rk iii
+joltber14 = { 27290  ,3 },        // Disc: Jarring Slam Lv 89 ber HoT
+joltber15 = { 27291  ,3 },        // Disc: Jarring Slam rk ii
+joltber16 = { 27292  ,3 },        // Disc: Jarring Slam rk iii
+joltber17 = { 30445  ,3 },        // Disc: Jarring Blow Lv 94 ber VoA
+joltber18 = { 30446  ,3 },        // Disc: Jarring Blow rk ii
+joltber19 = { 30447  ,3 },        // Disc: Jarring Blow rk iii
+joltber20 = { 36526  ,3 },        // Disc: Jarring Crush Lv 99 ber RoF
+joltber21 = { 36527  ,3 },        // Disc: Jarring Crush rk ii
+joltber22 = { 36528  ,3 },        // Disc: Jarring Crush rk iii
+joltber23 = { 45266  ,3 },        // Disc: Jarring Smite Lv 104 ber TDS
+joltber24 = { 45267  ,3 },        // Disc: Jarring Smite rk ii
+joltber25 = { 45268  ,3 },        // Disc: Jarring Smite rk iii
+joltber26 = { 57549  ,3 },        // Disc: Jarring Jolt Lv 109 Ber RoS
+joltber27 = { 57550  ,3 },        // Disc: Jarring Jolt Rk. II
+joltber28 = { 57551  ,3 },        // Disc: Jarring Jolt Rk. III
+joltber29 = { 60772  ,3 },        // Disc: Jarring Strike - Level 114 - TOV
+joltber30 = { 60773  ,3 },
+joltber31 = { 60774  ,3 },
+
+opfrenzy1 = { 16918  ,3 },        // Disc: Overpowering Frenzy lv 81 ber UF
+opfrenzy2 = { 16919  ,3 },        // Disc: Overpowering Frenzy Rk. II
+opfrenzy3 = { 16920  ,3 },        // Disc: Overpowering Frenzy Rk. III
+opfrenzy4 = { 27260  ,3 },        // Disc: Overwhelming Frenzy  Lv 86 ber Hot
+opfrenzy5 = { 27261  ,3 },        // Disc: Overwhelming Frenzy Rk. II
+opfrenzy6 = { 27262  ,3 },        // Disc: Overwhelming Frenzy Rk. III
+opfrenzy7 = { 30409  ,3 },        // Disc: Conquering Frenzy  Lv 91 ber VoA
+opfrenzy8 = { 30410  ,3 },        // Disc: Conquering Frenzy Rk. II
+opfrenzy9 = { 30411  ,3 },        // Disc: Conquering Frenzy Rk. III
+opfrenzy10 = { 36502  ,3 },        // Disc: Vanquishing Frenzy  Lv 96 ber RoF
+opfrenzy11 = { 36503  ,3 },        // Disc: Vanquishing Frenzy Rk. II
+opfrenzy12 = { 36504  ,3 },        // Disc: Vanquishing Frenzy Rk. III
+opfrenzy13 = { 45221  ,3 },        // Disc: Demolishing Frenzy  Lv 101 ber TDS
+opfrenzy14 = { 45222  ,3 },        // Disc: Demolishing Frenzy Rk. II
+opfrenzy15 = { 45223  ,3 },        // Disc: Demolishing Frenzy Rk. III
+opfrenzy16 = { 57513  ,3 },        // Disc: Mangling Frenzy - Level 106 - RoS
+opfrenzy17 = { 57514  ,3 },        // Disc: Mangling Frenzy Rk. II
+opfrenzy18 = { 57515  ,3 },        // Disc: Mangling Frenzy Rk. III
+opfrenzy19 = { 60727  ,3 },        // Disc: Vindicating Frenzy - Level 111 - ToV
+opfrenzy20 = { 60728  ,3 },
+opfrenzy21 = { 60729  ,3 },
+
+rallos1 =  { 19741  ,3 },        // Disc: Axe of Rallos Lv 85 ber UF
+rallos2 =  { 19742  ,3 },        // Disc: Axe of Rallos Rk. II
+rallos3 =  { 19743  ,3 },        // Disc: Axe of Rallos Rk. III
+rallos4 =  { 27293  ,3 },        // Disc: Axe of Graster Lv 90 ber HoT
+rallos5 =  { 27294  ,3 },        // Disc: Axe of Graster Rk. II
+rallos6 =  { 27295  ,3 },        // Disc: Axe of Graster Rk. III
+rallos7 =  { 30448  ,3 },        // Disc: Axe of Illdaera Lv 95 ber VoA
+rallos8 =  { 30449  ,3 },        // Disc: Axe of Illdaera Rk. II
+rallos9 =  { 30450  ,3 },        // Disc: Axe of Illdaera Rk. III
+rallos10 = { 30658  ,3 },        // Disc: Axe of Zurel Lv 100 ber VoA
+rallos11 = { 30659  ,3 },        // Disc: Axe of Zurel Rk. II
+rallos12 = { 30660  ,3 },        // Disc: Axe of Zurel Rk. III
+rallos13 = { 45284  ,3 },        // Disc: Axe of Numicia Lv 105 ber TDS
+rallos14 = { 45285  ,3 },        // Disc: Axe of Numicia Rk. II
+rallos15 = { 45286  ,3 },        // Disc: Axe of Numicia Rk. III
+rallos16 = { 50371  ,3 },        // Disc: Axe of the Aeons ber 103 eok
+rallos17 = { 50372  ,3 },        // Disc: Axe of the Aeons Rk. II
+rallos18 = { 50373  ,3 },        // Disc: Axe of the Aeons Rk. III
+rallos19 = { 58273  ,3 },        // Disc: Axe of Empyr 107 ber TBL
+rallos20 = { 58274  ,3 },        // Disc: Axe of Empyr Rk. II
+rallos21 = { 58275  ,3 },        // Disc: Axe of Empyr Rk. III
+rallos22 = { 57564  ,3 },        // Disc: Axe of Rekatok Lv 110 Ber RoS
+rallos23 = { 57565  ,3 },        // Disc: Axe of Rekatok Rk. II
+rallos24 = { 57566  ,3 },        // Disc: Axe of Rekatok Rk. III
+rallos25 = { 60787  ,3 },		   // Disc: Axe of Derakor - Level 115 ToV
+rallos26 = { 60788  ,3 },		   // Disc: Axe of Derakor - Level 115 ToV
+rallos27 = { 60789  ,3 },		   // Disc: Axe of Derakor - Level 115 ToV
+
+slapface1 =  { 27269  ,3 },        // Disc: slap in the face Lv 87 ber HoT
+slapface2 =  { 27270  ,3 },        // Disc: slap in the face rk. ii
+slapface3 =  { 27271  ,3 },        // Disc: slap in the face rk. iii
+slapface4 =  { 30418  ,3 },        // Disc: Kick in the Teeth Lv 92 ber VoA
+slapface5 =  { 30419  ,3 },        // Disc: Kick in the Teeth rk. ii
+slapface6 =  { 30420  ,3 },        // Disc: Kick in the Teeth rk. iii
+slapface7 =  { 36508  ,3 },        // Disc: Punch in the Throat  Lv 97 ber RoF
+slapface8 =  { 36509  ,3 },        // Disc: Punch in the Throat rk. ii
+slapface9 =  { 36510  ,3 },        // Disc: Punch in the Throat rk. iii
+slapface10 = { 45227  ,3 },        // Disc: Kick in the Shins  Lv 102 ber TDS
+slapface11 = { 45228  ,3 },        // Disc: Kick in the Shins rk. ii
+slapface12 = { 45229  ,3 },        // Disc: Kick in the Shins rk. iii
+slapface13 = { 57519  ,3 },        // Disc: Sucker Punch Lv 107 Ber RoS
+slapface14 = { 57520  ,3 },        // Disc: Sucker Punch Rk. II
+slapface15 = { 57521  ,3 },        // Disc: Sucker Punch Rk. III
+slapface16 = { 60734  ,3 },		   // Disc: Rabbit Punch - Level 112 - ToV
+slapface17 = { 60735  ,3 },
+slapface18 = { 60736  ,3 },
+
+stunber1 =  { 4931   ,3 },        // Disc: head strike
+stunber2 =  { 4932   ,3 },        // Disc: head pummel
+stunber3 =  { 4933   ,3 },        // Disc: head crush
+stunber4 =  { 6170   ,3 },        // Disc: mind strike
+stunber5 =  { 10917  ,3 },        // Disc: temple blow
+stunber6 =  { 10918  ,3 },        // Disc: temple blow rk. ii
+stunber7 =  { 10919  ,3 },        // Disc: temple blow rk. iii
+stunber8 =  { 14183  ,3 },        // Disc: temple strike
+stunber9 =  { 14184  ,3 },        // Disc: temple strike rk. ii
+stunber10 = { 14185  ,3 },        // Disc: temple strike rk. iii
+stunber11 = { 18204  ,3 },        // Disc: Temple Bash Lv 83 ber UF
+stunber12 = { 18205  ,3 },        // Disc: Temple Bash rk. ii
+stunber13 = { 18206  ,3 },        // Disc: Temple Bash rk. iii
+stunber14 = { 27281  ,3 },        // Disc: Temple Chop Lv 88 ber HoT
+stunber15 = { 27282  ,3 },        // Disc: Temple Chop rk. ii
+stunber16 = { 27283  ,3 },        // Disc: Temple Chop rk. iii
+stunber17 = { 30430  ,3 },        // Disc: Temple Smash Lv 93 ber VoA
+stunber18 = { 30431  ,3 },        // Disc: Temple Smash rk. ii
+stunber19 = { 30432  ,3 },        // Disc: Temple Smash rk. iii
+stunber20 = { 36520  ,3 },        // Disc: Temple Crush Lv 98 ber RoF
+stunber21 = { 36521  ,3 },        // Disc: Temple Crush rk. ii
+stunber22 = { 36522  ,3 },        // Disc: Temple Crush rk. iii
+stunber23 = { 45251  ,3 },        // Disc: Temple Demolish Lv 103 ber TDS
+stunber24 = { 45252  ,3 },        // Disc: Temple Demolish rk. ii
+stunber25 = { 45253  ,3 },        // Disc: Temple Demolish rk. iii
+stunber26 = { 57534  ,3 },        // Disc: Temple Slam Lv 108 Ber RoS
+stunber27 = { 57535  ,3 },        // Disc: Temple Slam Rk. II
+stunber28 = { 57536  ,3 },        // Disc: Temple Slam Rk. III
+stunber29 = { 60760  ,3 },        // Disc: Temple Crack - Level 113 - TOV
+stunber30 = { 60761  ,3 },
+stunber31 = { 60762  ,3 },
+
+volley1 =  { 6754   ,3 },        // Disc: rage volley
+volley2 =  { 6729   ,3 },        // Disc: destroyer's volley
+volley3 =  { 10926  ,3 },        // Disc: giant slayer's volley
+volley4 =  { 10927  ,3 },        // Disc: giant slayer's volley rk ii
+volley5 =  { 10928  ,3 },        // Disc: giant slayer's volley rk iii
+volley6 =  { 11928  ,3 },        // Disc: annihilator's volley
+volley7 =  { 11929  ,3 },        // Disc: annihilator's volley rk ii
+volley8 =  { 11930  ,3 },        // Disc: annihilator's volley rk iii
+volley9 =  { 14195  ,3 },        // Disc: decimator's volley
+volley10 = { 14196  ,3 },        // Disc: decimator's volley rk ii
+volley11 = { 14197  ,3 },        // Disc: decimator's volley rk iii
+volley12 = { 18216  ,3 },        // Disc: Eradicator's Volley Lv 84 ber UF
+volley13 = { 18217  ,3 },        // Disc: Eradicator's Volley Rk. II
+volley14 = { 18218  ,3 },        // Disc: Eradicator's Volley Rk. III
+volley15 = { 27287  ,3 },        // Disc: Savage Volley Lv 89 ber HoT
+volley16 = { 27288  ,3 },        // Disc: Savage Volley Rk. II
+volley17 = { 27289  ,3 },        // Disc: Savage Volley Rk. III
+volley18 = { 30442  ,3 },        // Disc: Sundering Volley Lv 94 ber VoA
+volley19 = { 30443  ,3 },        // Disc: Sundering Volley Rk. II
+volley20 = { 30444  ,3 },        // Disc: Sundering Volley Rk. III
+volley21 = { 36523  ,3 },        // Disc: Brutal Volley Lv 99 ber RoF
+volley22 = { 36524  ,3 },        // Disc: Brutal Volley Rk. II
+volley23 = { 36525  ,3 },        // Disc: Brutal Volley Rk. III
+volley24 = { 45263  ,3 },        // Disc: Demolishing Volley Lv 104 ber TDS
+volley25 = { 45264  ,3 },        // Disc: Demolishing Volley Rk. II
+volley26 = { 45265  ,3 },        // Disc: Demolishing Volley Rk. III
+volley27 = { 57546  ,3 },        // Disc: Mangling Volley Lv 109 Ber RoS
+volley28 = { 57547  ,3 },        // Disc: Mangling Volley Rk. II
+volley29 = { 57548  ,3 },        // Disc: Mangling Volley Rk. III
+volley30 = { 60769  ,3 },        // Disc: Vindicating Volley - Level 114 - ToV
+volley31 = { 60770  ,3 },
+volley32 = { 60771  ,3 },
+
+vigber1 = { 19753  ,3 },        // Disc: Vigorous Axe Throw Lv 83 ber UF
+vigber2 = { 19754  ,3 },        // Disc: Vigorous Axe Throw Rk. II
+vigber3 = { 19755  ,3 },        // Disc: Vigorous Axe Throw Rk. III
+vigber4 = { 27278  ,3 },        // Disc: Energetic Axe Throw Lv 88 ber HoT
+vigber5 = { 27279  ,3 },        // Disc: Energetic Axe Throw Rk. II
+vigber6 = { 27280  ,3 },        // Disc: Energetic Axe Throw Rk. III
+vigber7 = { 30427  ,3 },        // Disc: Spirited Axe Throw Lv 93 ber VoA
+vigber8 = { 30428  ,3 },        // Disc: Spirited Axe Throw Rk. II
+vigber9 = { 30429  ,3 },        // Disc: Spirited Axe Throw Rk. III
+vigber10 = { 36517  ,3 },        // Disc: Brutal Axe Throw Lv 98 ber RoF
+vigber11 = { 36518  ,3 },        // Disc: Brutal Axe Throw Rk. II
+vigber12 = { 36519  ,3 },        // Disc: Brutal Axe Throw Rk. III
+vigber13 = { 45248  ,3 },        // Disc: Demolishing Axe Throw Lv 103 ber TDS
+vigber14 = { 45249  ,3 },        // Disc: Demolishing Axe Throw Rk. II
+vigber15 = { 45250  ,3 },        // Disc: Demolishing Axe Throw Rk. III
+vigber16 = { 57531  ,3 },        // Disc: Mangling Axe Throw    Lv 108 Ber RoS
+vigber17 = { 57532  ,3 },        // Disc: Mangling Axe Throw Rk. II
+vigber18 = { 57533  ,3 },        // Disc: Mangling Axe Throw Rk. III
+vigber19 = { 60757  ,3 },        // Disc: Vindicating Axe Throw - Level 
+vigber20 = { 60758  ,3 },
+vigber21 = { 60759  ,3 },
+
+//End Berserker - Class 16
 
 rightidg1      = { 25345  ,3 },        // disc: Righteous Indignation Lv 88 pal HoT
 rightidg2      = { 25346  ,3 },        // disc: Righteous Indignation Rk. II
@@ -786,22 +917,6 @@ rightidg11     = { 55390  ,3 },        // disc: Righteous Condemnation Rk. II
 rightidg12     = { 55391  ,3 },        // disc: Righteous Condemnation Rk. III
 
 ravens         = { 987    ,4 },        // aa: raven's claw
-
-slapface1      = { 27269  ,3 },        // disc: slap in the face Lv 87 ber HoT
-slapface2      = { 27270  ,3 },        // disc: slap in the face rk. ii
-slapface3      = { 27271  ,3 },        // disc: slap in the face rk. iii
-slapface4      = { 30418  ,3 },        // disc: Kick in the Teeth Lv 92 ber VoA
-slapface5      = { 30419  ,3 },        // disc: Kick in the Teeth rk. ii
-slapface6      = { 30420  ,3 },        // disc: Kick in the Teeth rk. iii
-slapface7      = { 36508  ,3 },        // disc: Punch in the Throat  Lv 97 ber RoF
-slapface8      = { 36509  ,3 },        // disc: Punch in the Throat rk. ii
-slapface9      = { 36510  ,3 },        // disc: Punch in the Throat rk. iii
-slapface10     = { 45227  ,3 },        // disc: Kick in the Shins  Lv 102 ber TDS
-slapface11     = { 45228  ,3 },        // disc: Kick in the Shins rk. ii
-slapface12     = { 45229  ,3 },        // disc: Kick in the Shins rk. iii
-slapface13     = { 57519  ,3 },        // disc: Sucker Punch Lv 107 Ber RoS
-slapface14     = { 57520  ,3 },        // disc: Sucker Punch Rk. II
-slapface15     = { 57521  ,3 },        // disc: Sucker Punch Rk. III
 
 selos          = { 8205   ,4 },        // aa: selos
 
@@ -853,35 +968,6 @@ strike25       = { 44180  ,3 },        // disc: Daggergash rk. iii
 strike26       = { 56330  ,3 },        // disc: Daggerslice Lv 110 Rog RoS
 strike27       = { 56331  ,3 },        // disc: Daggerslice Rk. II
 strike28       = { 56332  ,3 },        // disc: Daggerslice Rk. III
-
-stunber1       = { 4931   ,3 },        // disc: head strike
-stunber2       = { 4932   ,3 },        // disc: head pummel
-stunber3       = { 4933   ,3 },        // disc: head crush
-stunber4       = { 6170   ,3 },        // disc: mind strike
-stunber5       = { 10917  ,3 },        // disc: temple blow
-stunber6       = { 10918  ,3 },        // disc: temple blow rk. ii
-stunber7       = { 10919  ,3 },        // disc: temple blow rk. iii
-stunber8       = { 14183  ,3 },        // disc: temple strike
-stunber9       = { 14184  ,3 },        // disc: temple strike rk. ii
-stunber10      = { 14185  ,3 },        // disc: temple strike rk. iii
-stunber11      = { 18204  ,3 },        // disc: Temple Bash Lv 83 ber UF
-stunber12      = { 18205  ,3 },        // disc: Temple Bash rk. ii
-stunber13      = { 18206  ,3 },        // disc: Temple Bash rk. iii
-stunber14      = { 27281  ,3 },        // disc: Temple Chop Lv 88 ber HoT
-stunber15      = { 27282  ,3 },        // disc: Temple Chop rk. ii
-stunber16      = { 27283  ,3 },        // disc: Temple Chop rk. iii
-stunber17      = { 30430  ,3 },        // disc: Temple Smash Lv 93 ber VoA
-stunber18      = { 30431  ,3 },        // disc: Temple Smash rk. ii
-stunber19      = { 30432  ,3 },        // disc: Temple Smash rk. iii
-stunber20      = { 36520  ,3 },        // disc: Temple Crush Lv 98 ber RoF
-stunber21      = { 36521  ,3 },        // disc: Temple Crush rk. ii
-stunber22      = { 36522  ,3 },        // disc: Temple Crush rk. iii
-stunber23      = { 45251  ,3 },        // disc: Temple Demolish Lv 103 ber TDS
-stunber24      = { 45252  ,3 },        // disc: Temple Demolish rk. ii
-stunber25      = { 45253  ,3 },        // disc: Temple Demolish rk. iii
-stunber26      = { 57534  ,3 },        // disc: Temple Slam Lv 108 Ber RoS
-stunber27      = { 57535  ,3 },        // disc: Temple Slam Rk. II
-stunber28      = { 57536  ,3 },        // disc: Temple Slam Rk. III
 
 stunmnk1       = { 469    ,4 },        // aa: stunning kick
 stunmnk2       = { 600    ,4 },        // aa: resounding kick
@@ -1002,55 +1088,6 @@ throat3        = { 10970  ,3 },        // disc: throat jab rk iii
 tstone         = { 5225   ,3 },        // disc: throw stone
 twisted        = { 670    ,4 },        // aa: twisted shank
 
-volley1        = { 6754   ,3 },        // disc: rage volley
-volley2        = { 6729   ,3 },        // disc: destroyer's volley
-volley3        = { 10926  ,3 },        // disc: giant slayer's volley
-volley4        = { 10927  ,3 },        // disc: giant slayer's volley rk ii
-volley5        = { 10928  ,3 },        // disc: giant slayer's volley rk iii
-volley6        = { 11928  ,3 },        // disc: annihilator's volley
-volley7        = { 11929  ,3 },        // disc: annihilator's volley rk ii
-volley8        = { 11930  ,3 },        // disc: annihilator's volley rk iii
-volley9        = { 14195  ,3 },        // disc: decimator's volley
-volley10       = { 14196  ,3 },        // disc: decimator's volley rk ii
-volley11       = { 14197  ,3 },        // disc: decimator's volley rk iii
-volley12       = { 18216  ,3 },        // disc: Eradicator's Volley Lv 84 ber UF
-volley13       = { 18217  ,3 },        // disc: Eradicator's Volley Rk. II
-volley14       = { 18218  ,3 },        // disc: Eradicator's Volley Rk. III
-volley15       = { 27287  ,3 },        // disc: Savage Volley Lv 89 ber HoT
-volley16       = { 27288  ,3 },        // disc: Savage Volley Rk. II
-volley17       = { 27289  ,3 },        // disc: Savage Volley Rk. III
-volley18       = { 30442  ,3 },        // disc: Sundering Volley Lv 94 ber VoA
-volley19       = { 30443  ,3 },        // disc: Sundering Volley Rk. II
-volley20       = { 30444  ,3 },        // disc: Sundering Volley Rk. III
-volley21       = { 36523  ,3 },        // disc: Brutal Volley Lv 99 ber RoF
-volley22       = { 36524  ,3 },        // disc: Brutal Volley Rk. II
-volley23       = { 36525  ,3 },        // disc: Brutal Volley Rk. III
-volley24       = { 45263  ,3 },        // disc: Demolishing Volley Lv 104 ber TDS
-volley25       = { 45264  ,3 },        // disc: Demolishing Volley Rk. II
-volley26       = { 45265  ,3 },        // disc: Demolishing Volley Rk. III
-volley27       = { 57546  ,3 },        // disc: Mangling Volley Lv 109 Ber RoS
-volley28       = { 57547  ,3 },        // disc: Mangling Volley Rk. II
-volley29       = { 57548  ,3 },        // disc: Mangling Volley Rk. III
-
-vigber1        = { 19753  ,3 },        // disc: Vigorous Axe Throw Lv 83 ber UF
-vigber2        = { 19754  ,3 },        // disc: Vigorous Axe Throw Rk. II
-vigber3        = { 19755  ,3 },        // disc: Vigorous Axe Throw Rk. III
-vigber4        = { 27278  ,3 },        // disc: Energetic Axe Throw Lv 88 ber HoT
-vigber5        = { 27279  ,3 },        // disc: Energetic Axe Throw Rk. II
-vigber6        = { 27280  ,3 },        // disc: Energetic Axe Throw Rk. III
-vigber7        = { 30427  ,3 },        // disc: Spirited Axe Throw Lv 93 ber VoA
-vigber8        = { 30428  ,3 },        // disc: Spirited Axe Throw Rk. II
-vigber9        = { 30429  ,3 },        // disc: Spirited Axe Throw Rk. III
-vigber10       = { 36517  ,3 },        // disc: Brutal Axe Throw Lv 98 ber RoF
-vigber11       = { 36518  ,3 },        // disc: Brutal Axe Throw Rk. II
-vigber12       = { 36519  ,3 },        // disc: Brutal Axe Throw Rk. III
-vigber13       = { 45248  ,3 },        // disc: Demolishing Axe Throw Lv 103 ber TDS
-vigber14       = { 45249  ,3 },        // disc: Demolishing Axe Throw Rk. II
-vigber15       = { 45250  ,3 },        // disc: Demolishing Axe Throw Rk. III
-vigber16       = { 57531  ,3 },        // disc: Mangling Axe Throw    Lv 108 Ber RoS
-vigber17       = { 57532  ,3 },        // disc: Mangling Axe Throw Rk. II
-vigber18       = { 57533  ,3 },        // disc: Mangling Axe Throw Rk. III
-
 vigmnk1        = { 19826  ,3 },        // disc: Vigorous Shuriken
 vigmnk2        = { 19827  ,3 },        // disc: Vigorous Shuriken Rk. II
 vigmnk3        = { 19828  ,3 },        // disc: Vigorous Shuriken Rk. III
@@ -1137,7 +1174,6 @@ DECLARE_ABILITY_OPTION(pBBLOW, "boastful", "[ON/OFF]?", "${If[${Me.AltAbility[bo
 DECLARE_ABILITY_OPTION(pBGING, "begging", "[ON/OFF]?", "0", "${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.Skill[begging]},1,0]}");
 DECLARE_ABILITY_OPTION(pBKOFF, "backoff", "[#] Life% Below? 0=0ff", "0", "${If[${meleemvi[plugin]} && ${meleemvi[melee]} && !${meleemvi[aggro]},1,0]}");
 DECLARE_ABILITY_OPTION(pBLEED, "bleed", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Bleed]} || ${Me.CombatAbility[Bleed Rk. II]} || ${Me.CombatAbility[Bleed Rk. III]} || ${Me.CombatAbility[Wound]} || ${Me.CombatAbility[Wound Rk. II]} || ${Me.CombatAbility[Wound Rk. III]} || ${Me.CombatAbility[Lacerate]} || ${Me.CombatAbility[Lacerate Rk. II]} || ${Me.CombatAbility[Lacerate Rk. III]} || ${Me.CombatAbility[Gash]} || ${Me.CombatAbility[Gash Rk. II]} || ${Me.CombatAbility[Gash Rk. III]} || ${Me.CombatAbility[Hack]} || ${Me.CombatAbility[Hack Rk. II]} || ${Me.CombatAbility[Hack Rk. III]} || ${Me.CombatAbility[Slice]} || ${Me.CombatAbility[Slice Rk. II]} || ${Me.CombatAbility[Slice Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Bleed]} || ${Me.CombatAbility[Bleed Rk. II]} || ${Me.CombatAbility[Bleed Rk. III]}|| ${Me.CombatAbility[Wound]} || ${Me.CombatAbility[Wound Rk. II]} || ${Me.CombatAbility[Wound Rk. III]} || ${Me.CombatAbility[Lacerate]} || ${Me.CombatAbility[Lacerate Rk. II]} || ${Me.CombatAbility[Lacerate Rk. III]} || ${Me.CombatAbility[Gash]} || ${Me.CombatAbility[Gash Rk. II]} || ${Me.CombatAbility[Gash Rk. III]} || ${Me.CombatAbility[Hack]} || ${Me.CombatAbility[Hack Rk. II]} || ${Me.CombatAbility[Hack Rk. III]} || ${Me.CombatAbility[Slice]} || ${Me.CombatAbility[Slice Rk. II]} || ${Me.CombatAbility[Slice Rk. III]}),1,0]}");
-DECLARE_ABILITY_OPTION(pBLUST, "bloodlust", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Shared Bloodlust]} || ${Me.CombatAbility[Shared Bloodlust Rk. II]} || ${Me.CombatAbility[Shared Bloodlust Rk. III]} || ${Me.CombatAbility[Shared Brutality]} || ${Me.CombatAbility[Shared Brutality Rk. II]} || ${Me.CombatAbility[Shared Brutality Rk. III]} || ${Me.CombatAbility[Shared Savagery]} || ${Me.CombatAbility[Shared Savagery Rk. II]} || ${Me.CombatAbility[Shared Savagery Rk. III]} || ${Me.CombatAbility[Shared Viciousness]} || ${Me.CombatAbility[Shared Viciousness Rk. II]} || ${Me.CombatAbility[Shared Viciousness Rk. III]} || ${Me.CombatAbility[Shared Cruelty]} || ${Me.CombatAbility[Shared Cruelty Rk. II]} || ${Me.CombatAbility[Shared Cruelty Rk. III]} || ${Me.CombatAbility[Shared Ruthlessness]} || ${Me.CombatAbility[Shared Ruthlessness Rk. II]} || ${Me.CombatAbility[Shared Ruthlessness Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Shared Bloodlust]} || ${Me.CombatAbility[Shared Bloodlust Rk. II]} || ${Me.CombatAbility[Shared Bloodlust Rk. III]} || ${Me.CombatAbility[Shared Brutality]} || ${Me.CombatAbility[Shared Brutality Rk. II]} || ${Me.CombatAbility[Shared Brutality Rk. III]} || ${Me.CombatAbility[Shared Savagery]} || ${Me.CombatAbility[Shared Savagery Rk. II]} || ${Me.CombatAbility[Shared Savagery Rk. III]} || ${Me.CombatAbility[Shared Viciousness]} || ${Me.CombatAbility[Shared Viciousness Rk. II]} || ${Me.CombatAbility[Shared Viciousness Rk. III]} || ${Me.CombatAbility[Shared Cruelty]} || ${Me.CombatAbility[Shared Cruelty Rk. II]} || ${Me.CombatAbility[Shared Cruelty Rk. III]} || ${Me.CombatAbility[Shared Ruthlessness]} || ${Me.CombatAbility[Shared Ruthlessness Rk. II]} || ${Me.CombatAbility[Shared Ruthlessness Rk. III]}),1,0]}");
 DECLARE_ABILITY_OPTION(pBOWID, "bow", "[ID] spell/disc/aa/item?", "0", "${If[${meleemvi[plugin]} && ${Me.Skill[archery]},1,0]}");
 DECLARE_ABILITY_OPTION(pBSTAB, "backstab", "[ON/OFF]?", "${If[${Me.Skill[backstab]},1,0]}", "${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.Skill[backstab]},1,0]}");
 DECLARE_ABILITY_OPTION(pBTASP, "asp", "[ON/OFF]?", "${If[${Me.AltAbility[bite of the asp]},1,0]}", "${If[${meleemvi[plugin]} && ${Me.AltAbility[bite of the asp]},1,0]}");
@@ -1148,8 +1184,6 @@ DECLARE_ABILITY_OPTION(pCFIST, "cloud", "[#] Endu% Above? 0=Off", "${If[${Me.Com
 DECLARE_ABILITY_OPTION(pCHAMS, "cstrike", "[ON/OFF]?", "${If[${Me.AltAbility[Chameleon Strike]},1,0]}", "${If[${meleemvi[plugin]} && ${Me.AltAbility[Chameleon Strike]},1,0]}");
 DECLARE_ABILITY_OPTION(pCHFOR, "challengefor", "[ON/OFF]?", "${If[${Me.Book[challenge for honor]} || ${Me.Book[challenge for honor rk. ii]} || ${Me.Book[challenge for honor rk. iii]} || ${Me.Book[trial for honor]} || ${Me.Book[trial for honor rk. ii]} || ${Me.Book[trial for honor rk. iii]} || ${Me.Book[charge for honor]} || ${Me.Book[charge for honor rk. ii]} || ${Me.Book[charge for honor rk. iii]} || ${Me.Book[challenge for power]} || ${Me.Book[challenge for power rk. ii]} || ${Me.Book[challenge for power rk. iii]} || ${Me.Book[trial for power]} || ${Me.Book[trial for power rk. ii]} || ${Me.Book[trial for power rk. iii]} || ${Me.Book[charge for honor]} || ${Me.Book[charge for honor rk. ii]} || ${Me.Book[charge for honor rk. iii]} || ${Me.Book[confrontation for power]} || ${Me.Book[confrontation for power rk. ii]} || ${Me.Book[confrontation for power rk. iii]} || ${Me.Book[confrontation for honor]} || ${Me.Book[confrontation for honor rk. ii]} || ${Me.Book[confrontation for honor rk. iii]} || ${Me.Book[Provocation for honor]} || ${Me.Book[Provocation for honor rk. ii]} || ${Me.Book[Provocation for honor rk. iii]} || ${Me.Book[Provocation for power]} || ${Me.Book[Provocation for power rk. ii]} || ${Me.Book[Provocation for power rk. iii]} || ${Me.Book[Demand for Power]} || ${Me.Book[Demand for Power rk. ii]} || ${Me.Book[Demand for Power rk. iii]} || ${Me.Book[Demand for Honor]} || ${Me.Book[Demand for Honor rk. ii]} || ${Me.Book[Demand for Honor rk. iii]} || ${Me.Book[Impose for Power]} || ${Me.Book[Impose for Power rk. ii]} ||${Me.Book[Impose for Power rk. iii]} || ${Me.Book[Impose for Honor]} || ${Me.Book[Impose for Honor rk. ii]} ||${Me.Book[Impose for Honor rk. iii]} || ${Me.Book[Refute for Power]} || ${Me.Book[Refute for Power Rk. II]} ||${Me.Book[Refute for Power Rk. III]} || ${Me.Book[Refute for Honor]} || ${Me.Book[Refute for Honor Rk. II]} ||${Me.Book[Refute for Honor Rk. III]},1,0]}", "${If[${meleemvi[plugin]} && ${meleemvi[aggro]} && (${Me.Book[challenge for honor]} || ${Me.Book[challenge for honor rk. ii]} || ${Me.Book[challenge for honor rk. iii]} || ${Me.Book[trial for honor]} || ${Me.Book[trial for honor rk. ii]} || ${Me.Book[trial for honor rk. iii]} || ${Me.Book[charge for honor]} || ${Me.Book[charge for honor rk. ii]} || ${Me.Book[charge for honor rk. iii]} || ${Me.Book[challenge for power]} || ${Me.Book[challenge for power rk. ii]} || ${Me.Book[challenge for power rk. iii]} || ${Me.Book[trial for power]} || ${Me.Book[trial for power rk. ii]} || ${Me.Book[trial for power rk. iii]} || ${Me.Book[charge for honor]} || ${Me.Book[charge for honor rk. ii]} || ${Me.Book[charge for honor rk. iii]} || ${Me.Book[confrontation for power]} || ${Me.Book[confrontation for power rk. ii]} || ${Me.Book[confrontation for power rk. iii]} || ${Me.Book[confrontation for honor]} || ${Me.Book[confrontation for honor rk. ii]} || ${Me.Book[confrontation for honor rk. iii]} || ${Me.Book[Provocation for honor]} || ${Me.Book[Provocation for honor rk. ii]} || ${Me.Book[Provocation for honor rk. iii]} || ${Me.Book[Provocation for power]} || ${Me.Book[Provocation for power rk. ii]} || ${Me.Book[Provocation for power rk. iii]} || ${Me.Book[Demand for Power]} || ${Me.Book[Demand for Power rk. ii]} || ${Me.Book[Demand for Power rk. iii]} || ${Me.Book[Demand for Honor]} || ${Me.Book[Demand for Honor rk. ii]} || ${Me.Book[Demand for Honor rk. iii]} || ${Me.Book[Impose for Power]} || ${Me.Book[Impose for Power rk. ii]} ||${Me.Book[Impose for Power rk. iii]} || ${Me.Book[Impose for Honor]} || ${Me.Book[Impose for Honor rk. ii]} ||${Me.Book[Impose for Honor rk. iii]} || ${Me.Book[Refute for Power]} || ${Me.Book[Refute for Power Rk. II]} ||${Me.Book[Refute for Power Rk. III]} || ${Me.Book[Refute for Honor]} || ${Me.Book[Refute for Honor Rk. II]} ||${Me.Book[Refute for Honor Rk. III]}),1,0]}");
 DECLARE_ABILITY_OPTION(pCOMMG, "commanding", "[#] Endu% Above? 0=0ff", "${If[${Me.CombatAbility[commanding voice]},20,0]}", "${If[${meleemvi[plugin]} && ${Me.CombatAbility[commanding voice]},1,0]}");
-DECLARE_ABILITY_OPTION(pCRIPS, "cripple", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[leg strike]} || ${Me.CombatAbility[leg cut]} || ${Me.CombatAbility[leg slice]} || ${Me.CombatAbility[crippling strike]} || ${Me.CombatAbility[tendon cleave]} || ${Me.CombatAbility[tendon cleave rk. ii]} || ${Me.CombatAbility[tendon cleave rk. iii]} || ${Me.CombatAbility[tendon sever]} || ${Me.CombatAbility[tendon sever rk. ii]} || ${Me.CombatAbility[tendon sever rk. iii]} || ${Me.CombatAbility[tendon shear]} || ${Me.CombatAbility[tendon shear rk. ii]} || ${Me.CombatAbility[tendon shear rk. iii]} || ${Me.CombatAbility[tendon lacerate]} || ${Me.CombatAbility[tendon lacerate rk. ii]} || ${Me.CombatAbility[tendon lacerate rk. iii]} || ${Me.CombatAbility[tendon Slash]} || ${Me.CombatAbility[tendon Slash rk. ii]} || ${Me.CombatAbility[tendon Slash rk. iii]} || ${Me.CombatAbility[Tendon Gash]} || ${Me.CombatAbility[Tendon Gash Rk. II]} || ${Me.CombatAbility[Tendon Gash Rk. III]} || ${Me.CombatAbility[Tendon Tear]} || ${Me.CombatAbility[Tendon Tear Rk. II]} || ${Me.CombatAbility[Tendon Tear Rk. III]} || ${Me.CombatAbility[Tendon Rupture]} || ${Me.CombatAbility[Tendon Rupture Rk. II]} || ${Me.CombatAbility[Tendon Rupture Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[leg strike]} || ${Me.CombatAbility[leg cut]} || ${Me.CombatAbility[leg slice]} || ${Me.CombatAbility[crippling strike]} || ${Me.CombatAbility[tendon cleave]} || ${Me.CombatAbility[tendon cleave rk. ii]} || ${Me.CombatAbility[tendon cleave rk. iii]} || ${Me.CombatAbility[tendon sever]} || ${Me.CombatAbility[tendon sever rk. ii]} || ${Me.CombatAbility[tendon sever rk. iii]} || ${Me.CombatAbility[tendon shear]} || ${Me.CombatAbility[tendon shear rk. ii]} || ${Me.CombatAbility[tendon shear rk. iii]} || ${Me.CombatAbility[tendon lacerate]} || ${Me.CombatAbility[tendon lacerate rk. ii]} || ${Me.CombatAbility[tendon lacerate rk. iii]} || ${Me.CombatAbility[tendon Slash]} || ${Me.CombatAbility[tendon Slash rk. ii]} || ${Me.CombatAbility[tendon Slash rk. iii]} || ${Me.CombatAbility[Tendon Gash]} || ${Me.CombatAbility[Tendon Gash Rk. II]} || ${Me.CombatAbility[Tendon Gash Rk. III]} || ${Me.CombatAbility[Tendon Tear]} || ${Me.CombatAbility[Tendon Tear Rk. II]} || ${Me.CombatAbility[Tendon Tear Rk. III]} || ${Me.CombatAbility[Tendon Rupture]} || ${Me.CombatAbility[Tendon Rupture Rk. II]} || ${Me.CombatAbility[Tendon Rupture Rk. III]}),1,0]}");
-DECLARE_ABILITY_OPTION(pCRYHC, "cryhavoc", "[#] Endu% Above? 0=0ff", "${If[${Me.CombatAbility[cry havoc]} || ${Me.CombatAbility[Cry Carnage]} || ${Me.CombatAbility[Cry Carnage Rk. II]} || ${Me.CombatAbility[Cry Carnage Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[cry havoc]} || ${Me.CombatAbility[Cry Carnage]} || ${Me.CombatAbility[Cry Carnage Rk. II]} || ${Me.CombatAbility[Cry Carnage Rk. III]}),1,0]}");
 DECLARE_ABILITY_OPTION(pDEFEN, "defense", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Bracing Defense]} || ${Me.CombatAbility[Bracing Defense Rk. II]} || ${Me.CombatAbility[Bracing Defense Rk. III]} || ${Me.CombatAbility[Staunch Defense]} || ${Me.CombatAbility[Staunch Defense Rk. II]} || ${Me.CombatAbility[Staunch Defense Rk. III]} || ${Me.CombatAbility[Stalwart Defense]} || ${Me.CombatAbility[Stalwart Defense Rk. II]} || ${Me.CombatAbility[Stalwart Defense Rk. III]} || ${Me.CombatAbility[Steadfast Defense]} || ${Me.CombatAbility[Steadfast Defense Rk. II]} || ${Me.CombatAbility[Steadfast Defense Rk. III]} || ${Me.CombatAbility[Stout Defense]} || ${Me.CombatAbility[Stout Defense Rk. II]} || ${Me.CombatAbility[Stout Defense Rk. III]} || ${Me.CombatAbility[Resolute Defense]} || ${Me.CombatAbility[Resolute Defense Rk. II]} || ${Me.CombatAbility[Resolute Defense Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Bracing Defense]} || ${Me.CombatAbility[Bracing Defense Rk. II]} || ${Me.CombatAbility[Bracing Defense Rk. III]} || ${Me.CombatAbility[Staunch Defense]} || ${Me.CombatAbility[Staunch Defense Rk. II]} || ${Me.CombatAbility[Staunch Defense Rk. III]} || ${Me.CombatAbility[Stalwart Defense]} || ${Me.CombatAbility[Stalwart Defense Rk. II]} || ${Me.CombatAbility[Stalwart Defense Rk. III]} || ${Me.CombatAbility[Steadfast Defense]} || ${Me.CombatAbility[Steadfast Defense Rk. II]} || ${Me.CombatAbility[Steadfast Defense Rk. III]} || ${Me.CombatAbility[Stout Defense]} || ${Me.CombatAbility[Stout Defense Rk. II]} || ${Me.CombatAbility[Stout Defense Rk. III]} || ${Me.CombatAbility[Resolute Defense]} || ${Me.CombatAbility[Resolute Defense Rk. II]} || ${Me.CombatAbility[Resolute Defense Rk. III]}),1,0]}");
 DECLARE_ABILITY_OPTION(pDISRM, "disarm", "[ON/OFF]?", "${If[${Me.Skill[disarm]},1,0]}", "${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.Skill[disarm]},1,0]}");
 DECLARE_ABILITY_OPTION(pDMONK, "monkey", "[#] Endu% Above? 0=0ff", "${If[${Me.CombatAbility[Drunken Monkey Style]} || ${Me.CombatAbility[Drunken Monkey Style rk. ii]} || ${Me.CombatAbility[Drunken Monkey Style rk. iii]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Drunken Monkey Style]} || ${Me.CombatAbility[Drunken Monkey Style rk. ii]} || ${Me.CombatAbility[Drunken Monkey Style rk. iii]}),1,0]}");
@@ -1374,7 +1408,6 @@ DECLARE_ABILITY_OPTION(pMELEE, "melee", "[ON/OFF] Melee Mode? 0=0ff", "${If[${Se
 DECLARE_ABILITY_OPTION(pMELEP, "meleepri", "[ID] Primary (Melee)?", "0", "${If[${meleemvi[plugin]} && ${meleemvi[melee]} && !${meleemvi[aggro]},1,0]}");
 DECLARE_ABILITY_OPTION(pMELES, "meleesec", "[ID] Offhand (Melee)?", "0", "${If[${meleemvi[plugin]} && ${meleemvi[melee]} && !${meleemvi[aggro]},1,0]} && ${meleemvi[meleepri]}");
 DECLARE_ABILITY_OPTION(pMENDS, "mend", "[#] MyLife% Below? 0=0ff", "${If[${Me.Skill[mend]},1,0]}", "${If[${meleemvi[plugin]} && ${Me.Skill[mend]},1,0]}");
-DECLARE_ABILITY_OPTION(pOFREN, "opfrenzy", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Overpowering Frenzy]} || ${Me.CombatAbility[Overpowering Frenzy Rk. II]} || ${Me.CombatAbility[Overpowering Frenzy Rk. III]} || ${Me.CombatAbility[Overwhelming Frenzy]} || ${Me.CombatAbility[Overwhelming Frenzy Rk. II]} || ${Me.CombatAbility[Overwhelming Frenzy Rk. III]} || ${Me.CombatAbility[Conquering Frenzy]} || ${Me.CombatAbility[Conquering Frenzy Rk. II]} || ${Me.CombatAbility[Conquering Frenzy Rk. III]} || ${Me.CombatAbility[Vanquishing Frenzy]} || ${Me.CombatAbility[Vanquishing Frenzy Rk. II]} || ${Me.CombatAbility[Vanquishing Frenzy Rk. III]} || ${Me.CombatAbility[Demolishing Frenzy]} || ${Me.CombatAbility[Demolishing Frenzy Rk. II]} || ${Me.CombatAbility[Demolishing Frenzy Rk. III]} || ${Me.CombatAbility[Mangling Frenzy]} || ${Me.CombatAbility[Mangling Frenzy Rk. II]} || ${Me.CombatAbility[Mangling Frenzy Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Overpowering Frenzy]} || ${Me.CombatAbility[Overpowering Frenzy Rk. II]} || ${Me.CombatAbility[Overpowering Frenzy Rk. III]} || ${Me.CombatAbility[Overwhelming Frenzy]} || ${Me.CombatAbility[Overwhelming Frenzy Rk. II]} || ${Me.CombatAbility[Overwhelming Frenzy Rk. III]} || ${Me.CombatAbility[Conquering Frenzy]} || ${Me.CombatAbility[Conquering Frenzy Rk. II]} || ${Me.CombatAbility[Conquering Frenzy Rk. III]} || ${Me.CombatAbility[Vanquishing Frenzy]} || ${Me.CombatAbility[Vanquishing Frenzy Rk. II]} || ${Me.CombatAbility[Vanquishing Frenzy Rk. III]} || ${Me.CombatAbility[Demolishing Frenzy]} || ${Me.CombatAbility[Demolishing Frenzy Rk. II]} || ${Me.CombatAbility[Demolishing Frenzy Rk. III]} || ${Me.CombatAbility[Mangling Frenzy]} || ${Me.CombatAbility[Mangling Frenzy Rk. II]} || ${Me.CombatAbility[Mangling Frenzy Rk. III]}),1,0]}");
 DECLARE_ABILITY_OPTION(pOSTRK, "opportunisticstrike", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Opportunistic Strike]} || ${Me.CombatAbility[Opportunistic Strike Rk. II]} || ${Me.CombatAbility[Opportunistic Strike Rk. III]} || ${Me.CombatAbility[Strategic Strike]} || ${Me.CombatAbility[Strategic Strike Rk. II]} || ${Me.CombatAbility[Strategic Strike Rk. III]} || ${Me.CombatAbility[Vital Strike]} || ${Me.CombatAbility[Vital Strike Rk. II]} || ${Me.CombatAbility[Vital Strike Rk. III]} || ${Me.CombatAbility[Calculated Strike]} || ${Me.CombatAbility[Calculated Strike Rk. II]} || ${Me.CombatAbility[Calculated Strike Rk. III]} || ${Me.CombatAbility[Cunning Strike]} || ${Me.CombatAbility[Cunning Strike Rk. II]} || ${Me.CombatAbility[Cunning Strike Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Opportunistic Strike]} || ${Me.CombatAbility[Opportunistic Strike Rk. II]} || ${Me.CombatAbility[Opportunistic Strike Rk. III]} || ${Me.CombatAbility[Strategic Strike]} || ${Me.CombatAbility[Strategic Strike Rk. II]} || ${Me.CombatAbility[Strategic Strike Rk. III]} || ${Me.CombatAbility[Vital Strike]} || ${Me.CombatAbility[Vital Strike Rk. II]} || ${Me.CombatAbility[Vital Strike Rk. III]} || ${Me.CombatAbility[Calculated Strike]} || ${Me.CombatAbility[Calculated Strike Rk. II]} || ${Me.CombatAbility[Calculated Strike Rk. III]} || ${Me.CombatAbility[Cunning Strike]} || ${Me.CombatAbility[Cunning Strike Rk. II]} || ${Me.CombatAbility[Cunning Strike Rk. III]}),1,0]}");
 DECLARE_ABILITY_OPTION(pPETAS, "petassist", "[ON/OFF] Assist Me?", "${If[${Select[${Me.Class.ShortName},SHD,DRU,SHM,NEC,MAG,ENC,BST]},1,0]}", "${If[${meleemvi[plugin]} && ${meleemvi[petassist]} && ${Select[${Me.Class.ShortName},SHD,DRU,SHM,NEC,MAG,ENC,BST]},1,0]}");
 DECLARE_ABILITY_OPTION(pPETDE, "petdelay", "[#] # Sec Delay Before Engaging?", "${If[${Select[${Me.Class.ShortName},SHD,DRU,SHM,NEC,MAG,ENC,BST]},0,0]}", "${If[${meleemvi[plugin]} && ${meleemvi[petassist]} && ${Select[${Me.Class.ShortName},SHD,DRU,SHM,NEC,MAG,ENC,BST]},1,0]}");
@@ -1391,10 +1424,8 @@ DECLARE_ABILITY_OPTION(pPRVKE, "provokeend", "[#] Stop when Target Life% Below?"
 DECLARE_ABILITY_OPTION(pPRVKM, "provokemax", "[#] Counter? ,1=try once, 0=0ff", "${If[${Select[${Me.Class.ShortName},WAR,PAL,SHD,MNK,BER]},1,0]}", "${If[${meleemvi[plugin]} && ${meleemvi[aggro]} && ${Select[${Me.Class.ShortName},WAR,PAL,SHD,MNK,BER]},1,0]}");
 DECLARE_ABILITY_OPTION(pPRVKO, "provokeonce", "[ON/OFF]?", "${If[${Select[${Me.Class.ShortName},WAR,PAL,SHD,MNK,BER]},1,0]}", "${If[${meleemvi[plugin]} && ${meleemvi[aggro]} && ${Select[${Me.Class.ShortName},WAR,PAL,SHD,MNK,BER]},1,0]}");
 DECLARE_ABILITY_OPTION(pRAKES, "rake", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[rake]} || ${Me.CombatAbility[harrow]} || ${Me.CombatAbility[harrow rk. ii]} || ${Me.CombatAbility[harrow rk. iii]} || ${Me.CombatAbility[foray]} || ${Me.CombatAbility[foray rk. ii]} || ${Me.CombatAbility[foray rk. iii]} || ${Me.CombatAbility[rush]} || ${Me.CombatAbility[rush rk. ii]} || ${Me.CombatAbility[rush rk. iii]} || ${Me.CombatAbility[Barrage]} || ${Me.CombatAbility[Barrage rk. ii]} || ${Me.CombatAbility[Barrage rk. iii]} || ${Me.CombatAbility[Pummel]} || ${Me.CombatAbility[Pummel rk. ii]} || ${Me.CombatAbility[Pummel rk. iii]} || ${Me.CombatAbility[Maul]} || ${Me.CombatAbility[Maul rk. ii]} || ${Me.CombatAbility[Maul rk. iii]} || ${Me.CombatAbility[Mangle]} || ${Me.CombatAbility[Mangle Rk. II]} || ${Me.CombatAbility[Mangle Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[rake]} || ${Me.CombatAbility[harrow]} || ${Me.CombatAbility[harrow rk. ii]} || ${Me.CombatAbility[harrow rk. iii]} || ${Me.CombatAbility[foray]} || ${Me.CombatAbility[foray rk. ii]} || ${Me.CombatAbility[foray rk. iii]} || ${Me.CombatAbility[rush]} || ${Me.CombatAbility[rush rk. ii]} || ${Me.CombatAbility[rush rk. iii]} || ${Me.CombatAbility[Barrage]} || ${Me.CombatAbility[Barrage rk. ii]} || ${Me.CombatAbility[Barrage rk. iii]} || ${Me.CombatAbility[Pummel]} || ${Me.CombatAbility[Pummel rk. ii]} || ${Me.CombatAbility[Pummel rk. iii]} || ${Me.CombatAbility[Maul]} || ${Me.CombatAbility[Maul rk. ii]} || ${Me.CombatAbility[Maul rk. iii]} || ${Me.CombatAbility[Mangle]} || ${Me.CombatAbility[Mangle Rk. II]} || ${Me.CombatAbility[Mangle Rk. III]}),1,0]}");
-DECLARE_ABILITY_OPTION(pRALLO, "rallos", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Axe of Rallos]} || ${Me.CombatAbility[Axe of Rallos Rk. II]} || ${Me.CombatAbility[Axe of Rallos Rk. III]} || ${Me.CombatAbility[Axe of Graster]} || ${Me.CombatAbility[Axe of Graster Rk. II]} || ${Me.CombatAbility[Axe of Graster Rk. III]} || ${Me.CombatAbility[Axe of Illdaera]} || ${Me.CombatAbility[Axe of Illdaera Rk. II]} || ${Me.CombatAbility[Axe of Illdaera Rk. III]} || ${Me.CombatAbility[Axe of Zurel]} || ${Me.CombatAbility[Axe of Zurel Rk. II]} || ${Me.CombatAbility[Axe of Zurel Rk. III]} || ${Me.CombatAbility[Axe of Numicia]} || ${Me.CombatAbility[Axe of Numicia Rk. II]} || ${Me.CombatAbility[Axe of Numicia Rk. III]} || ${Me.CombatAbility[Axe of the Aeons]} || ${Me.CombatAbility[Axe of the Aeons Rk. II]} || ${Me.CombatAbility[Axe of the Aeons Rk. III]} || ${Me.CombatAbility[Axe of Rekatok]} || ${Me.CombatAbility[Axe of Rekatok Rk. II]} || ${Me.CombatAbility[Axe of Rekatok Rk. III]} || ${Me.CombatAbility[Axe of Empyr]} || ${Me.CombatAbility[Axe of Empyr Rk. II]} || ${Me.CombatAbility[Axe of Empyr Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Axe of Rallos]} || ${Me.CombatAbility[Axe of Rallos Rk. II]} || ${Me.CombatAbility[Axe of Rallos Rk. III]} || ${Me.CombatAbility[Axe of Graster]} || ${Me.CombatAbility[Axe of Graster Rk. II]} || ${Me.CombatAbility[Axe of Graster Rk. III]} || ${Me.CombatAbility[Axe of Illdaera]} || ${Me.CombatAbility[Axe of Illdaera Rk. II]} || ${Me.CombatAbility[Axe of Illdaera Rk. III]} ${Me.CombatAbility[Axe of Illdaera Rk. III]} || ${Me.CombatAbility[Axe of Zurel]} || ${Me.CombatAbility[Axe of Zurel Rk. II]} || ${Me.CombatAbility[Axe of Zurel Rk. III]} || ${Me.CombatAbility[Axe of Numicia]} || ${Me.CombatAbility[Axe of Numicia Rk. II]} || ${Me.CombatAbility[Axe of Numicia Rk. III]} || ${Me.CombatAbility[Axe of the Aeons]} || ${Me.CombatAbility[Axe of the Aeons Rk. II]} || ${Me.CombatAbility[Axe of the Aeons Rk. III]} || ${Me.CombatAbility[Axe of Rekatok]} || ${Me.CombatAbility[Axe of Rekatok Rk. II]} || ${Me.CombatAbility[Axe of Rekatok Rk. III]} || ${Me.CombatAbility[Axe of Empyr]} || ${Me.CombatAbility[Axe of Empyr Rk. II]} || ${Me.CombatAbility[Axe of Empyr Rk. III]}),1,0]}");
 DECLARE_ABILITY_OPTION(pRANGE, "range", "[#] Max Range? 0=0ff", "0", "${If[${meleemvi[plugin]},1,0]}");
 DECLARE_ABILITY_OPTION(pRAVEN, "ravens", "[ON/OFF]?", "${If[${Me.AltAbility[raven's claw]},1,0]}", "${If[${meleemvi[plugin]} && ${Me.AltAbility[raven's claw]},1,0]}");
-DECLARE_ABILITY_OPTION(pRAVOL, "ragevolley", "[#] Endu% Above? 0=0ff", "${If[${Me.CombatAbility[rage volley]} || ${Me.CombatAbility[destroyer's volley]} || ${Me.CombatAbility[giantslayer's volley]} || ${Me.CombatAbility[giantslayer's volley rk. ii]} || ${Me.CombatAbility[giantslayer's volley rk. iii]} || ${Me.CombatAbility[annihilator's volley]} || ${Me.CombatAbility[annihilator's volley rk. ii]} || ${Me.CombatAbility[annihilator's volley rk. iii]} || ${Me.CombatAbility[decimator's volley]} || ${Me.CombatAbility[decimator's volley rk. ii]} || ${Me.CombatAbility[decimator's volley rk. iii]} || ${Me.CombatAbility[Eradicator's Volley]} || ${Me.CombatAbility[Eradicator's Volley rk. ii]} || ${Me.CombatAbility[Eradicator's Volley rk. iii]} || ${Me.CombatAbility[Savage Volley]} || ${Me.CombatAbility[Savage Volley rk. ii]} || ${Me.CombatAbility[Savage Volley rk. iii]} || ${Me.CombatAbility[Sundering Volley]} || ${Me.CombatAbility[Sundering Volley rk. ii]} || ${Me.CombatAbility[Sundering Volley rk. iii]} || ${Me.CombatAbility[Brutal Volley]} || ${Me.CombatAbility[Brutal Volley rk. ii]} || ${Me.CombatAbility[Brutal Volley rk. iii]} || ${Me.CombatAbility[Demolishing Volley]} || ${Me.CombatAbility[Demolishing Volley rk. ii]} || ${Me.CombatAbility[Demolishing Volley rk. iii]} || ${Me.CombatAbility[Mangling Volley]} || ${Me.CombatAbility[Mangling Volley Rk. II]} || ${Me.CombatAbility[Mangling Volley Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[rage volley]} || ${Me.CombatAbility[destroyer's volley]} || ${Me.CombatAbility[giantslayer's volley]} || ${Me.CombatAbility[giantslayer's volley rk. ii]} || ${Me.CombatAbility[giantslayer's volley rk. iii]} || ${Me.CombatAbility[annihilator's volley]} || ${Me.CombatAbility[annihilator's volley rk. ii]} || ${Me.CombatAbility[annihilator's volley rk. iii]} || ${Me.CombatAbility[decimator's volley]} || ${Me.CombatAbility[decimator's volley rk. ii]} || ${Me.CombatAbility[decimator's volley rk. iii]} || ${Me.CombatAbility[Eradicator's Volley]} || ${Me.CombatAbility[Eradicator's Volley rk. ii]} || ${Me.CombatAbility[Eradicator's Volley rk. iii]} || ${Me.CombatAbility[Savage Volley]} || ${Me.CombatAbility[Savage Volley rk. ii]} || ${Me.CombatAbility[Savage Volley rk. iii]} || ${Me.CombatAbility[Sundering Volley]} || ${Me.CombatAbility[Sundering Volley rk. ii]} || ${Me.CombatAbility[Sundering Volley rk. iii]} || ${Me.CombatAbility[Brutal Volley]} || ${Me.CombatAbility[Brutal Volley rk. ii]} || ${Me.CombatAbility[Brutal Volley rk. iii]} || ${Me.CombatAbility[Demolishing Volley]} || ${Me.CombatAbility[Demolishing Volley rk. ii]} || ${Me.CombatAbility[Demolishing Volley rk. iii]} || ${Me.CombatAbility[Mangling Volley]} || ${Me.CombatAbility[Mangling Volley Rk. II]} || ${Me.CombatAbility[Mangling Volley Rk. III]}),1,0]}");
 DECLARE_ABILITY_OPTION(pRESUM, "resume", "[#] Life% Above? 100=0ff", "75", "${If[${meleemvi[plugin]} && !${meleemvi[aggro]},1,0]}");
 DECLARE_ABILITY_OPTION(pRGHTI, "rightidg", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Righteous Indignation]} || ${Me.CombatAbility[Righteous Indignation rk. ii]} || ${Me.CombatAbility[Righteous Indignation rk. iii]} || ${Me.CombatAbility[Righteous Vexation]} || ${Me.CombatAbility[Righteous Vexation rk. ii]} || ${Me.CombatAbility[Righteous Vexation rk. iii]} || ${Me.CombatAbility[Righteous Umbrage]} || ${Me.CombatAbility[Righteous Umbrage rk. ii]} || ${Me.CombatAbility[Righteous Umbrage rk. iii]} || ${Me.CombatAbility[Righteous Condemnation]} || ${Me.CombatAbility[Righteous Condemnation Rk. II]} || ${Me.CombatAbility[Righteous Condemnation Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Righteous Indignation]} || ${Me.CombatAbility[Righteous Indignation rk. ii]} || ${Me.CombatAbility[Righteous Indignation rk. iii]} || ${Me.CombatAbility[Righteous Vexation]} || ${Me.CombatAbility[Righteous Vexation rk. ii]} || ${Me.CombatAbility[Righteous Vexation rk. iii]} || ${Me.CombatAbility[Righteous Umbrage]} || ${Me.CombatAbility[Righteous Umbrage rk. ii]} || ${Me.CombatAbility[Righteous Umbrage rk. iii]} || ${Me.CombatAbility[Righteous Condemnation]} || ${Me.CombatAbility[Righteous Condemnation Rk. II]} || ${Me.CombatAbility[Righteous Condemnation Rk. III]}),1,0]}");
 DECLARE_ABILITY_OPTION(pRKICK, "roundkick", "[ON/OFF]?", "${If[${Me.Skill[round kick]},1,0]}", "${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.Skill[round kick]},1,0]}");
@@ -1403,7 +1434,6 @@ DECLARE_ABILITY_OPTION(pSELOK, "selos", "[ON/OFF]?", "${If[${Me.AltAbility[selo'
 DECLARE_ABILITY_OPTION(pSENSE, "sensetraps", "[ON/OFF]?", "0", "${If[${meleemvi[plugin]} && ${Me.Skill[sense traps]},1,0]}");
 DECLARE_ABILITY_OPTION(pSHIEL, "shield", "[ID] item?", "0", "${If[${meleemvi[plugin]} && ${Me.Skill[bash]},0,0]}");
 DECLARE_ABILITY_OPTION(pSLAMS, "slam", "[ON/OFF]?", "${If[${Select[${Me.Race.ID},2,9,10]},1,0]}", "${If[${meleemvi[plugin]} && ${Select[${Me.Race.ID},2,9,10]},1,0]}"); // 2=barbarian 9=troll 10=ogre
-DECLARE_ABILITY_OPTION(pSLAPF, "slapface", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Slap in the Face]} || ${Me.CombatAbility[Slap in the Face rk. ii]} || ${Me.CombatAbility[Slap in the Face rk. iii]} || ${Me.CombatAbility[Kick in the Teeth]} || ${Me.CombatAbility[Kick in the Teeth rk. ii]} || ${Me.CombatAbility[Kick in the Teeth rk. iii]} || ${Me.CombatAbility[Punch in the Throat]} || ${Me.CombatAbility[Punch in the Throat rk. ii]} || ${Me.CombatAbility[Punch in the Throat rk. iii]} || ${Me.CombatAbility[Kick in the Shins]} || ${Me.CombatAbility[Kick in the Shins rk. ii]} || ${Me.CombatAbility[Kick in the Shins rk. iii]} || ${Me.CombatAbility[Sucker Punch]} || ${Me.CombatAbility[Sucker Punch Rk. II]} || ${Me.CombatAbility[Sucker Punch Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Slap in the Face]} || ${Me.CombatAbility[Slap in the Face rk. ii]} || ${Me.CombatAbility[Slap in the Face rk. iii]} || ${Me.CombatAbility[Kick in the Teeth]} || ${Me.CombatAbility[Kick in the Teeth rk. ii]} || ${Me.CombatAbility[Kick in the Teeth rk. iii]} || ${Me.CombatAbility[Punch in the Throat]} || ${Me.CombatAbility[Punch in the Throat rk. ii]} || ${Me.CombatAbility[Punch in the Throat rk. iii]} || ${Me.CombatAbility[Kick in the Shins]} || ${Me.CombatAbility[Kick in the Shins rk. ii]} || ${Me.CombatAbility[Kick in the Shins rk. iii]} || ${Me.CombatAbility[Sucker Punch]} || ${Me.CombatAbility[Sucker Punch Rk. II]} || ${Me.CombatAbility[Sucker Punch Rk. III]}),1,0]}");
 DECLARE_ABILITY_OPTION(pSNEAK, "sneak", "[ON/OFF]?", "0", "${If[${meleemvi[plugin]} && ${Me.Skill[sneak]},1,0]}");
 DECLARE_ABILITY_OPTION(pSTAND, "standup", "[ON/OFF] Authorize to StandUp?", "0", "${If[${meleemvi[plugin]},1,0]}");
 DECLARE_ABILITY_OPTION(pSTEEL, "steely", "[ON/OFF]", "${If[${Select[${Me.Class.ShortName},PAL,SHD]} && (${Me.Book[Steely Stance]} || ${Me.Book[Steely Stance rk. ii]} || ${Me.Book[Steely Stance rk. iii]} || ${Me.Book[Stubborn Stance]} || ${Me.Book[Stubborn Stance rk. ii]} || ${Me.Book[Stubborn Stance rk. iii]} || ${Me.Book[Stoic Stance]} || ${Me.Book[Stoic Stance rk. ii]} || ${Me.Book[Stoic Stance rk. iii]} || ${Me.Book[Steadfast Stance]} || ${Me.Book[Steadfast Stance rk. ii]} || ${Me.Book[Steadfast Stance rk. iii]} || ${Me.Book[Staunch Stance]} || ${Me.Book[Staunch Stance rk. ii]} || ${Me.Book[Staunch Stance rk. iii]} || ${Me.Book[Defiant Stance]} || ${Me.Book[Defiant Stance Rk. II]} || ${Me.Book[Defiant Stance Rk. III]}),0,0]}", "${If[${meleemvi[plugin]} && ${Select[${Me.Class.ShortName},PAL,SHD]} && (${Me.Book[Steely Stance]} || ${Me.Book[Steely Stance rk. ii]} || ${Me.Book[Steely Stance rk. iii]} || ${Me.Book[Stubborn Stance]} || ${Me.Book[Stubborn Stance rk. ii]} || ${Me.Book[Stubborn Stance rk. iii]} || ${Me.Book[Stoic Stance]} || ${Me.Book[Stoic Stance rk. ii]} || ${Me.Book[Stoic Stance rk. iii]} || ${Me.Book[Steadfast Stance]} || ${Me.Book[Steadfast Stance rk. ii]} || ${Me.Book[Steadfast Stance rk. iii]} || ${Me.Book[Staunch Stance]} || ${Me.Book[Staunch Stance rk. ii]} || ${Me.Book[Staunch Stance rk. iii]} || ${Me.Book[Defiant Stance]} || ${Me.Book[Defiant Stance Rk. II]} || ${Me.Book[Defiant Stance Rk. III]}),1,0]}");
@@ -1424,13 +1454,23 @@ DECLARE_ABILITY_OPTION(pTHROW, "throwstone", "[#] Endu% Above? 0=0ff", "0", "${I
 DECLARE_ABILITY_OPTION(pTIGER, "tigerclaw", "[ON/OFF]?", "${If[${Me.Skill[tiger claw]},1,0]}", "${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.Skill[tiger claw]},1,0]}");
 DECLARE_ABILITY_OPTION(pTTJAB, "throatjab", "[ON/OFF]?", "${If[${Me.AltAbility[throat jab]},1,0]}", "${If[${meleemvi[plugin]} && ${Me.AltAbility[throat jab]},1,0]}");
 DECLARE_ABILITY_OPTION(pTWIST, "twistedshank", "[ON/OFF]?", "${If[${Me.AltAbility[twisted shank]},1,0]}", "${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.AltAbility[twisted shank]},1,0]}");
-DECLARE_ABILITY_OPTION(pVIGAX, "vigaxe", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Vigorous Axe Throw]} || ${Me.CombatAbility[Vigorous Axe Throw Rk. II]} || ${Me.CombatAbility[Vigorous Axe Throw Rk. III]} || ${Me.CombatAbility[Energetic Axe Throw]} || ${Me.CombatAbility[Energetic Axe Throw Rk. II]} || ${Me.CombatAbility[Energetic Axe Throw Rk. III]} || ${Me.CombatAbility[Spirited Axe Throw]} || ${Me.CombatAbility[Spirited Axe Throw Rk. II]} || ${Me.CombatAbility[Spirited Axe Throw Rk. III]} || ${Me.CombatAbility[Brutal Axe Throw]} || ${Me.CombatAbility[Brutal Axe Throw Rk. II]} || ${Me.CombatAbility[Brutal Axe Throw Rk. III]} || ${Me.CombatAbility[Demolishing Axe Throw]} || ${Me.CombatAbility[Demolishing Axe Throw Rk. II]} || ${Me.CombatAbility[Demolishing Axe Throw Rk. III]} || ${Me.CombatAbility[Mangling Axe Throw]} || ${Me.CombatAbility[Mangling Axe Throw Rk. II]} || ${Me.CombatAbility[Mangling Axe Throw Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Vigorous Axe Throw]} || ${Me.CombatAbility[Vigorous Axe Throw Rk. II]} || ${Me.CombatAbility[Vigorous Axe Throw Rk. III]} || ${Me.CombatAbility[Energetic Axe Throw]} || ${Me.CombatAbility[Energetic Axe Throw Rk. II]} || ${Me.CombatAbility[Energetic Axe Throw Rk. III]} || ${Me.CombatAbility[Spirited Axe Throw]} || ${Me.CombatAbility[Spirited Axe Throw Rk. II]} || ${Me.CombatAbility[Spirited Axe Throw Rk. III]} || ${Me.CombatAbility[Brutal Axe Throw]} || ${Me.CombatAbility[Brutal Axe Throw Rk. II]} || ${Me.CombatAbility[Brutal Axe Throw Rk. III]} || ${Me.CombatAbility[Demolishing Axe Throw]} || ${Me.CombatAbility[Demolishing Axe Throw Rk. II]} || ${Me.CombatAbility[Demolishing Axe Throw Rk. III]} || ${Me.CombatAbility[Mangling Axe Throw]} || ${Me.CombatAbility[Mangling Axe Throw Rk. II]} || ${Me.CombatAbility[Mangling Axe Throw Rk. III]}),1,0]}");
 DECLARE_ABILITY_OPTION(pVIGDR, "vigdagger", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Vigorous Dagger-Throw]} || ${Me.CombatAbility[Vigorous Dagger-Throw Rk. II]} || ${Me.CombatAbility[Vigorous Dagger-Throw Rk. III]} || ${Me.CombatAbility[Vigorous Dagger-Strike]} || ${Me.CombatAbility[Vigorous Dagger-Strike Rk. II]} || ${Me.CombatAbility[Vigorous Dagger-Strike Rk. III]} || ${Me.CombatAbility[Energetic Dagger-Strike]} || ${Me.CombatAbility[Energetic Dagger-Strike Rk. II]} || ${Me.CombatAbility[Energetic Dagger-Strike Rk. III]} || ${Me.CombatAbility[Energetic Dagger-Throw]} || ${Me.CombatAbility[Energetic Dagger-Throw Rk. II]} || ${Me.CombatAbility[Energetic Dagger-Throw Rk. III]} || ${Me.CombatAbility[Exuberant Dagger-Throw]} || ${Me.CombatAbility[Exuberant Dagger-Throw Rk. II]} || ${Me.CombatAbility[Exuberant Dagger-Throw Rk. III]} || ${Me.CombatAbility[Forceful Dagger-Throw]} || ${Me.CombatAbility[Forceful Dagger-Throw Rk. II]} || ${Me.CombatAbility[Forceful Dagger-Throw Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Vigorous Dagger-Throw]} || ${Me.CombatAbility[Vigorous Dagger-Throw Rk. II]} || ${Me.CombatAbility[Vigorous Dagger-Throw Rk. III]} || ${Me.CombatAbility[Vigorous Dagger-Strike]} || ${Me.CombatAbility[Vigorous Dagger-Strike Rk. II]} || ${Me.CombatAbility[Vigorous Dagger-Strike Rk. III]} || ${Me.CombatAbility[Energetic Dagger-Strike]} || ${Me.CombatAbility[Energetic Dagger-Strike Rk. II]} || ${Me.CombatAbility[Energetic Dagger-Strike Rk. III]} || ${Me.CombatAbility[Energetic Dagger-Throw]} || ${Me.CombatAbility[Energetic Dagger-Throw Rk. II]} || ${Me.CombatAbility[Energetic Dagger-Throw Rk. III]} || ${Me.CombatAbility[Exuberant Dagger-Throw]} || ${Me.CombatAbility[Exuberant Dagger-Throw Rk. II]} || ${Me.CombatAbility[Exuberant Dagger-Throw Rk. III]} || ${Me.CombatAbility[Forceful Dagger-Throw]} || ${Me.CombatAbility[Forceful Dagger-Throw Rk. II]} || ${Me.CombatAbility[Forceful Dagger-Throw Rk. III]}),1,0]}");
 DECLARE_ABILITY_OPTION(pVIGSN, "vigshuriken", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Vigorous Shuriken]} || ${Me.CombatAbility[Vigorous Shuriken Rk. II]} || ${Me.CombatAbility[Vigorous Shuriken Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Vigorous Shuriken]} || ${Me.CombatAbility[Vigorous Shuriken Rk. II]} || ${Me.CombatAbility[Vigorous Shuriken Rk. III]}),1,0]}");
 DECLARE_ABILITY_OPTION(pWITHS, "withstand", "[#] Endu% Above? 0=Off", "${If[${Select[${Me.Class.ShortName},PAL,SHD]} && (${Me.CombatAbility[withstand]} || ${Me.CombatAbility[withstand rk. ii]} || ${Me.CombatAbility[withstand rk. iii]} || ${Me.CombatAbility[defy]} || ${Me.CombatAbility[defy rk. ii]} || ${Me.CombatAbility[defy rk. iii]} || ${Me.CombatAbility[Reprove]} || ${Me.CombatAbility[Reprove rk. ii]} || ${Me.CombatAbility[Reprove rk. iii]} || ${Me.CombatAbility[Repel]} || ${Me.CombatAbility[Repel rk. ii]} || ${Me.CombatAbility[Repel rk. iii]} || ${Me.CombatAbility[Spurn]} || ${Me.CombatAbility[Spurn Rk. II]} || ${Me.CombatAbility[Spurn Rk. III]}),20,0]}", "${If[${meleemvi[plugin]} && ${Select[${Me.Class.ShortName},PAL,SHD]} && (${Me.CombatAbility[withstand]} || ${Me.CombatAbility[withstand rk. ii]} || ${Me.CombatAbility[withstand rk. iii]} || ${Me.CombatAbility[defy]} || ${Me.CombatAbility[defy rk. ii]} || ${Me.CombatAbility[defy rk. iii]} || ${Me.CombatAbility[Reprove]} || ${Me.CombatAbility[Reprove rk. ii]} || ${Me.CombatAbility[Reprove rk. iii]} || ${Me.CombatAbility[Repel]} || ${Me.CombatAbility[Repel rk. ii]} || ${Me.CombatAbility[Repel rk. iii]} || ${Me.CombatAbility[Spurn]} || ${Me.CombatAbility[Spurn Rk. II]} || ${Me.CombatAbility[Spurn Rk. III]}),1,0]}");
 DECLARE_ABILITY_OPTION(pYAULP, "yaulp", "[ON/OFF]?", "${If[${Me.AltAbility[yaulp]},0,0]}", "${If[${meleemvi[plugin]} && ${Me.AltAbility[yaulp]},1,0]}");
 
-
+//Berserker - Class 16
+DECLARE_ABILITY_OPTION(pBLUST, "bloodlust", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Shared Bloodlust]} || ${Me.CombatAbility[Shared Bloodlust Rk. II]} || ${Me.CombatAbility[Shared Bloodlust Rk. III]} || ${Me.CombatAbility[Shared Brutality]} || ${Me.CombatAbility[Shared Brutality Rk. II]} || ${Me.CombatAbility[Shared Brutality Rk. III]} || ${Me.CombatAbility[Shared Savagery]} || ${Me.CombatAbility[Shared Savagery Rk. II]} || ${Me.CombatAbility[Shared Savagery Rk. III]} || ${Me.CombatAbility[Shared Viciousness]} || ${Me.CombatAbility[Shared Viciousness Rk. II]} || ${Me.CombatAbility[Shared Viciousness Rk. III]} || ${Me.CombatAbility[Shared Cruelty]} || ${Me.CombatAbility[Shared Cruelty Rk. II]} || ${Me.CombatAbility[Shared Cruelty Rk. III]} || ${Me.CombatAbility[Shared Ruthlessness]} || ${Me.CombatAbility[Shared Ruthlessness Rk. II]} || ${Me.CombatAbility[Shared Ruthlessness Rk. III]} || ${Me.CombatAbility[Shared Atavism]} || ${Me.CombatAbility[Shared Atavism Rk. II]} || ${Me.CombatAbility[Shared Atavism Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Shared Bloodlust]} || ${Me.CombatAbility[Shared Bloodlust Rk. II]} || ${Me.CombatAbility[Shared Bloodlust Rk. III]} || ${Me.CombatAbility[Shared Brutality]} || ${Me.CombatAbility[Shared Brutality Rk. II]} || ${Me.CombatAbility[Shared Brutality Rk. III]} || ${Me.CombatAbility[Shared Savagery]} || ${Me.CombatAbility[Shared Savagery Rk. II]} || ${Me.CombatAbility[Shared Savagery Rk. III]} || ${Me.CombatAbility[Shared Viciousness]} || ${Me.CombatAbility[Shared Viciousness Rk. II]} || ${Me.CombatAbility[Shared Viciousness Rk. III]} || ${Me.CombatAbility[Shared Cruelty]} || ${Me.CombatAbility[Shared Cruelty Rk. II]} || ${Me.CombatAbility[Shared Cruelty Rk. III]} || ${Me.CombatAbility[Shared Ruthlessness]} || ${Me.CombatAbility[Shared Ruthlessness Rk. II]} || ${Me.CombatAbility[Shared Ruthlessness Rk. III]} || ${Me.CombatAbility[Shared Atavism]} || ${Me.CombatAbility[Shared Atavism Rk. II]} || ${Me.CombatAbility[Shared Atavism Rk. III]}),1,0]}");
+DECLARE_ABILITY_OPTION(pCRIPS, "cripple", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[leg strike]} || ${Me.CombatAbility[leg cut]} || ${Me.CombatAbility[leg slice]} || ${Me.CombatAbility[crippling strike]} || ${Me.CombatAbility[tendon cleave]} || ${Me.CombatAbility[tendon cleave rk. ii]} || ${Me.CombatAbility[tendon cleave rk. iii]} || ${Me.CombatAbility[tendon sever]} || ${Me.CombatAbility[tendon sever rk. ii]} || ${Me.CombatAbility[tendon sever rk. iii]} || ${Me.CombatAbility[tendon shear]} || ${Me.CombatAbility[tendon shear rk. ii]} || ${Me.CombatAbility[tendon shear rk. iii]} || ${Me.CombatAbility[tendon lacerate]} || ${Me.CombatAbility[tendon lacerate rk. ii]} || ${Me.CombatAbility[tendon lacerate rk. iii]} || ${Me.CombatAbility[tendon Slash]} || ${Me.CombatAbility[tendon Slash rk. ii]} || ${Me.CombatAbility[tendon Slash rk. iii]} || ${Me.CombatAbility[Tendon Gash]} || ${Me.CombatAbility[Tendon Gash Rk. II]} || ${Me.CombatAbility[Tendon Gash Rk. III]} || ${Me.CombatAbility[Tendon Tear]} || ${Me.CombatAbility[Tendon Tear Rk. II]} || ${Me.CombatAbility[Tendon Tear Rk. III]} || ${Me.CombatAbility[Tendon Rupture]} || ${Me.CombatAbility[Tendon Rupture Rk. II]} || ${Me.CombatAbility[Tendon Rupture Rk. III]} || ${Me.CombatAbility[Tendon Rip]} || ${Me.CombatAbility[Tendon Rip Rk. II]} || ${Me.CombatAbility[Tendon Rip Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[leg strike]} || ${Me.CombatAbility[leg cut]} || ${Me.CombatAbility[leg slice]} || ${Me.CombatAbility[crippling strike]} || ${Me.CombatAbility[tendon cleave]} || ${Me.CombatAbility[tendon cleave rk. ii]} || ${Me.CombatAbility[tendon cleave rk. iii]} || ${Me.CombatAbility[tendon sever]} || ${Me.CombatAbility[tendon sever rk. ii]} || ${Me.CombatAbility[tendon sever rk. iii]} || ${Me.CombatAbility[tendon shear]} || ${Me.CombatAbility[tendon shear rk. ii]} || ${Me.CombatAbility[tendon shear rk. iii]} || ${Me.CombatAbility[tendon lacerate]} || ${Me.CombatAbility[tendon lacerate rk. ii]} || ${Me.CombatAbility[tendon lacerate rk. iii]} || ${Me.CombatAbility[tendon Slash]} || ${Me.CombatAbility[tendon Slash rk. ii]} || ${Me.CombatAbility[tendon Slash rk. iii]} || ${Me.CombatAbility[Tendon Gash]} || ${Me.CombatAbility[Tendon Gash Rk. II]} || ${Me.CombatAbility[Tendon Gash Rk. III]} || ${Me.CombatAbility[Tendon Tear]} || ${Me.CombatAbility[Tendon Tear Rk. II]} || ${Me.CombatAbility[Tendon Tear Rk. III]} || ${Me.CombatAbility[Tendon Rupture]} || ${Me.CombatAbility[Tendon Rupture Rk. II]} || ${Me.CombatAbility[Tendon Rupture Rk. III]} || ${Me.CombatAbility[Tendon Rip]} || ${Me.CombatAbility[Tendon Rip Rk. II]} || ${Me.CombatAbility[Tendon Rip Rk. III]}),1,0]}");
+DECLARE_ABILITY_OPTION(pCRYHC, "cryhavoc", "[#] Endu% Above? 0=0ff", "${If[${Me.CombatAbility[cry havoc]} || ${Me.CombatAbility[Cry Carnage]} || ${Me.CombatAbility[Cry Carnage Rk. II]} || ${Me.CombatAbility[Cry Carnage Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[cry havoc]} || ${Me.CombatAbility[Cry Carnage]} || ${Me.CombatAbility[Cry Carnage Rk. II]} || ${Me.CombatAbility[Cry Carnage Rk. III]}),1,0]}");
+//Where is jolt?
+//Where is stun?
+DECLARE_ABILITY_OPTION(pSLAPF, "slapface", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Slap in the Face]} || ${Me.CombatAbility[Slap in the Face rk. ii]} || ${Me.CombatAbility[Slap in the Face rk. iii]} || ${Me.CombatAbility[Kick in the Teeth]} || ${Me.CombatAbility[Kick in the Teeth rk. ii]} || ${Me.CombatAbility[Kick in the Teeth rk. iii]} || ${Me.CombatAbility[Punch in the Throat]} || ${Me.CombatAbility[Punch in the Throat rk. ii]} || ${Me.CombatAbility[Punch in the Throat rk. iii]} || ${Me.CombatAbility[Kick in the Shins]} || ${Me.CombatAbility[Kick in the Shins rk. ii]} || ${Me.CombatAbility[Kick in the Shins rk. iii]} || ${Me.CombatAbility[Sucker Punch]} || ${Me.CombatAbility[Sucker Punch Rk. II]} || ${Me.CombatAbility[Sucker Punch Rk. III]} || ${Me.CombatAbility[Rabbit Punch]} || ${Me.CombatAbility[Rabbit Punch Rk. II]} || ${Me.CombatAbility[Rabbit Punch Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Slap in the Face]} || ${Me.CombatAbility[Slap in the Face rk. ii]} || ${Me.CombatAbility[Slap in the Face rk. iii]} || ${Me.CombatAbility[Kick in the Teeth]} || ${Me.CombatAbility[Kick in the Teeth rk. ii]} || ${Me.CombatAbility[Kick in the Teeth rk. iii]} || ${Me.CombatAbility[Punch in the Throat]} || ${Me.CombatAbility[Punch in the Throat rk. ii]} || ${Me.CombatAbility[Punch in the Throat rk. iii]} || ${Me.CombatAbility[Kick in the Shins]} || ${Me.CombatAbility[Kick in the Shins rk. ii]} || ${Me.CombatAbility[Kick in the Shins rk. iii]} || ${Me.CombatAbility[Sucker Punch]} || ${Me.CombatAbility[Sucker Punch Rk. II]} || ${Me.CombatAbility[Sucker Punch Rk. III]}),1,0]}");
+DECLARE_ABILITY_OPTION(pRALLO, "rallos", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Axe of Rallos]} || ${Me.CombatAbility[Axe of Rallos Rk. II]} || ${Me.CombatAbility[Axe of Rallos Rk. III]} || ${Me.CombatAbility[Axe of Graster]} || ${Me.CombatAbility[Axe of Graster Rk. II]} || ${Me.CombatAbility[Axe of Graster Rk. III]} || ${Me.CombatAbility[Axe of Illdaera]} || ${Me.CombatAbility[Axe of Illdaera Rk. II]} || ${Me.CombatAbility[Axe of Illdaera Rk. III]} || ${Me.CombatAbility[Axe of Zurel]} || ${Me.CombatAbility[Axe of Zurel Rk. II]} || ${Me.CombatAbility[Axe of Zurel Rk. III]} || ${Me.CombatAbility[Axe of Numicia]} || ${Me.CombatAbility[Axe of Numicia Rk. II]} || ${Me.CombatAbility[Axe of Numicia Rk. III]} || ${Me.CombatAbility[Axe of the Aeons]} || ${Me.CombatAbility[Axe of the Aeons Rk. II]} || ${Me.CombatAbility[Axe of the Aeons Rk. III]} || ${Me.CombatAbility[Axe of Rekatok]} || ${Me.CombatAbility[Axe of Rekatok Rk. II]} || ${Me.CombatAbility[Axe of Rekatok Rk. III]} || ${Me.CombatAbility[Axe of Empyr]} || ${Me.CombatAbility[Axe of Empyr Rk. II]} || ${Me.CombatAbility[Axe of Empyr Rk. III]} || ${Me.CombatAbility[Axe of Derakor]} || ${Me.CombatAbility[Axe of Derakor Rk. II]} || ${Me.CombatAbility[Axe of Derakor Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Axe of Rallos]} || ${Me.CombatAbility[Axe of Rallos Rk. II]} || ${Me.CombatAbility[Axe of Rallos Rk. III]} || ${Me.CombatAbility[Axe of Graster]} || ${Me.CombatAbility[Axe of Graster Rk. II]} || ${Me.CombatAbility[Axe of Graster Rk. III]} || ${Me.CombatAbility[Axe of Illdaera]} || ${Me.CombatAbility[Axe of Illdaera Rk. II]} || ${Me.CombatAbility[Axe of Illdaera Rk. III]} ${Me.CombatAbility[Axe of Illdaera Rk. III]} || ${Me.CombatAbility[Axe of Zurel]} || ${Me.CombatAbility[Axe of Zurel Rk. II]} || ${Me.CombatAbility[Axe of Zurel Rk. III]} || ${Me.CombatAbility[Axe of Numicia]} || ${Me.CombatAbility[Axe of Numicia Rk. II]} || ${Me.CombatAbility[Axe of Numicia Rk. III]} || ${Me.CombatAbility[Axe of the Aeons]} || ${Me.CombatAbility[Axe of the Aeons Rk. II]} || ${Me.CombatAbility[Axe of the Aeons Rk. III]} || ${Me.CombatAbility[Axe of Rekatok]} || ${Me.CombatAbility[Axe of Rekatok Rk. II]} || ${Me.CombatAbility[Axe of Rekatok Rk. III]} || ${Me.CombatAbility[Axe of Empyr]} || ${Me.CombatAbility[Axe of Empyr Rk. II]} || ${Me.CombatAbility[Axe of Empyr Rk. III]} || ${Me.CombatAbility[Axe of Derakor]} || ${Me.CombatAbility[Axe of Derakor Rk. II]} || ${Me.CombatAbility[Axe of Derakor Rk. III]}),1,0]}");
+DECLARE_ABILITY_OPTION(pRAVOL, "ragevolley", "[#] Endu% Above? 0=0ff", "${If[${Me.CombatAbility[rage volley]} || ${Me.CombatAbility[destroyer's volley]} || ${Me.CombatAbility[giantslayer's volley]} || ${Me.CombatAbility[giantslayer's volley rk. ii]} || ${Me.CombatAbility[giantslayer's volley rk. iii]} || ${Me.CombatAbility[annihilator's volley]} || ${Me.CombatAbility[annihilator's volley rk. ii]} || ${Me.CombatAbility[annihilator's volley rk. iii]} || ${Me.CombatAbility[decimator's volley]} || ${Me.CombatAbility[decimator's volley rk. ii]} || ${Me.CombatAbility[decimator's volley rk. iii]} || ${Me.CombatAbility[Eradicator's Volley]} || ${Me.CombatAbility[Eradicator's Volley rk. ii]} || ${Me.CombatAbility[Eradicator's Volley rk. iii]} || ${Me.CombatAbility[Savage Volley]} || ${Me.CombatAbility[Savage Volley rk. ii]} || ${Me.CombatAbility[Savage Volley rk. iii]} || ${Me.CombatAbility[Sundering Volley]} || ${Me.CombatAbility[Sundering Volley rk. ii]} || ${Me.CombatAbility[Sundering Volley rk. iii]} || ${Me.CombatAbility[Brutal Volley]} || ${Me.CombatAbility[Brutal Volley rk. ii]} || ${Me.CombatAbility[Brutal Volley rk. iii]} || ${Me.CombatAbility[Demolishing Volley]} || ${Me.CombatAbility[Demolishing Volley rk. ii]} || ${Me.CombatAbility[Demolishing Volley rk. iii]} || ${Me.CombatAbility[Mangling Volley]} || ${Me.CombatAbility[Mangling Volley Rk. II]} || ${Me.CombatAbility[Mangling Volley Rk. III]} || ${Me.CombatAbility[Vindicating Volley]} || ${Me.CombatAbility[Vindicating Volley Rk. II]} || ${Me.CombatAbility[Vindicating Volley Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[rage volley]} || ${Me.CombatAbility[destroyer's volley]} || ${Me.CombatAbility[giantslayer's volley]} || ${Me.CombatAbility[giantslayer's volley rk. ii]} || ${Me.CombatAbility[giantslayer's volley rk. iii]} || ${Me.CombatAbility[annihilator's volley]} || ${Me.CombatAbility[annihilator's volley rk. ii]} || ${Me.CombatAbility[annihilator's volley rk. iii]} || ${Me.CombatAbility[decimator's volley]} || ${Me.CombatAbility[decimator's volley rk. ii]} || ${Me.CombatAbility[decimator's volley rk. iii]} || ${Me.CombatAbility[Eradicator's Volley]} || ${Me.CombatAbility[Eradicator's Volley rk. ii]} || ${Me.CombatAbility[Eradicator's Volley rk. iii]} || ${Me.CombatAbility[Savage Volley]} || ${Me.CombatAbility[Savage Volley rk. ii]} || ${Me.CombatAbility[Savage Volley rk. iii]} || ${Me.CombatAbility[Sundering Volley]} || ${Me.CombatAbility[Sundering Volley rk. ii]} || ${Me.CombatAbility[Sundering Volley rk. iii]} || ${Me.CombatAbility[Brutal Volley]} || ${Me.CombatAbility[Brutal Volley rk. ii]} || ${Me.CombatAbility[Brutal Volley rk. iii]} || ${Me.CombatAbility[Demolishing Volley]} || ${Me.CombatAbility[Demolishing Volley rk. ii]} || ${Me.CombatAbility[Demolishing Volley rk. iii]} || ${Me.CombatAbility[Mangling Volley]} || ${Me.CombatAbility[Mangling Volley Rk. II]} || ${Me.CombatAbility[Mangling Volley Rk. III]} || ${Me.CombatAbility[Vindicating Volley]} || ${Me.CombatAbility[Vindicating Volley Rk. II]} || ${Me.CombatAbility[Vindicating Volley Rk. III]}),1,0]}");
+DECLARE_ABILITY_OPTION(pOFREN, "opfrenzy", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Overpowering Frenzy]} || ${Me.CombatAbility[Overpowering Frenzy Rk. II]} || ${Me.CombatAbility[Overpowering Frenzy Rk. III]} || ${Me.CombatAbility[Overwhelming Frenzy]} || ${Me.CombatAbility[Overwhelming Frenzy Rk. II]} || ${Me.CombatAbility[Overwhelming Frenzy Rk. III]} || ${Me.CombatAbility[Conquering Frenzy]} || ${Me.CombatAbility[Conquering Frenzy Rk. II]} || ${Me.CombatAbility[Conquering Frenzy Rk. III]} || ${Me.CombatAbility[Vanquishing Frenzy]} || ${Me.CombatAbility[Vanquishing Frenzy Rk. II]} || ${Me.CombatAbility[Vanquishing Frenzy Rk. III]} || ${Me.CombatAbility[Demolishing Frenzy]} || ${Me.CombatAbility[Demolishing Frenzy Rk. II]} || ${Me.CombatAbility[Demolishing Frenzy Rk. III]} || ${Me.CombatAbility[Mangling Frenzy]} || ${Me.CombatAbility[Mangling Frenzy Rk. II]} || ${Me.CombatAbility[Mangling Frenzy Rk. III]} || ${Me.CombatAbility[Vindicating Frenzy]} || ${Me.CombatAbility[Vindicating Frenzy Rk. II]} || ${Me.CombatAbility[Vindicating Frenzy Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Overpowering Frenzy]} || ${Me.CombatAbility[Overpowering Frenzy Rk. II]} || ${Me.CombatAbility[Overpowering Frenzy Rk. III]} || ${Me.CombatAbility[Overwhelming Frenzy]} || ${Me.CombatAbility[Overwhelming Frenzy Rk. II]} || ${Me.CombatAbility[Overwhelming Frenzy Rk. III]} || ${Me.CombatAbility[Conquering Frenzy]} || ${Me.CombatAbility[Conquering Frenzy Rk. II]} || ${Me.CombatAbility[Conquering Frenzy Rk. III]} || ${Me.CombatAbility[Vanquishing Frenzy]} || ${Me.CombatAbility[Vanquishing Frenzy Rk. II]} || ${Me.CombatAbility[Vanquishing Frenzy Rk. III]} || ${Me.CombatAbility[Demolishing Frenzy]} || ${Me.CombatAbility[Demolishing Frenzy Rk. II]} || ${Me.CombatAbility[Demolishing Frenzy Rk. III]} || ${Me.CombatAbility[Mangling Frenzy]} || ${Me.CombatAbility[Mangling Frenzy Rk. II]} || ${Me.CombatAbility[Mangling Frenzy Rk. III]} || ${Me.CombatAbility[Vindicating Frenzy]} || ${Me.CombatAbility[Vindicating Frenzy Rk. II]} || ${Me.CombatAbility[Vindicating Frenzy Rk. III]}),1,0]}");
+DECLARE_ABILITY_OPTION(pVIGAX, "vigaxe", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Vigorous Axe Throw]} || ${Me.CombatAbility[Vigorous Axe Throw Rk. II]} || ${Me.CombatAbility[Vigorous Axe Throw Rk. III]} || ${Me.CombatAbility[Energetic Axe Throw]} || ${Me.CombatAbility[Energetic Axe Throw Rk. II]} || ${Me.CombatAbility[Energetic Axe Throw Rk. III]} || ${Me.CombatAbility[Spirited Axe Throw]} || ${Me.CombatAbility[Spirited Axe Throw Rk. II]} || ${Me.CombatAbility[Spirited Axe Throw Rk. III]} || ${Me.CombatAbility[Brutal Axe Throw]} || ${Me.CombatAbility[Brutal Axe Throw Rk. II]} || ${Me.CombatAbility[Brutal Axe Throw Rk. III]} || ${Me.CombatAbility[Demolishing Axe Throw]} || ${Me.CombatAbility[Demolishing Axe Throw Rk. II]} || ${Me.CombatAbility[Demolishing Axe Throw Rk. III]} || ${Me.CombatAbility[Mangling Axe Throw]} || ${Me.CombatAbility[Mangling Axe Throw Rk. II]} || ${Me.CombatAbility[Mangling Axe Throw Rk. III]} || ${Me.CombatAbility[Vindicating Axe Throw]} || ${Me.CombatAbility[Vindicating Axe Throw Rk. II]} || ${Me.CombatAbility[Vindicating Axe Throw Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Vigorous Axe Throw]} || ${Me.CombatAbility[Vigorous Axe Throw Rk. II]} || ${Me.CombatAbility[Vigorous Axe Throw Rk. III]} || ${Me.CombatAbility[Energetic Axe Throw]} || ${Me.CombatAbility[Energetic Axe Throw Rk. II]} || ${Me.CombatAbility[Energetic Axe Throw Rk. III]} || ${Me.CombatAbility[Spirited Axe Throw]} || ${Me.CombatAbility[Spirited Axe Throw Rk. II]} || ${Me.CombatAbility[Spirited Axe Throw Rk. III]} || ${Me.CombatAbility[Brutal Axe Throw]} || ${Me.CombatAbility[Brutal Axe Throw Rk. II]} || ${Me.CombatAbility[Brutal Axe Throw Rk. III]} || ${Me.CombatAbility[Demolishing Axe Throw]} || ${Me.CombatAbility[Demolishing Axe Throw Rk. II]} || ${Me.CombatAbility[Demolishing Axe Throw Rk. III]} || ${Me.CombatAbility[Mangling Axe Throw]} || ${Me.CombatAbility[Mangling Axe Throw Rk. II]} || ${Me.CombatAbility[Mangling Axe Throw Rk. III]} || ${Me.CombatAbility[Vindicating Axe Throw]} || ${Me.CombatAbility[Vindicating Axe Throw Rk. II]} || ${Me.CombatAbility[Vindicating Axe Throw Rk. III]}),1,0]}");
+//End Berserker
 char* UI_PetBack = "back";
 char* UI_PetAttk = "attack";
 
@@ -3421,17 +3461,17 @@ void Configure() {
         break;
     case Berserker: // BER
         BerserkerClass = true;
-        AbilityFind(&idSLAPFACE, &slapface15, &slapface14, &slapface13, &slapface12, &slapface11, &slapface10, &slapface9, &slapface8, &slapface7, &slapface6, &slapface5, &slapface4, &slapface3, &slapface2, &slapface1, 0);
-        AbilityFind(&idJOLT, &joltber28, &joltber27, &joltber26, &joltber25, &joltber24, &joltber23, &joltber22, &joltber21, &joltber20, &joltber19, &joltber18, &joltber17, &joltber16, &joltber15, &joltber14, &joltber13, &joltber12, &joltber11, &joltber10, &joltber9, &joltber8, &joltber7, &joltber6, &joltber5, &joltber4, &joltber3, &joltber2, &joltber1, 0);
-        AbilityFind(&idRAGEVOLLEY, &volley29, &volley28, &volley27, &volley26, &volley25, &volley24, &volley23, &volley22, &volley21, &volley20, &volley19, &volley18, &volley17, &volley16, &volley15, &volley14, &volley13, &volley12, &volley11, &volley10, &volley9, &volley8, &volley7, &volley6, &volley5, &volley4, &volley3, &volley2, &volley1, 0);
-        AbilityFind(&idPROVOKE[1], &stunber25, &stunber24, &stunber23, &stunber22, &stunber21, &stunber20, &stunber19, &stunber18, &stunber17, &stunber16, &stunber15, &stunber14, &stunber13, &stunber12, &stunber11, &stunber10, &stunber9, &stunber8, &stunber7, &stunber6, &stunber5, &stunber4, &stunber3, &stunber2, &stunber1, 0);
-        AbilityFind(&idSTUN[1], &stunber28, &stunber27, &stunber26, &stunber25, &stunber24, &stunber23, &stunber22, &stunber21, &stunber20, &stunber19, &stunber18, &stunber17, &stunber16, &stunber15, &stunber14, &stunber13, &stunber12, &stunber11, &stunber10, &stunber9, &stunber8, &stunber7, &stunber6, &stunber5, &stunber4, &stunber3, &stunber2, &stunber1, 0);
-        AbilityFind(&idCRIPPLE, &cripple28, &cripple27, &cripple26, &cripple25, &cripple24, &cripple23, &cripple22, &cripple21, &cripple20, &cripple19, &cripple18, &cripple17, &cripple16, &cripple15, &cripple14, &cripple13, &cripple12, &cripple11, &cripple10, &cripple9, &cripple8, &cripple7, &cripple6, &cripple5, &cripple4, &cripple3, &cripple2, &cripple1, 0);
-        AbilityFind(&idCRYHAVOC, &cryhavoc4, &cryhavoc3, &cryhavoc2, &cryhavoc1, 0);
-        AbilityFind(&idBLOODLUST, &bloodlust18, &bloodlust17, &bloodlust16, &bloodlust15, &bloodlust14, &bloodlust13, &bloodlust12, &bloodlust11, &bloodlust10, &bloodlust9, &bloodlust8, &bloodlust7, &bloodlust6, &bloodlust5, &bloodlust4, &bloodlust3, &bloodlust2, &bloodlust1, 0);
-        AbilityFind(&idVIGAXE, &vigber18, &vigber17, &vigber16, &vigber15, &vigber14, &vigber13, &vigber12, &vigber11, &vigber10, &vigber9, &vigber8, &vigber7, &vigber6, &vigber5, &vigber4, &vigber3, &vigber2, &vigber1, 0);
-        AbilityFind(&idOPFRENZY, &opfrenzy18, &opfrenzy17, &opfrenzy16, &opfrenzy15, &opfrenzy14, &opfrenzy13, &opfrenzy12, &opfrenzy11, &opfrenzy10, &opfrenzy9, &opfrenzy8, &opfrenzy7, &opfrenzy6, &opfrenzy5, &opfrenzy4, &opfrenzy3, &opfrenzy2, &opfrenzy1, 0);
-		AbilityFind(&idRALLOS, &rallos24, &rallos23, &rallos22, &rallos21, &rallos20, &rallos19, &rallos18, &rallos17, &rallos16, &rallos15, &rallos14, &rallos13, &rallos12, &rallos11, &rallos10, &rallos9, &rallos8, &rallos7, &rallos6, &rallos5, &rallos4, &rallos3, &rallos2, &rallos1, 0);
+		AbilityFind(&idBLOODLUST, &bloodlust21, &bloodlust20, &bloodlust19, &bloodlust18, &bloodlust17, &bloodlust16, &bloodlust15, &bloodlust14, &bloodlust13, &bloodlust12, &bloodlust11, &bloodlust10, &bloodlust9, &bloodlust8, &bloodlust7, &bloodlust6, &bloodlust5, &bloodlust4, &bloodlust3, &bloodlust2, &bloodlust1, 0);
+		AbilityFind(&idCRIPPLE, &cripple31, &cripple30, &cripple29, &cripple28, &cripple27, &cripple26, &cripple25, &cripple24, &cripple23, &cripple22, &cripple21, &cripple20, &cripple19, &cripple18, &cripple17, &cripple16, &cripple15, &cripple14, &cripple13, &cripple12, &cripple11, &cripple10, &cripple9, &cripple8, &cripple7, &cripple6, &cripple5, &cripple4, &cripple3, &cripple2, &cripple1, 0);
+		AbilityFind(&idCRYHAVOC, &cryhavoc4, &cryhavoc3, &cryhavoc2, &cryhavoc1, 0);		
+        AbilityFind(&idJOLT, &joltber31, &joltber30, &joltber29, &joltber28, &joltber27, &joltber26, &joltber25, &joltber24, &joltber23, &joltber22, &joltber21, &joltber20, &joltber19, &joltber18, &joltber17, &joltber16, &joltber15, &joltber14, &joltber13, &joltber12, &joltber11, &joltber10, &joltber9, &joltber8, &joltber7, &joltber6, &joltber5, &joltber4, &joltber3, &joltber2, &joltber1, 0);
+		AbilityFind(&idOPFRENZY, &opfrenzy21, &opfrenzy20, &opfrenzy19, &opfrenzy18, &opfrenzy17, &opfrenzy16, &opfrenzy15, &opfrenzy14, &opfrenzy13, &opfrenzy12, &opfrenzy11, &opfrenzy10, &opfrenzy9, &opfrenzy8, &opfrenzy7, &opfrenzy6, &opfrenzy5, &opfrenzy4, &opfrenzy3, &opfrenzy2, &opfrenzy1, 0);
+		AbilityFind(&idRALLOS, &rallos27, &rallos26, &rallos25, &rallos24, &rallos23, &rallos22, &rallos21, &rallos20, &rallos19, &rallos18, &rallos17, &rallos16, &rallos15, &rallos14, &rallos13, &rallos12, &rallos11, &rallos10, &rallos9, &rallos8, &rallos7, &rallos6, &rallos5, &rallos4, &rallos3, &rallos2, &rallos1, 0);
+		AbilityFind(&idSLAPFACE, &slapface18, &slapface17, &slapface16, &slapface15, &slapface14, &slapface13, &slapface12, &slapface11, &slapface10, &slapface9, &slapface8, &slapface7, &slapface6, &slapface5, &slapface4, &slapface3, &slapface2, &slapface1, 0);
+		AbilityFind(&idSTUN[1], &stunber31, &stunber30, &stunber29, &stunber28, &stunber27, &stunber26, &stunber25, &stunber24, &stunber23, &stunber22, &stunber21, &stunber20, &stunber19, &stunber18, &stunber17, &stunber16, &stunber15, &stunber14, &stunber13, &stunber12, &stunber11, &stunber10, &stunber9, &stunber8, &stunber7, &stunber6, &stunber5, &stunber4, &stunber3, &stunber2, &stunber1, 0);
+		AbilityFind(&idVIGAXE, &vigber21, &vigber20, &vigber19, &vigber18, &vigber17, &vigber16, &vigber15, &vigber14, &vigber13, &vigber12, &vigber11, &vigber10, &vigber9, &vigber8, &vigber7, &vigber6, &vigber5, &vigber4, &vigber3, &vigber2, &vigber1, 0);
+		AbilityFind(&idRAGEVOLLEY, &volley32, &volley31, &volley30, &volley29, &volley28, &volley27, &volley26, &volley25, &volley24, &volley23, &volley22, &volley21, &volley20, &volley19, &volley18, &volley17, &volley16, &volley15, &volley14, &volley13, &volley12, &volley11, &volley10, &volley9, &volley8, &volley7, &volley6, &volley5, &volley4, &volley3, &volley2, &volley1, 0);
+		AbilityFind(&idPROVOKE[1], &stunber31, &stunber30, &stunber29, &stunber28, &stunber27, &stunber26, &stunber25, &stunber24, &stunber23, &stunber22, &stunber21, &stunber20, &stunber19, &stunber18, &stunber17, &stunber16, &stunber15, &stunber14, &stunber13, &stunber12, &stunber11, &stunber10, &stunber9, &stunber8, &stunber7, &stunber6, &stunber5, &stunber4, &stunber3, &stunber2, &stunber1, 0);
         break;
     }
 
