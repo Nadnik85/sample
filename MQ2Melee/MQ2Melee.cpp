@@ -155,505 +155,692 @@ ULONGLONG PressDelay = 0;
 #define   i_taunt             73
 
 infodata
-btlleap        = { 611    ,4 },        // aa: battle leap
-btlstromp      = { 1252   ,4 },        // aa: Battle Stomp
-asp            = { 986    ,4 },        // aa: bite of the asp
 
-assault1       = { 22540  ,3 },        // disc: Assault Lv 85 rog UF
-assault2       = { 22541  ,3 },        // disc: Assault Rk. II
-assault3       = { 22542  ,3 },        // disc: Assault Rk. III
-assault4       = { 26142  ,3 },        // disc: Battery Lv 90 rog HoT
-assault5       = { 26143  ,3 },        // disc: Battery Rk. II
-assault6       = { 26144  ,3 },        // disc: Battery Rk. III
-assault7       = { 29243  ,3 },        // disc: Onslaught Lv 95 rog VoA
-assault8       = { 29244  ,3 },        // disc: Onslaught Rk. II
-assault9       = { 29245  ,3 },        // disc: Onslaught Rk. III
-assault10      = { 35299  ,3 },        // disc: Incursion Lv 100 rog RoF
-assault11      = { 35300  ,3 },        // disc: Incursion Rk. II
-assault12      = { 35301  ,3 },        // disc: Incursion Rk. III
-assault13      = { 44172  ,3 },        // disc: Barrage Lv 105 rog TDS
-assault14      = { 44173  ,3 },        // disc: Barrage Rk. II
-assault15      = { 44174  ,3 },        // disc: Barrage Rk. III
-assault16      = { 56324  ,3 },        // disc: Fellstrike Lv 110 rog RoS
-assault17      = { 56325  ,3 },        // disc: Fellstrike Rk. II
-assault18      = { 56326  ,3 },        // disc: Fellstrike Rk. III
+//Everyone
+tstone =  { 5225   ,3 },        // disc: throw stone
+btlleap = { 611    ,4 },        // aa: battle leap
 
-bladesrng1     = { 40105  ,3 },        // disc: storm of blades rk i
-bladesrng2     = { 40106  ,3 },        // disc: storm of blades rk ii
-bladesrng3     = { 40107  ,3 },        // disc: storm of blades rk iii
-bladesrng4     = { 40108  ,3 },        // disc: focused storm of blades rk i
-bladesrng5     = { 40109  ,3 },        // disc: focused storm of blades rk ii
-bladesrng6     = { 40110  ,3 },        // disc: focused storm of blades rk iii
+#pragma region Warrior - Class 1
+callchal = { 552    ,4 },        // aa: call of challenge
 
-bleed1         = { 19247  ,3 },        // disc: bleed Lv 83 rog UF
-bleed2         = { 19248  ,3 },        // disc: bleed Rk. II
-bleed3         = { 19249  ,3 },        // disc: bleed Rk. III
-bleed4         = { 26127  ,3 },        // disc: Wound Lv 88 rog HoT
-bleed5         = { 26128  ,3 },        // disc: Wound Rk. II
-bleed6         = { 26129  ,3 },        // disc: Wound Rk. III
-bleed7         = { 29228  ,3 },        // disc: Lacerate Lv 93 rog VoA
-bleed8         = { 29229  ,3 },        // disc: Lacerate Rk. II
-bleed9         = { 29230  ,3 },        // disc: Lacerate Rk. III
-bleed10        = { 35284  ,3 },        // disc: Gash Lv 98 rog RoF
-bleed11        = { 35285  ,3 },        // disc: Gash Rk. II
-bleed12        = { 35286  ,3 },        // disc: Gash Rk. III
-bleed13        = { 44151  ,3 },        // disc: Hack Lv 103 rog TDS
-bleed14        = { 44152  ,3 },        // disc: Hack Rk. II
-bleed15        = { 44153  ,3 },        // disc: Hack Rk. III
-bleed16        = { 56303  ,3 },        // disc: Slice Lv 108 rog RoS
-bleed17        = { 56304  ,3 },        // disc: Slice Rk. II
-bleed18        = { 56305  ,3 },        // disc: Slice Rk. III
+commanding = { 8000   ,3 },        // disc: commanding voice
 
-bvivi1         = { 27098  ,3 },        // disc: Bestial Vivisection lv 86 BST HoT
-bvivi2         = { 27099  ,3 },        // disc: Bestial Vivisection Rk. II
-bvivi3         = { 27100  ,3 },        // disc: Bestial Vivisection Rk. III
-bvivi4         = { 30238  ,3 },        // disc: Bestial Rending lv 91 BST VoA
-bvivi5         = { 30239  ,3 },        // disc: Bestial Rending Rk. II
-bvivi6         = { 30240  ,3 },        // disc: Bestial Rending Rk. III
-bvivi7         = { 36319  ,3 },        // disc: Bestial Evulsing lv 96 BST RoF
-bvivi8         = { 36320  ,3 },        // disc: Bestial Evulsing Rk. II
-bvivi9         = { 36321  ,3 },        // disc: Bestial Evulsing Rk. III
-bvivi10        = { 57335  ,3 },        // disc: Bestial Savagery Lv 106 Bst RoS
-bvivi11        = { 57336  ,3 },        // disc: Bestial Savagery Rk. II
-bvivi12        = { 57337  ,3 },        // disc: Bestial Savagery Rk. III
+defense1 =  { 22556  ,3 },        // disc: Bracing Defense Lv 85 war UF
+defense2 =  { 22557  ,3 },        // disc: Bracing Defense Rk. II
+defense3 =  { 22558  ,3 },        // disc: Bracing Defense Rk. III
+defense4 =  { 25051  ,3 },        // disc: Staunch Defense Lc 90 war HoT
+defense5 =  { 25052  ,3 },        // disc: Staunch Defense Rk. II
+defense6 =  { 25053  ,3 },        // disc: Staunch Defense Rk. III
+defense7 =  { 28066  ,3 },        // disc: Stalwart Defense Lv 95 war VoA
+defense8 =  { 28067  ,3 },        // disc: Stalwart Defense Rk. II
+defense9 =  { 28068  ,3 },        // disc: Stalwart Defense Rk. III
+defense10 = { 34042  ,3 },        // disc: Steadfast Defense Lv 100 war RoF
+defense11 = { 34043  ,3 },        // disc: Steadfast Defense Rk. II
+defense12 = { 34044  ,3 },        // disc: Steadfast Defense Rk. III
+defense13 = { 43060  ,3 },        // disc: Stout Defense Lv 105 war TDS
+defense14 = { 43061  ,3 },        // disc: Stout Defense Rk. II
+defense15 = { 43062  ,3 },        // disc: Stout Defense Rk. III
+defense16 = { 55057  ,3 },        // disc: Resolute Defense Lv 110 War RoS
+defense17 = { 55058  ,3 },        // disc: Resolute Defense Rk. II
+defense18 = { 55059  ,3 },        // disc: Resolute Defense Rk. III
 
-boastful       = { 199    ,4 },        // aa: boastful bellow
-callchal       = { 552    ,4 },        // aa: call of challenge
-commanding     = { 8000   ,3 },        // disc: commanding voice
+fieldarm1 =  { 19917  ,3 },        // disc: Field Armorer Lv 85 war UF
+fieldarm2 =  { 19918  ,3 },        // disc: Field Armorer Rk. II
+fieldarm3 =  { 19919  ,3 },        // disc: Field Armorer Rk. III
+fieldarm4 =  { 25036  ,3 },        // disc: Field Outfitter Lv 90 war HoT
+fieldarm5 =  { 25037  ,3 },        // disc: Field Outfitter Rk. II
+fieldarm6 =  { 25038  ,3 },        // disc: Field Outfitter Rk. III
+fieldarm7 =  { 28051  ,3 },        // disc: Field Defender Lv 95 war VoA
+fieldarm8 =  { 28052  ,3 },        // disc: Field Defender Rk. II
+fieldarm9 =  { 28053  ,3 },        // disc: Field Defender Rk. III
+fieldarm10 = { 34036  ,3 },        // disc: Field Guardian Lv 100 war RoF
+fieldarm11 = { 34037  ,3 },        // disc: Field Guardian Rk. II
+fieldarm12 = { 34038  ,3 },        // disc: Field Guardian Rk. III
+fieldarm13 = { 43057  ,3 },        // disc: Field Protector Lv 105 war TDS
+fieldarm14 = { 43058  ,3 },        // disc: Field Protector Rk. II
+fieldarm15 = { 43059  ,3 },        // disc: Field Protector Rk. III
+fieldarm16 = { 55054  ,3 },        // disc: Field Champion Lv 110 War RoS
+fieldarm17 = { 55055  ,3 },        // disc: Field Champion Rk. II
+fieldarm18 = { 55056  ,3 },        // disc: Field Champion Rk. III
 
-cloud1         = { 25914  ,3 },        // disc: Cloud of Fists Lv 87 mnk HoT
-cloud2         = { 25915  ,3 },        // disc: Cloud of Fists rk. ii
-cloud3         = { 25916  ,3 },        // disc: Cloud of Fists rk. iii
-cloud4         = { 40229  ,3 },        // disc: Phantom Partisan Lv 100 mnk HoT
-cloud5         = { 40230  ,3 },        // disc: Phantom Partisan rk. ii
-cloud6         = { 40231  ,3 },        // disc: Phantom Partisan rk. iii
+gutpunch = { 3732   ,4 },        // aa: gut punch
 
+kneestrike = { 801    ,4 },        // aa: knee strike
 
+prowar1 =  { 4608   ,3 },        // disc: provoke
+prowar2 =  { 4681   ,3 },        // disc: bellow
+prowar3 =  { 4682   ,3 },        // disc: berate
+prowar4 =  { 4697   ,3 },        // disc: incite
+prowar5 =  { 5015   ,3 },        // disc: bellow of the mastruq
+prowar6 =  { 5016   ,3 },        // disc: ancient: chaos cry
+prowar7 =  { 6173   ,3 },        // disc: bazu bellow
+prowar8 =  { 10974  ,3 },        // disc: scowl
+prowar9 =  { 10975  ,3 },        // disc: scowl rk ii
+prowar10 = { 10976  ,3 },        // disc: scowl rk iii
+prowar11 = { 15360  ,3 },        // disc: sneer
+prowar12 = { 15361  ,3 },        // disc: sneer rk ii
+prowar13 = { 15362  ,3 },        // disc: sneer rk iii
+prowar14 = { 19537  ,3 },        // disc: bazu bluster Lv 81 war UF
+prowar15 = { 19538  ,3 },        // disc: bazu bluster rk. ii
+prowar16 = { 19539  ,3 },        // disc: bazu bluster rk. iii
+prowar17 = { 19531  ,3 },        // disc: jeer rk i Lv 85 war UF
+prowar18 = { 19532  ,3 },        // disc: jeer rk ii
+prowar19 = { 19533  ,3 },        // disc: jeer rk iii
+prowar20 = { 25018  ,3 },        // disc: bazu roar Lv 86 war HoT
+prowar21 = { 25019  ,3 },        // disc: bazu roar rk. ii
+prowar22 = { 25020  ,3 },        // disc: bazu roar rk. iii
+prowar23 = { 25045  ,3 },        // disc: scoff Lv 90 war HoT
+prowar24 = { 25046  ,3 },        // disc: scoff rk. ii
+prowar25 = { 25047  ,3 },        // disc: scoff rk. iii
+prowar26 = { 28021  ,3 },        // disc: Grendlaen Roar Lv 91 war VoA
+prowar27 = { 28022  ,3 },        // disc: Grendlaen Roar rk. ii
+prowar28 = { 28023  ,3 },        // disc: Grendlaen Roar rk. iii
+prowar29 = { 28060  ,3 },        // disc: Scorn Lv 95 war VoA
+prowar30 = { 28061  ,3 },        // disc: Scorn rk. ii
+prowar31 = { 28062  ,3 },        // disc: Scorn rk. iii
+prowar32 = { 34015  ,3 },        // disc: Krondal's Roar Lv 96 war RoF
+prowar33 = { 34016  ,3 },        // disc: Krondal's Roar rk. ii
+prowar34 = { 34017  ,3 },        // disc: Krondal's Roar rk. iii
+prowar35 = { 34027  ,3 },        // disc: Ridicule Lv 98 war RoF
+prowar36 = { 34028  ,3 },        // disc: Ridicule rk. ii
+prowar37 = { 34029  ,3 },        // disc: Ridicule rk. iii
+prowar38 = { 43021  ,3 },        // disc: Cyclone Roar
+prowar39 = { 43022  ,3 },        // disc: Cyclone Roar rk. ii
+prowar40 = { 43023  ,3 },        // disc: Cyclone Roar rk. iii
+prowar41 = { 43033  ,3 },        // disc: Insult Lv 103 war TDS
+prowar42 = { 43034  ,3 },        // disc: Insult rk. ii
+prowar43 = { 43035  ,3 },        // disc: Insult rk. iii
+prowar44 = { 55027  ,3 },        // disc: Slander Lv 108 War RoS
+prowar45 = { 55028  ,3 },        // disc: Slander Rk. II
+prowar46 = { 55029  ,3 },        // disc: Slander Rk. III
+prowar47 = { 55009  ,3 },        // disc: Kluzen's Roar Lv 106 war RoS
+prowar48 = { 55010  ,3 },        // disc: Kluzen's Roar Rk. II
+prowar49 = { 55011  ,3 },        // disc: Kluzen's Roar Rk. III
 
-cstrike        = { 11080  ,4 },        // aa: Chameleon Strike
+opstrke1 =  { 15375  ,3 },        // disc: Opportunistic Strike Lv 78 war
+opstrke2 =  { 15376  ,3 },        // disc: Opportunistic Strike rk ii
+opstrke3 =  { 15377  ,3 },        // disc: Opportunistic Strike rk iii
+opstrke4 =  { 25027  ,3 },        // disc: Strategic Strike lv 88 war HoT
+opstrke5 =  { 25028  ,3 },        // disc: Strategic Strike rk ii
+opstrke6 =  { 25029  ,3 },        // disc: Strategic Strike rk iii
+opstrke7 =  { 28036  ,3 },        // disc: Vital Strike Lv 93 war VoA
+opstrke8 =  { 28037  ,3 },        // disc: Vital Strike rk ii
+opstrke9 =  { 28038  ,3 },        // disc: Vital Strike rk iii
+opstrke10 = { 43045  ,3 },        // disc: Calculated Strike Lv 104 war TDS
+opstrke11 = { 43046  ,3 },        // disc: Calculated Strike rk ii
+opstrke12 = { 43046  ,3 },        // disc: Calculated Strike rk iii
+opstrke13 = { 55045  ,3 },        // disc: Cunning Strike Lv 109 War RoS
+opstrke14 = { 55046  ,3 },        // disc: Cunning Strike Rk. II
+opstrke15 = { 55047  ,3 },        // disc: Cunning Strike Rk. III
 
-defense1       = { 22556  ,3 },        // disc: Bracing Defense Lv 85 war UF
-defense2       = { 22557  ,3 },        // disc: Bracing Defense Rk. II
-defense3       = { 22558  ,3 },        // disc: Bracing Defense Rk. III
-defense4       = { 25051  ,3 },        // disc: Staunch Defense Lc 90 war HoT
-defense5       = { 25052  ,3 },        // disc: Staunch Defense Rk. II
-defense6       = { 25053  ,3 },        // disc: Staunch Defense Rk. III
-defense7       = { 28066  ,3 },        // disc: Stalwart Defense Lv 95 war VoA
-defense8       = { 28067  ,3 },        // disc: Stalwart Defense Rk. II
-defense9       = { 28068  ,3 },        // disc: Stalwart Defense Rk. III
-defense10      = { 34042  ,3 },        // disc: Steadfast Defense Lv 100 war RoF
-defense11      = { 34043  ,3 },        // disc: Steadfast Defense Rk. II
-defense12      = { 34044  ,3 },        // disc: Steadfast Defense Rk. III
-defense13      = { 43060  ,3 },        // disc: Stout Defense Lv 105 war TDS
-defense14      = { 43061  ,3 },        // disc: Stout Defense Rk. II
-defense15      = { 43062  ,3 },        // disc: Stout Defense Rk. III
-defense16      = { 55057  ,3 },        // disc: Resolute Defense Lv 110 War RoS
-defense17      = { 55058  ,3 },        // disc: Resolute Defense Rk. II
-defense18      = { 55059  ,3 },        // disc: Resolute Defense Rk. III
+throat1 = { 10968  ,3 },        // disc: throat jab
+throat2 = { 10969  ,3 },        // disc: throat jab rk ii
+throat3 = { 10970  ,3 },        // disc: throat jab rk iii
+#pragma endregion
 
-enragingkick1  = { 28506  ,3 },        // disc: Enraging Crescent lv 92 Voa rng
-enragingkick2  = { 28507  ,3 },        // disc: Enraging Crescent Kicks Rk. III
-enragingkick3  = { 28508  ,3 },        // disc: Enraging Crescent Kicks Rk. III
-enragingkick4  = { 34527  ,3 },        // disc: Enraging Heel Kicks lv 97 Rof rng
-enragingkick5  = { 34528  ,3 },        // disc: Enraging Heel Kicks Rk. III
-enragingkick6  = { 34529  ,3 },        // disc: Enraging Heel Kicks Rk. III
-enragingkick7  = { 43463  ,3 },        // disc: Enraging Cut Kicks lv 102 TDS rng
-enragingkick8  = { 43464  ,3 },        // disc: Enraging Cut Kicks Rk. III
-enragingkick9  = { 43465  ,3 },        // disc: Enraging Cut Kicks Rk. III
+#pragma region Cleric - Class 2
+yaulp = { 489    ,4 },        // aa: yaulp
+#pragma endregion 
+
+#pragma region Paladin - Class 3
+honor1 =  { 10173  ,5 },        // spell: challenge for honor
+honor2 =  { 10174  ,5 },        // spell: challenge for honor rk ii
+honor3 =  { 10175  ,5 },        // spell: challenge for honor rk iii
+honor4 =  { 14954  ,5 },        // spell: trial for honor
+honor5 =  { 14955  ,5 },        // spell: trial for honor rk ii
+honor6 =  { 14956  ,5 },        // spell: trial for honor rk iii
+honor7 =  { 19068  ,5 },        // spell: Charge for Honor Lv 85 pal UF
+honor8 =  { 19069  ,5 },        // spell: Charge for Honor rk ii
+honor9 =  { 19070  ,5 },        // spell: Charge for Honor rk iii
+honor10 = { 25297  ,5 },        // spell: Confrontation for Honor Lv 90 pal HoT
+honor11 = { 25298  ,5 },        // spell: Confrontation for Honor rk ii
+honor12 = { 25299  ,5 },        // spell: Confrontation for Honor rk iii
+honor13 = { 28347  ,5 },        // spell: Provocation for Honor Lv 95 pal VoA
+honor14 = { 28348  ,5 },        // spell: Provocation for Honor rk ii
+honor15 = { 28349  ,5 },        // spell: Provocation for Honor rk iii
+honor16 = { 34350  ,5 },        // spell: Demand for Honor Lv 97 pal RoF
+honor17 = { 34351  ,5 },        // spell: Demand for Honor rk. ii
+honor18 = { 34352  ,5 },        // spell: Demand for Honor rk. iii
+honor19 = { 43322  ,5 },        // spell: Impose for Honor Lv 102 pal TDS
+honor20 = { 43323  ,5 },        // spell: Impose for Honor rk. ii
+honor21 = { 43324  ,5 },        // spell: Impose for Honor rk. iii
+honor22 = { 55353  ,5 },        // spell: Refute for Honor Lv 107 Pal RoS
+honor23 = { 55354  ,5 },        // spell: Refute for Honor Rk. II
+honor24 = { 55355  ,5 },        // spell: Refute for Honor Rk. III
+
+layhand = { 6001   ,4 },        // aa: lay on hands
+
+rightidg1 =  { 25345  ,3 },        // disc: Righteous Indignation Lv 88 pal HoT
+rightidg2 =  { 25346  ,3 },        // disc: Righteous Indignation Rk. II
+rightidg3 =  { 25347  ,3 },        // disc: Righteous Indignation Rk. III
+rightidg4 =  { 28398  ,3 },        // disc: Righteous Vexation Lv 93 pal VoA
+rightidg5 =  { 28399  ,3 },        // disc: Righteous Vexation Rk. II
+rightidg6 =  { 28400  ,3 },        // disc: Righteous Vexation Rk. III
+rightidg7 =  { 34401  ,3 },        // disc: Righteous Umbrage Lv 98 pal RoF
+rightidg8 =  { 34402  ,3 },        // disc: Righteous Umbrage Rk. II
+rightidg9 =  { 34403  ,3 },        // disc: Righteous Umbrage Rk. III
+rightidg10 = { 55389  ,3 },        // disc: Righteous Condemnation Lv 108 pal RoS
+rightidg11 = { 55390  ,3 },        // disc: Righteous Condemnation Rk. II
+rightidg12 = { 55391  ,3 },        // disc: Righteous Condemnation Rk. III
+
+stunaas1 = { 73     ,4 },        // aa: divine stun
+stunaas2 = { 702    ,4 },        // aa: hand of disruption
+stunaas3 = { 3826   ,4 },        // aa: force of disruption
+
+stunpal1 =  { 216    ,5 },        // spell: stun
+stunpal2 =  { 123    ,5 },        // spell: holy might
+stunpal3 =  { 3975   ,5 },        // spell: force of akera
+stunpal4 =  { 3245   ,5 },        // spell: force of akilae
+stunpal5 =  { 4977   ,5 },        // spell: ancient force of chaos
+stunpal6 =  { 5284   ,5 },        // spell: force of piety
+stunpal7 =  { 5299   ,5 },        // spell: ancient force of jeron
+stunpal8 =  { 10158  ,5 },        // spell: sacred force
+stunpal9 =  { 10159  ,5 },        // spell: sacred force rk. ii
+stunpal10 = { 10160  ,5 },        // spell: sacred force rk. iii
+stunpal11 = { 11851  ,5 },        // spell: force of prexus
+stunpal12 = { 11852  ,5 },        // spell: force of prexus rk. ii
+stunpal13 = { 11853  ,5 },        // spell: force of prexus rk. iii
+stunpal14 = { 14942  ,5 },        // spell: solemn force
+stunpal15 = { 14943  ,5 },        // spell: solemn force rk. ii
+stunpal16 = { 14944  ,5 },        // spell: solemn force rk. iii
+stunpal17 = { 14984  ,5 },        // spell: Force of Timorous
+stunpal18 = { 14985  ,5 },        // spell: Force of Timorous  rk. ii
+stunpal19 = { 14986  ,5 },        // spell: Force of Timorous  rk. iii
+stunpal20 = { 19056  ,5 },        // spell: Devout Force Lv 81 pal UF
+stunpal21 = { 19057  ,5 },        // spell: Devout Force rk. ii
+stunpal22 = { 19058  ,5 },        // spell: Devout Force rk. iii
+stunpal23 = { 19098  ,5 },        // spell: Force of the Crying Seas Lv 85 pal UF
+stunpal24 = { 19099  ,5 },        // spell: Force of the Crying Seas rk. ii
+stunpal25 = { 19100  ,5 },        // spell: Force of the Crying Seas rk. iii
+stunpal26 = { 25282  ,5 },        // spell: Earnest Force Lv 86 pal HoT
+stunpal27 = { 25283  ,5 },        // spell: Earnest Force rk. ii
+stunpal28 = { 25284  ,5 },        // spell: Earnest Force rk. iii
+stunpal29 = { 25375  ,5 },        // spell: Force of Marr Lv 90 pal Hot
+stunpal30 = { 25376  ,5 },        // spell: Force of Marr rk. ii
+stunpal31 = { 25377  ,5 },        // spell: Force of Marr rk. iii
+stunpal32 = { 28326  ,5 },        // spell: Zealous Force Lv 91 pal VoA
+stunpal33 = { 28327  ,5 },        // spell: Zealous Force rk. ii
+stunpal34 = { 28328  ,5 },        // spell: Zealous Force rk. iii
+stunpal35 = { 28446  ,5 },        // spell: Force of Oseka Lv 95 pal VoA
+stunpal36 = { 28447  ,5 },        // spell: Force of Oseka rk. ii
+stunpal37 = { 28448  ,5 },        // spell: Force of Oseka rk. iii
+stunpal38 = { 34332  ,5 },        // spell: Reverent Force Lv 96 pal VoA
+stunpal39 = { 34333  ,5 },        // spell: Reverent Force rk. ii
+stunpal40 = { 34334  ,5 },        // spell: Reverent Force rk. iii
+stunpal41 = { 34452  ,5 },        // spell: Force of the Iceclad Lv 100 pal RoF
+stunpal42 = { 34453  ,5 },        // spell: Force of the Iceclad rk. ii
+stunpal43 = { 34454  ,5 },        // spell: Force of the Iceclad rk .iii
+stunpal44 = { 43412  ,5 },        // spell: Force of the Darkened Sea Lv 105 pal TDS
+stunpal45 = { 43413  ,5 },        // spell: Force of the Darkened Sea rk. ii
+stunpal46 = { 43414  ,5 },        // spell: Force of the Darkened Sea rk .iii
+stunpal47 = { 55479  ,5 },        // spell: Force of the Timorous Deep Lv 110 Pal RoS
+stunpal48 = { 55480  ,5 },        // spell: Force of the Timorous Deep Rk. II
+stunpal49 = { 55481  ,5 },        // spell: Force of the Timorous Deep Rk. III
+
+#pragma endregion
+
+#pragma region Ranger - Class 4
+bladesrng1 = { 40105  ,3 },        // disc: storm of blades rk i
+bladesrng2 = { 40106  ,3 },        // disc: storm of blades rk ii
+bladesrng3 = { 40107  ,3 },        // disc: storm of blades rk iii
+bladesrng4 = { 40108  ,3 },        // disc: focused storm of blades rk i
+bladesrng5 = { 40109  ,3 },        // disc: focused storm of blades rk ii
+bladesrng6 = { 40110  ,3 },        // disc: focused storm of blades rk iii
+
+enragingkick1 =  { 28506  ,3 },        // disc: Enraging Crescent lv 92 Voa rng
+enragingkick2 =  { 28507  ,3 },        // disc: Enraging Crescent Kicks Rk. III
+enragingkick3 =  { 28508  ,3 },        // disc: Enraging Crescent Kicks Rk. III
+enragingkick4 =  { 34527  ,3 },        // disc: Enraging Heel Kicks lv 97 Rof rng
+enragingkick5 =  { 34528  ,3 },        // disc: Enraging Heel Kicks Rk. III
+enragingkick6 =  { 34529  ,3 },        // disc: Enraging Heel Kicks Rk. III
+enragingkick7 =  { 43463  ,3 },        // disc: Enraging Cut Kicks lv 102 TDS rng
+enragingkick8 =  { 43464  ,3 },        // disc: Enraging Cut Kicks Rk. III
+enragingkick9 =  { 43465  ,3 },        // disc: Enraging Cut Kicks Rk. III
 enragingkick10 = { 55539  ,3 },        // disc: Enraging Wheel Kicks Lv 107 Rng RoS
 enragingkick11 = { 55540  ,3 },        // disc: Enraging Wheel Kicks Rk. II
 enragingkick12 = { 55541  ,3 },        // disc: Enraging Wheel Kicks Rk. III
 
-escape         = { 102    ,4 },        // aa: escape
-eyegouge       = { 470    ,4 },        // aa: eye gouge
+joltrng1 = { 1741   ,5 },        // spell: jolt
+joltrng2 = { 1296   ,5 },        // spell: cinder jolt
+#pragma endregion
 
-feignid        = { 420    ,4 },        // aa: imitate death
-feigndp        = { 428    ,4 },        // aa: death peace
-feigns1        = { 366    ,5 },        // spell: feign death
-feigns2        = { 3685   ,5 },        // spell: comatose
-feigns3        = { 1460   ,5 },        // spell: death peace
-feigns4        = { 10306  ,5 },        // spell: last breath
-feigns5        = { 10307  ,5 },        // spell: last breath rk ii
-feigns6        = { 10308  ,5 },        // spell: last breath rk iii
-feigns7        = { 15223  ,5 },        // spell: rigor mortis
-feigns8        = { 15224  ,5 },        // spell: rigor mortis rk ii
-feigns9        = { 15225  ,5 },        // spell: rigor mortis rk iii
-feigns10       = { 15190  ,5 },        // spell: last gasp
-feigns11       = { 15191  ,5 },        // spell: last gasp rk ii
-feigns12       = { 15192  ,5 },        // spell: last gasp rk iii
-feigns13       = { 19343  ,5 },        // spell: Final Breath Lv 85 sk UF
-feigns14       = { 19344  ,5 },        // spell: Final Breath rk ii
-feigns15       = { 19345  ,5 },        // spell: Final Breath rk iii
-feigns16       = { 25662  ,5 },        // spell: Last Breath Lv 90 sk Hot
-feigns17       = { 25663  ,5 },        // spell: Last Breath rk ii
-feigns18       = { 25664  ,5 },        // spell: Last Breath rk iii
-feigns19       = { 28760  ,5 },        // spell: Final Gasp Lv 95 sk Voa
-feigns20       = { 28761  ,5 },        // spell: Final Gasp rk ii
-feigns21       = { 28762  ,5 },        // spell: Final Gasp rk iii
-feigns22       = { 34775  ,5 },        // spell: Terminal Breath Lv 100 sk RoF
-feigns23       = { 34776  ,5 },        // spell: Terminal Breath Rk. II
-feigns24       = { 34777  ,5 },        // spell: Terminal Breath Rk. III
+#pragma region ShadowKnight - Class 5
+feignid =  { 420    ,4 },        // aa: imitate death
+feigndp =  { 428    ,4 },        // aa: death peace
+feigns1 =  { 366    ,5 },        // spell: feign death
+feigns2 =  { 3685   ,5 },        // spell: comatose
+feigns3 =  { 1460   ,5 },        // spell: death peace
+feigns4 =  { 10306  ,5 },        // spell: last breath
+feigns5 =  { 10307  ,5 },        // spell: last breath rk ii
+feigns6 =  { 10308  ,5 },        // spell: last breath rk iii
+feigns7 =  { 15223  ,5 },        // spell: rigor mortis
+feigns8 =  { 15224  ,5 },        // spell: rigor mortis rk ii
+feigns9 =  { 15225  ,5 },        // spell: rigor mortis rk iii
+feigns10 = { 15190  ,5 },        // spell: last gasp
+feigns11 = { 15191  ,5 },        // spell: last gasp rk ii
+feigns12 = { 15192  ,5 },        // spell: last gasp rk iii
+feigns13 = { 19343  ,5 },        // spell: Final Breath Lv 85 sk UF
+feigns14 = { 19344  ,5 },        // spell: Final Breath rk ii
+feigns15 = { 19345  ,5 },        // spell: Final Breath rk iii
+feigns16 = { 25662  ,5 },        // spell: Last Breath Lv 90 sk Hot
+feigns17 = { 25663  ,5 },        // spell: Last Breath rk ii
+feigns18 = { 25664  ,5 },        // spell: Last Breath rk iii
+feigns19 = { 28760  ,5 },        // spell: Final Gasp Lv 95 sk Voa
+feigns20 = { 28761  ,5 },        // spell: Final Gasp rk ii
+feigns21 = { 28762  ,5 },        // spell: Final Gasp rk iii
+feigns22 = { 34775  ,5 },        // spell: Terminal Breath Lv 100 sk RoF
+feigns23 = { 34776  ,5 },        // spell: Terminal Breath Rk. II
+feigns24 = { 34777  ,5 },        // spell: Terminal Breath Rk. III
 
-feign_bst      = { 11073  ,4 },        // aa: playing possum
+gblade1 = { 28687  ,3 },        // disc: Gouging Blade - SK Lv 92 VoA
+gblade2 = { 28688  ,3 },        // disc: Gouging Blade Rk. II
+gblade3 = { 28689  ,3 },        // disc: Gouging Blade Rk. III
+gblade4 = { 34714  ,3 },        // disc: Gashing Blade - SK Lv 97 RoF
+gblade5 = { 34715  ,3 },        // disc: Gashing Blade Rk. II
+gblade6 = { 34716  ,3 },        // disc: Gashing Blade Rk. III
+gblade7 = { 43637  ,3 },        // disc: Lacerating Blade - SK Lv 102 RoF
+gblade8 = { 43638  ,3 },        // disc: Lacerating Blade Rk. II
+gblade9 = { 43639  ,3 },        // disc: Lacerating Blade Rk. III
+gblade10 = { 55731  ,3 },        // disc: Wounding Blade Lv 107 Shd RoS
+gblade11 = { 55732  ,3 },        // disc: Wounding Blade Rk. II
+gblade12 = { 55733  ,3 },        // disc: Wounding Blade Rk. III
 
-feign_n1       = { 25662  ,5 },        // spell: Scapegoat
-feign_n2       = { 25663  ,5 },        // spell: Scapegoat rk ii
-feign_n3       = { 25664  ,5 },        // spell: Scapegoat rk iii
+harmtouch = { 6000   ,4 },        // aa: harmtouch
 
-fieldarm1      = { 19917  ,3 },        // disc: Field Armorer Lv 85 war UF
-fieldarm2      = { 19918  ,3 },        // disc: Field Armorer Rk. II
-fieldarm3      = { 19919  ,3 },        // disc: Field Armorer Rk. III
-fieldarm4      = { 25036  ,3 },        // disc: Field Outfitter Lv 90 war HoT
-fieldarm5      = { 25037  ,3 },        // disc: Field Outfitter Rk. II
-fieldarm6      = { 25038  ,3 },        // disc: Field Outfitter Rk. III
-fieldarm7      = { 28051  ,3 },        // disc: Field Defender Lv 95 war VoA
-fieldarm8      = { 28052  ,3 },        // disc: Field Defender Rk. II
-fieldarm9      = { 28053  ,3 },        // disc: Field Defender Rk. III
-fieldarm10     = { 34036  ,3 },        // disc: Field Guardian Lv 100 war RoF
-fieldarm11     = { 34037  ,3 },        // disc: Field Guardian Rk. II
-fieldarm12     = { 34038  ,3 },        // disc: Field Guardian Rk. III
-fieldarm13     = { 43057  ,3 },        // disc: Field Protector Lv 105 war TDS
-fieldarm14     = { 43058  ,3 },        // disc: Field Protector Rk. II
-fieldarm15     = { 43059  ,3 },        // disc: Field Protector Rk. III
-fieldarm16     = { 55054  ,3 },        // disc: Field Champion Lv 110 War RoS
-fieldarm17     = { 55055  ,3 },        // disc: Field Champion Rk. II
-fieldarm18     = { 55056  ,3 },        // disc: Field Champion Rk. III
+power1 = { 10260  ,5 },        // spell: challenge for power
+power2 = { 10261  ,5 },        // spell: challenge for power rk. ii
+power3 = { 10262  ,5 },        // spell: challenge for power rk. iii
+power4 = { 15163  ,5 },        // spell: trial for power
+power5 = { 15164  ,5 },        // spell: trial for power rk. ii
+power6 = { 15165  ,5 },        // spell: trial for power rk. iii
+power7 = { 19316  ,5 },        // spell: Charge for Power Lv 82 shd UF
+power8 = { 19317  ,5 },        // spell: Charge for Power rk. ii
+power9 = { 19318  ,5 },        // spell: Charge for Power rk. iii
+power10 = { 25586  ,5 },        // spell: Confrontation for Power Lv 87 shd HoT
+power11 = { 25587  ,5 },        // spell: Confrontation for Power rk. ii
+power12 = { 25588  ,5 },        // spell: Confrontation for Powerr rk. iii
+power13 = { 28663  ,5 },        // spell: Provocation for Power Lv 92 shd VoA
+power14 = { 28664  ,5 },        // spell: Provocation for Power rk. ii
+power15 = { 28665  ,5 },        // spell: Provocation for Power rk .iii
+power16 = { 34693  ,5 },        // spell: Demand for Power  Lv 97 shd RoF
+power17 = { 34694  ,5 },        // spell: Demand for Power rk. ii
+power18 = { 34695  ,5 },        // spell: Demand for Power rk. iii
+power19 = { 43619  ,5 },        // spell: Impose for Power  Lv 102 shd TDS
+power20 = { 43620  ,5 },        // spell: Impose for Power rk. ii
+power21 = { 43621  ,5 },        // spell: Impose for Power rk. iii
+power22 = { 55713  ,5 },        // spell: Refute for Power Lv 107 Shd RoS
+power23 = { 55714  ,5 },        // spell: Refute for Power Rk. II
+power24 = { 55715  ,5 },        // spell: Refute for Power Rk. III
 
-//ferociouskick  = { 337    ,4 },        // aa: ferocious kick
+terror1 = { 1221   ,5 },        // spell: terror of darkness
+terror2 = { 1222   ,5 },        // spell: terror of shadows
+terror3 = { 1223   ,5 },        // spell: terror of death
+terror4 = { 1224   ,5 },        // spell: terror of terris
+terror5 = { 3405   ,5 },        // spell: terror of thule
+terror6 = { 5329   ,5 },        // spell: terror of discord
+terror7 = { 10257  ,5 },        // spell: terror of vergalid
+terror8 = { 10258  ,5 },        // spell: terror of vergalid rk. ii
+terror9 = { 10259  ,5 },        // spell: terror of vergalid rk. iii
+terror10 = { 15160  ,5 },        // spell: terror of the Soulbleeder
+terror11 = { 15161  ,5 },        // spell: terror of the Soulbleeder rk. ii
+terror12 = { 15162  ,5 },        // spell: terror of the Soulbleeder rk. iii
+terror13 = { 19313  ,5 },        // spell: Terror of Jelvalak Lv 81 sk UF
+terror14 = { 19314  ,5 },        // spell: Terror of Jelvalak rk. ii
+terror15 = { 19315  ,5 },        // spell: Terror of Jelvalak rk. iii
+terror16 = { 25580  ,5 },        // spell: Terror of Rerekalen lv 86 sk HoT
+terror17 = { 25581  ,5 },        // spell: Terror of Rerekalen rk. ii
+terror18 = { 25582  ,5 },        // spell: Terror of Rerekalen rk. iii
+terror19 = { 28657  ,5 },        // spell: Terror of Desalin Lv 91 sk VoA
+terror20 = { 28658  ,5 },        // spell: Terror of Desalin rk. ii
+terror21 = { 28659  ,5 },        // spell: Terror of Desalin rk. iii
+terror22 = { 34687  ,5 },        // spell: Terror of Poira Lv 96 sk RoF
+terror23 = { 34688  ,5 },        // spell: Terror of Poira rk. ii
+terror24 = { 34689  ,5 },        // spell: Terror of Poira rk. iii
+terror25 = { 43607  ,5 },        // spell: Terror of Narus Lv 101 sk TDS
+terror26 = { 43608  ,5 },        // spell: Terror of Narus rk. ii
+terror27 = { 43609  ,5 },        // spell: Terror of Narus rk. iii
+terror28 = { 55689  ,5 },        // spell: Terror of Kra'Du Lv 106 Sk RoS
+terror29 = { 55690  ,5 },        // spell: Terror of Kra'Du Rk. II
+terror30 = { 55691  ,5 },        // spell: Terror of Kra'Du Rk. III
 
-feral1         = { 247    ,4 },        // aa: feral swipe
-fistswu        = { 8002   ,3 },        // disc: fists of wu
+#pragma endregion
 
-fclaw1         = { 27119  ,3 },        // disc: flurry of claws lv 87 BST HoT
-fclaw2         = { 27120  ,3 },        // disc: flurry of claws rk. ii
-fclaw3         = { 27121  ,3 },        // disc: flurry of claws rk. iii
-fclaw4         = { 30271  ,3 },        // disc: Tumult of claws lv 92 BST Voa
-fclaw5         = { 30272  ,3 },        // disc: Tumult of claws rk. ii
-fclaw6         = { 30273  ,3 },        // disc: Tumult of claws rk. iii
-fclaw7         = { 36346  ,3 },        // disc: Clamor of Claws lv 97 BST Rof
-fclaw8         = { 36347  ,3 },        // disc: Clamor of Claws rk. ii
-fclaw9         = { 36348  ,3 },        // disc: Clamor of Claws rk. iii
-fclaw10        = { 40516  ,3 },        // disc: Focused Clamor of Claws lv 98 BST Rof
-fclaw11        = { 40517  ,3 },        // disc: Focused Clamor of Claws rk. ii
-fclaw12        = { 40518  ,3 },        // disc: Focused Clamor of Claws rk. iii
-fclaw13        = { 45103  ,3 },        // disc: Tempest of Claws lv 102 BST TDS
-fclaw14        = { 45104  ,3 },        // disc: Tempest of Claws rk. ii
-fclaw15        = { 45105  ,3 },        // disc: Tempest of Claws rk. iii
-fclaw16        = { 57386  ,3 },        // disc: Storm of Claws Lv 107 Bst RoS
-fclaw17        = { 57387  ,3 },        // disc: Storm of Claws Rk. II
-fclaw18        = { 57388  ,3 },        // disc: Storm of Claws Rk. III
+#pragma region Druid - Class 6
+#pragma endregion
 
-gblade1        = { 28687  ,3 },        // disc: Gouging Blade - SK Lv 92 VoA
-gblade2        = { 28688  ,3 },        // disc: Gouging Blade Rk. II
-gblade3        = { 28689  ,3 },        // disc: Gouging Blade Rk. III
-gblade4        = { 34714  ,3 },        // disc: Gashing Blade - SK Lv 97 RoF
-gblade5        = { 34715  ,3 },        // disc: Gashing Blade Rk. II
-gblade6        = { 34716  ,3 },        // disc: Gashing Blade Rk. III
-gblade7        = { 43637  ,3 },        // disc: Lacerating Blade - SK Lv 102 RoF
-gblade8        = { 43638  ,3 },        // disc: Lacerating Blade Rk. II
-gblade9        = { 43639  ,3 },        // disc: Lacerating Blade Rk. III
-gblade10       = { 55731  ,3 },        // disc: Wounding Blade Lv 107 Shd RoS
-gblade11       = { 55732  ,3 },        // disc: Wounding Blade Rk. II
-gblade12       = { 55733  ,3 },        // disc: Wounding Blade Rk. III
+#pragma region Monk - Class 7
+cloud1 = { 25914  ,3 },        // disc: Cloud of Fists Lv 87 mnk HoT
+cloud2 = { 25915  ,3 },        // disc: Cloud of Fists rk. ii
+cloud3 = { 25916  ,3 },        // disc: Cloud of Fists rk. iii
+cloud4 = { 40229  ,3 },        // disc: Phantom Partisan Lv 100 mnk HoT
+cloud5 = { 40230  ,3 },        // disc: Phantom Partisan rk. ii
+cloud6 = { 40231  ,3 },        // disc: Phantom Partisan rk. iii
 
-gorillasmash   = { 988    ,4 },        // aa: gorilla smash
-gutpunch       = { 3732   ,4 },        // aa: gut punch
-harmtouch      = { 6000   ,4 },        // aa: harmtouch
+fistswu = { 8002   ,3 },        // disc: fists of wu
 
-honor1         = { 10173  ,5 },        // spell: challenge for honor
-honor2         = { 10174  ,5 },        // spell: challenge for honor rk ii
-honor3         = { 10175  ,5 },        // spell: challenge for honor rk iii
-honor4         = { 14954  ,5 },        // spell: trial for honor
-honor5         = { 14955  ,5 },        // spell: trial for honor rk ii
-honor6         = { 14956  ,5 },        // spell: trial for honor rk iii
-honor7         = { 19068  ,5 },        // spell: Charge for Honor Lv 85 pal UF
-honor8         = { 19069  ,5 },        // spell: Charge for Honor rk ii
-honor9         = { 19070  ,5 },        // spell: Charge for Honor rk iii
-honor10        = { 25297  ,5 },        // spell: Confrontation for Honor Lv 90 pal HoT
-honor11        = { 25298  ,5 },        // spell: Confrontation for Honor rk ii
-honor12        = { 25299  ,5 },        // spell: Confrontation for Honor rk iii
-honor13        = { 28347  ,5 },        // spell: Provocation for Honor Lv 95 pal VoA
-honor14        = { 28348  ,5 },        // spell: Provocation for Honor rk ii
-honor15        = { 28349  ,5 },        // spell: Provocation for Honor rk iii
-honor16        = { 34350  ,5 },        // spell: Demand for Honor Lv 97 pal RoF
-honor17        = { 34351  ,5 },        // spell: Demand for Honor rk. ii
-honor18        = { 34352  ,5 },        // spell: Demand for Honor rk. iii
-honor19        = { 43322  ,5 },        // spell: Impose for Honor Lv 102 pal TDS
-honor20        = { 43323  ,5 },        // spell: Impose for Honor rk. ii
-honor21        = { 43324  ,5 },        // spell: Impose for Honor rk. iii
-honor22        = { 55353  ,5 },        // spell: Refute for Honor Lv 107 Pal RoS
-honor23        = { 55354  ,5 },        // spell: Refute for Honor Rk. II
-honor24        = { 55355  ,5 },        // spell: Refute for Honor Rk. III
+leop1 =  { 6752   ,3 },        // disc: leopard claw
+leop2 =  { 6727   ,3 },        // disc: dragon fang
+leop3 =  { 10944  ,3 },        // disc: clawstriker flurry
+leop4 =  { 10945  ,3 },        // disc: clawstriker flurry rk ii
+leop5 =  { 10946  ,3 },        // disc: clawstriker flurry rk iii
+leop6 =  { 14796  ,3 },        // disc: wheel of fists
+leop7 =  { 14797  ,3 },        // disc: wheel of fists rk ii
+leop8 =  { 14798  ,3 },        // disc: wheel of fists rk iii
+leop9 =  { 18901  ,3 },        // disc: whorl of fists Lv 84 mnk UF
+leop10 = { 18902  ,3 },        // disc: whorl of fists rk ii
+leop11 = { 18903  ,3 },        // disc: whorl of fists rk iii
+leop12 = { 25926  ,3 },        // disc: Six-Step Pattern Lv 89 mnk Hot
+leop13 = { 25927  ,3 },        // disc: Six-Step Pattern rk. ii
+leop14 = { 25928  ,3 },        // disc: Six-Step Pattern rk iii
+leop15 = { 29033  ,3 },        // disc: Seven-Step Pattern Lv 94 mnk VoA
+leop16 = { 29034  ,3 },        // disc: Seven-Step Pattern rk .ii
+leop17 = { 29035  ,3 },        // disc: Seven-Step Pattern rk iii
+leop18 = { 35074  ,3 },        // disc: Eight-Step Pattern Lv 96 mnk RoF
+leop19 = { 35075  ,3 },        // disc: Eight-Step Pattern Rk. II
+leop20 = { 35076  ,3 },        // disc: Eight-Step Pattern Rk. III
+leop21 = { 43974  ,3 },        // disc: Torrent of Fists Lv 104 mnk TDS
+leop22 = { 43975  ,3 },        // disc: Torrent of Fists Rk. II
+leop23 = { 43976  ,3 },        // disc: Torrent of Fists Rk. III
+leop24 = { 56099  ,3 },        // disc: Firestorm of Fists Lv 110 Mnk RoS
+leop25 = { 56100  ,3 },        // disc: Firestorm of Fists Rk. II
+leop26 = { 56101  ,3 },        // disc: Firestorm of Fists Rk. III
 
+monkey1 = { 22525  ,3 },        // disc: Drunken Monkey Style Lv 85 mnk UF
+monkey2 = { 22526  ,3 },        // disc: Drunken Monkey Style rk .ii
+monkey3 = { 22527  ,3 },        // disc: Drunken Monkey Style rk iii
 
+stunmnk1 = { 469    ,4 },        // aa: stunning kick
+stunmnk2 = { 600    ,4 },        // aa: resounding kick
 
-joltbst1       = { 362    ,4 },        // aa: roar of thunder
+synergy1 =  { 18895  ,3 },        // disc: Calanin's Synergy Lv 81 mnk UF
+synergy2 =  { 18896  ,3 },        // disc: Calanin's Synergy Rk. II
+synergy3 =  { 18897  ,3 },        // disc: Calanin's Synergy Rk. III
+synergy4 =  { 25907  ,3 },        // disc: Dreamwalker's Synergy Lv 86 mnk HoT
+synergy5 =  { 25908  ,3 },        // disc: Dreamwalker's Synergy Rk. II
+synergy6 =  { 25909  ,3 },        // disc: Dreamwalker's Synergy Rk. III
+synergy7 =  { 29002  ,3 },        // disc: Veilwalker's Synergy Lv 91 mnk VoA
+synergy8 =  { 29003  ,3 },        // disc: Veilwalker's Synergy Rk. II
+synergy9 =  { 29004  ,3 },        // disc: Veilwalker's Synergy Rk. III
+synergy10 = { 35043  ,3 },        // disc: Shadewalker's Synergy mnk RoF
+synergy11 = { 35044  ,3 },        // disc: Shadewalker's Synergy Rk. II
+synergy12 = { 35045  ,3 },        // disc: Shadewalker's Synergy Rk. III
+synergy13 = { 43943  ,3 },        // disc: Doomwalker's Synergy mnk Lv 101 TDS
+synergy14 = { 43944  ,3 },        // disc: Doomwalker's Synergy Rk. II
+synergy15 = { 43945  ,3 },        // disc: Doomwalker's Synergy Rk. III
+synergy16 = { 56058  ,3 },        // disc: Firewalker's Synergy Lv 106 Mnk RoS
+synergy17 = { 56059  ,3 },        // disc: Firewalker's Synergy Rk. II
+synergy18 = { 56060  ,3 },        // disc: Firewalker's Synergy Rk. III
 
-joltrng1       = { 1741   ,5 },        // spell: jolt
-joltrng2       = { 1296   ,5 },        // spell: cinder jolt
+vigmnk1 = { 19826  ,3 },        // disc: Vigorous Shuriken
+vigmnk2 = { 19827  ,3 },        // disc: Vigorous Shuriken Rk. II
+vigmnk3 = { 19828  ,3 },        // disc: Vigorous Shuriken Rk. III
 
-jltkicks1      = { 10086  ,3 },        // disc: jolting kicks
-jltkicks2      = { 10087  ,3 },        // disc: jolting kicks rk ii
-jltkicks3      = { 10088  ,3 },        // disc: jolting kicks rk iii
-jltkicks4      = { 15020  ,3 },        // disc: Jolting Snapkicks
-jltkicks5      = { 15021  ,3 },        // disc: Jolting Snapkicks rk ii
-jltkicks6      = { 15022  ,3 },        // disc: Jolting Snapkicks rk iii
-jltkicks7      = { 19152  ,3 },        // disc: Jolting Frontkicks Lv 82 rng UF
-jltkicks8      = { 19153  ,3 },        // disc: Jolting Frontkicks rk ii
-jltkicks9      = { 19154  ,3 },        // disc: Jolting Frontkicks rk iii
-jltkicks10     = { 25432  ,3 },        // disc: Jolting Hook kicks Lv Lv 87 rng HoT
-jltkicks11     = { 25433  ,3 },        // disc: Jolting Hook kicks rk ii
-jltkicks12     = { 25434  ,3 },        // disc: Jolting Hook kicks rk iii
-jltkicks13     = { 28509  ,3 },        // disc: Jolting Crescent kicks lv 92 rng VoA
-jltkicks14     = { 28510  ,3 },        // disc: Jolting Crescent kicks rk ii
-jltkicks15     = { 28511  ,3 },        // disc: Jolting Crescent kicks rk iii
-jltkicks16     = { 34530  ,3 },        // disc: Jolting Heel Kicks lv 97 rng RoF
-jltkicks17     = { 34531  ,3 },        // disc: Jolting Heel Kicks rk ii
-jltkicks18     = { 34532  ,3 },        // disc: Jolting Heel Kicks rk iii
-jltkicks19     = { 43466  ,3 },        // disc: Jolting Cut Kicks lv 102 rng TDS
-jltkicks20     = { 43467  ,3 },        // disc: Jolting Cut Kicks rk ii
-jltkicks21     = { 43468  ,3 },        // disc: Jolting Cut Kicks rk iii
-jltkicks22     = { 55542  ,3 },        // disc: Jolting Wheel Kicks Lv 107 Rng RoS
-jltkicks23     = { 55543  ,3 },        // disc: Jolting Wheel Kicks Rk. II
-jltkicks24     = { 55544  ,3 },        // disc: Jolting Wheel Kicks Rk. III
+#pragma endregion
 
-jugular1       = { 15121  ,3 },        // disc: Jugular Slash Lv 77 ROG
-jugular2       = { 15122  ,3 },        // disc: Jugular Slash Rk. II
-jugular3       = { 15123  ,3 },        // disc: Jugular Slash Rk. III
-jugular4       = { 19268  ,3 },        // disc: Jugular Slice Lv 82 ROG
-jugular5       = { 19269  ,3 },        // disc: Jugular Slice Rk. II
-jugular6       = { 19270  ,3 },        // disc: Jugular Slice Rk. III
-jugular7       = { 26115  ,3 },        // disc: Jugular Sever Lv 87 ROG HoT
-jugular8       = { 26116  ,3 },        // disc: Jugular Sever Rk. II
-jugular9       = { 26117  ,3 },        // disc: Jugular Sever Rk. III
-jugular10      = { 29210  ,3 },        // disc: Jugular Gash Lv 92 ROG VoA
-jugular11      = { 29211  ,3 },        // disc: Jugular Gash Rk. II
-jugular12      = { 29212  ,3 },        // disc: Jugular Gash Rk. III
-jugular13      = { 35263  ,3 },        // disc: Jugular Lacerate Lv 97 ROG RoF
-jugular14      = { 35264  ,3 },        // disc: Jugular Lacerate Rk. II
-jugular15      = { 35265  ,3 },        // disc: Jugular Lacerate Rk. III
-jugular16      = { 44136  ,3 },        // disc: Jugular Hack Lv 102 ROG TDS
-jugular17      = { 44137  ,3 },        // disc: Jugular Hack Rk. II
-jugular18      = { 44138  ,3 },        // disc: Jugular Hack Rk. III
-jugular19      = { 56285  ,3 },        // disc: Jugular Strike Lv 107 Rog RoS
-jugular20      = { 56286  ,3 },        // disc: Jugular Strike Rk. II
-jugular21      = { 56287  ,3 },        // disc: Jugular Strike Rk. III
+#pragma region Bard - Class 8
+boastful = { 199    ,4 },        // aa: boastful bellow
 
-kneestrike     = { 801    ,4 },        // aa: knee strike
+selos = { 8205   ,4 },        // aa: selos
 
-knifeplay1     = { 40297  ,3 },        // disc: Knifeplay Discipline rog 97 Rof
-knifeplay2     = { 40298  ,3 },        // disc: Knifeplay Disciplinen Rk. II
-knifeplay3     = { 40299  ,3 },        // disc: Knifeplay Discipline Rk. III
+#pragma endregion
 
-layhand        = { 6001   ,4 },        // aa: lay on hands
+#pragma region Rogue - Class 9
+assault1 =  { 22540  ,3 },        // disc: Assault Lv 85 rog UF
+assault2 =  { 22541  ,3 },        // disc: Assault Rk. II
+assault3 =  { 22542  ,3 },        // disc: Assault Rk. III
+assault4 =  { 26142  ,3 },        // disc: Battery Lv 90 rog HoT
+assault5 =  { 26143  ,3 },        // disc: Battery Rk. II
+assault6 =  { 26144  ,3 },        // disc: Battery Rk. III
+assault7 =  { 29243  ,3 },        // disc: Onslaught Lv 95 rog VoA
+assault8 =  { 29244  ,3 },        // disc: Onslaught Rk. II
+assault9 =  { 29245  ,3 },        // disc: Onslaught Rk. III
+assault10 = { 35299  ,3 },        // disc: Incursion Lv 100 rog RoF
+assault11 = { 35300  ,3 },        // disc: Incursion Rk. II
+assault12 = { 35301  ,3 },        // disc: Incursion Rk. III
+assault13 = { 44172  ,3 },        // disc: Barrage Lv 105 rog TDS
+assault14 = { 44173  ,3 },        // disc: Barrage Rk. II
+assault15 = { 44174  ,3 },        // disc: Barrage Rk. III
+assault16 = { 56324  ,3 },        // disc: Fellstrike Lv 110 rog RoS
+assault17 = { 56325  ,3 },        // disc: Fellstrike Rk. II
+assault18 = { 56326  ,3 },        // disc: Fellstrike Rk. III
 
-leop1          = { 6752   ,3 },        // disc: leopard claw
-leop2          = { 6727   ,3 },        // disc: dragon fang
-leop3          = { 10944  ,3 },        // disc: clawstriker flurry
-leop4          = { 10945  ,3 },        // disc: clawstriker flurry rk ii
-leop5          = { 10946  ,3 },        // disc: clawstriker flurry rk iii
-leop6          = { 14796  ,3 },        // disc: wheel of fists
-leop7          = { 14797  ,3 },        // disc: wheel of fists rk ii
-leop8          = { 14798  ,3 },        // disc: wheel of fists rk iii
-leop9          = { 18901  ,3 },        // disc: whorl of fists Lv 84 mnk UF
-leop10         = { 18902  ,3 },        // disc: whorl of fists rk ii
-leop11         = { 18903  ,3 },        // disc: whorl of fists rk iii
-leop12         = { 25926  ,3 },        // disc: Six-Step Pattern Lv 89 mnk Hot
-leop13         = { 25927  ,3 },        // disc: Six-Step Pattern rk. ii
-leop14         = { 25928  ,3 },        // disc: Six-Step Pattern rk iii
-leop15         = { 29033  ,3 },        // disc: Seven-Step Pattern Lv 94 mnk VoA
-leop16         = { 29034  ,3 },        // disc: Seven-Step Pattern rk .ii
-leop17         = { 29035  ,3 },        // disc: Seven-Step Pattern rk iii
-leop18         = { 35074  ,3 },        // disc: Eight-Step Pattern Lv 96 mnk RoF
-leop19         = { 35075  ,3 },        // disc: Eight-Step Pattern Rk. II
-leop20         = { 35076  ,3 },        // disc: Eight-Step Pattern Rk. III
-leop21         = { 43974  ,3 },        // disc: Torrent of Fists Lv 104 mnk TDS
-leop22         = { 43975  ,3 },        // disc: Torrent of Fists Rk. II
-leop23         = { 43976  ,3 },        // disc: Torrent of Fists Rk. III
-leop24         = { 56099  ,3 },        // disc: Firestorm of Fists Lv 110 Mnk RoS
-leop25         = { 56100  ,3 },        // disc: Firestorm of Fists Rk. II
-leop26         = { 56101  ,3 },        // disc: Firestorm of Fists Rk. III
+bleed1 =  { 19247  ,3 },        // disc: bleed Lv 83 rog UF
+bleed2 =  { 19248  ,3 },        // disc: bleed Rk. II
+bleed3 =  { 19249  ,3 },        // disc: bleed Rk. III
+bleed4 =  { 26127  ,3 },        // disc: Wound Lv 88 rog HoT
+bleed5 =  { 26128  ,3 },        // disc: Wound Rk. II
+bleed6 =  { 26129  ,3 },        // disc: Wound Rk. III
+bleed7 =  { 29228  ,3 },        // disc: Lacerate Lv 93 rog VoA
+bleed8 =  { 29229  ,3 },        // disc: Lacerate Rk. II
+bleed9 =  { 29230  ,3 },        // disc: Lacerate Rk. III
+bleed10 = { 35284  ,3 },        // disc: Gash Lv 98 rog RoF
+bleed11 = { 35285  ,3 },        // disc: Gash Rk. II
+bleed12 = { 35286  ,3 },        // disc: Gash Rk. III
+bleed13 = { 44151  ,3 },        // disc: Hack Lv 103 rog TDS
+bleed14 = { 44152  ,3 },        // disc: Hack Rk. II
+bleed15 = { 44153  ,3 },        // disc: Hack Rk. III
+bleed16 = { 56303  ,3 },        // disc: Slice Lv 108 rog RoS
+bleed17 = { 56304  ,3 },        // disc: Slice Rk. II
+bleed18 = { 56305  ,3 },        // disc: Slice Rk. III
 
-mendpet1       = { 58     ,4 },        // aa: mend companion
-mendpet2       = { 418    ,4 },        // aa: replenish companion
+escape = { 102    ,4 },        // aa: escape
 
-monkey1        = { 22525  ,3 },        // disc: Drunken Monkey Style Lv 85 mnk UF
-monkey2        = { 22526  ,3 },        // disc: Drunken Monkey Style rk .ii
-monkey3        = { 22527  ,3 },        // disc: Drunken Monkey Style rk iii
+jugular1 =  { 15121  ,3 },        // disc: Jugular Slash Lv 77 ROG
+jugular2 =  { 15122  ,3 },        // disc: Jugular Slash Rk. II
+jugular3 =  { 15123  ,3 },        // disc: Jugular Slash Rk. III
+jugular4 =  { 19268  ,3 },        // disc: Jugular Slice Lv 82 ROG
+jugular5 =  { 19269  ,3 },        // disc: Jugular Slice Rk. II
+jugular6 =  { 19270  ,3 },        // disc: Jugular Slice Rk. III
+jugular7 =  { 26115  ,3 },        // disc: Jugular Sever Lv 87 ROG HoT
+jugular8 =  { 26116  ,3 },        // disc: Jugular Sever Rk. II
+jugular9 =  { 26117  ,3 },        // disc: Jugular Sever Rk. III
+jugular10 = { 29210  ,3 },        // disc: Jugular Gash Lv 92 ROG VoA
+jugular11 = { 29211  ,3 },        // disc: Jugular Gash Rk. II
+jugular12 = { 29212  ,3 },        // disc: Jugular Gash Rk. III
+jugular13 = { 35263  ,3 },        // disc: Jugular Lacerate Lv 97 ROG RoF
+jugular14 = { 35264  ,3 },        // disc: Jugular Lacerate Rk. II
+jugular15 = { 35265  ,3 },        // disc: Jugular Lacerate Rk. III
+jugular16 = { 44136  ,3 },        // disc: Jugular Hack Lv 102 ROG TDS
+jugular17 = { 44137  ,3 },        // disc: Jugular Hack Rk. II
+jugular18 = { 44138  ,3 },        // disc: Jugular Hack Rk. III
+jugular19 = { 56285  ,3 },        // disc: Jugular Strike Lv 107 Rog RoS
+jugular20 = { 56286  ,3 },        // disc: Jugular Strike Rk. II
+jugular21 = { 56287  ,3 },        // disc: Jugular Strike Rk. III
 
+knifeplay1 = { 40297  ,3 },        // disc: Knifeplay Discipline rog 97 Rof
+knifeplay2 = { 40298  ,3 },        // disc: Knifeplay Disciplinen Rk. II
+knifeplay3 = { 40299  ,3 },        // disc: Knifeplay Discipline Rk. III
 
+pinpoint1 =  { 11925  ,3 },        // disc: Pinpoint Vulnerability Lv 74 ROG
+pinpoint2 =  { 11926  ,3 },        // disc: Pinpoint Vulnerability Rk. II
+pinpoint3 =  { 11927  ,3 },        // disc: Pinpoint Vulnerability Rk. III
+pinpoint4 =  { 15115  ,3 },        // disc: Pinpoint Weaknesses Lv 79 ROG
+pinpoint5 =  { 15116  ,3 },        // disc: Pinpoint Weaknesses Rk. II
+pinpoint6 =  { 15117  ,3 },        // disc: Pinpoint Weaknesses Rk. III
+pinpoint7 =  { 19262  ,3 },        // disc: Pinpoint Vitals Lv 84 ROG
+pinpoint8 =  { 19263  ,3 },        // disc: Pinpoint Vitals Rk. II
+pinpoint9 =  { 19264  ,3 },        // disc: Pinpoint Vitals Rk. III
+pinpoint10 = { 26139  ,3 },        // disc: Pinpoint Flaws Lv 89 ROG HoT
+pinpoint11 = { 26140  ,3 },        // disc: Pinpoint Flaws Rk. II
+pinpoint12 = { 26141  ,3 },        // disc: Pinpoint Flaws Rk. III
+pinpoint13 = { 29240  ,3 },        // disc: Pinpoint Liabilities Lv 94 ROG VoA
+pinpoint14 = { 29241  ,3 },        // disc: Pinpoint Liabilities Rk. II
+pinpoint15 = { 29242  ,3 },        // disc: Pinpoint Liabilities Rk. III
+pinpoint16 = { 35296  ,3 },        // disc: Pinpoint Deficiencies Lv 99 ROG RoF
+pinpoint17 = { 35297  ,3 },        // disc: Pinpoint Deficiencies Rk. II
+pinpoint18 = { 35298  ,3 },        // disc: Pinpoint Deficiencies Rk. III
 
-opstrke1       = { 15375  ,3 },        // disc: Opportunistic Strike Lv 78 war
-opstrke2       = { 15376  ,3 },        // disc: Opportunistic Strike rk ii
-opstrke3       = { 15377  ,3 },        // disc: Opportunistic Strike rk iii
-opstrke4       = { 25027  ,3 },        // disc: Strategic Strike lv 88 war HoT
-opstrke5       = { 25028  ,3 },        // disc: Strategic Strike rk ii
-opstrke6       = { 25029  ,3 },        // disc: Strategic Strike rk iii
-opstrke7       = { 28036  ,3 },        // disc: Vital Strike Lv 93 war VoA
-opstrke8       = { 28037  ,3 },        // disc: Vital Strike rk ii
-opstrke9       = { 28038  ,3 },        // disc: Vital Strike rk iii
-opstrke10      = { 43045  ,3 },        // disc: Calculated Strike Lv 104 war TDS
-opstrke11      = { 43046  ,3 },        // disc: Calculated Strike rk ii
-opstrke12      = { 43046  ,3 },        // disc: Calculated Strike rk iii
-opstrke13      = { 55045  ,3 },        // disc: Cunning Strike Lv 109 War RoS
-opstrke14      = { 55046  ,3 },        // disc: Cunning Strike Rk. II
-opstrke15      = { 55047  ,3 },        // disc: Cunning Strike Rk. III
+strike1 =  { 4659   ,3 },        // disc: sneak attack
+strike2 =  { 4685   ,3 },        // disc: thief's vengeance
+strike3 =  { 4686   ,3 },        // disc: assassin strike
+strike4 =  { 5017   ,3 },        // disc: kyv strike
+strike5 =  { 5018   ,3 },        // disc: ancient chaos strike
+strike6 =  { 6174   ,3 },        // disc: daggerfall
+strike7 =  { 8470   ,3 },        // disc: razor arc
+strike8 =  { 15133  ,3 },        // disc: swiftblade
+strike9 =  { 15134  ,3 },        // disc: swiftblade rk. ii
+strike10 = { 15135  ,3 },        // disc: swiftblade rk. iii
+strike11 = { 19280  ,3 },        // disc: Daggerlunge Lv 85 rog UF
+strike12 = { 19281  ,3 },        // disc: Daggerlunge rk. ii
+strike13 = { 19282  ,3 },        // disc: Daggerlunge rk. iii
+strike14 = { 26148  ,3 },        // disc: Daggerswipe Lv 90 rog HoT
+strike15 = { 26149  ,3 },        // disc: Daggerswipe rk. ii
+strike16 = { 26150  ,3 },        // disc: Daggerswipe rk. iii
+strike17 = { 29249  ,3 },        // disc: Daggerstrike Lv 95 rog VoA
+strike18 = { 29250  ,3 },        // disc: Daggerstrike rk. ii
+strike19 = { 29251  ,3 },        // disc: Daggerstrike rk. iii
+strike20 = { 35305  ,3 },        // disc: Daggerthrust Lv 100 rog RoF
+strike21 = { 35306  ,3 },        // disc: Daggerthrust rk. ii
+strike22 = { 35307  ,3 },        // disc: Daggerthrust rk. iii
+strike23 = { 44178  ,3 },        // disc: Daggergash Lv 105 rog TDS
+strike24 = { 44179  ,3 },        // disc: Daggergash rk. ii
+strike25 = { 44180  ,3 },        // disc: Daggergash rk. iii
+strike26 = { 56330  ,3 },        // disc: Daggerslice Lv 110 Rog RoS
+strike27 = { 56331  ,3 },        // disc: Daggerslice Rk. II
+strike28 = { 56332  ,3 },        // disc: Daggerslice Rk. III
 
-pinpoint1      = { 11925  ,3 },        // disc: Pinpoint Vulnerability Lv 74 ROG
-pinpoint2      = { 11926  ,3 },        // disc: Pinpoint Vulnerability Rk. II
-pinpoint3      = { 11927  ,3 },        // disc: Pinpoint Vulnerability Rk. III
-pinpoint4      = { 15115  ,3 },        // disc: Pinpoint Weaknesses Lv 79 ROG
-pinpoint5      = { 15116  ,3 },        // disc: Pinpoint Weaknesses Rk. II
-pinpoint6      = { 15117  ,3 },        // disc: Pinpoint Weaknesses Rk. III
-pinpoint7      = { 19262  ,3 },        // disc: Pinpoint Vitals Lv 84 ROG
-pinpoint8      = { 19263  ,3 },        // disc: Pinpoint Vitals Rk. II
-pinpoint9      = { 19264  ,3 },        // disc: Pinpoint Vitals Rk. III
-pinpoint10     = { 26139  ,3 },        // disc: Pinpoint Flaws Lv 89 ROG HoT
-pinpoint11     = { 26140  ,3 },        // disc: Pinpoint Flaws Rk. II
-pinpoint12     = { 26141  ,3 },        // disc: Pinpoint Flaws Rk. III
-pinpoint13     = { 29240  ,3 },        // disc: Pinpoint Liabilities Lv 94 ROG VoA
-pinpoint14     = { 29241  ,3 },        // disc: Pinpoint Liabilities Rk. II
-pinpoint15     = { 29242  ,3 },        // disc: Pinpoint Liabilities Rk. III
-pinpoint16     = { 35296  ,3 },        // disc: Pinpoint Deficiencies Lv 99 ROG RoF
-pinpoint17     = { 35297  ,3 },        // disc: Pinpoint Deficiencies Rk. II
-pinpoint18     = { 35298  ,3 },        // disc: Pinpoint Deficiencies Rk. III
+thiefeye1 = { 8001   ,3 },        // disc: thief's eye
+thiefeye2 = { 40294  ,3 },        // disc: Thief's Vision
+thiefeye3 = { 40295  ,3 },        // disc: Thief's Vision rk. II
+thiefeye4 = { 40296  ,3 },        // disc: Thief's Vision rk. III
 
-potfast0       = { 77789  ,7 },        // potion: Distillate of Divine Healing I
-potfast1       = { 77790  ,7 },        // potion: Distillate of Divine Healing II
-potfast2       = { 77791  ,7 },        // potion: Distillate of Divine Healing III
-potfast3       = { 77792  ,7 },        // potion: Distillate of Divine Healing IV
-potfast4       = { 77793  ,7 },        // potion: Distillate of Divine Healing V
-potfast5       = { 77794  ,7 },        // potion: Distillate of Divine Healing VI
-potfast6       = { 77795  ,7 },        // potion: Distillate of Divine Healing VII
-potfast7       = { 77796  ,7 },        // potion: Distillate of Divine Healing VIII
-potfast8       = { 77797  ,7 },        // potion: Distillate of Divine Healing IX
-potfast9       = { 77798  ,7 },        // potion: Distillate of Divine Healing X
-potfast10      = { 35930  ,7 },        // potion: Distillate of Divine Healing XI
-potfast11      = { 35935  ,7 },        // potion: Distillate of Divine Healing XII
-potfast12      = { 35940  ,7 },        // potion: Distillate of Divine Healing XIII
-potfast13      = { 40554  ,7 },        // potion: Distillate of Divine Healing XIV
-potfast14      = { 56941  ,7 },        // potion: Distillate of Divine Healing XV
-potfast15      = { 64612  ,7 },        // potion: Distillate of Divine Healing XVI
-potfast16      = { 135337 ,7 },        // potion: Distillate of Divine Healing XVII
+vigrog1 =  { 19871  ,3 },        // disc: Vigorous Dagger-Throw
+vigrog2 =  { 19872  ,3 },        // disc: Vigorous Dagger-Throw Rk. II
+vigrog3 =  { 19873  ,3 },        // disc: Vigorous Dagger-Throw Rk. III
+vigrog4 =  { 26124  ,3 },        // disc: Vigorous Dagger-Strike
+vigrog5 =  { 26125  ,3 },        // disc: Vigorous Dagger-Strike Rk. II
+vigrog6 =  { 26126  ,3 },        // disc: Vigorous Dagger-Strike Rk. III
+vigrog7 =  { 29225  ,3 },        // disc: Energetic Dagger-Strike
+vigrog8 =  { 29226  ,3 },        // disc: Energetic Dagger-Strike Rk. II
+vigrog9 =  { 29227  ,3 },        // disc: Energetic Dagger-Strike Rk. III
+vigrog10 = { 35281  ,3 },        // disc: Energetic Dagger-Throw 98 Rog RoF
+vigrog11 = { 35282  ,3 },        // disc: Energetic Dagger-Throw Rk. II
+vigrog12 = { 35283  ,3 },        // disc: Energetic Dagger-Throw Rk. III
+vigrog13 = { 44148  ,3 },        // disc: Exuberant Dagger-Throw 103 Rog TDS
+vigrog14 = { 44149  ,3 },        // disc: Exuberant Dagger-Throw Rk. II
+vigrog15 = { 44150  ,3 },        // disc: Exuberant Dagger-Throw Rk. III
+vigrog16 = { 56300  ,3 },        // disc: Forceful Dagger-Throw 108 Rog RoS
+vigrog17 = { 56301  ,3 },        // disc: Forceful Dagger-Throw Rk. II
+vigrog18 = { 56302  ,3 },        // disc: Forceful Dagger-Throw Rk. III
 
-potover0       = { 77779  ,7 },        // potion: Distillate of Celestial Healing I
-potover1       = { 77780  ,7 },        // potion: Distillate of Celestial Healing II
-potover2       = { 77781  ,7 },        // potion: Distillate of Celestial Healing III
-potover3       = { 77782  ,7 },        // potion: Distillate of Celestial Healing IV
-potover4       = { 77783  ,7 },        // potion: Distillate of Celestial Healing V
-potover5       = { 77784  ,7 },        // potion: Distillate of Celestial Healing VI
-potover6       = { 77785  ,7 },        // potion: Distillate of Celestial Healing VII
-potover7       = { 77786  ,7 },        // potion: Distillate of Celestial Healing VIII
-potover8       = { 77787  ,7 },        // potion: Distillate of Celestial Healing IX
-potover9       = { 77788  ,7 },        // potion: Distillate of Celestial Healing X
-potover10      = { 35931  ,7 },        // potion: Distillate of Celestial Healing XI
-potover11      = { 35936  ,7 },        // potion: Distillate of Celestial Healing XII
-potover12      = { 35941  ,7 },        // potion: Distillate of Celestial Healing XIII
-potover13      = { 40555  ,7 },        // potion: Distillate of Celestial Healing XIV
-potover14      = { 56942  ,7 },        // potion: Distillate of Celestial Healing XV
-potover15      = { 64613  ,7 },        // potion: Distillate of Celestial Healing XVI
-potover16      = { 135338 ,7 },        // potion: Distillate of Celestial Healing XVII
+twisted = { 670    ,4 },        // aa: twisted shank
+#pragma endregion
 
-power1         = { 10260  ,5 },        // spell: challenge for power
-power2         = { 10261  ,5 },        // spell: challenge for power rk. ii
-power3         = { 10262  ,5 },        // spell: challenge for power rk. iii
-power4         = { 15163  ,5 },        // spell: trial for power
-power5         = { 15164  ,5 },        // spell: trial for power rk. ii
-power6         = { 15165  ,5 },        // spell: trial for power rk. iii
-power7         = { 19316  ,5 },        // spell: Charge for Power Lv 82 shd UF
-power8         = { 19317  ,5 },        // spell: Charge for Power rk. ii
-power9         = { 19318  ,5 },        // spell: Charge for Power rk. iii
-power10        = { 25586  ,5 },        // spell: Confrontation for Power Lv 87 shd HoT
-power11        = { 25587  ,5 },        // spell: Confrontation for Power rk. ii
-power12        = { 25588  ,5 },        // spell: Confrontation for Powerr rk. iii
-power13        = { 28663  ,5 },        // spell: Provocation for Power Lv 92 shd VoA
-power14        = { 28664  ,5 },        // spell: Provocation for Power rk. ii
-power15        = { 28665  ,5 },        // spell: Provocation for Power rk .iii
-power16        = { 34693  ,5 },        // spell: Demand for Power  Lv 97 shd RoF
-power17        = { 34694  ,5 },        // spell: Demand for Power rk. ii
-power18        = { 34695  ,5 },        // spell: Demand for Power rk. iii
-power19        = { 43619  ,5 },        // spell: Impose for Power  Lv 102 shd TDS
-power20        = { 43620  ,5 },        // spell: Impose for Power rk. ii
-power21        = { 43621  ,5 },        // spell: Impose for Power rk. iii
-power22        = { 55713  ,5 },        // spell: Refute for Power Lv 107 Shd RoS
-power23        = { 55714  ,5 },        // spell: Refute for Power Rk. II
-power24        = { 55715  ,5 },        // spell: Refute for Power Rk. III
+#pragma region Shaman - Class 10
+#pragma endregion
 
-prowar1        = { 4608   ,3 },        // disc: provoke
-prowar2        = { 4681   ,3 },        // disc: bellow
-prowar3        = { 4682   ,3 },        // disc: berate
-prowar4        = { 4697   ,3 },        // disc: incite
-prowar5        = { 5015   ,3 },        // disc: bellow of the mastruq
-prowar6        = { 5016   ,3 },        // disc: ancient: chaos cry
-prowar7        = { 6173   ,3 },        // disc: bazu bellow
-prowar8        = { 10974  ,3 },        // disc: scowl
-prowar9        = { 10975  ,3 },        // disc: scowl rk ii
-prowar10       = { 10976  ,3 },        // disc: scowl rk iii
-prowar11       = { 15360  ,3 },        // disc: sneer
-prowar12       = { 15361  ,3 },        // disc: sneer rk ii
-prowar13       = { 15362  ,3 },        // disc: sneer rk iii
-prowar14       = { 19537  ,3 },        // disc: bazu bluster Lv 81 war UF
-prowar15       = { 19538  ,3 },        // disc: bazu bluster rk. ii
-prowar16       = { 19539  ,3 },        // disc: bazu bluster rk. iii
-prowar17       = { 19531  ,3 },        // disc: jeer rk i Lv 85 war UF
-prowar18       = { 19532  ,3 },        // disc: jeer rk ii
-prowar19       = { 19533  ,3 },        // disc: jeer rk iii
-prowar20       = { 25018  ,3 },        // disc: bazu roar Lv 86 war HoT
-prowar21       = { 25019  ,3 },        // disc: bazu roar rk. ii
-prowar22       = { 25020  ,3 },        // disc: bazu roar rk. iii
-prowar23       = { 25045  ,3 },        // disc: scoff Lv 90 war HoT
-prowar24       = { 25046  ,3 },        // disc: scoff rk. ii
-prowar25       = { 25047  ,3 },        // disc: scoff rk. iii
-prowar26       = { 28021  ,3 },        // disc: Grendlaen Roar Lv 91 war VoA
-prowar27       = { 28022  ,3 },        // disc: Grendlaen Roar rk. ii
-prowar28       = { 28023  ,3 },        // disc: Grendlaen Roar rk. iii
-prowar29       = { 28060  ,3 },        // disc: Scorn Lv 95 war VoA
-prowar30       = { 28061  ,3 },        // disc: Scorn rk. ii
-prowar31       = { 28062  ,3 },        // disc: Scorn rk. iii
-prowar32       = { 34015  ,3 },        // disc: Krondal's Roar Lv 96 war RoF
-prowar33       = { 34016  ,3 },        // disc: Krondal's Roar rk. ii
-prowar34       = { 34017  ,3 },        // disc: Krondal's Roar rk. iii
-prowar35       = { 34027  ,3 },        // disc: Ridicule Lv 98 war RoF
-prowar36       = { 34028  ,3 },        // disc: Ridicule rk. ii
-prowar37       = { 34029  ,3 },        // disc: Ridicule rk. iii
-prowar38       = { 43021  ,3 },        // disc: Cyclone Roar
-prowar39       = { 43022  ,3 },        // disc: Cyclone Roar rk. ii
-prowar40       = { 43023  ,3 },        // disc: Cyclone Roar rk. iii
-prowar41       = { 43033  ,3 },        // disc: Insult Lv 103 war TDS
-prowar42       = { 43034  ,3 },        // disc: Insult rk. ii
-prowar43       = { 43035  ,3 },        // disc: Insult rk. iii
-prowar44       = { 55027  ,3 },        // disc: Slander Lv 108 War RoS
-prowar45       = { 55028  ,3 },        // disc: Slander Rk. II
-prowar46       = { 55029  ,3 },        // disc: Slander Rk. III
-prowar47       = { 55009  ,3 },        // disc: Kluzen's Roar Lv 106 war RoS
-prowar48       = { 55010  ,3 },        // disc: Kluzen's Roar Rk. II
-prowar49       = { 55011  ,3 },        // disc: Kluzen's Roar Rk. III
+#pragma region Necromancer - Class 11
+feign_n1 = { 25662  ,5 },        // spell: Scapegoat
+feign_n2 = { 25663  ,5 },        // spell: Scapegoat rk ii
+feign_n3 = { 25664  ,5 },        // spell: Scapegoat rk iii
+#pragma endregion
 
-rake1          = { 8782   ,3 },        // disc: rake
-rake2          = { 14158  ,3 },        // disc: harrow
-rake3          = { 14159  ,3 },        // disc: harrow rk. ii
-rake4          = { 14160  ,3 },        // disc: harrow rk. iii
-rake5          = { 18170  ,3 },        // disc: foray Lv 85 bst UF
-rake6          = { 18171  ,3 },        // disc: foray rk. ii
-rake7          = { 18172  ,3 },        // disc: foray rk. iii
-rake8          = { 27219  ,3 },        // disc: rush Lv 90 bst Hot
-rake9          = { 27220  ,3 },        // disc: rush rk. ii
-rake10         = { 27221  ,3 },        // disc: rush rk. iii
-rake11         = { 30368  ,3 },        // disc: Barrage Lv 95 bst Hot
-rake12         = { 30369  ,3 },        // disc: Barrage rk. ii
-rake13         = { 30370  ,3 },        // disc: Barrage rk. iii
-rake14         = { 36425  ,3 },        // disc: Pummel Lv 100 bst RoF
-rake15         = { 36426  ,3 },        // disc: Pummel rk. ii
-rake16         = { 36427  ,3 },        // disc: Pummel rk. iii
-rake17         = { 45164  ,3 },        // disc: Maul Lv 104 bst TDS
-rake18         = { 45165  ,3 },        // disc: Maul rk. ii
-rake19         = { 45166  ,3 },        // disc: Maul rk. iii
-rake20         = { 57450  ,3 },        // disc: Mangle Lv 109 Bst RoS
-rake21         = { 57451  ,3 },        // disc: Mangle Rk. II
-rake22         = { 57452  ,3 },        // disc: Mangle Rk. III
+#pragma region Wizard - Class 12
+#pragma endregion
 
-//Berserker - Class 16
+#pragma region Mage - Class 13
+#pragma endregion
 
+#pragma region Enchanter - Class 14
+#pragma endregion
+
+#pragma region Beastlord - Class 15
+asp = { 986    ,4 },        // aa: bite of the asp
+
+bvivi1 =  { 27098  ,3 },        // disc: Bestial Vivisection lv 86 BST HoT
+bvivi2 =  { 27099  ,3 },        // disc: Bestial Vivisection Rk. II
+bvivi3 =  { 27100  ,3 },        // disc: Bestial Vivisection Rk. III
+bvivi4 =  { 30238  ,3 },        // disc: Bestial Rending lv 91 BST VoA
+bvivi5 =  { 30239  ,3 },        // disc: Bestial Rending Rk. II
+bvivi6 =  { 30240  ,3 },        // disc: Bestial Rending Rk. III
+bvivi7 =  { 36319  ,3 },        // disc: Bestial Evulsing lv 96 BST RoF
+bvivi8 =  { 36320  ,3 },        // disc: Bestial Evulsing Rk. II
+bvivi9 =  { 36321  ,3 },        // disc: Bestial Evulsing Rk. III
+bvivi10 = { 57335  ,3 },        // disc: Bestial Savagery Lv 106 Bst RoS
+bvivi11 = { 57336  ,3 },        // disc: Bestial Savagery Rk. II
+bvivi12 = { 57337  ,3 },        // disc: Bestial Savagery Rk. III
+
+cstrike = { 11080  ,4 },        // aa: Chameleon Strike
+
+feign_bst = { 11073  ,4 },        // aa: playing possum
+
+feral1 = { 247    ,4 },        // aa: feral swipe
+
+fclaw1 = { 27119  ,3 },        // disc: flurry of claws lv 87 BST HoT
+fclaw2 = { 27120  ,3 },        // disc: flurry of claws rk. ii
+fclaw3 = { 27121  ,3 },        // disc: flurry of claws rk. iii
+fclaw4 = { 30271  ,3 },        // disc: Tumult of claws lv 92 BST Voa
+fclaw5 = { 30272  ,3 },        // disc: Tumult of claws rk. ii
+fclaw6 = { 30273  ,3 },        // disc: Tumult of claws rk. iii
+fclaw7 = { 36346  ,3 },        // disc: Clamor of Claws lv 97 BST Rof
+fclaw8 = { 36347  ,3 },        // disc: Clamor of Claws rk. ii
+fclaw9 = { 36348  ,3 },        // disc: Clamor of Claws rk. iii
+fclaw10 = { 40516  ,3 },        // disc: Focused Clamor of Claws lv 98 BST Rof
+fclaw11 = { 40517  ,3 },        // disc: Focused Clamor of Claws rk. ii
+fclaw12 = { 40518  ,3 },        // disc: Focused Clamor of Claws rk. iii
+fclaw13 = { 45103  ,3 },        // disc: Tempest of Claws lv 102 BST TDS
+fclaw14 = { 45104  ,3 },        // disc: Tempest of Claws rk. ii
+fclaw15 = { 45105  ,3 },        // disc: Tempest of Claws rk. iii
+fclaw16 = { 57386  ,3 },        // disc: Storm of Claws Lv 107 Bst RoS
+fclaw17 = { 57387  ,3 },        // disc: Storm of Claws Rk. II
+fclaw18 = { 57388  ,3 },        // disc: Storm of Claws Rk. III
+
+gorillasmash = { 988    ,4 },        // aa: gorilla smash
+
+rake1 = { 8782   ,3 },        // disc: rake
+rake2 = { 14158  ,3 },        // disc: harrow
+rake3 = { 14159  ,3 },        // disc: harrow rk. ii
+rake4 = { 14160  ,3 },        // disc: harrow rk. iii
+rake5 = { 18170  ,3 },        // disc: foray Lv 85 bst UF
+rake6 = { 18171  ,3 },        // disc: foray rk. ii
+rake7 = { 18172  ,3 },        // disc: foray rk. iii
+rake8 = { 27219  ,3 },        // disc: rush Lv 90 bst Hot
+rake9 = { 27220  ,3 },        // disc: rush rk. ii
+rake10 = { 27221  ,3 },        // disc: rush rk. iii
+rake11 = { 30368  ,3 },        // disc: Barrage Lv 95 bst Hot
+rake12 = { 30369  ,3 },        // disc: Barrage rk. ii
+rake13 = { 30370  ,3 },        // disc: Barrage rk. iii
+rake14 = { 36425  ,3 },        // disc: Pummel Lv 100 bst RoF
+rake15 = { 36426  ,3 },        // disc: Pummel rk. ii
+rake16 = { 36427  ,3 },        // disc: Pummel rk. iii
+rake17 = { 45164  ,3 },        // disc: Maul Lv 104 bst TDS
+rake18 = { 45165  ,3 },        // disc: Maul rk. ii
+rake19 = { 45166  ,3 },        // disc: Maul rk. iii
+rake20 = { 57450  ,3 },        // disc: Mangle Lv 109 Bst RoS
+rake21 = { 57451  ,3 },        // disc: Mangle Rk. II
+rake22 = { 57452  ,3 },        // disc: Mangle Rk. III
+
+joltbst1 = { 362    ,4 },        // aa: roar of thunder
+
+jltkicks1 = { 10086  ,3 },        // disc: jolting kicks
+jltkicks2 = { 10087  ,3 },        // disc: jolting kicks rk ii
+jltkicks3 = { 10088  ,3 },        // disc: jolting kicks rk iii
+jltkicks4 = { 15020  ,3 },        // disc: Jolting Snapkicks
+jltkicks5 = { 15021  ,3 },        // disc: Jolting Snapkicks rk ii
+jltkicks6 = { 15022  ,3 },        // disc: Jolting Snapkicks rk iii
+jltkicks7 = { 19152  ,3 },        // disc: Jolting Frontkicks Lv 82 rng UF
+jltkicks8 = { 19153  ,3 },        // disc: Jolting Frontkicks rk ii
+jltkicks9 = { 19154  ,3 },        // disc: Jolting Frontkicks rk iii
+jltkicks10 = { 25432  ,3 },        // disc: Jolting Hook kicks Lv Lv 87 rng HoT
+jltkicks11 = { 25433  ,3 },        // disc: Jolting Hook kicks rk ii
+jltkicks12 = { 25434  ,3 },        // disc: Jolting Hook kicks rk iii
+jltkicks13 = { 28509  ,3 },        // disc: Jolting Crescent kicks lv 92 rng VoA
+jltkicks14 = { 28510  ,3 },        // disc: Jolting Crescent kicks rk ii
+jltkicks15 = { 28511  ,3 },        // disc: Jolting Crescent kicks rk iii
+jltkicks16 = { 34530  ,3 },        // disc: Jolting Heel Kicks lv 97 rng RoF
+jltkicks17 = { 34531  ,3 },        // disc: Jolting Heel Kicks rk ii
+jltkicks18 = { 34532  ,3 },        // disc: Jolting Heel Kicks rk iii
+jltkicks19 = { 43466  ,3 },        // disc: Jolting Cut Kicks lv 102 rng TDS
+jltkicks20 = { 43467  ,3 },        // disc: Jolting Cut Kicks rk ii
+jltkicks21 = { 43468  ,3 },        // disc: Jolting Cut Kicks rk iii
+jltkicks22 = { 55542  ,3 },        // disc: Jolting Wheel Kicks Lv 107 Rng RoS
+jltkicks23 = { 55543  ,3 },        // disc: Jolting Wheel Kicks Rk. II
+jltkicks24 = { 55544  ,3 },        // disc: Jolting Wheel Kicks Rk. III
+
+ravens = { 987    ,4 },        // aa: raven's claw
+#pragma endregion
+
+#pragma region Berserker - Class 16
 bloodlust1 = { 22506  ,3 },        // Disc: Shared Bloodlust Lv 85 ber UF
 bloodlust2 = { 22507  ,3 },        // Disc: Shared Bloodlust  Rk. II
 bloodlust3 = { 22508  ,3 },        // Disc: Shared Bloodlust  Rk. III
@@ -900,26 +1087,52 @@ vigber18 = { 57533  ,3 },        // Disc: Mangling Axe Throw Rk. III
 vigber19 = { 60757  ,3 },        // Disc: Vindicating Axe Throw - Level 
 vigber20 = { 60758  ,3 },
 vigber21 = { 60759  ,3 },
+#pragma endregion
 
-//End Berserker - Class 16
+#pragma region Nec/Mag/Bst
+mendpet1 = { 58     ,4 },        // aa: mend companion
+mendpet2 = { 418    ,4 },        // aa: replenish companion
+#pragma endregion
 
-rightidg1      = { 25345  ,3 },        // disc: Righteous Indignation Lv 88 pal HoT
-rightidg2      = { 25346  ,3 },        // disc: Righteous Indignation Rk. II
-rightidg3      = { 25347  ,3 },        // disc: Righteous Indignation Rk. III
-rightidg4      = { 28398  ,3 },        // disc: Righteous Vexation Lv 93 pal VoA
-rightidg5      = { 28399  ,3 },        // disc: Righteous Vexation Rk. II
-rightidg6      = { 28400  ,3 },        // disc: Righteous Vexation Rk. III
-rightidg7      = { 34401  ,3 },        // disc: Righteous Umbrage Lv 98 pal RoF
-rightidg8      = { 34402  ,3 },        // disc: Righteous Umbrage Rk. II
-rightidg9      = { 34403  ,3 },        // disc: Righteous Umbrage Rk. III
-rightidg10     = { 55389  ,3 },        // disc: Righteous Condemnation Lv 108 pal RoS
-rightidg11     = { 55390  ,3 },        // disc: Righteous Condemnation Rk. II
-rightidg12     = { 55391  ,3 },        // disc: Righteous Condemnation Rk. III
+#pragma region Potions
+potfast0 = { 77789  ,7 },        // potion: Distillate of Divine Healing I
+potfast1 = { 77790  ,7 },        // potion: Distillate of Divine Healing II
+potfast2 = { 77791  ,7 },        // potion: Distillate of Divine Healing III
+potfast3 = { 77792  ,7 },        // potion: Distillate of Divine Healing IV
+potfast4 = { 77793  ,7 },        // potion: Distillate of Divine Healing V
+potfast5 = { 77794  ,7 },        // potion: Distillate of Divine Healing VI
+potfast6 = { 77795  ,7 },        // potion: Distillate of Divine Healing VII
+potfast7 = { 77796  ,7 },        // potion: Distillate of Divine Healing VIII
+potfast8 = { 77797  ,7 },        // potion: Distillate of Divine Healing IX
+potfast9 = { 77798  ,7 },        // potion: Distillate of Divine Healing X
+potfast10 = { 35930  ,7 },        // potion: Distillate of Divine Healing XI
+potfast11 = { 35935  ,7 },        // potion: Distillate of Divine Healing XII
+potfast12 = { 35940  ,7 },        // potion: Distillate of Divine Healing XIII
+potfast13 = { 40554  ,7 },        // potion: Distillate of Divine Healing XIV
+potfast14 = { 56941  ,7 },        // potion: Distillate of Divine Healing XV
+potfast15 = { 64612  ,7 },        // potion: Distillate of Divine Healing XVI
+potfast16 = { 135337 ,7 },        // potion: Distillate of Divine Healing XVII
 
-ravens         = { 987    ,4 },        // aa: raven's claw
+potover0 = { 77779  ,7 },        // potion: Distillate of Celestial Healing I
+potover1 = { 77780  ,7 },        // potion: Distillate of Celestial Healing II
+potover2 = { 77781  ,7 },        // potion: Distillate of Celestial Healing III
+potover3 = { 77782  ,7 },        // potion: Distillate of Celestial Healing IV
+potover4 = { 77783  ,7 },        // potion: Distillate of Celestial Healing V
+potover5 = { 77784  ,7 },        // potion: Distillate of Celestial Healing VI
+potover6 = { 77785  ,7 },        // potion: Distillate of Celestial Healing VII
+potover7 = { 77786  ,7 },        // potion: Distillate of Celestial Healing VIII
+potover8 = { 77787  ,7 },        // potion: Distillate of Celestial Healing IX
+potover9 = { 77788  ,7 },        // potion: Distillate of Celestial Healing X
+potover10 = { 35931  ,7 },        // potion: Distillate of Celestial Healing XI
+potover11 = { 35936  ,7 },        // potion: Distillate of Celestial Healing XII
+potover12 = { 35941  ,7 },        // potion: Distillate of Celestial Healing XIII
+potover13 = { 40555  ,7 },        // potion: Distillate of Celestial Healing XIV
+potover14 = { 56942  ,7 },        // potion: Distillate of Celestial Healing XV
+potover15 = { 64613  ,7 },        // potion: Distillate of Celestial Healing XVI
+potover16 = { 135338 ,7 },        // potion: Distillate of Celestial Healing XVII
+#pragma endregion
 
-selos          = { 8205   ,4 },        // aa: selos
-
+#pragma region Pal/Shd
 steely1        = { 19137  ,5 },        //spell Steely Stance lv 84 pal/shd UF
 steely2        = { 19138  ,5 },        //spell Steely Stance Rk. II
 steely3        = { 19139  ,5 },        //spell Steely Stance Rk. III
@@ -939,199 +1152,27 @@ steely16       = { 55320  ,5 },        // spell: Defiant Stance Lv 109 Pal/Shd R
 steely17       = { 55321  ,5 },        // spell: Defiant Stance Rk. II
 steely18       = { 55322  ,5 },        // spell: Defiant Stance Rk. III
 
+withstand1 = { 19131  ,3 },        // disc: Withstand Lv 83 pal/sk UF
+withstand2 = { 19132  ,3 },        // disc: Withstand Rk. II
+withstand3 = { 19133  ,3 },        // disc: Withstand Rk. III
+withstand4 = { 25264  ,3 },        // disc: Defy Lv 88 pal/sk HoT
+withstand5 = { 25265  ,3 },        // disc: Defy Rk. II
+withstand6 = { 25266  ,3 },        // disc: Defy Rk. III
+withstand7 = { 28308  ,3 },        // disc: Renounce Lv 93 pal/sk VoA
+withstand8 = { 28309  ,3 },        // disc: Renounce Rk. II
+withstand9 = { 28310  ,3 },        // disc: Renounce Rk. III
+withstand10 = { 34314  ,3 },        // disc: Reprove Lv 98 pal/sk VoA
+withstand11 = { 34315  ,3 },        // disc: Reprove Rk. II
+withstand12 = { 34316  ,3 },        // disc: Reprove Rk. III
+withstand13 = { 43283  ,3 },        // disc: Repel Lv 103 pal/sk TDS
+withstand14 = { 43284  ,3 },        // disc: Repel Rk. II
+withstand15 = { 43285  ,3 },        // disc: Repel Rk. III
+withstand16 = { 55317  ,3 },        // disc: Spurn Lv 108 Pal/Sk RoS
+withstand17 = { 55318  ,3 },        // disc: Spurn Rk. II
+withstand18 = { 55319  ,3 },        // dics: Spurn Rk. III
+#pragma endregion Pal/Shd
 
-strike1        = { 4659   ,3 },        // disc: sneak attack
-strike2        = { 4685   ,3 },        // disc: thief's vengeance
-strike3        = { 4686   ,3 },        // disc: assassin strike
-strike4        = { 5017   ,3 },        // disc: kyv strike
-strike5        = { 5018   ,3 },        // disc: ancient chaos strike
-strike6        = { 6174   ,3 },        // disc: daggerfall
-strike7        = { 8470   ,3 },        // disc: razor arc
-strike8        = { 15133  ,3 },        // disc: swiftblade
-strike9        = { 15134  ,3 },        // disc: swiftblade rk. ii
-strike10       = { 15135  ,3 },        // disc: swiftblade rk. iii
-strike11       = { 19280  ,3 },        // disc: Daggerlunge Lv 85 rog UF
-strike12       = { 19281  ,3 },        // disc: Daggerlunge rk. ii
-strike13       = { 19282  ,3 },        // disc: Daggerlunge rk. iii
-strike14       = { 26148  ,3 },        // disc: Daggerswipe Lv 90 rog HoT
-strike15       = { 26149  ,3 },        // disc: Daggerswipe rk. ii
-strike16       = { 26150  ,3 },        // disc: Daggerswipe rk. iii
-strike17       = { 29249  ,3 },        // disc: Daggerstrike Lv 95 rog VoA
-strike18       = { 29250  ,3 },        // disc: Daggerstrike rk. ii
-strike19       = { 29251  ,3 },        // disc: Daggerstrike rk. iii
-strike20       = { 35305  ,3 },        // disc: Daggerthrust Lv 100 rog RoF
-strike21       = { 35306  ,3 },        // disc: Daggerthrust rk. ii
-strike22       = { 35307  ,3 },        // disc: Daggerthrust rk. iii
-strike23       = { 44178  ,3 },        // disc: Daggergash Lv 105 rog TDS
-strike24       = { 44179  ,3 },        // disc: Daggergash rk. ii
-strike25       = { 44180  ,3 },        // disc: Daggergash rk. iii
-strike26       = { 56330  ,3 },        // disc: Daggerslice Lv 110 Rog RoS
-strike27       = { 56331  ,3 },        // disc: Daggerslice Rk. II
-strike28       = { 56332  ,3 },        // disc: Daggerslice Rk. III
-
-stunmnk1       = { 469    ,4 },        // aa: stunning kick
-stunmnk2       = { 600    ,4 },        // aa: resounding kick
-
-stunaas1       = { 73     ,4 },        // aa: divine stun
-stunaas2       = { 702    ,4 },        // aa: hand of disruption
-stunaas3       = { 3826   ,4 },        // aa: force of disruption
-
-stunpal1       = { 216    ,5 },        // spell: stun
-stunpal2       = { 123    ,5 },        // spell: holy might
-stunpal3       = { 3975   ,5 },        // spell: force of akera
-stunpal4       = { 3245   ,5 },        // spell: force of akilae
-stunpal5       = { 4977   ,5 },        // spell: ancient force of chaos
-stunpal6       = { 5284   ,5 },        // spell: force of piety
-stunpal7       = { 5299   ,5 },        // spell: ancient force of jeron
-stunpal8       = { 10158  ,5 },        // spell: sacred force
-stunpal9       = { 10159  ,5 },        // spell: sacred force rk. ii
-stunpal10      = { 10160  ,5 },        // spell: sacred force rk. iii
-stunpal11      = { 11851  ,5 },        // spell: force of prexus
-stunpal12      = { 11852  ,5 },        // spell: force of prexus rk. ii
-stunpal13      = { 11853  ,5 },        // spell: force of prexus rk. iii
-stunpal14      = { 14942  ,5 },        // spell: solemn force
-stunpal15      = { 14943  ,5 },        // spell: solemn force rk. ii
-stunpal16      = { 14944  ,5 },        // spell: solemn force rk. iii
-stunpal17      = { 14984  ,5 },        // spell: Force of Timorous
-stunpal18      = { 14985  ,5 },        // spell: Force of Timorous  rk. ii
-stunpal19      = { 14986  ,5 },        // spell: Force of Timorous  rk. iii
-stunpal20      = { 19056  ,5 },        // spell: Devout Force Lv 81 pal UF
-stunpal21      = { 19057  ,5 },        // spell: Devout Force rk. ii
-stunpal22      = { 19058  ,5 },        // spell: Devout Force rk. iii
-stunpal23      = { 19098  ,5 },        // spell: Force of the Crying Seas Lv 85 pal UF
-stunpal24      = { 19099  ,5 },        // spell: Force of the Crying Seas rk. ii
-stunpal25      = { 19100  ,5 },        // spell: Force of the Crying Seas rk. iii
-stunpal26      = { 25282  ,5 },        // spell: Earnest Force Lv 86 pal HoT
-stunpal27      = { 25283  ,5 },        // spell: Earnest Force rk. ii
-stunpal28      = { 25284  ,5 },        // spell: Earnest Force rk. iii
-stunpal29      = { 25375  ,5 },        // spell: Force of Marr Lv 90 pal Hot
-stunpal30      = { 25376  ,5 },        // spell: Force of Marr rk. ii
-stunpal31      = { 25377  ,5 },        // spell: Force of Marr rk. iii
-stunpal32      = { 28326  ,5 },        // spell: Zealous Force Lv 91 pal VoA
-stunpal33      = { 28327  ,5 },        // spell: Zealous Force rk. ii
-stunpal34      = { 28328  ,5 },        // spell: Zealous Force rk. iii
-stunpal35      = { 28446  ,5 },        // spell: Force of Oseka Lv 95 pal VoA
-stunpal36      = { 28447  ,5 },        // spell: Force of Oseka rk. ii
-stunpal37      = { 28448  ,5 },        // spell: Force of Oseka rk. iii
-stunpal38      = { 34332  ,5 },        // spell: Reverent Force Lv 96 pal VoA
-stunpal39      = { 34333  ,5 },        // spell: Reverent Force rk. ii
-stunpal40      = { 34334  ,5 },        // spell: Reverent Force rk. iii
-stunpal41      = { 34452  ,5 },        // spell: Force of the Iceclad Lv 100 pal RoF
-stunpal42      = { 34453  ,5 },        // spell: Force of the Iceclad rk. ii
-stunpal43      = { 34454  ,5 },        // spell: Force of the Iceclad rk .iii
-stunpal44      = { 43412  ,5 },        // spell: Force of the Darkened Sea Lv 105 pal TDS
-stunpal45      = { 43413  ,5 },        // spell: Force of the Darkened Sea rk. ii
-stunpal46      = { 43414  ,5 },        // spell: Force of the Darkened Sea rk .iii
-stunpal47      = { 55479  ,5 },        // spell: Force of the Timorous Deep Lv 110 Pal RoS
-stunpal48      = { 55480  ,5 },        // spell: Force of the Timorous Deep Rk. II
-stunpal49      = { 55481  ,5 },        // spell: Force of the Timorous Deep Rk. III
-
-synergy1       = { 18895  ,3 },        // disc: Calanin's Synergy Lv 81 mnk UF
-synergy2       = { 18896  ,3 },        // disc: Calanin's Synergy Rk. II
-synergy3       = { 18897  ,3 },        // disc: Calanin's Synergy Rk. III
-synergy4       = { 25907  ,3 },        // disc: Dreamwalker's Synergy Lv 86 mnk HoT
-synergy5       = { 25908  ,3 },        // disc: Dreamwalker's Synergy Rk. II
-synergy6       = { 25909  ,3 },        // disc: Dreamwalker's Synergy Rk. III
-synergy7       = { 29002  ,3 },        // disc: Veilwalker's Synergy Lv 91 mnk VoA
-synergy8       = { 29003  ,3 },        // disc: Veilwalker's Synergy Rk. II
-synergy9       = { 29004  ,3 },        // disc: Veilwalker's Synergy Rk. III
-synergy10      = { 35043  ,3 },        // disc: Shadewalker's Synergy mnk RoF
-synergy11      = { 35044  ,3 },        // disc: Shadewalker's Synergy Rk. II
-synergy12      = { 35045  ,3 },        // disc: Shadewalker's Synergy Rk. III
-synergy13      = { 43943  ,3 },        // disc: Doomwalker's Synergy mnk Lv 101 TDS
-synergy14      = { 43944  ,3 },        // disc: Doomwalker's Synergy Rk. II
-synergy15      = { 43945  ,3 },        // disc: Doomwalker's Synergy Rk. III
-synergy16      = { 56058  ,3 },        // disc: Firewalker's Synergy Lv 106 Mnk RoS
-synergy17      = { 56059  ,3 },        // disc: Firewalker's Synergy Rk. II
-synergy18      = { 56060  ,3 },        // disc: Firewalker's Synergy Rk. III
-
-terror1        = { 1221   ,5 },        // spell: terror of darkness
-terror2        = { 1222   ,5 },        // spell: terror of shadows
-terror3        = { 1223   ,5 },        // spell: terror of death
-terror4        = { 1224   ,5 },        // spell: terror of terris
-terror5        = { 3405   ,5 },        // spell: terror of thule
-terror6        = { 5329   ,5 },        // spell: terror of discord
-terror7        = { 10257  ,5 },        // spell: terror of vergalid
-terror8        = { 10258  ,5 },        // spell: terror of vergalid rk. ii
-terror9        = { 10259  ,5 },        // spell: terror of vergalid rk. iii
-terror10       = { 15160  ,5 },        // spell: terror of the Soulbleeder
-terror11       = { 15161  ,5 },        // spell: terror of the Soulbleeder rk. ii
-terror12       = { 15162  ,5 },        // spell: terror of the Soulbleeder rk. iii
-terror13       = { 19313  ,5 },        // spell: Terror of Jelvalak Lv 81 sk UF
-terror14       = { 19314  ,5 },        // spell: Terror of Jelvalak rk. ii
-terror15       = { 19315  ,5 },        // spell: Terror of Jelvalak rk. iii
-terror16       = { 25580  ,5 },        // spell: Terror of Rerekalen lv 86 sk HoT
-terror17       = { 25581  ,5 },        // spell: Terror of Rerekalen rk. ii
-terror18       = { 25582  ,5 },        // spell: Terror of Rerekalen rk. iii
-terror19       = { 28657  ,5 },        // spell: Terror of Desalin Lv 91 sk VoA
-terror20       = { 28658  ,5 },        // spell: Terror of Desalin rk. ii
-terror21       = { 28659  ,5 },        // spell: Terror of Desalin rk. iii
-terror22       = { 34687  ,5 },        // spell: Terror of Poira Lv 96 sk RoF
-terror23       = { 34688  ,5 },        // spell: Terror of Poira rk. ii
-terror24       = { 34689  ,5 },        // spell: Terror of Poira rk. iii
-terror25       = { 43607  ,5 },        // spell: Terror of Narus Lv 101 sk TDS
-terror26       = { 43608  ,5 },        // spell: Terror of Narus rk. ii
-terror27       = { 43609  ,5 },        // spell: Terror of Narus rk. iii
-terror28       = { 55689  ,5 },        // spell: Terror of Kra'Du Lv 106 Sk RoS
-terror29       = { 55690  ,5 },        // spell: Terror of Kra'Du Rk. II
-terror30       = { 55691  ,5 },        // spell: Terror of Kra'Du Rk. III
-
-thiefeye1      = { 8001   ,3 },        // disc: thief's eye
-thiefeye2      = { 40294  ,3 },        // disc: Thief's Vision
-thiefeye3      = { 40295  ,3 },        // disc: Thief's Vision rk. II
-thiefeye4      = { 40296  ,3 },        // disc: Thief's Vision rk. III
-
-throat1        = { 10968  ,3 },        // disc: throat jab
-throat2        = { 10969  ,3 },        // disc: throat jab rk ii
-throat3        = { 10970  ,3 },        // disc: throat jab rk iii
-
-tstone         = { 5225   ,3 },        // disc: throw stone
-twisted        = { 670    ,4 },        // aa: twisted shank
-
-vigmnk1        = { 19826  ,3 },        // disc: Vigorous Shuriken
-vigmnk2        = { 19827  ,3 },        // disc: Vigorous Shuriken Rk. II
-vigmnk3        = { 19828  ,3 },        // disc: Vigorous Shuriken Rk. III
-
-vigrog1        = { 19871  ,3 },        // disc: Vigorous Dagger-Throw
-vigrog2        = { 19872  ,3 },        // disc: Vigorous Dagger-Throw Rk. II
-vigrog3        = { 19873  ,3 },        // disc: Vigorous Dagger-Throw Rk. III
-vigrog4        = { 26124  ,3 },        // disc: Vigorous Dagger-Strike
-vigrog5        = { 26125  ,3 },        // disc: Vigorous Dagger-Strike Rk. II
-vigrog6        = { 26126  ,3 },        // disc: Vigorous Dagger-Strike Rk. III
-vigrog7        = { 29225  ,3 },        // disc: Energetic Dagger-Strike
-vigrog8        = { 29226  ,3 },        // disc: Energetic Dagger-Strike Rk. II
-vigrog9        = { 29227  ,3 },        // disc: Energetic Dagger-Strike Rk. III
-vigrog10       = { 35281  ,3 },        // disc: Energetic Dagger-Throw 98 Rog RoF
-vigrog11       = { 35282  ,3 },        // disc: Energetic Dagger-Throw Rk. II
-vigrog12       = { 35283  ,3 },        // disc: Energetic Dagger-Throw Rk. III
-vigrog13       = { 44148  ,3 },        // disc: Exuberant Dagger-Throw 103 Rog TDS
-vigrog14       = { 44149  ,3 },        // disc: Exuberant Dagger-Throw Rk. II
-vigrog15       = { 44150  ,3 },        // disc: Exuberant Dagger-Throw Rk. III
-vigrog16       = { 56300  ,3 },        // disc: Forceful Dagger-Throw 108 Rog RoS
-vigrog17       = { 56301  ,3 },        // disc: Forceful Dagger-Throw Rk. II
-vigrog18       = { 56302  ,3 },        // disc: Forceful Dagger-Throw Rk. III
-
-withstand1     = { 19131  ,3 },        // disc: Withstand Lv 83 pal/sk UF
-withstand2     = { 19132  ,3 },        // disc: Withstand Rk. II
-withstand3     = { 19133  ,3 },        // disc: Withstand Rk. III
-withstand4     = { 25264  ,3 },        // disc: Defy Lv 88 pal/sk HoT
-withstand5     = { 25265  ,3 },        // disc: Defy Rk. II
-withstand6     = { 25266  ,3 },        // disc: Defy Rk. III
-withstand7     = { 28308  ,3 },        // disc: Renounce Lv 93 pal/sk VoA
-withstand8     = { 28309  ,3 },        // disc: Renounce Rk. II
-withstand9     = { 28310  ,3 },        // disc: Renounce Rk. III
-withstand10    = { 34314  ,3 },        // disc: Reprove Lv 98 pal/sk VoA
-withstand11    = { 34315  ,3 },        // disc: Reprove Rk. II
-withstand12    = { 34316  ,3 },        // disc: Reprove Rk. III
-withstand13    = { 43283  ,3 },        // disc: Repel Lv 103 pal/sk TDS
-withstand14    = { 43284  ,3 },        // disc: Repel Rk. II
-withstand15    = { 43285  ,3 },        // disc: Repel Rk. III
-withstand16    = { 55317  ,3 },        // disc: Spurn Lv 108 Pal/Sk RoS
-withstand17    = { 55318  ,3 },        // disc: Spurn Rk. II
-withstand18    = { 55319  ,3 },        // dics: Spurn Rk. III
-
-yaulp          = { 489    ,4 },        // aa: yaulp
-
+#pragma region Abilities
 sbkstab        = { 8      ,2 },        // skill: backstab
 sbash          = { 10     ,2 },        // skill: bash
 sbegging       = { 67     ,2 },        // skill: begging
@@ -1153,6 +1194,7 @@ sslam          = { 111    ,2 },        // skill: slam
 ssneak         = { 42     ,2 },        // skill: sneak
 staunt         = { 73     ,2 },        // skill: taunt
 stigclaw       = { 52     ,2 };        // skill: tigerclaw
+#pragma endregion Abilities
 
 #define DECLARE_ABILITY_OPTION( __var, __key, __help, __default, __show) char* __var[]  = {\
                                                                                   __key, \
@@ -3327,25 +3369,21 @@ void Configure() {
     idWITHSTAND.Setup(0, 0);
     idYAULP.Setup(0, 0);
 
-    AbilityFind(&idBACKSTAB, &sbkstab, 0);
+    
     AbilityFind(&idBASH, &sbash, 0);
     AbilityFind(&idBEGGING, &sbegging, 0);
     AbilityFind(&idDISARM, &sdisarm, 0);
     AbilityFind(&idFORAGE, &sforage, 0);
-    AbilityFind(&idFRENZY, &sfrenzy, 0);
     AbilityFind(&idHIDE, &shide, 0);
     AbilityFind(&idINTIMIDATION, &sintim, 0);
     AbilityFind(&idKICK, &skick, 0);
-    AbilityFind(&idLAYHAND, &layhand, 0);
     AbilityFind(&idMEND, &smend, 0);
-    AbilityFind(&idPICKPOCKET, &sppocket, 0);
     AbilityFind(&idSENSETRAP, &ssensetr, 0);
     AbilityFind(&idSLAM, &sslam, 0);
     AbilityFind(&idSNEAK, &ssneak, 0);
     AbilityFind(&idTAUNT, &staunt, 0);
-    AbilityFind(&idBATTLELEAP, &btlstromp, &btlleap, 0);  // prefer battle stomp over battle leap
+    AbilityFind(&idBATTLELEAP, &btlleap, 0);
     AbilityFind(&idTHROWSTONE, &tstone, 0);
-
     AbilityFind(&idPOTHEALOVER, &potover16, &potover15, &potover14, &potover13, &potover12, &potover11, &potover10, &potover9, &potover8, &potover7, &potover6, &potover5, &potover4, &potover3, &potover2, &potover1, &potover0, 0);
     AbilityFind(&idPOTHEALFAST, &potfast16, &potfast15, &potfast14, &potfast13, &potfast12, &potfast11, &potfast10, &potfast9, &potfast8, &potfast7, &potfast6, &potfast5, &potfast4, &potfast3, &potfast2, &potfast1, &potfast0, 0);
     doSTAB = 0;
@@ -3365,6 +3403,7 @@ void Configure() {
         AbilityFind(&idYAULP, &yaulp, 0);
         break;
     case  Paladin: // PAL
+		AbilityFind(&idLAYHAND, &layhand, 0);
         AbilityFind(&idCHALLENGEFOR, &honor24, &honor23, &honor22, &honor21, &honor20, &honor19, &honor18, &honor17, &honor16, &honor15, &honor14, &honor13, &honor12, &honor11, &honor10, &honor9, &honor8, &honor7, &honor6, &honor5, &honor4, &honor3, &honor2, &honor1, 0);
         AbilityFind(&idPROVOKE[0], &stunaas3, &stunaas2, &stunaas1, 0);
         AbilityFind(&idPROVOKE[1], &stunpal49, &stunpal48, &stunpal47, &stunpal46, &stunpal45, &stunpal44, &stunpal43, &stunpal42, &stunpal41, &stunpal40, &stunpal39, &stunpal38, &stunpal37, &stunpal36, &stunpal35, &stunpal34, &stunpal33, &stunpal32, &stunpal31, &stunpal30, &stunpal29, &stunpal28, &stunpal27, &stunpal26, &stunpal25, &stunpal24, &stunpal23, &stunpal22, &stunpal21, &stunpal20, &stunpal19, &stunpal18, &stunpal17, &stunpal16, &stunpal15, &stunpal14, &stunpal13, &stunpal12, &stunpal11, &stunpal10, &stunpal9, &stunpal8, &stunpal7, &stunpal6, &stunpal5, &stunpal4, &stunpal3, &stunpal2, &stunpal1, 0);
@@ -3425,6 +3464,8 @@ void Configure() {
         AbilityFind(&idJUGULAR, &jugular21, &jugular20, &jugular19, &jugular18, &jugular17, &jugular16, &jugular15, &jugular14, &jugular13, &jugular12, &jugular11, &jugular10, &jugular9, &jugular8, &jugular7, &jugular6, &jugular5, &jugular4, &jugular3, &jugular2, &jugular1, 0);
         AbilityFind(&idESCAPE, &escape, 0);
         AbilityFind(&idTWISTEDSHANK, &twisted, 0);
+		AbilityFind(&idBACKSTAB, &sbkstab, 0);
+		AbilityFind(&idPICKPOCKET, &sppocket, 0);
         // Seized Opportunity position fix 05/01/2011 (htw)
         SOValue = AAPoint(GetAAIndexByName("Seized Opportunity"));
         if (SOValue >= 74)
@@ -3472,6 +3513,7 @@ void Configure() {
 		AbilityFind(&idVIGAXE, &vigber21, &vigber20, &vigber19, &vigber18, &vigber17, &vigber16, &vigber15, &vigber14, &vigber13, &vigber12, &vigber11, &vigber10, &vigber9, &vigber8, &vigber7, &vigber6, &vigber5, &vigber4, &vigber3, &vigber2, &vigber1, 0);
 		AbilityFind(&idRAGEVOLLEY, &volley32, &volley31, &volley30, &volley29, &volley28, &volley27, &volley26, &volley25, &volley24, &volley23, &volley22, &volley21, &volley20, &volley19, &volley18, &volley17, &volley16, &volley15, &volley14, &volley13, &volley12, &volley11, &volley10, &volley9, &volley8, &volley7, &volley6, &volley5, &volley4, &volley3, &volley2, &volley1, 0);
 		AbilityFind(&idPROVOKE[1], &stunber31, &stunber30, &stunber29, &stunber28, &stunber27, &stunber26, &stunber25, &stunber24, &stunber23, &stunber22, &stunber21, &stunber20, &stunber19, &stunber18, &stunber17, &stunber16, &stunber15, &stunber14, &stunber13, &stunber12, &stunber11, &stunber10, &stunber9, &stunber8, &stunber7, &stunber6, &stunber5, &stunber4, &stunber3, &stunber2, &stunber1, 0);
+		AbilityFind(&idFRENZY, &sfrenzy, 0);
         break;
     }
 
