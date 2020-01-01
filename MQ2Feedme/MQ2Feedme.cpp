@@ -71,7 +71,7 @@ const char* PLUGIN_NAME = "MQ2FeedMe";
 bool WindowOpen(PCHAR WindowName)
 {
   PCSIDLWND pWnd=(PCSIDLWND)FindMQ2Window(WindowName);
-  return (!pWnd)?false:pWnd->IsVisible();
+  return pWnd && pWnd->IsVisible();
 }
 
 bool IsCasting()
