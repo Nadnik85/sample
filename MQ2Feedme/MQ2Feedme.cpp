@@ -16,6 +16,7 @@
 //    from moveitem.h.  Now moveitem.h no longer required.
 // 4.0 edited by: Eqmule 07/26/2016 to add string safety
 // 4.1 edited by: Sic 10/9/2019 to add a campcheck, so we don't interrupt camping to eat
+// 4.2 edited by: Sic 12/31/2019 to update CursorHasItem() (with consultation from CWTN, and cleanup from Brainiac)
 //****************************************************************//
 // It will eat food and drink from lists you specify if your hunger
 // or thirst levels fall below the thresholds you specifiy.  These 
@@ -43,7 +44,7 @@ using namespace std;
 #include <string>
 
 PreSetup("MQ2FeedMe");
-PLUGIN_VERSION(4.0);
+PLUGIN_VERSION(4.2);
 
 #define	SKIP_PULSES	50
 #define	NOID -1
@@ -67,27 +68,26 @@ bool IAmCamping = false;						 // Defining if we are camping out or not
 
 const char* PLUGIN_NAME = "MQ2FeedMe";
 
-BOOL WindowOpen(PCHAR WindowName)
+bool WindowOpen(PCHAR WindowName)
 {
   PCSIDLWND pWnd=(PCSIDLWND)FindMQ2Window(WindowName);
-  return (!pWnd)?false:(BOOL)pWnd->IsVisible();
+  return pWnd && pWnd->IsVisible();
 }
 
-BOOL IsCasting()
+bool IsCasting()
 {
     return (pCharSpawn && ((PSPAWNINFO)pCharSpawn)->CastingData.SpellID != NOID);
 }
 
-BOOL AbilityInUse()
+bool AbilityInUse()
 {
     if (pCharSpawn && ((PSPAWNINFO)pCharSpawn)->CastingData.SpellETA == 0) return false;
     return true;
 }
 
-BOOL CursorHasItem()
+bool CursorHasItem()
 {
-    if (GetCharInfo2()->pInventoryArray->Inventory.Cursor) return true;
-    return false;
+	return GetCharInfo2() && GetCharInfo2()->pInventoryArray->Inventory.Cursor != nullptr;
 }
 
 void ReadList(list<string> *MyList, PCHAR fSec)
