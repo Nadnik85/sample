@@ -1,7 +1,16 @@
+Jan 08 2020
+- Updated for TEST
+- CONTENTS changed by dbg. The evolving stuff is now in its own struct, plugins that use it need to be edited.
+  Example: PrePatch: pCont->EvolvingCurrentLevel
+  Now: pCont->pEvolutionData.p->EvolvingCurrentLevel
+  The Following are members of pEvolutionData: GroupID, EvolvingCurrentLevel, EvolvingExpPct, EvolvingMaxLevel, LastEquipped;
+- ItemColor is now gone from CONTENTS.
+-
 Dec 21 2019
 - Fixed a crash in mq2chatwnd.cpp on /camp desktop
 - Fixed the chatwindow disappearing act.
 - Fixed mq2eqbc window disappearing act.
+  Don't forget to recheck it in builder.
 -
 Dec 20 2019
 - Updated for LIVE
