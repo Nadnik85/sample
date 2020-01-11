@@ -1,5 +1,193 @@
-Nov 23 2019
+Jan 10 2020
+- ${Me.Spell[blah]} now searches for rank spells as well - brainiac
+  Example:  You have Demand For Power Rk. II in your spellbook.
+  Usage:    /echo ${Me.Spell[Demand for Power]}
+  Output:   Demand For Power Rk. II
+- MQ2Melee has been updated for ToV - Sic
+
+Jan 09 2020 by RedGuides
+- MQ2Linkdb (eqmule) Updated to not require an item on cursor to do /link /import and to not poof the item used as the template.
+- MuleAssist.mac (eqmule) Fixed some issues with GoM, will now read your kissassist_info & kissassist_buff ini's.
+
+Jan 09 2020
+- Added Me.Spell it return a SpellType selecting spells only from YOUR SpellBook. - brainiac
+  Usage: /echo ${Me.Spell[Spirit of Wolf].ID}
+  Output: 278
+  Usage: /echo ${Me.Spell[278].Name}
+  Output: Spirit of Wolf
+- Fixed a wrong offset for pinstCBlockedBuffWnd_x for TEST build - SwiftyMuse
+- Book Icon and Gem Icon IDs will no longer be shown in ItemDisplay when they are 0 - SwiftyMuse
+
+Jan 08 2020
+- Updated for TEST
+- CONTENTS changed by dbg. The evolving stuff is now in its own struct, plugins that use it need to be edited.
+  Example: PrePatch: pCont->EvolvingCurrentLevel
+  Now: pCont->pEvolutionData.p->EvolvingCurrentLevel
+  The Following are members of pEvolutionData: GroupID, EvolvingCurrentLevel, EvolvingExpPct, EvolvingMaxLevel, LastEquipped;
+- ItemColor is now gone from CONTENTS.
+
+Jan 05 2020 by RedGuides
+- MQ2AASpend (Sic) Updated MQ2AASpend to reflect appropriate AutoGrant Expansion
+- MQ2Melee (ChatWithThisName) Update MQ2Melee for new Berserker abilities. Rearranged the code to group all Berserker abilities in one spot.
+- MQ2Data (ChatWithThisName) Update MQ2Data for Ground TLO. If a groundspawn item is not found, it will now correctly say so.
+- MQ2Feedme (Sic, brainiac, CWTN) code cleanup and a crash fixed
+- MQ2Relocate (Sic, Knightly) moved all functions into the plugin directly so anyone can compile from source, code cleaned up
+  Will now twist off for bards when mq2twist is loaded
+- MQ2Heals (jimbob) Fixed xtarget rez problem, added new spells
+- MQ2AFNuke (jimbob) Updated Cleric, Druid, Enchanter, Wizard, Magician, Ranger, Beastlord, and Shaman spells. Happy Hunting!
+- Alctol.mac (wirlin) Goes to your max alcohol tolerance for your level and sobers up before camping
+- CWTN Plugins (ChatWithThisName) updated, check their resource pages for updates
+
+Dec 23 2019 by RedGuides
+- MQ2Commands (ChatWithThisName) Plugins can now be loaded with "/plugin name load"
+- MQ2AFNuke (Jimbob) Updated Wizard spells for ToV, Updated Enchanter burns to use Calculated Insanity after IoG or if Megaburn is on. 
+  Updated Druid burn Black Wolf to Great Wolf.
+- MQ2Relocate (Sic, review:Knightly) Updated /relocate crystal for ToV pre-order item "Froststone Crystal Resonator", cleaned up coding.
+- MQ2Status (Sic) updated for emu. Added "xp" and "aaxp" to help. Updated options, cleaned up coding.
+- MQ2Spawns (ChatWithThisName) Fix issues with visibility with the window.
+- MQ2PortalSetter (ChatWithThisName) - New ToV zone added, new button for Eastern Wastes (ToV). 
+- CWTN Plugins updated
+
+Dec 21 2019
+- Fixed a crash in mq2chatwnd.cpp on /camp desktop
+- Fixed the chatwindow disappearing act.
+- Fixed mq2eqbc window disappearing act.
+
+Dec 21 2019 by RedGuides
+- (ChatWithThisName) A temporary fix for some of the MQ2 and EQBC window issues.
+
+Dec 20 2019 by RedGuides
+- MQ2Status (Sic) Added "Monk" to the /status output for check on CWTN class plugins
+
+Dec 20 2019
+- Updated for LIVE
+
+Dec 19 2019
+- Updated for TEST
+- /plugin without specifying unload now acts like a toggle, if plugin is loaded it unloads it.
+
+Dec 18 2019 by RedGuides
+- New Plugin! MQ2TSTrophy (Sic, review: brainiac) Equip the proper Tradeskill Trophy when opening an environmental crafting container.
+- New Plugin! MQ2AutoClaim (Dewey2461, ChatWithThisName, review: Knightly) will automatically claim Daybreak Cash eligible for your account.
+- MQ2Medley (Plure) Fixed MQ2Medley after the changes to HideDoCommand
+- MQ2KissBuffs (ChatWithThisName) remove old ID's from the .ini file, no longer writes blocked buffs based on a separate timer.
+- fish.mac (wired420) fixed an issue that was causing lag
+
+Dec 18 2019 Torment of Velious Build
+- Updated for LIVE
+
+Dec 17 2019
+- Updated for BETA
+- Fixed a bug in GetCachedBuffs
+
+Dec 16 2019
+- Updated for BETA
+- Fixed MQ2Twist in global plugins
+- Added GetCachedBuffs to exports so plugins can make use of it.
+  Usage:
+  std::map<int, std::map<int,cTargetBuff>>cbuffs;
+  GetCachedBuffs(cbuffs);
+
+Dec 15 2019
+- Updated for BETA
+
+Dec 14 2019
+- Updated for BETA
+
+Dec 13 2019
+- Updated for BETA
+
+Dec 12 2019
+- Updated for BETA
+
+Dec 11 2019
+- Updated for BETA
+
+Dec 10 2019 by Redguides
+- CWTN Plugins updated
+- MQ2AFNuke (Jimbob) Updated Mage: Heart of Flames to Heart of Skyfire
+
+Dec 10 2019
+- Updated for TEST
+- Updated for BETA
+
+Dec 09 2019
+- Updated for BETA
+
+Dec 08 2019
+- Multiple fixes for the EMU build
+
+Dec 06 2019 by RedGuides
+- MQ2Status (Sic) fixed lifetime subscription display
+- MQ2Twist (Plure) Fixed MQ2Twist after the changes to HideDoCommand, fixed interruption with /useitem
+- LootSort (DrWhomPhd) Updated LootSort to explicitely leverage stdlib data type and the experimental::filesystem library.
+- CWTN (ChatWithThisName) line of class plugins updated, welcome mq2war and mq2rogue
+- Thank you to DrWhomPhd, brainiac, and Knightly for cleaning up AutoLootSort, MQ2Speaker and MQRez
+
+Dec 06 2019
+- Updated for BETA
+- Added .SpellIcon and .GemIcon to the Spell TLO.
+- Fixed the Button structure
+
+Dec 05 2019
+- Updated for BETA
+
+Dec 04 2019
+- Updated for BETA
+
+Dec 03 2019 by RedGuides
+- MQ2AFNuke (jimbob) Updated for Spire changes
+- Fish.mac (wired420) modernized, includes alcoholism option
+
+Dec 03 2019
+- Updated for BETA
+
+Dec 02 2019
+- Updated for BETA
+
+Dec 01 2019
+- Updated for BETA
+
+Nov 30 2019
+- Updated for BETA
+
+Nov 29 2019 by Redguides
+- MQ2Status (Sic) added "/status sub" to check for EQ subscriptions, /status will now also return if you are silver or bronze
+
+Nov 29 2019
+- Updated for BETA
+
+Nov 28 2019 Happy Thanksgiving!
+- Updated for BETA
+- Updated MQ2Melee. Yaulp in now default "off" by Sic/CWTN 
+
+Nov 27 2019
+- Updated for BETA
+
+Nov 26 2019
+- Updated for TEST
+- Added SubscriptionDays to the Character TLO it returns an int. Cred request: @sic
+  Usage: /echo I have ${Me.SubscriptionDays} left before my all access expires.
+- Updated MQ2AutoForage at https://www.macroquest2.com/phpBB3/viewtopic.php?f=50&t=9588&p=70471
+- Added MQ2AutoForage to builder global plugins.
+- Fixed a crash in MQ2AutoForage when inventory was full.
+  This crash would result in the EQGraphicsDX9.dll dumps some people has sent me. (Thank you.)
+
+Nov 25 2019
+- Updated for BETA
+
+Nov 24 2019
+- Updated for BETA
+
+Nov 23 2019 by RedGuides
 - MQ2Main (ChatWithThisName) Add /removelev command. typing /removelev will remove any levitation in the buff or shortbuff window. 
+- MQ2Berzerker, MQ2Rogue, MQ2EsKay, MQ2War (ChatWithThisName) updated
+- MQ2Status (Sic) Added /status fellowship - returns some information on your fellowship (WIP)
+  Added /status campfire - returns information on your campfire
+  Added /status bagspace - returns how many free inventory spaces you have
+  Corrected a missing return; for /status aa
+- MQ2DPSAdv (ChatWithThisName) Correct divide by zero crash in new SDPS output.
+- MQ2Rez (ChatwithThisName) Add Rez datatype. ${Rez.Accept} ${Rez.Percent} ${Rez.Pct} ${Rez.SafeMode} ${Rez.Voice} ${Rez.Release}
 
 Nov 23 2019
 - Updated for BETA

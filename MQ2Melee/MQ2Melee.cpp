@@ -32,6 +32,8 @@
 //							| 2019-02-07: Fixed Two Handed Bash skills... + saar zerker tbl disc...
 //							| 2019-11-14: Updated by Sic/CWTN Yaulp to default to "off"
 //							| 2019-12-29: Updated by ChatWithThisname-> Added Warrior, Berserker, Rogue discs for ToV. Rearranged information by class instead of alphabetically.
+//							| 2020-01-06: Updated by Sic - Added Paladin, Shadowknight, Ranger, Monk, Necro, and Beastlord ToV discs/spells
+//
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
 // SHOW_ABILITY:    0=0ff, 1=Display every ability that plugin use.
 // SHOW_ATTACKING:  0=0ff, 1=Display Attacking Target
@@ -221,6 +223,9 @@ steely15 = { 43291  ,5 },        //spell Staunch Stance Rk. III
 steely16 = { 55320  ,5 },        // spell: Defiant Stance Lv 109 Pal/Shd RoS
 steely17 = { 55321  ,5 },        // spell: Defiant Stance Rk. II
 steely18 = { 55322  ,5 },        // spell: Defiant Stance Rk. III
+steely19 = { 58781  ,5 },        // spell: Stormwall Stance
+steely20 = { 58782  ,5 },        // spell: Stormwall Stance Rk. II
+steely21 = { 58783  ,5 },        // spell: Stormwall Stance Rk. III
 
 withstand1 = { 19131  ,3 },        // disc: Withstand Lv 83 pal/sk UF
 withstand2 = { 19132  ,3 },        // disc: Withstand Rk. II
@@ -240,7 +245,10 @@ withstand15 = { 43285  ,3 },        // disc: Repel Rk. III
 withstand16 = { 55317  ,3 },        // disc: Spurn Lv 108 Pal/Sk RoS
 withstand17 = { 55318  ,3 },        // disc: Spurn Rk. II
 withstand18 = { 55319  ,3 },        // dics: Spurn Rk. III
-#pragma endregion Pal/Shd
+withstand19 = { 58778  ,3 },        // disc: Thwart
+withstand20 = { 58779  ,3 },        // disc: Thwart Rk. II
+withstand21 = { 58780  ,3 },        // dics: Thwart Rk. III
+#pragma endregion Pal/Shd Updated for ToV
 
 #pragma region Abilities
 sbkstab = { 8      ,2 },        // skill: backstab
@@ -425,6 +433,9 @@ honor21 = { 43324  ,5 },        // spell: Impose for Honor rk. iii
 honor22 = { 55353  ,5 },        // spell: Refute for Honor Lv 107 Pal RoS
 honor23 = { 55354  ,5 },        // spell: Refute for Honor Rk. II
 honor24 = { 55355  ,5 },        // spell: Refute for Honor Rk. III
+honor25 = { 58811  ,5 },		// spell: Protest for Honor
+honor26 = { 58812  ,5 },		// spell: Protest for Honor Rk. II
+honor27 = { 58813  ,5 },		// spell: Protest for Honor Rk. III
 
 layhand = { 6001   ,4 },        // aa: lay on hands
 
@@ -440,6 +451,9 @@ rightidg9 =  { 34403  ,3 },        // disc: Righteous Umbrage Rk. III
 rightidg10 = { 55389  ,3 },        // disc: Righteous Condemnation Lv 108 pal RoS
 rightidg11 = { 55390  ,3 },        // disc: Righteous Condemnation Rk. II
 rightidg12 = { 55391  ,3 },        // disc: Righteous Condemnation Rk. III
+rightidg13 = { 58838  ,3 },		   // disc: Righteous Antipathy
+rightidg14 = { 58839  ,3 },		   // disc: Righteous Antipathy Rk. II
+rightidg15 = { 58840  ,3 },		   // disc: Righteous Antipathy Rk. III
 
 stunaas1 = { 73     ,4 },        // aa: divine stun
 stunaas2 = { 702    ,4 },        // aa: hand of disruption
@@ -494,8 +508,11 @@ stunpal46 = { 43414  ,5 },        // spell: Force of the Darkened Sea rk .iii
 stunpal47 = { 55479  ,5 },        // spell: Force of the Timorous Deep Lv 110 Pal RoS
 stunpal48 = { 55480  ,5 },        // spell: Force of the Timorous Deep Rk. II
 stunpal49 = { 55481  ,5 },        // spell: Force of the Timorous Deep Rk. III
+stunpal50 = { 58919  ,5 },        // spell: Force of the Grotto
+stunpal51 = { 55420  ,5 },        // spell: Force of the Grotto Rk. II
+stunpal52 = { 55421  ,5 },        // spell: Force of the Grotto Rk. III
 
-#pragma endregion
+#pragma endregion Updated for ToV
 
 #pragma region Ranger - Class 4
 bladesrng1 = { 40105  ,3 },        // disc: storm of blades rk i
@@ -504,6 +521,21 @@ bladesrng3 = { 40107  ,3 },        // disc: storm of blades rk iii
 bladesrng4 = { 40108  ,3 },        // disc: focused storm of blades rk i
 bladesrng5 = { 40109  ,3 },        // disc: focused storm of blades rk ii
 bladesrng6 = { 40110  ,3 },        // disc: focused storm of blades rk iii
+bladesrng7 = { 43457  ,3 },        // disc: Squall of Blades 
+bladesrng8 = { 43458  ,3 },        // disc: Squall of Blades Rk. II
+bladesrng9 = { 43459  ,3 },        // disc: Squall of Blades Rk. III
+bladesrng10 = { 50083  ,3 },        // disc: Focused Squall of Blades 
+bladesrng11 = { 50084  ,3 },        // disc: Focused Squall of Blades Rk. II
+bladesrng12 = { 50085  ,3 },        // disc: Focused Squall of Blades Rk. III
+bladesrng13 = { 55527  ,3 },        // disc: Gale of Blades 
+bladesrng14 = { 55528  ,3 },        // disc: Gale of Blades Rk. II
+bladesrng15 = { 55529  ,3 },        // disc: Gale of Blades Rk. III
+bladesrng16 = { 57918  ,3 },        // disc: Focused Gale of Blades 
+bladesrng17 = { 57919  ,3 },        // disc: Focused Gale of Blades Rk. II
+bladesrng18 = { 57920  ,3 },        // disc: Focused Gale of Blades Rk. III
+bladesrng19 = { 58958  ,3 },        // disc: Blizzard of Blades 
+bladesrng20 = { 58959  ,3 },        // disc: Blizzard of Blades Rk. II
+bladesrng21 = { 58960  ,3 },        // disc: Blizzard of Blades Rk. III
 
 enragingkick1 =  { 28506  ,3 },        // disc: Enraging Crescent lv 92 Voa rng
 enragingkick2 =  { 28507  ,3 },        // disc: Enraging Crescent Kicks Rk. III
@@ -517,10 +549,41 @@ enragingkick9 =  { 43465  ,3 },        // disc: Enraging Cut Kicks Rk. III
 enragingkick10 = { 55539  ,3 },        // disc: Enraging Wheel Kicks Lv 107 Rng RoS
 enragingkick11 = { 55540  ,3 },        // disc: Enraging Wheel Kicks Rk. II
 enragingkick12 = { 55541  ,3 },        // disc: Enraging Wheel Kicks Rk. III
+enragingkick13 = { 58970  ,3 },        // disc: Enraging Axe Kicks
+enragingkick14 = { 58971  ,3 },        // disc: Enraging Axe Kicks Rk. II
+enragingkick15 = { 58972  ,3 },        // disc: Enraging Axe Kicks Rk. III
+
+jltkicks1 = { 10086  ,3 },        // disc: jolting kicks
+jltkicks2 = { 10087  ,3 },        // disc: jolting kicks rk ii
+jltkicks3 = { 10088  ,3 },        // disc: jolting kicks rk iii
+jltkicks4 = { 15020  ,3 },        // disc: Jolting Snapkicks
+jltkicks5 = { 15021  ,3 },        // disc: Jolting Snapkicks rk ii
+jltkicks6 = { 15022  ,3 },        // disc: Jolting Snapkicks rk iii
+jltkicks7 = { 19152  ,3 },        // disc: Jolting Frontkicks Lv 82 rng UF
+jltkicks8 = { 19153  ,3 },        // disc: Jolting Frontkicks rk ii
+jltkicks9 = { 19154  ,3 },        // disc: Jolting Frontkicks rk iii
+jltkicks10 = { 25432  ,3 },        // disc: Jolting Hook kicks Lv Lv 87 rng HoT
+jltkicks11 = { 25433  ,3 },        // disc: Jolting Hook kicks rk ii
+jltkicks12 = { 25434  ,3 },        // disc: Jolting Hook kicks rk iii
+jltkicks13 = { 28509  ,3 },        // disc: Jolting Crescent kicks lv 92 rng VoA
+jltkicks14 = { 28510  ,3 },        // disc: Jolting Crescent kicks rk ii
+jltkicks15 = { 28511  ,3 },        // disc: Jolting Crescent kicks rk iii
+jltkicks16 = { 34530  ,3 },        // disc: Jolting Heel Kicks lv 97 rng RoF
+jltkicks17 = { 34531  ,3 },        // disc: Jolting Heel Kicks rk ii
+jltkicks18 = { 34532  ,3 },        // disc: Jolting Heel Kicks rk iii
+jltkicks19 = { 43466  ,3 },        // disc: Jolting Cut Kicks lv 102 rng TDS
+jltkicks20 = { 43467  ,3 },        // disc: Jolting Cut Kicks rk ii
+jltkicks21 = { 43468  ,3 },        // disc: Jolting Cut Kicks rk iii
+jltkicks22 = { 55542  ,3 },        // disc: Jolting Wheel Kicks Lv 107 Rng RoS
+jltkicks23 = { 55543  ,3 },        // disc: Jolting Wheel Kicks Rk. II
+jltkicks24 = { 55544  ,3 },        // disc: Jolting Wheel Kicks Rk. III
+jltkicks25 = { 55542  ,3 },        // disc: Jolting Axe Kicks
+jltkicks26 = { 55543  ,3 },        // disc: Jolting Axe Kicks Rk. II
+jltkicks27 = { 55544  ,3 },        // disc: Jolting Axe Kicks Rk. III
 
 joltrng1 = { 1741   ,5 },        // spell: jolt
 joltrng2 = { 1296   ,5 },        // spell: cinder jolt
-#pragma endregion
+#pragma endregion Updated for ToV
 
 #pragma region ShadowKnight - Class 5
 feignid =  { 420    ,4 },        // aa: imitate death
@@ -562,6 +625,9 @@ gblade9 = { 43639  ,3 },        // disc: Lacerating Blade Rk. III
 gblade10 = { 55731  ,3 },        // disc: Wounding Blade Lv 107 Shd RoS
 gblade11 = { 55732  ,3 },        // disc: Wounding Blade Rk. II
 gblade12 = { 55733  ,3 },        // disc: Wounding Blade Rk. III
+gblade13 = { 59147  ,3 },        // disc: Rending Blade 
+gblade14 = { 59148  ,3 },        // disc: Rending Blade Rk. II
+gblade15 = { 59149  ,3 },        // disc: Rending Blade Rk. III
 
 harmtouch = { 6000   ,4 },        // aa: harmtouch
 
@@ -589,6 +655,9 @@ power21 = { 43621  ,5 },        // spell: Impose for Power rk. iii
 power22 = { 55713  ,5 },        // spell: Refute for Power Lv 107 Shd RoS
 power23 = { 55714  ,5 },        // spell: Refute for Power Rk. II
 power24 = { 55715  ,5 },        // spell: Refute for Power Rk. III
+power25 = { 59129  ,5 },        // spell: Protest for Power
+power26 = { 59130  ,5 },        // spell: Protest for Power Rk. II
+power27 = { 59131  ,5 },        // spell: Protest for Power Rk. III
 
 terror1 = { 1221   ,5 },        // spell: terror of darkness
 terror2 = { 1222   ,5 },        // spell: terror of shadows
@@ -620,8 +689,11 @@ terror27 = { 43609  ,5 },        // spell: Terror of Narus rk. iii
 terror28 = { 55689  ,5 },        // spell: Terror of Kra'Du Lv 106 Sk RoS
 terror29 = { 55690  ,5 },        // spell: Terror of Kra'Du Rk. II
 terror30 = { 55691  ,5 },        // spell: Terror of Kra'Du Rk. III
+terror31 = { 59105  ,5 },        // spell: Terror of Mirenilla
+terror32 = { 59106  ,5 },        // spell: Terror of Mirenilla Rk. II
+terror33 = { 59107  ,5 },        // spell: Terror of Mirenilla Rk. III
 
-#pragma endregion
+#pragma endregion Updated for ToV
 
 #pragma region Druid - Class 6
 #pragma endregion - Empty
@@ -633,6 +705,9 @@ cloud3 = { 25916  ,3 },        // disc: Cloud of Fists rk. iii
 cloud4 = { 40229  ,3 },        // disc: Phantom Partisan Lv 100 mnk HoT
 cloud5 = { 40230  ,3 },        // disc: Phantom Partisan rk. ii
 cloud6 = { 40231  ,3 },        // disc: Phantom Partisan rk. iii
+cloud7 = { 50183  ,3 },        // disc: Phantom Pummeling
+cloud8 = { 50184  ,3 },        // disc: Phantom Pummeling Rk. II
+cloud9 = { 50185  ,3 },        // disc: Phantom Pummeling Rk. III
 
 fistswu = { 8002   ,3 },        // disc: fists of wu
 
@@ -662,6 +737,9 @@ leop23 = { 43976  ,3 },        // disc: Torrent of Fists Rk. III
 leop24 = { 56099  ,3 },        // disc: Firestorm of Fists Lv 110 Mnk RoS
 leop25 = { 56100  ,3 },        // disc: Firestorm of Fists Rk. II
 leop26 = { 56101  ,3 },        // disc: Firestorm of Fists Rk. III
+leop27 = { 59454  ,3 },        // disc: Barrage of Fists
+leop28 = { 59455  ,3 },        // disc: Barrage of Fists Rk. II
+leop29 = { 59456  ,3 },        // disc: Barrage of Fists Rk. III
 
 monkey1 = { 22525  ,3 },        // disc: Drunken Monkey Style Lv 85 mnk UF
 monkey2 = { 22526  ,3 },        // disc: Drunken Monkey Style rk .ii
@@ -688,12 +766,15 @@ synergy15 = { 43945  ,3 },        // disc: Doomwalker's Synergy Rk. III
 synergy16 = { 56058  ,3 },        // disc: Firewalker's Synergy Lv 106 Mnk RoS
 synergy17 = { 56059  ,3 },        // disc: Firewalker's Synergy Rk. II
 synergy18 = { 56060  ,3 },        // disc: Firewalker's Synergy Rk. III
+synergy19 = { 59428  ,3 },        // disc: Icewalker's Synergy
+synergy20 = { 59429  ,3 },        // disc: Icewalker's Synergy Rk. II
+synergy21 = { 59430  ,3 },        // disc: Icewalker's Synergy Rk. III
 
 vigmnk1 = { 19826  ,3 },        // disc: Vigorous Shuriken
 vigmnk2 = { 19827  ,3 },        // disc: Vigorous Shuriken Rk. II
 vigmnk3 = { 19828  ,3 },        // disc: Vigorous Shuriken Rk. III
 
-#pragma endregion
+#pragma endregion Updated for ToV
 
 #pragma region Bard - Class 8
 boastful = { 199    ,4 },        // aa: boastful bellow
@@ -872,6 +953,14 @@ twisted = { 670    ,4 },        // aa: twisted shank
 feign_n1 = { 25662  ,5 },        // spell: Scapegoat
 feign_n2 = { 25663  ,5 },        // spell: Scapegoat rk ii
 feign_n3 = { 25664  ,5 },        // spell: Scapegoat rk iii
+
+feign_n4 = { 29571  ,5 },        // spell: Unwitting Sacrifice
+feign_n5 = { 29572  ,5 },        // spell: Unwitting Sacrifice Rk. II
+feign_n6 = { 29573  ,5 },        // spell: Unwitting Sacrifice Rk. III
+
+feign_n7 = { 31616  ,5 },        // spell: Conscripted Sacrifice
+feign_n8 = { 31617  ,5 },        // spell: Conscripted Sacrifice Rk. II
+feign_n9 = { 31618  ,5 },        // spell: Conscripted Sacrifice Rk. III
 #pragma endregion - Updated to ToV
 
 #pragma region Wizard - Class 12
@@ -923,6 +1012,9 @@ fclaw15 = { 45105  ,3 },        // disc: Tempest of Claws rk. iii
 fclaw16 = { 57386  ,3 },        // disc: Storm of Claws Lv 107 Bst RoS
 fclaw17 = { 57387  ,3 },        // disc: Storm of Claws Rk. II
 fclaw18 = { 57388  ,3 },        // disc: Storm of Claws Rk. III
+fclaw19 = { 60616  ,3 },        // disc: Maelstrom of Claws
+fclaw20 = { 60617  ,3 },        // disc: Maelstrom of Claws Rk. II
+fclaw21 = { 60618  ,3 },        // disc: Maelstrom of Claws Rk. III
 
 gorillasmash = { 988    ,4 },        // aa: gorilla smash
 
@@ -948,36 +1040,14 @@ rake19 = { 45166  ,3 },        // disc: Maul rk. iii
 rake20 = { 57450  ,3 },        // disc: Mangle Lv 109 Bst RoS
 rake21 = { 57451  ,3 },        // disc: Mangle Rk. II
 rake22 = { 57452  ,3 },        // disc: Mangle Rk. III
+rake23 = { 60678  ,3 },        // disc: Batter
+rake24 = { 60679  ,3 },        // disc: Batter Rk. II
+rake25 = { 60680  ,3 },        // disc: Batter Rk. III
 
 joltbst1 = { 362    ,4 },        // aa: roar of thunder
 
-jltkicks1 =  { 10086  ,3 },        // disc: jolting kicks
-jltkicks2 =  { 10087  ,3 },        // disc: jolting kicks rk ii
-jltkicks3 =  { 10088  ,3 },        // disc: jolting kicks rk iii
-jltkicks4 =  { 15020  ,3 },        // disc: Jolting Snapkicks
-jltkicks5 =  { 15021  ,3 },        // disc: Jolting Snapkicks rk ii
-jltkicks6 =  { 15022  ,3 },        // disc: Jolting Snapkicks rk iii
-jltkicks7 =  { 19152  ,3 },        // disc: Jolting Frontkicks Lv 82 rng UF
-jltkicks8 =  { 19153  ,3 },        // disc: Jolting Frontkicks rk ii
-jltkicks9 =  { 19154  ,3 },        // disc: Jolting Frontkicks rk iii
-jltkicks10 = { 25432  ,3 },        // disc: Jolting Hook kicks Lv Lv 87 rng HoT
-jltkicks11 = { 25433  ,3 },        // disc: Jolting Hook kicks rk ii
-jltkicks12 = { 25434  ,3 },        // disc: Jolting Hook kicks rk iii
-jltkicks13 = { 28509  ,3 },        // disc: Jolting Crescent kicks lv 92 rng VoA
-jltkicks14 = { 28510  ,3 },        // disc: Jolting Crescent kicks rk ii
-jltkicks15 = { 28511  ,3 },        // disc: Jolting Crescent kicks rk iii
-jltkicks16 = { 34530  ,3 },        // disc: Jolting Heel Kicks lv 97 rng RoF
-jltkicks17 = { 34531  ,3 },        // disc: Jolting Heel Kicks rk ii
-jltkicks18 = { 34532  ,3 },        // disc: Jolting Heel Kicks rk iii
-jltkicks19 = { 43466  ,3 },        // disc: Jolting Cut Kicks lv 102 rng TDS
-jltkicks20 = { 43467  ,3 },        // disc: Jolting Cut Kicks rk ii
-jltkicks21 = { 43468  ,3 },        // disc: Jolting Cut Kicks rk iii
-jltkicks22 = { 55542  ,3 },        // disc: Jolting Wheel Kicks Lv 107 Rng RoS
-jltkicks23 = { 55543  ,3 },        // disc: Jolting Wheel Kicks Rk. II
-jltkicks24 = { 55544  ,3 },        // disc: Jolting Wheel Kicks Rk. III
-
 ravens = { 987    ,4 },        // aa: raven's claw
-#pragma endregion
+#pragma endregion Updated for ToV
 
 #pragma region Berserker - Class 16
 bloodlust1 =  { 22506  ,3 },        // Disc: Shared Bloodlust Lv 85 ber UF
@@ -1289,7 +1359,6 @@ DECLARE_ABILITY_OPTION(pSHIEL, "shield", "[ID] item?", "0", "${If[${meleemvi[plu
 DECLARE_ABILITY_OPTION(pSLAMS, "slam", "[ON/OFF]?", "${If[${Select[${Me.Race.ID},2,9,10]},1,0]}", "${If[${meleemvi[plugin]} && ${Select[${Me.Race.ID},2,9,10]},1,0]}"); // 2=barbarian 9=troll 10=ogre
 DECLARE_ABILITY_OPTION(pSNEAK, "sneak", "[ON/OFF]?", "0", "${If[${meleemvi[plugin]} && ${Me.Skill[sneak]},1,0]}");
 DECLARE_ABILITY_OPTION(pSTAND, "standup", "[ON/OFF] Authorize to StandUp?", "0", "${If[${meleemvi[plugin]},1,0]}");
-DECLARE_ABILITY_OPTION(pSTEEL, "steely", "[ON/OFF]", "${If[${Select[${Me.Class.ShortName},PAL,SHD]} && (${Me.Book[Steely Stance]} || ${Me.Book[Steely Stance rk. ii]} || ${Me.Book[Steely Stance rk. iii]} || ${Me.Book[Stubborn Stance]} || ${Me.Book[Stubborn Stance rk. ii]} || ${Me.Book[Stubborn Stance rk. iii]} || ${Me.Book[Stoic Stance]} || ${Me.Book[Stoic Stance rk. ii]} || ${Me.Book[Stoic Stance rk. iii]} || ${Me.Book[Steadfast Stance]} || ${Me.Book[Steadfast Stance rk. ii]} || ${Me.Book[Steadfast Stance rk. iii]} || ${Me.Book[Staunch Stance]} || ${Me.Book[Staunch Stance rk. ii]} || ${Me.Book[Staunch Stance rk. iii]} || ${Me.Book[Defiant Stance]} || ${Me.Book[Defiant Stance Rk. II]} || ${Me.Book[Defiant Stance Rk. III]}),0,0]}", "${If[${meleemvi[plugin]} && ${Select[${Me.Class.ShortName},PAL,SHD]} && (${Me.Book[Steely Stance]} || ${Me.Book[Steely Stance rk. ii]} || ${Me.Book[Steely Stance rk. iii]} || ${Me.Book[Stubborn Stance]} || ${Me.Book[Stubborn Stance rk. ii]} || ${Me.Book[Stubborn Stance rk. iii]} || ${Me.Book[Stoic Stance]} || ${Me.Book[Stoic Stance rk. ii]} || ${Me.Book[Stoic Stance rk. iii]} || ${Me.Book[Steadfast Stance]} || ${Me.Book[Steadfast Stance rk. ii]} || ${Me.Book[Steadfast Stance rk. iii]} || ${Me.Book[Staunch Stance]} || ${Me.Book[Staunch Stance rk. ii]} || ${Me.Book[Staunch Stance rk. iii]} || ${Me.Book[Defiant Stance]} || ${Me.Book[Defiant Stance Rk. II]} || ${Me.Book[Defiant Stance Rk. III]}),1,0]}");
 DECLARE_ABILITY_OPTION(pSTIKD, "stickdelay", "[#] Sec to Wait Target in Range?", "0", "${If[${meleemvi[plugin]} && ${Stick.Status.NotEqual[NULL]},1,0]}");
 DECLARE_ABILITY_OPTION(pSTIKKB, "stickbreak", "0=Normal, 1=Allow BreakOnKB", "0", "${If[${meleemvi[plugin]} && ${Stick.Status.NotEqual[NULL]},1,0]}");
 DECLARE_ABILITY_OPTION(pSTIKM, "stickmode", "[0-2] 0=Built-In 1=From INI 2=do not stick?", "0", "${If[${meleemvi[plugin]} && ${Stick.Status.NotEqual[NULL]},1,0]}");
@@ -1299,8 +1368,6 @@ DECLARE_ABILITY_OPTION(pSTRIKM, "strikemode", "[ON/OFF] Use strikecmd from ini?"
 DECLARE_ABILITY_OPTION(pTAUNT, "taunt", "[ON/OFF]?", "${If[${Me.Skill[taunt]},1,0]}", "${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${meleemvi[aggro]} && ${Me.Skill[taunt]},1,0]}");
 DECLARE_ABILITY_OPTION(pTHROW, "throwstone", "[#] Endu% Above? 0=0ff", "0", "${If[${meleemvi[plugin]} && ${Me.CombatAbility[throw stone]},1,0]}");
 DECLARE_ABILITY_OPTION(pTIGER, "tigerclaw", "[ON/OFF]?", "${If[${Me.Skill[tiger claw]},1,0]}", "${If[${meleemvi[plugin]} && ${meleemvi[melee]} && ${Me.Skill[tiger claw]},1,0]}");
-DECLARE_ABILITY_OPTION(pWITHS, "withstand", "[#] Endu% Above? 0=Off", "${If[${Select[${Me.Class.ShortName},PAL,SHD]} && (${Me.CombatAbility[withstand]} || ${Me.CombatAbility[withstand rk. ii]} || ${Me.CombatAbility[withstand rk. iii]} || ${Me.CombatAbility[defy]} || ${Me.CombatAbility[defy rk. ii]} || ${Me.CombatAbility[defy rk. iii]} || ${Me.CombatAbility[Reprove]} || ${Me.CombatAbility[Reprove rk. ii]} || ${Me.CombatAbility[Reprove rk. iii]} || ${Me.CombatAbility[Repel]} || ${Me.CombatAbility[Repel rk. ii]} || ${Me.CombatAbility[Repel rk. iii]} || ${Me.CombatAbility[Spurn]} || ${Me.CombatAbility[Spurn Rk. II]} || ${Me.CombatAbility[Spurn Rk. III]}),20,0]}", "${If[${meleemvi[plugin]} && ${Select[${Me.Class.ShortName},PAL,SHD]} && (${Me.CombatAbility[withstand]} || ${Me.CombatAbility[withstand rk. ii]} || ${Me.CombatAbility[withstand rk. iii]} || ${Me.CombatAbility[defy]} || ${Me.CombatAbility[defy rk. ii]} || ${Me.CombatAbility[defy rk. iii]} || ${Me.CombatAbility[Reprove]} || ${Me.CombatAbility[Reprove rk. ii]} || ${Me.CombatAbility[Reprove rk. iii]} || ${Me.CombatAbility[Repel]} || ${Me.CombatAbility[Repel rk. ii]} || ${Me.CombatAbility[Repel rk. iii]} || ${Me.CombatAbility[Spurn]} || ${Me.CombatAbility[Spurn Rk. II]} || ${Me.CombatAbility[Spurn Rk. III]}),1,0]}");
-DECLARE_ABILITY_OPTION(pCHFOR, "challengefor", "[ON/OFF]?", "${If[${Me.Book[challenge for honor]} || ${Me.Book[challenge for honor rk. ii]} || ${Me.Book[challenge for honor rk. iii]} || ${Me.Book[trial for honor]} || ${Me.Book[trial for honor rk. ii]} || ${Me.Book[trial for honor rk. iii]} || ${Me.Book[charge for honor]} || ${Me.Book[charge for honor rk. ii]} || ${Me.Book[charge for honor rk. iii]} || ${Me.Book[challenge for power]} || ${Me.Book[challenge for power rk. ii]} || ${Me.Book[challenge for power rk. iii]} || ${Me.Book[trial for power]} || ${Me.Book[trial for power rk. ii]} || ${Me.Book[trial for power rk. iii]} || ${Me.Book[charge for honor]} || ${Me.Book[charge for honor rk. ii]} || ${Me.Book[charge for honor rk. iii]} || ${Me.Book[confrontation for power]} || ${Me.Book[confrontation for power rk. ii]} || ${Me.Book[confrontation for power rk. iii]} || ${Me.Book[confrontation for honor]} || ${Me.Book[confrontation for honor rk. ii]} || ${Me.Book[confrontation for honor rk. iii]} || ${Me.Book[Provocation for honor]} || ${Me.Book[Provocation for honor rk. ii]} || ${Me.Book[Provocation for honor rk. iii]} || ${Me.Book[Provocation for power]} || ${Me.Book[Provocation for power rk. ii]} || ${Me.Book[Provocation for power rk. iii]} || ${Me.Book[Demand for Power]} || ${Me.Book[Demand for Power rk. ii]} || ${Me.Book[Demand for Power rk. iii]} || ${Me.Book[Demand for Honor]} || ${Me.Book[Demand for Honor rk. ii]} || ${Me.Book[Demand for Honor rk. iii]} || ${Me.Book[Impose for Power]} || ${Me.Book[Impose for Power rk. ii]} ||${Me.Book[Impose for Power rk. iii]} || ${Me.Book[Impose for Honor]} || ${Me.Book[Impose for Honor rk. ii]} ||${Me.Book[Impose for Honor rk. iii]} || ${Me.Book[Refute for Power]} || ${Me.Book[Refute for Power Rk. II]} ||${Me.Book[Refute for Power Rk. III]} || ${Me.Book[Refute for Honor]} || ${Me.Book[Refute for Honor Rk. II]} ||${Me.Book[Refute for Honor Rk. III]},1,0]}", "${If[${meleemvi[plugin]} && ${meleemvi[aggro]} && (${Me.Book[challenge for honor]} || ${Me.Book[challenge for honor rk. ii]} || ${Me.Book[challenge for honor rk. iii]} || ${Me.Book[trial for honor]} || ${Me.Book[trial for honor rk. ii]} || ${Me.Book[trial for honor rk. iii]} || ${Me.Book[charge for honor]} || ${Me.Book[charge for honor rk. ii]} || ${Me.Book[charge for honor rk. iii]} || ${Me.Book[challenge for power]} || ${Me.Book[challenge for power rk. ii]} || ${Me.Book[challenge for power rk. iii]} || ${Me.Book[trial for power]} || ${Me.Book[trial for power rk. ii]} || ${Me.Book[trial for power rk. iii]} || ${Me.Book[charge for honor]} || ${Me.Book[charge for honor rk. ii]} || ${Me.Book[charge for honor rk. iii]} || ${Me.Book[confrontation for power]} || ${Me.Book[confrontation for power rk. ii]} || ${Me.Book[confrontation for power rk. iii]} || ${Me.Book[confrontation for honor]} || ${Me.Book[confrontation for honor rk. ii]} || ${Me.Book[confrontation for honor rk. iii]} || ${Me.Book[Provocation for honor]} || ${Me.Book[Provocation for honor rk. ii]} || ${Me.Book[Provocation for honor rk. iii]} || ${Me.Book[Provocation for power]} || ${Me.Book[Provocation for power rk. ii]} || ${Me.Book[Provocation for power rk. iii]} || ${Me.Book[Demand for Power]} || ${Me.Book[Demand for Power rk. ii]} || ${Me.Book[Demand for Power rk. iii]} || ${Me.Book[Demand for Honor]} || ${Me.Book[Demand for Honor rk. ii]} || ${Me.Book[Demand for Honor rk. iii]} || ${Me.Book[Impose for Power]} || ${Me.Book[Impose for Power rk. ii]} ||${Me.Book[Impose for Power rk. iii]} || ${Me.Book[Impose for Honor]} || ${Me.Book[Impose for Honor rk. ii]} ||${Me.Book[Impose for Honor rk. iii]} || ${Me.Book[Refute for Power]} || ${Me.Book[Refute for Power Rk. II]} ||${Me.Book[Refute for Power Rk. III]} || ${Me.Book[Refute for Honor]} || ${Me.Book[Refute for Honor Rk. II]} ||${Me.Book[Refute for Honor Rk. III]}),1,0]}");
 
 
 #pragma region Downshit
@@ -1491,6 +1558,15 @@ DECLARE_ABILITY_OPTION(pHOLF89, "holyflag89", "[ON/OFF] holyflag89?", "0", "${If
 DECLARE_ABILITY_OPTION(pHOLF90, "holyflag90", "[ON/OFF] holyflag90?", "0", "${If[${meleemvi[plugin]} && ${meleemvs[holyshit90].Length},1,0]}");
 #pragma endregion
 
+#pragma region Paladin/Shadowknight
+DECLARE_ABILITY_OPTION(pWITHS, "withstand", "[#] Endu% Above? 0=Off", "${If[${Select[${Me.Class.ShortName},PAL,SHD]} && (${Me.CombatAbility[withstand]} || ${Me.CombatAbility[withstand rk. ii]} || ${Me.CombatAbility[withstand rk. iii]} || ${Me.CombatAbility[defy]} || ${Me.CombatAbility[defy rk. ii]} || ${Me.CombatAbility[defy rk. iii]} || ${Me.CombatAbility[Reprove]} || ${Me.CombatAbility[Reprove rk. ii]} || ${Me.CombatAbility[Reprove rk. iii]} || ${Me.CombatAbility[Repel]} || ${Me.CombatAbility[Repel rk. ii]} || ${Me.CombatAbility[Repel rk. iii]} || ${Me.CombatAbility[Spurn]} || ${Me.CombatAbility[Spurn Rk. II]} || ${Me.CombatAbility[Spurn Rk. III]} || ${Me.CombatAbility[Thwart]} || ${Me.CombatAbility[Thwart Rk. II]} || ${Me.CombatAbility[Thwart Rk. III]}),20,0]}", "${If[${meleemvi[plugin]} && ${Select[${Me.Class.ShortName},PAL,SHD]} && (${Me.CombatAbility[withstand]} || ${Me.CombatAbility[withstand rk. ii]} || ${Me.CombatAbility[withstand rk. iii]} || ${Me.CombatAbility[defy]} || ${Me.CombatAbility[defy rk. ii]} || ${Me.CombatAbility[defy rk. iii]} || ${Me.CombatAbility[Reprove]} || ${Me.CombatAbility[Reprove rk. ii]} || ${Me.CombatAbility[Reprove rk. iii]} || ${Me.CombatAbility[Repel]} || ${Me.CombatAbility[Repel rk. ii]} || ${Me.CombatAbility[Repel rk. iii]} || ${Me.CombatAbility[Spurn]} || ${Me.CombatAbility[Spurn Rk. II]} || ${Me.CombatAbility[Spurn Rk. III]} || ${Me.CombatAbility[Thwart]} || ${Me.CombatAbility[Thwart Rk. II]} || ${Me.CombatAbility[Thwart Rk. III]}),1,0]}");
+
+DECLARE_ABILITY_OPTION(pCHFOR, "challengefor", "[ON/OFF]?", "${If[${Me.Spell[Challenge for Honor].ID} || ${Me.Spell[trial for honor].ID} || ${Me.Spell[charge for honor].ID} || ${Me.Spell[challenge for power].ID} || ${Me.Spell[trial for power].ID} || ${Me.Spell[charge for honor].ID} || ${Me.Spell[confrontation for power].ID} || ${Me.Spell[confrontation for honor].ID} || ${Me.Spell[Provocation for honor].ID} || ${Me.Spell[Provocation for power].ID} || ${Me.Spell[Demand for Power].ID} || ${Me.Spell[Demand for Honor].ID} || ${Me.Spell[Impose for Power].ID} || ${Me.Spell[Impose for Honor].ID} || ${Me.Spell[Refute for Power].ID} || ${Me.Spell[Refute for Honor].ID} || ${Me.Spell[Protest for Power].ID} || ${Me.Spell[Protest for Power].ID},1,0]}", "${If[${meleemvi[plugin].ID} && ${meleemvi[aggro].ID} && (${Me.Spell[challenge for honor].ID} || ${Me.Spell[trial for honor].ID} || ${Me.Spell[charge for honor].ID} || ${Me.Spell[challenge for power].ID} || ${Me.Spell[trial for power].ID} || ${Me.Spell[charge for honor].ID} || ${Me.Spell[confrontation for power].ID} || ${Me.Spell[confrontation for honor].ID} || ${Me.Spell[Provocation for honor].ID} || ${Me.Spell[Provocation for power].ID} || ${Me.Spell[Demand for Power].ID} || ${Me.Spell[Demand for Honor].ID} || ${Me.Spell[Impose for Power].ID} || ${Me.Spell[Impose for Honor].ID} || ${Me.Spell[Refute for Power].ID} || ${Me.Spell[Refute for Honor].ID} || ${Me.Spell[Protest for Power].ID} || ${Me.Spell[Protest for Power].ID}),1,0]}");
+
+DECLARE_ABILITY_OPTION(pSTEEL, "steely", "[ON/OFF]", "${If[${Select[${Me.Class.ShortName},PAL,SHD]} && (${Me.Spell[Steely Stance].ID} || ${Me.Spell[Stubborn Stance].ID} || ${Me.Spell[Stoic Stance].ID} || ${Me.Spell[Steadfast Stance].ID} || ${Me.Spell[Staunch Stance].ID} || ${Me.Spell[Defiant Stance].ID} || ${Me.Spell[Stormwall Stance].ID}),0,0].ID}", "${If[${meleemvi[plugin].ID} && ${Select[${Me.Class.ShortName},PAL,SHD]} && (${Me.Spell[Steely Stance].ID} || ${Me.Spell[Stubborn Stance].ID} || ${Me.Spell[Stoic Stance].ID} || ${Me.Spell[Steadfast Stance].ID} || ${Me.Spell[Staunch Stance].ID} || ${Me.Spell[Defiant Stance].ID} || ${Me.Spell[Stormwall Stance].ID}),1,0]}");
+
+#pragma endregion Updated for ToV
+
 #pragma region Warrior - Class 1
 DECLARE_ABILITY_OPTION(pCALLC, "callchallenge", "[ON/OFF]?", "${If[${Me.AltAbility[call of challenge]},1,0]}", "${If[${meleemvi[plugin]} && ${Me.AltAbility[call of challenge]},1,0]}");
 DECLARE_ABILITY_OPTION(pCOMMG, "commanding", "[#] Endu% Above? 0=0ff", "${If[${Me.CombatAbility[commanding voice]},20,0]}", "${If[${meleemvi[plugin]} && ${Me.CombatAbility[commanding voice]},1,0]}");
@@ -1511,21 +1587,26 @@ DECLARE_ABILITY_OPTION(pYAULP, "yaulp", "[ON/OFF]?", "${If[${Me.AltAbility[yaulp
 #pragma region Paladin - Class 3
 //Challenge for power/honor is listed for both paladin/shadowknight
 DECLARE_ABILITY_OPTION(pLHAND, "layhand", "[#] MyLife% Below? 0=0ff", "${If[${Me.AltAbility[Lay on Hands]},20,0]}", "${If[${meleemvi[plugin]} && ${Me.AltAbility[Lay on Hands]} && ${Me.Class.ShortName.Equal[PAL]},1,0]}");
-DECLARE_ABILITY_OPTION(pRGHTI, "rightidg", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Righteous Indignation]} || ${Me.CombatAbility[Righteous Indignation rk. ii]} || ${Me.CombatAbility[Righteous Indignation rk. iii]} || ${Me.CombatAbility[Righteous Vexation]} || ${Me.CombatAbility[Righteous Vexation rk. ii]} || ${Me.CombatAbility[Righteous Vexation rk. iii]} || ${Me.CombatAbility[Righteous Umbrage]} || ${Me.CombatAbility[Righteous Umbrage rk. ii]} || ${Me.CombatAbility[Righteous Umbrage rk. iii]} || ${Me.CombatAbility[Righteous Condemnation]} || ${Me.CombatAbility[Righteous Condemnation Rk. II]} || ${Me.CombatAbility[Righteous Condemnation Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Righteous Indignation]} || ${Me.CombatAbility[Righteous Indignation rk. ii]} || ${Me.CombatAbility[Righteous Indignation rk. iii]} || ${Me.CombatAbility[Righteous Vexation]} || ${Me.CombatAbility[Righteous Vexation rk. ii]} || ${Me.CombatAbility[Righteous Vexation rk. iii]} || ${Me.CombatAbility[Righteous Umbrage]} || ${Me.CombatAbility[Righteous Umbrage rk. ii]} || ${Me.CombatAbility[Righteous Umbrage rk. iii]} || ${Me.CombatAbility[Righteous Condemnation]} || ${Me.CombatAbility[Righteous Condemnation Rk. II]} || ${Me.CombatAbility[Righteous Condemnation Rk. III]}),1,0]}");
+DECLARE_ABILITY_OPTION(pRGHTI, "rightidg", "[#] Endu% Above? 0=Off", "0", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Righteous Indignation]} || ${Me.CombatAbility[Righteous Indignation rk. ii]} || ${Me.CombatAbility[Righteous Indignation rk. iii]} || ${Me.CombatAbility[Righteous Vexation]} || ${Me.CombatAbility[Righteous Vexation rk. ii]} || ${Me.CombatAbility[Righteous Vexation rk. iii]} || ${Me.CombatAbility[Righteous Umbrage]} || ${Me.CombatAbility[Righteous Umbrage rk. ii]} || ${Me.CombatAbility[Righteous Umbrage rk. iii]} || ${Me.CombatAbility[Righteous Condemnation]} || ${Me.CombatAbility[Righteous Condemnation Rk. II]} || ${Me.CombatAbility[Righteous Condemnation Rk. III]} || ${Me.CombatAbility[Righteous Antipathy]} || ${Me.CombatAbility[Righteous Antipathy Rk. II]} || ${Me.CombatAbility[Righteous Antipathy Rk. III]}),1,0]}");
+
 //Stunaa missing?
 //stunpal missing?
 
 #pragma endregion
 
 #pragma region Ranger - Class 4
-DECLARE_ABILITY_OPTION(pSBLADES, "stormblades", "[#] Endu% Above? 0=0ff", "${If[${Me.CombatAbility[focused storm of blades]} || ${Me.CombatAbility[focused storm of blades rk. ii]} || ${Me.CombatAbility[focused storm of blades rk. iii]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[focused storm of blades]} || ${Me.CombatAbility[focused storm of blades rk. ii]} || ${Me.CombatAbility[focused storm of blades rk. iii]}),1,0]}");
-DECLARE_ABILITY_OPTION(pERKCK, "enragingkick", "[#] Life% Below? 0=0ff", "${If[${Me.CombatAbility[Enraging Crescent Kicks]} || ${Me.CombatAbility[Enraging Crescent Kicks Rk. II]} || ${Me.CombatAbility[Enraging Crescent Kicks Rk. III]} || ${Me.CombatAbility[Enraging Heel Kicks]} || ${Me.CombatAbility[Enraging Heel Kicks Rk. II]} || ${Me.CombatAbility[Enraging Heel Kicks Rk. III]} || ${Me.CombatAbility[Enraging Cut Kicks]} || ${Me.CombatAbility[Enraging Cut Kicks Rk. II]} || ${Me.CombatAbility[Enraging Cut Kicks Rk. III]} ,20,0]}", "${If[${meleemvi[plugin]} && !${meleemvi[aggro]} && (${Me.CombatAbility[Enraging Crescent Kicks]} || ${Me.CombatAbility[Enraging Crescent Kicks Rk. II]} || ${Me.CombatAbility[Enraging Crescent Kicks Rk. III]} || ${Me.CombatAbility[Enraging Heel Kicks]} || ${Me.CombatAbility[Enraging Heel Kicks Rk. II]} || ${Me.CombatAbility[Enraging Heel Kicks Rk. III]})|| ${Me.CombatAbility[Enraging Cut Kicks]} || ${Me.CombatAbility[Enraging Cut Kicks Rk. II]} || ${Me.CombatAbility[Enraging Cut Kicks Rk. III]},1,0]}");
+DECLARE_ABILITY_OPTION(pSBLADES, "stormblades", "[#] Endu% Above? 0=0ff", "${If[${Me.CombatAbility[focused storm of blades]} || ${Me.CombatAbility[focused storm of blades rk. ii]} || ${Me.CombatAbility[focused storm of blades rk. iii]} || ${Me.CombatAbility[Squall of Blades]} || ${Me.CombatAbility[Squall of Blades Rk. II]} || ${Me.CombatAbility[Squall of Blades Rk. III]} || ${Me.CombatAbility[Focused Squall of Blades]} || ${Me.CombatAbility[Focused Squall of Blades Rk. II]} || ${Me.CombatAbility[Focused Squall of Blades Rk. III]} || ${Me.CombatAbility[Gale of Blades]} || ${Me.CombatAbility[Gale of Blades Rk. II]} || ${Me.CombatAbility[Gale of Blades Rk. III]} || ${Me.CombatAbility[Focused Gale of Blades]} || ${Me.CombatAbility[Focused Gale of Blades Rk. II]} || ${Me.CombatAbility[Focused Gale of Blades Rk. III]} || ${Me.CombatAbility[Blizzard of Blades]} || ${Me.CombatAbility[Blizzard of Blades Rk. II]} || ${Me.CombatAbility[Blizzard of Blades Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[focused storm of blades]} || ${Me.CombatAbility[focused storm of blades rk. ii]} || ${Me.CombatAbility[focused storm of blades rk. iii]} || ${Me.CombatAbility[Squall of Blades]} || ${Me.CombatAbility[Squall of Blades Rk. II]} || ${Me.CombatAbility[Squall of Blades Rk. III]} || ${Me.CombatAbility[Focused Squall of Blades]} || ${Me.CombatAbility[Focused Squall of Blades Rk. II]} || ${Me.CombatAbility[Focused Squall of Blades Rk. III]} || ${Me.CombatAbility[Gale of Blades]} || ${Me.CombatAbility[Gale of Blades Rk. II]} || ${Me.CombatAbility[Gale of Blades Rk. III]} || ${Me.CombatAbility[Focused Gale of Blades]} || ${Me.CombatAbility[Focused Gale of Blades Rk. II]} || ${Me.CombatAbility[Focused Gale of Blades Rk. III]} || ${Me.CombatAbility[Blizzard of Blades]} || ${Me.CombatAbility[Blizzard of Blades Rk. II]} || ${Me.CombatAbility[Blizzard of Blades Rk. III]}),1,0]}");
+
+DECLARE_ABILITY_OPTION(pERKCK, "enragingkick", "[#] Life% Below? 0=0ff", "${If[${Me.CombatAbility[Enraging Crescent Kicks]} || ${Me.CombatAbility[Enraging Crescent Kicks Rk. II]} || ${Me.CombatAbility[Enraging Crescent Kicks Rk. III]} || ${Me.CombatAbility[Enraging Heel Kicks]} || ${Me.CombatAbility[Enraging Heel Kicks Rk. II]} || ${Me.CombatAbility[Enraging Heel Kicks Rk. III]} || ${Me.CombatAbility[Enraging Cut Kicks]} || ${Me.CombatAbility[Enraging Cut Kicks Rk. II]} || ${Me.CombatAbility[Enraging Cut Kicks Rk. III]} || ${Me.CombatAbility[Enraging Axe Kicks]} || ${Me.CombatAbility[Enraging Axe Kicks Rk. II]} || ${Me.CombatAbility[Enraging Axe Kicks Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && !${meleemvi[aggro]} && (${Me.CombatAbility[Enraging Crescent Kicks]} || ${Me.CombatAbility[Enraging Crescent Kicks Rk. II]} || ${Me.CombatAbility[Enraging Crescent Kicks Rk. III]} || ${Me.CombatAbility[Enraging Heel Kicks]} || ${Me.CombatAbility[Enraging Heel Kicks Rk. II]} || ${Me.CombatAbility[Enraging Heel Kicks Rk. III]} || ${Me.CombatAbility[Enraging Cut Kicks]} || ${Me.CombatAbility[Enraging Cut Kicks Rk. II]} || ${Me.CombatAbility[Enraging Cut Kicks Rk. III]} || ${Me.CombatAbility[Enraging Axe Kicks]} || ${Me.CombatAbility[Enraging Axe Kicks Rk. II]} || ${Me.CombatAbility[Enraging Axe Kicks Rk. III]}),1,0]}");
+
+DECLARE_ABILITY_OPTION(pJKICK, "jltkicks", "[#] Endu% Above? 0=0ff", "${If[${Me.CombatAbility[jolting kicks]} || ${Me.CombatAbility[jolting kicks rk. ii]} || ${Me.CombatAbility[jolting kicks rk. iii]} || ${Me.CombatAbility[Jolting Snapkicks]} || ${Me.CombatAbility[Jolting Snapkicks rk. ii]} || ${Me.CombatAbility[Jolting Snapkicks rk. iii]} || ${Me.CombatAbility[Jolting Frontkicks]} || ${Me.CombatAbility[Jolting Frontkicks rk. ii]} || ${Me.CombatAbility[Jolting Frontkicks rk. iii]} || ${Me.CombatAbility[Jolting Hook kicks]} || ${Me.CombatAbility[Jolting Hook kicks rk. ii]} || ${Me.CombatAbility[Jolting Hook kicks rk. iii]} || ${Me.CombatAbility[Jolting Crescent kicks]} || ${Me.CombatAbility[Jolting Crescent kicks rk. ii]} || ${Me.CombatAbility[Jolting Crescent kicks rk. iii]} || ${Me.CombatAbility[Jolting Heel Kicks]} || ${Me.CombatAbility[Jolting Heel Kicks rk. ii]} || ${Me.CombatAbility[Jolting Heel Kicks rk. iii]} || ${Me.CombatAbility[Jolting Cut Kicks]} || ${Me.CombatAbility[Jolting Cut Kicks rk. ii]} || ${Me.CombatAbility[Jolting Cut Kicks rk. iii]} || ${Me.CombatAbility[Jolting Wheel Kicks]} || ${Me.CombatAbility[Jolting Wheel Kicks Rk. II]} || ${Me.CombatAbility[Jolting Wheel Kicks Rk. III]} || ${Me.CombatAbility[Jolting Axe Kicks]} || ${Me.CombatAbility[Jolting Axe Kicks Rk. II]} || ${Me.CombatAbility[Jolting Axe Kicks Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[jolting kicks]} || ${Me.CombatAbility[jolting kicks rk. ii]} || ${Me.CombatAbility[jolting kicks rk. iii]} || ${Me.CombatAbility[Jolting Snapkicks]} || ${Me.CombatAbility[Jolting Snapkicks rk. ii]} || ${Me.CombatAbility[Jolting Snapkicks rk. iii]} || ${Me.CombatAbility[Jolting Frontkicks]} || ${Me.CombatAbility[Jolting Frontkicks rk. ii]} || ${Me.CombatAbility[Jolting Frontkicks rk. iii]} || ${Me.CombatAbility[Jolting Hook kicks]} || ${Me.CombatAbility[Jolting Hook kicks rk. ii]} || ${Me.CombatAbility[Jolting Hook kicks rk. iii]} || ${Me.CombatAbility[Jolting Crescent kicks]} || ${Me.CombatAbility[Jolting Crescent kicks rk. ii]} || ${Me.CombatAbility[Jolting Crescent kicks rk. iii]} || ${Me.CombatAbility[Jolting Heel Kicks]} || ${Me.CombatAbility[Jolting Heel Kicks rk. ii]} || ${Me.CombatAbility[Jolting Heel Kicks rk. iii]} || ${Me.CombatAbility[Jolting Cut Kicks]} || ${Me.CombatAbility[Jolting Cut Kicks rk. ii]} || ${Me.CombatAbility[Jolting Cut Kicks rk. iii]} || ${Me.CombatAbility[Jolting Wheel Kicks]} || ${Me.CombatAbility[Jolting Wheel Kicks Rk. II]} || ${Me.CombatAbility[Jolting Wheel Kicks Rk. III]} || ${Me.CombatAbility[Jolting Axe Kicks]} || ${Me.CombatAbility[Jolting Axe Kicks Rk. II]} || ${Me.CombatAbility[Jolting Axe Kicks Rk. III]}),1,0]}");
 
 #pragma endregion
 
 #pragma region Shadow Knight - Class 5
-DECLARE_ABILITY_OPTION(pGBLDE, "gblade", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Gouging Blade]} || ${Me.CombatAbility[Gouging Blade Rk. II]} || ${Me.CombatAbility[Gouging Blade Rk. III]} || ${Me.CombatAbility[Gashing Blade]} || ${Me.CombatAbility[Gashing Blade Rk. II]} || ${Me.CombatAbility[Gashing Blade Rk. III]} || ${Me.CombatAbility[Lacerating Blade]} || ${Me.CombatAbility[Lacerating Blade Rk. II]} || ${Me.CombatAbility[Lacerating Blade Rk. III]} || ${Me.CombatAbility[Wounding Blade]} || ${Me.CombatAbility[Wounding Blade Rk. II]} || ${Me.CombatAbility[Wounding Blade Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && ${Me.CombatAbility[Gouging Blade]} || ${Me.CombatAbility[Gouging Blade Rk. II]} || ${Me.CombatAbility[Gouging Blade Rk. III]} || ${Me.CombatAbility[Gashing Blade]} || ${Me.CombatAbility[Gashing Blade Rk. II]} || ${Me.CombatAbility[Gashing Blade Rk. III]} || ${Me.CombatAbility[Lacerating Blade]} || ${Me.CombatAbility[Lacerating Blade Rk. II]} || ${Me.CombatAbility[Lacerating Blade Rk. III]} || ${Me.CombatAbility[Wounding Blade]} || ${Me.CombatAbility[Wounding Blade Rk. II]} || ${Me.CombatAbility[Wounding Blade Rk. III]},1,0]}");
-DECLARE_ABILITY_OPTION(pHARMT, "harmtouch", "[ON/OFF]?", "${If[${Me.AltAbility[harm touch].ID},1,0]}", "${If[${meleemvi[plugin]} && ${Me.AltAbility[harm touch]}   && ${Me.Class.ShortName.Equal[SHD]},1,0]}");
+DECLARE_ABILITY_OPTION(pGBLDE, "gblade", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Gouging Blade]} || ${Me.CombatAbility[Gouging Blade Rk. II]} || ${Me.CombatAbility[Gouging Blade Rk. III]} || ${Me.CombatAbility[Gashing Blade]} || ${Me.CombatAbility[Gashing Blade Rk. II]} || ${Me.CombatAbility[Gashing Blade Rk. III]} || ${Me.CombatAbility[Lacerating Blade]} || ${Me.CombatAbility[Lacerating Blade Rk. II]} || ${Me.CombatAbility[Lacerating Blade Rk. III]} || ${Me.CombatAbility[Wounding Blade]} || ${Me.CombatAbility[Wounding Blade Rk. II]} || ${Me.CombatAbility[Wounding Blade Rk. III]} || ${Me.CombatAbility[Rending Blade]} || ${Me.CombatAbility[Rending Blade Rk. II]} || ${Me.CombatAbility[Rending Blade Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Gouging Blade]} || ${Me.CombatAbility[Gouging Blade Rk. II]} || ${Me.CombatAbility[Gouging Blade Rk. III]} || ${Me.CombatAbility[Gashing Blade]} || ${Me.CombatAbility[Gashing Blade Rk. II]} || ${Me.CombatAbility[Gashing Blade Rk. III]} || ${Me.CombatAbility[Lacerating Blade]} || ${Me.CombatAbility[Lacerating Blade Rk. II]} || ${Me.CombatAbility[Lacerating Blade Rk. III]} || ${Me.CombatAbility[Wounding Blade]} || ${Me.CombatAbility[Wounding Blade Rk. II]} || ${Me.CombatAbility[Wounding Blade Rk. III]} || ${Me.CombatAbility[Rending Blade]} || ${Me.CombatAbility[Rending Blade Rk. II]} || ${Me.CombatAbility[Rending Blade Rk. III]}),1,0]}");
+
+DECLARE_ABILITY_OPTION(pHARMT, "harmtouch", "[ON/OFF]?", "${If[${Me.AltAbility[harm touch].ID},1,0]}", "${If[${meleemvi[plugin]} && ${Me.AltAbility[harm touch]} && ${Me.Class.ShortName.Equal[SHD]},1,0]}");
 //Challenge for power/honor is listed for both paladin/shadowknight
 //Where is Terror of line?
 #pragma endregion
@@ -1534,14 +1615,14 @@ DECLARE_ABILITY_OPTION(pHARMT, "harmtouch", "[ON/OFF]?", "${If[${Me.AltAbility[h
 #pragma endregion - Empty
 
 #pragma region Monk - Class 7
-DECLARE_ABILITY_OPTION(pCFIST, "cloud", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Cloud of Fists]} || ${Me.CombatAbility[Cloud of Fists Rk. II]} || ${Me.CombatAbility[Cloud of Fists Rk. III]} || ${Me.CombatAbility[Phantom Partisan]} || ${Me.CombatAbility[Phantom Partisan Rk. II]} || ${Me.CombatAbility[Phantom Partisan Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Cloud of Fists]} || ${Me.CombatAbility[Cloud of Fists Rk. II]} || ${Me.CombatAbility[Cloud of Fists Rk. III]} || ${Me.CombatAbility[Phantom Partisan]} || ${Me.CombatAbility[Phantom Partisan Rk. II]} || ${Me.CombatAbility[Phantom Partisan Rk. III]}),1,0]}");
+DECLARE_ABILITY_OPTION(pCFIST, "cloud", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Cloud of Fists]} || ${Me.CombatAbility[Cloud of Fists Rk. II]} || ${Me.CombatAbility[Cloud of Fists Rk. III]} || ${Me.CombatAbility[Phantom Partisan]} || ${Me.CombatAbility[Phantom Partisan Rk. II]} || ${Me.CombatAbility[Phantom Partisan Rk. III]}|| ${Me.CombatAbility[Phantom Pummeling]} || ${Me.CombatAbility[Phantom Pummeling Rk. II]} || ${Me.CombatAbility[Phantom Pummeling Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Cloud of Fists]} || ${Me.CombatAbility[Cloud of Fists Rk. II]} || ${Me.CombatAbility[Cloud of Fists Rk. III]} || ${Me.CombatAbility[Phantom Partisan]} || ${Me.CombatAbility[Phantom Partisan Rk. II]} || ${Me.CombatAbility[Phantom Partisan Rk. III]}|| ${Me.CombatAbility[Phantom Pummeling]} || ${Me.CombatAbility[Phantom Pummeling Rk. II]} || ${Me.CombatAbility[Phantom Pummeling Rk. III]}),1,0]}");
 DECLARE_ABILITY_OPTION(pFALLS, "falls", "[ON/OFF] Auto-Feign?", "0", "${If[${meleemvi[plugin]} && !${meleemvi[aggro]} && ${Me.Class.ShortName.Equal[MNK]},1,0]}");
 DECLARE_ABILITY_OPTION(pFISTS, "fistsofwu", "[#] Endu% Above? 0=0ff", "${If[${Me.CombatAbility[fists of wu]},20,0]}", "${If[${meleemvi[plugin]} && ${Me.CombatAbility[fists of wu]},1,0]}");
-DECLARE_ABILITY_OPTION(pLCLAW, "leopardclaw", "[#] Endu% Above? 0=0ff", "${If[${Me.CombatAbility[leopard claw]} || ${Me.CombatAbility[dragon fang]} || ${Me.CombatAbility[clawstriker's flurry]} || ${Me.CombatAbility[clawstriker's flurry rk. ii]} || ${Me.CombatAbility[clawstriker's flurry rk. iii]} || ${Me.CombatAbility[wheel of fists]} || ${Me.CombatAbility[wheel of fists rk. ii]} || ${Me.CombatAbility[wheel of fists rk. iii]} || ${Me.CombatAbility[Six-Step Pattern]} || ${Me.CombatAbility[Six-Step Pattern rk. ii]} || ${Me.CombatAbility[Six-Step Pattern rk. iii]} || ${Me.CombatAbility[Seven-Step Pattern]} || ${Me.CombatAbility[Seven-Step Pattern rk. ii]} || ${Me.CombatAbility[Seven-Step Pattern rk. iii]} || ${Me.CombatAbility[Eight-Step Pattern]} || ${Me.CombatAbility[Eight-Step Pattern Rk. II]} || ${Me.CombatAbility[Eight-Step Pattern Rk. III]} || ${Me.CombatAbility[Torrent of Fists]} || ${Me.CombatAbility[Torrent of Fists Rk. II]} || ${Me.CombatAbility[Torrent of Fists Rk. III]} || ${Me.CombatAbility[Firestorm of Fists]} || ${Me.CombatAbility[Firestorm of Fists Rk. II]} || ${Me.CombatAbility[Firestorm of Fists Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[leopard claw]} || ${Me.CombatAbility[dragon fang]} || ${Me.CombatAbility[clawstriker's flurry]} || ${Me.CombatAbility[clawstriker's flurry rk. ii]} || ${Me.CombatAbility[clawstriker's flurry rk. iii]} || ${Me.CombatAbility[wheel of fists]} || ${Me.CombatAbility[wheel of fists rk. ii]} || ${Me.CombatAbility[wheel of fists rk. iii]} || ${Me.CombatAbility[Six-Step Pattern]} || ${Me.CombatAbility[Six-Step Pattern rk. ii]} || ${Me.CombatAbility[Six-Step Pattern rk. iii]} || ${Me.CombatAbility[Seven-Step Pattern]} || ${Me.CombatAbility[Seven-Step Pattern rk. ii]} || ${Me.CombatAbility[Seven-Step Pattern rk. iii]} || ${Me.CombatAbility[Eight-Step Pattern]} || ${Me.CombatAbility[Eight-Step Pattern Rk. II]} || ${Me.CombatAbility[Eight-Step Pattern Rk. III]} || ${Me.CombatAbility[Torrent of Fists]} || ${Me.CombatAbility[Torrent of Fists Rk. II]} || ${Me.CombatAbility[Torrent of Fists Rk. III]} || ${Me.CombatAbility[Firestorm of Fists]} || ${Me.CombatAbility[Firestorm of Fists Rk. II]} || ${Me.CombatAbility[Firestorm of Fists Rk. III]}),1,0]}");
+DECLARE_ABILITY_OPTION(pLCLAW, "leopardclaw", "[#] Endu% Above? 0=0ff", "${If[${Me.CombatAbility[leopard claw]} || ${Me.CombatAbility[dragon fang]} || ${Me.CombatAbility[clawstriker's flurry]} || ${Me.CombatAbility[clawstriker's flurry rk. ii]} || ${Me.CombatAbility[clawstriker's flurry rk. iii]} || ${Me.CombatAbility[wheel of fists]} || ${Me.CombatAbility[wheel of fists rk. ii]} || ${Me.CombatAbility[wheel of fists rk. iii]} || ${Me.CombatAbility[Six-Step Pattern]} || ${Me.CombatAbility[Six-Step Pattern rk. ii]} || ${Me.CombatAbility[Six-Step Pattern rk. iii]} || ${Me.CombatAbility[Seven-Step Pattern]} || ${Me.CombatAbility[Seven-Step Pattern rk. ii]} || ${Me.CombatAbility[Seven-Step Pattern rk. iii]} || ${Me.CombatAbility[Eight-Step Pattern]} || ${Me.CombatAbility[Eight-Step Pattern Rk. II]} || ${Me.CombatAbility[Eight-Step Pattern Rk. III]} || ${Me.CombatAbility[Torrent of Fists]} || ${Me.CombatAbility[Torrent of Fists Rk. II]} || ${Me.CombatAbility[Torrent of Fists Rk. III]} || ${Me.CombatAbility[Firestorm of Fists]} || ${Me.CombatAbility[Firestorm of Fists Rk. II]} || ${Me.CombatAbility[Firestorm of Fists Rk. III]} || ${Me.CombatAbility[Barrage of Fists]} || ${Me.CombatAbility[Barrage of Fists Rk. II]} || ${Me.CombatAbility[Barrage of Fists Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[leopard claw]} || ${Me.CombatAbility[dragon fang]} || ${Me.CombatAbility[clawstriker's flurry]} || ${Me.CombatAbility[clawstriker's flurry rk. ii]} || ${Me.CombatAbility[clawstriker's flurry rk. iii]} || ${Me.CombatAbility[wheel of fists]} || ${Me.CombatAbility[wheel of fists rk. ii]} || ${Me.CombatAbility[wheel of fists rk. iii]} || ${Me.CombatAbility[Six-Step Pattern]} || ${Me.CombatAbility[Six-Step Pattern rk. ii]} || ${Me.CombatAbility[Six-Step Pattern rk. iii]} || ${Me.CombatAbility[Seven-Step Pattern]} || ${Me.CombatAbility[Seven-Step Pattern rk. ii]} || ${Me.CombatAbility[Seven-Step Pattern rk. iii]} || ${Me.CombatAbility[Eight-Step Pattern]} || ${Me.CombatAbility[Eight-Step Pattern Rk. II]} || ${Me.CombatAbility[Eight-Step Pattern Rk. III]} || ${Me.CombatAbility[Torrent of Fists]} || ${Me.CombatAbility[Torrent of Fists Rk. II]} || ${Me.CombatAbility[Torrent of Fists Rk. III]} || ${Me.CombatAbility[Firestorm of Fists]} || ${Me.CombatAbility[Firestorm of Fists Rk. II]} || ${Me.CombatAbility[Firestorm of Fists Rk. III]} || ${Me.CombatAbility[Barrage of Fists]} || ${Me.CombatAbility[Barrage of Fists Rk. II]} || ${Me.CombatAbility[Barrage of Fists Rk. III]}),1,0]}");
 DECLARE_ABILITY_OPTION(pMENDS, "mend", "[#] MyLife% Below? 0=0ff", "${If[${Me.Skill[mend]},1,0]}", "${If[${meleemvi[plugin]} && ${Me.Skill[mend]},1,0]}");
 DECLARE_ABILITY_OPTION(pDMONK, "monkey", "[#] Endu% Above? 0=0ff", "${If[${Me.CombatAbility[Drunken Monkey Style]} || ${Me.CombatAbility[Drunken Monkey Style rk. ii]} || ${Me.CombatAbility[Drunken Monkey Style rk. iii]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Drunken Monkey Style]} || ${Me.CombatAbility[Drunken Monkey Style rk. ii]} || ${Me.CombatAbility[Drunken Monkey Style rk. iii]}),1,0]}");
 //stunmnk missing?
-DECLARE_ABILITY_OPTION(pSYNGY, "synergy", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Calanin's Synergy]} || ${Me.CombatAbility[Calanin's Synergy Rk. II]} || ${Me.CombatAbility[Calanin's Synergy Rk. III]} || ${Me.CombatAbility[Dreamwalker's Synergy]} || ${Me.CombatAbility[Dreamwalker's Synergy Rk. II]} || ${Me.CombatAbility[Dreamwalker's Synergy Rk. III]} || ${Me.CombatAbility[Veilwalker's Synergy]} || ${Me.CombatAbility[Veilwalker's Synergy Rk. II]} || ${Me.CombatAbility[Veilwalker's Synergy Rk. III]} || ${Me.CombatAbility[Shadewalker's Synergy]} || ${Me.CombatAbility[Shadewalker's Synergy Rk. II]} || ${Me.CombatAbility[Shadewalker's Synergy Rk. III]} || ${Me.CombatAbility[Doomwalker's Synergy]} || ${Me.CombatAbility[Doomwalker's Synergy Rk. II]} || ${Me.CombatAbility[Doomwalker's Synergy Rk. III]} || ${Me.CombatAbility[Firewalker's Synergy]} || ${Me.CombatAbility[Firewalker's Synergy Rk. II]} || ${Me.CombatAbility[Firewalker's Synergy Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Calanin's Synergy]} || ${Me.CombatAbility[Calanin's Synergy Rk. II]} || ${Me.CombatAbility[Calanin's Synergy Rk. III]} || ${Me.CombatAbility[Dreamwalker's Synergy]} || ${Me.CombatAbility[Dreamwalker's Synergy Rk. II]} || ${Me.CombatAbility[Dreamwalker's Synergy Rk. III]} || ${Me.CombatAbility[Veilwalker's Synergy]} || ${Me.CombatAbility[Veilwalker's Synergy Rk. II]} || ${Me.CombatAbility[Veilwalker's Synergy Rk. III]} || ${Me.CombatAbility[Shadewalker's Synergy]} || ${Me.CombatAbility[Shadewalker's Synergy Rk. II]} || ${Me.CombatAbility[Shadewalker's Synergy Rk. III]} || ${Me.CombatAbility[Doomwalker's Synergy]} || ${Me.CombatAbility[Doomwalker's Synergy Rk. II]} || ${Me.CombatAbility[Doomwalker's Synergy Rk. III]} || ${Me.CombatAbility[Firewalker's Synergy]} || ${Me.CombatAbility[Firewalker's Synergy Rk. II]} || ${Me.CombatAbility[Firewalker's Synergy Rk. III]}),1,0]}");
+DECLARE_ABILITY_OPTION(pSYNGY, "synergy", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Calanin's Synergy]} || ${Me.CombatAbility[Calanin's Synergy Rk. II]} || ${Me.CombatAbility[Calanin's Synergy Rk. III]} || ${Me.CombatAbility[Dreamwalker's Synergy]} || ${Me.CombatAbility[Dreamwalker's Synergy Rk. II]} || ${Me.CombatAbility[Dreamwalker's Synergy Rk. III]} || ${Me.CombatAbility[Veilwalker's Synergy]} || ${Me.CombatAbility[Veilwalker's Synergy Rk. II]} || ${Me.CombatAbility[Veilwalker's Synergy Rk. III]} || ${Me.CombatAbility[Shadewalker's Synergy]} || ${Me.CombatAbility[Shadewalker's Synergy Rk. II]} || ${Me.CombatAbility[Shadewalker's Synergy Rk. III]} || ${Me.CombatAbility[Doomwalker's Synergy]} || ${Me.CombatAbility[Doomwalker's Synergy Rk. II]} || ${Me.CombatAbility[Doomwalker's Synergy Rk. III]} || ${Me.CombatAbility[Firewalker's Synergy]} || ${Me.CombatAbility[Firewalker's Synergy Rk. II]} || ${Me.CombatAbility[Firewalker's Synergy Rk. III]} || ${Me.CombatAbility[Icewalker's Synergy]} || ${Me.CombatAbility[Icewalker's Synergy Rk. II]} || ${Me.CombatAbility[Icewalker's Synergy Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Calanin's Synergy]} || ${Me.CombatAbility[Calanin's Synergy Rk. II]} || ${Me.CombatAbility[Calanin's Synergy Rk. III]} || ${Me.CombatAbility[Dreamwalker's Synergy]} || ${Me.CombatAbility[Dreamwalker's Synergy Rk. II]} || ${Me.CombatAbility[Dreamwalker's Synergy Rk. III]} || ${Me.CombatAbility[Veilwalker's Synergy]} || ${Me.CombatAbility[Veilwalker's Synergy Rk. II]} || ${Me.CombatAbility[Veilwalker's Synergy Rk. III]} || ${Me.CombatAbility[Shadewalker's Synergy]} || ${Me.CombatAbility[Shadewalker's Synergy Rk. II]} || ${Me.CombatAbility[Shadewalker's Synergy Rk. III]} || ${Me.CombatAbility[Doomwalker's Synergy]} || ${Me.CombatAbility[Doomwalker's Synergy Rk. II]} || ${Me.CombatAbility[Doomwalker's Synergy Rk. III]} || ${Me.CombatAbility[Firewalker's Synergy]} || ${Me.CombatAbility[Firewalker's Synergy Rk. II]} || ${Me.CombatAbility[Firewalker's Synergy Rk. III]} || ${Me.CombatAbility[Icewalker's Synergy]} || ${Me.CombatAbility[Icewalker's Synergy Rk. II]} || ${Me.CombatAbility[Icewalker's Synergy Rk. III]}),1,0]}");
 DECLARE_ABILITY_OPTION(pVIGSN, "vigshuriken", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[Vigorous Shuriken]} || ${Me.CombatAbility[Vigorous Shuriken Rk. II]} || ${Me.CombatAbility[Vigorous Shuriken Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[Vigorous Shuriken]} || ${Me.CombatAbility[Vigorous Shuriken Rk. II]} || ${Me.CombatAbility[Vigorous Shuriken Rk. III]}),1,0]}");
 
 #pragma endregion
@@ -1597,10 +1678,9 @@ DECLARE_ABILITY_OPTION(pBVIVI, "bvivi", "[#] Endu% Above? 0=Off", "${If[${Me.Com
 DECLARE_ABILITY_OPTION(pCHAMS, "cstrike", "[ON/OFF]?", "${If[${Me.AltAbility[Chameleon Strike]},1,0]}", "${If[${meleemvi[plugin]} && ${Me.AltAbility[Chameleon Strike]},1,0]}");
 //Feign Beast?? Where for art thou Feign Beast?
 DECLARE_ABILITY_OPTION(pFERAL, "feralswipe", "[ON/OFF]?", "${If[${Me.AltAbility[feral swipe]},1,0]}", "${If[${meleemvi[plugin]} && ${Me.AltAbility[feral swipe]},1,0]}");
-DECLARE_ABILITY_OPTION(pFCLAW, "fclaw", "[#] Endu% Above? 0=0ff", "${If[${Me.CombatAbility[flurry of claws]} || ${Me.CombatAbility[flurry of claws rk. ii]} || ${Me.CombatAbility[flurry of claws rk. iii]} || ${Me.CombatAbility[tumult of claws]} || ${Me.CombatAbility[tumult of claws rk. ii]} || ${Me.CombatAbility[tumult of claws rk. iii]} || ${Me.CombatAbility[clamor of claws]} || ${Me.CombatAbility[clamor of claws rk. ii]} || ${Me.CombatAbility[clamor of claws rk. iii]} || ${Me.CombatAbility[tempest of claws]} || ${Me.CombatAbility[tempest of claws rk. ii]} || ${Me.CombatAbility[tempest of claws rk. iii]} || ${Me.CombatAbility[Storm of claws]} || ${Me.CombatAbility[Storm of claws Rk. II]} || ${Me.CombatAbility[Storm of claws Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[flurry of claws]} || ${Me.CombatAbility[flurry of claws rk. ii]} || ${Me.CombatAbility[flurry of claws rk. iii]} || ${Me.CombatAbility[tumult of claws]} || ${Me.CombatAbility[tumult of claws rk. ii]} || ${Me.CombatAbility[tumult of claws rk. iii]} || ${Me.CombatAbility[clamor of claws]} || ${Me.CombatAbility[clamor of claws rk. ii]} || ${Me.CombatAbility[clamor of claws rk. iii]} || ${Me.CombatAbility[tempest of claws]} || ${Me.CombatAbility[tempest of claws rk. ii]} || ${Me.CombatAbility[tempest of claws rk. iii]} || ${Me.CombatAbility[Storm of claws]} || ${Me.CombatAbility[Storm of claws Rk. II]} || ${Me.CombatAbility[Storm of claws Rk. III]}),1,0]}");
+DECLARE_ABILITY_OPTION(pFCLAW, "fclaw", "[#] Endu% Above? 0=0ff", "${If[${Me.CombatAbility[flurry of claws]} || ${Me.CombatAbility[flurry of claws rk. ii]} || ${Me.CombatAbility[flurry of claws rk. iii]} || ${Me.CombatAbility[tumult of claws]} || ${Me.CombatAbility[tumult of claws rk. ii]} || ${Me.CombatAbility[tumult of claws rk. iii]} || ${Me.CombatAbility[clamor of claws]} || ${Me.CombatAbility[clamor of claws rk. ii]} || ${Me.CombatAbility[clamor of claws rk. iii]} || ${Me.CombatAbility[tempest of claws]} || ${Me.CombatAbility[tempest of claws rk. ii]} || ${Me.CombatAbility[tempest of claws rk. iii]} || ${Me.CombatAbility[Storm of claws]} || ${Me.CombatAbility[Storm of claws Rk. II]} || ${Me.CombatAbility[Storm of claws Rk. III]} || ${Me.CombatAbility[Maelstrom of Claws]} || ${Me.CombatAbility[Maelstrom of Claws Rk. II]} || ${Me.CombatAbility[Maelstrom of Claws Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[flurry of claws]} || ${Me.CombatAbility[flurry of claws rk. ii]} || ${Me.CombatAbility[flurry of claws rk. iii]} || ${Me.CombatAbility[tumult of claws]} || ${Me.CombatAbility[tumult of claws rk. ii]} || ${Me.CombatAbility[tumult of claws rk. iii]} || ${Me.CombatAbility[clamor of claws]} || ${Me.CombatAbility[clamor of claws rk. ii]} || ${Me.CombatAbility[clamor of claws rk. iii]} || ${Me.CombatAbility[tempest of claws]} || ${Me.CombatAbility[tempest of claws rk. ii]} || ${Me.CombatAbility[tempest of claws rk. iii]} || ${Me.CombatAbility[Storm of claws]} || ${Me.CombatAbility[Storm of claws Rk. II]} || ${Me.CombatAbility[Storm of claws Rk. III]} || ${Me.CombatAbility[Maelstrom of Claws]} || ${Me.CombatAbility[Maelstrom of Claws Rk. II]} || ${Me.CombatAbility[Maelstrom of Claws Rk. III]}),1,0]}");
 DECLARE_ABILITY_OPTION(pGORSM, "gorillasmash", "[ON/OFF]?", "${If[${Me.AltAbility[gorilla smash]},1,0]}", "${If[${meleemvi[plugin]} && ${Me.AltAbility[gorilla smash]},1,0]}");
-DECLARE_ABILITY_OPTION(pRAKES, "rake", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[rake]} || ${Me.CombatAbility[harrow]} || ${Me.CombatAbility[harrow rk. ii]} || ${Me.CombatAbility[harrow rk. iii]} || ${Me.CombatAbility[foray]} || ${Me.CombatAbility[foray rk. ii]} || ${Me.CombatAbility[foray rk. iii]} || ${Me.CombatAbility[rush]} || ${Me.CombatAbility[rush rk. ii]} || ${Me.CombatAbility[rush rk. iii]} || ${Me.CombatAbility[Barrage]} || ${Me.CombatAbility[Barrage rk. ii]} || ${Me.CombatAbility[Barrage rk. iii]} || ${Me.CombatAbility[Pummel]} || ${Me.CombatAbility[Pummel rk. ii]} || ${Me.CombatAbility[Pummel rk. iii]} || ${Me.CombatAbility[Maul]} || ${Me.CombatAbility[Maul rk. ii]} || ${Me.CombatAbility[Maul rk. iii]} || ${Me.CombatAbility[Mangle]} || ${Me.CombatAbility[Mangle Rk. II]} || ${Me.CombatAbility[Mangle Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[rake]} || ${Me.CombatAbility[harrow]} || ${Me.CombatAbility[harrow rk. ii]} || ${Me.CombatAbility[harrow rk. iii]} || ${Me.CombatAbility[foray]} || ${Me.CombatAbility[foray rk. ii]} || ${Me.CombatAbility[foray rk. iii]} || ${Me.CombatAbility[rush]} || ${Me.CombatAbility[rush rk. ii]} || ${Me.CombatAbility[rush rk. iii]} || ${Me.CombatAbility[Barrage]} || ${Me.CombatAbility[Barrage rk. ii]} || ${Me.CombatAbility[Barrage rk. iii]} || ${Me.CombatAbility[Pummel]} || ${Me.CombatAbility[Pummel rk. ii]} || ${Me.CombatAbility[Pummel rk. iii]} || ${Me.CombatAbility[Maul]} || ${Me.CombatAbility[Maul rk. ii]} || ${Me.CombatAbility[Maul rk. iii]} || ${Me.CombatAbility[Mangle]} || ${Me.CombatAbility[Mangle Rk. II]} || ${Me.CombatAbility[Mangle Rk. III]}),1,0]}");
-DECLARE_ABILITY_OPTION(pJKICK, "jltkicks", "[#] Endu% Above? 0=0ff", "${If[${Me.CombatAbility[jolting kicks]} || ${Me.CombatAbility[jolting kicks rk. ii]} || ${Me.CombatAbility[jolting kicks rk. iii]} || ${Me.CombatAbility[Jolting Snapkicks]} || ${Me.CombatAbility[Jolting Snapkicks rk. ii]} || ${Me.CombatAbility[Jolting Snapkicks rk. iii]} || ${Me.CombatAbility[Jolting Frontkicks]} || ${Me.CombatAbility[Jolting Frontkicks rk. ii]} || ${Me.CombatAbility[Jolting Frontkicks rk. iii]} || ${Me.CombatAbility[Jolting Hook kicks]} || ${Me.CombatAbility[Jolting Hook kicks rk. ii]} || ${Me.CombatAbility[Jolting Hook kicks rk. iii]} || ${Me.CombatAbility[Jolting Crescent kicks]} || ${Me.CombatAbility[Jolting Crescent kicks rk. ii]} || ${Me.CombatAbility[Jolting Crescent kicks rk. iii]} || ${Me.CombatAbility[Jolting Heel Kicks]} || ${Me.CombatAbility[Jolting Heel Kicks rk. ii]} || ${Me.CombatAbility[Jolting Heel Kicks rk. iii]} || ${Me.CombatAbility[Jolting Cut Kicks]} || ${Me.CombatAbility[Jolting Cut Kicks rk. ii]} || ${Me.CombatAbility[Jolting Cut Kicks rk. iii]} || ${Me.CombatAbility[Jolting Wheel Kicks]} || ${Me.CombatAbility[Jolting Wheel Kicks Rk. II]} || ${Me.CombatAbility[Jolting Wheel Kicks Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[jolting kicks]} || ${Me.CombatAbility[jolting kicks rk. ii]} || ${Me.CombatAbility[jolting kicks rk. iii]} || ${Me.CombatAbility[Jolting Snapkicks]} || ${Me.CombatAbility[Jolting Snapkicks rk. ii]} || ${Me.CombatAbility[Jolting Snapkicks rk. iii]} || ${Me.CombatAbility[Jolting Frontkicks]} || ${Me.CombatAbility[Jolting Frontkicks rk. ii]} || ${Me.CombatAbility[Jolting Frontkicks rk. iii]} || ${Me.CombatAbility[Jolting Hook kicks]} || ${Me.CombatAbility[Jolting Hook kicks rk. ii]} || ${Me.CombatAbility[Jolting Hook kicks rk. iii]} || ${Me.CombatAbility[Jolting Crescent kicks]} || ${Me.CombatAbility[Jolting Crescent kicks rk. ii]} || ${Me.CombatAbility[Jolting Crescent kicks rk. iii]} || ${Me.CombatAbility[Jolting Heel Kicks]} || ${Me.CombatAbility[Jolting Heel Kicks rk. ii]} || ${Me.CombatAbility[Jolting Heel Kicks rk. iii]} || ${Me.CombatAbility[Jolting Cut Kicks]} || ${Me.CombatAbility[Jolting Cut Kicks rk. ii]} || ${Me.CombatAbility[Jolting Cut Kicks rk. iii]} || ${Me.CombatAbility[Jolting Wheel Kicks]} || ${Me.CombatAbility[Jolting Wheel Kicks Rk. II]} || ${Me.CombatAbility[Jolting Wheel Kicks Rk. III]}),1,0]}");
+DECLARE_ABILITY_OPTION(pRAKES, "rake", "[#] Endu% Above? 0=Off", "${If[${Me.CombatAbility[rake]} || ${Me.CombatAbility[harrow]} || ${Me.CombatAbility[harrow rk. ii]} || ${Me.CombatAbility[harrow rk. iii]} || ${Me.CombatAbility[foray]} || ${Me.CombatAbility[foray rk. ii]} || ${Me.CombatAbility[foray rk. iii]} || ${Me.CombatAbility[rush]} || ${Me.CombatAbility[rush rk. ii]} || ${Me.CombatAbility[rush rk. iii]} || ${Me.CombatAbility[Barrage]} || ${Me.CombatAbility[Barrage rk. ii]} || ${Me.CombatAbility[Barrage rk. iii]} || ${Me.CombatAbility[Pummel]} || ${Me.CombatAbility[Pummel rk. ii]} || ${Me.CombatAbility[Pummel rk. iii]} || ${Me.CombatAbility[Maul]} || ${Me.CombatAbility[Maul rk. ii]} || ${Me.CombatAbility[Maul rk. iii]} || ${Me.CombatAbility[Mangle]} || ${Me.CombatAbility[Mangle Rk. II]} || ${Me.CombatAbility[Mangle Rk. III]} || ${Me.CombatAbility[Batter]} || ${Me.CombatAbility[Batter Rk. II]} || ${Me.CombatAbility[Batter Rk. III]},20,0]}", "${If[${meleemvi[plugin]} && (${Me.CombatAbility[rake]} || ${Me.CombatAbility[harrow]} || ${Me.CombatAbility[harrow rk. ii]} || ${Me.CombatAbility[harrow rk. iii]} || ${Me.CombatAbility[foray]} || ${Me.CombatAbility[foray rk. ii]} || ${Me.CombatAbility[foray rk. iii]} || ${Me.CombatAbility[rush]} || ${Me.CombatAbility[rush rk. ii]} || ${Me.CombatAbility[rush rk. iii]} || ${Me.CombatAbility[Barrage]} || ${Me.CombatAbility[Barrage rk. ii]} || ${Me.CombatAbility[Barrage rk. iii]} || ${Me.CombatAbility[Pummel]} || ${Me.CombatAbility[Pummel rk. ii]} || ${Me.CombatAbility[Pummel rk. iii]} || ${Me.CombatAbility[Maul]} || ${Me.CombatAbility[Maul rk. ii]} || ${Me.CombatAbility[Maul rk. iii]} || ${Me.CombatAbility[Mangle]} || ${Me.CombatAbility[Mangle Rk. II]} || ${Me.CombatAbility[Mangle Rk. III]} || ${Me.CombatAbility[Batter]} || ${Me.CombatAbility[Batter Rk. II]} || ${Me.CombatAbility[Batter Rk. III]}),1,0]}");
 DECLARE_ABILITY_OPTION(pRAVEN, "ravens", "[ON/OFF]?", "${If[${Me.AltAbility[raven's claw]},1,0]}", "${If[${meleemvi[plugin]} && ${Me.AltAbility[raven's claw]},1,0]}");
 
 #pragma endregion
@@ -2577,64 +2657,64 @@ public:
 
 class Option {
 public:
-    char*    K;  // key?
-    char*    H;  // help?
-    char*    D;  // default?
-    char*    S;  // show?
-    string  *C;  // condition?
-    Ability *A;  // ability?
-    long    *V;  // value?
-    Function F;  // function?
-    int      U;  // update?
+    char*    OptionKey;  // key?
+    char*    OptionHelp;  // help?
+    char*    OptionDefault;  // default?
+    char*    OptionShow;  // show?
+    string  *OptionCondition;  // condition?
+    Ability *OptionAbility;  // ability?
+    long    *OptionValue;  // value?
+    Function OptionFunction;  // function?
+    int      OptionUpdate;  // update?
 
     Option(char* k, char* h, char* d, char* s, Function f, string *c) {
-        K = k; H = h; D = d; S = s; F = f; U = false; C = c; A = NULL; V = NULL;
+        OptionKey = k; OptionHelp = h; OptionDefault = d; OptionShow = s; OptionFunction = f; OptionUpdate = false; OptionCondition = c; OptionAbility = NULL; OptionValue = NULL;
     }
 
     Option(char* k, char* h, char* d, char* s, Function f, Ability *a) {
-        K = k; H = h; D = d; S = s; F = f; U = false; C = NULL; A = a; V = NULL;
+        OptionKey = k; OptionHelp = h; OptionDefault = d; OptionShow = s; OptionFunction = f; OptionUpdate = false; OptionCondition = NULL; OptionAbility = a; OptionValue = NULL;
     }
 
     Option(char* k, char* h, char* d, char* s, Function f, long *v) {
-        K = k; H = h; D = d; S = s; F = f; U = false; C = NULL; A = NULL; V = v;
+        OptionKey = k; OptionHelp = h; OptionDefault = d; OptionShow = s; OptionFunction = f; OptionUpdate = false; OptionCondition = NULL; OptionAbility = NULL; OptionValue = v;
     }
 
     void Write() {
-        if (K[0] && !C && Evaluate(S)) {
-            long value = (A) ? A->ID : (V) ? *V : 0;
-            if (value > 0) WriteChatf("%s::%s (\ag%d\ax) \ay%s\ax.", PLUGIN_NAME, K, value, H);
-            else           WriteChatf("%s::%s (\ar0\ax) \ay%s\ax.", PLUGIN_NAME, K, H);
+        if (OptionKey[0] && !OptionCondition && Evaluate(OptionShow)) {
+            long value = (OptionAbility) ? OptionAbility->ID : (OptionValue) ? *OptionValue : 0;
+            if (value > 0) WriteChatf("%s::%s (\ag%d\ax) \ay%s\ax.", PLUGIN_NAME, OptionKey, value, OptionHelp);
+            else           WriteChatf("%s::%s (\ar0\ax) \ay%s\ax.", PLUGIN_NAME, OptionKey, OptionHelp);
         }
     }
 
     void Setup(char* value) {
-        if (C) *C = value;
-        else if (A) A->Setup(atol(value), 0);
-        else if (V) {
-            if (!_stricmp("false", value) || !_stricmp("off", value))    *V = 0;
-            else if (!_stricmp("true", value) || !_stricmp("on", value)) *V = 1;
-            else *V = atol(value);
+        if (OptionCondition) *OptionCondition = value;
+        else if (OptionAbility) OptionAbility->Setup(atol(value), 0);
+        else if (OptionValue) {
+            if (!_stricmp("false", value) || !_stricmp("off", value))    *OptionValue = 0;
+            else if (!_stricmp("true", value) || !_stricmp("on", value)) *OptionValue = 1;
+            else *OptionValue = atol(value);
         }
-        if (F) this->F();
+        if (OptionFunction) this->OptionFunction();
     }
 
     void *Value() {
-        if (A) return &A->ID;
-        else if (V) return V;
-        else if (C) return C;
+        if (OptionAbility) return &OptionAbility->ID;
+        else if (OptionValue) return OptionValue;
+        else if (OptionCondition) return OptionCondition;
         return NULL;
     }
 
     long Ready() {
-        if (A) return A->Ready("");
+        if (OptionAbility) return OptionAbility->Ready("");
         return NOID;
     }
 
     void Reset() {
-        if (K[0]) {
-            if (C) *C = D;
+        if (OptionKey[0]) {
+            if (OptionCondition) *OptionCondition = OptionDefault;
             else {
-                strcpy_s(Reserved, D);
+                strcpy_s(Reserved, OptionDefault);
                 if (Reserved[0])
                     ParseMacroData(Reserved, sizeof(Reserved));
                 CHAR szTemp[2048] = { 0 };
@@ -2647,14 +2727,14 @@ public:
                     MessageBox(NULL, "Exception in MQ2Melee::Reset", "Debug", MB_OK);
                     //throw();
                 }
-                if (A)
-                    A->Setup(value, 0);
-                else if (V)
-                    *V = value;
+                if (OptionAbility)
+                    OptionAbility->Setup(value, 0);
+                else if (OptionValue)
+                    *OptionValue = value;
 
             }
-            if (F)
-                this->F();
+            if (OptionFunction)
+                this->OptionFunction();
         }
     }
 };
@@ -3278,11 +3358,11 @@ int datameleemvi(char* Index, MQ2TYPEVAR &Dest) {
     Dest.DWord = 0;
     Liste::iterator c;
     if (CmdListe.end() != (c = CmdListe.find(Index))) {
-        if (long *V = (long*)(*c).second.Value()) Dest.DWord = *V;
+        if (long *OptionValue = (long*)(*c).second.Value()) Dest.DWord = *OptionValue;
         return true;
     }
     if (VarListe.end() != (c = VarListe.find(Index))) {
-        if (long *V = (long*)(*c).second.Value()) Dest.DWord = *V;
+        if (long *OptionValue = (long*)(*c).second.Value()) Dest.DWord = *OptionValue;
         return true;
     }
     return true;
@@ -3293,8 +3373,8 @@ int datameleemvs(char* Index, MQ2TYPEVAR &Dest) {
     Dest.Ptr = &Workings;
     Liste::iterator c = IniListe.find(Index);
     if (IniListe.end() != c) {
-        if (string *S = (string*)(*c).second.Value())
-            strcpy_s(Workings, S->c_str());
+        if (string *OptionShow = (string*)(*c).second.Value())
+            strcpy_s(Workings, OptionShow->c_str());
     }
     else Workings[0] = 0;
     return true;
@@ -3510,20 +3590,20 @@ void Configure() {
         break;
     case  Paladin: // PAL
 		AbilityFind(&idLAYHAND, &layhand, 0);
-        AbilityFind(&idCHALLENGEFOR, &honor24, &honor23, &honor22, &honor21, &honor20, &honor19, &honor18, &honor17, &honor16, &honor15, &honor14, &honor13, &honor12, &honor11, &honor10, &honor9, &honor8, &honor7, &honor6, &honor5, &honor4, &honor3, &honor2, &honor1, 0);
+        AbilityFind(&idCHALLENGEFOR, &honor27, &honor26, &honor25, &honor24, &honor23, &honor22, &honor21, &honor20, &honor19, &honor18, &honor17, &honor16, &honor15, &honor14, &honor13, &honor12, &honor11, &honor10, &honor9, &honor8, &honor7, &honor6, &honor5, &honor4, &honor3, &honor2, &honor1, 0);
         AbilityFind(&idPROVOKE[0], &stunaas3, &stunaas2, &stunaas1, 0);
-        AbilityFind(&idPROVOKE[1], &stunpal49, &stunpal48, &stunpal47, &stunpal46, &stunpal45, &stunpal44, &stunpal43, &stunpal42, &stunpal41, &stunpal40, &stunpal39, &stunpal38, &stunpal37, &stunpal36, &stunpal35, &stunpal34, &stunpal33, &stunpal32, &stunpal31, &stunpal30, &stunpal29, &stunpal28, &stunpal27, &stunpal26, &stunpal25, &stunpal24, &stunpal23, &stunpal22, &stunpal21, &stunpal20, &stunpal19, &stunpal18, &stunpal17, &stunpal16, &stunpal15, &stunpal14, &stunpal13, &stunpal12, &stunpal11, &stunpal10, &stunpal9, &stunpal8, &stunpal7, &stunpal6, &stunpal5, &stunpal4, &stunpal3, &stunpal2, &stunpal1, 0);
-        AbilityFind(&idSTEELY, &steely18, &steely17, &steely16, &steely15, &steely14, &steely13, &steely12, &steely11, &steely10, &steely9, &steely8, &steely7, &steely6, &steely5, &steely4, &steely3, &steely2, &steely1, 0);
+        AbilityFind(&idPROVOKE[1], &stunpal52, &stunpal51, &stunpal50, &stunpal49, &stunpal48, &stunpal47, &stunpal46, &stunpal45, &stunpal44, &stunpal43, &stunpal42, &stunpal41, &stunpal40, &stunpal39, &stunpal38, &stunpal37, &stunpal36, &stunpal35, &stunpal34, &stunpal33, &stunpal32, &stunpal31, &stunpal30, &stunpal29, &stunpal28, &stunpal27, &stunpal26, &stunpal25, &stunpal24, &stunpal23, &stunpal22, &stunpal21, &stunpal20, &stunpal19, &stunpal18, &stunpal17, &stunpal16, &stunpal15, &stunpal14, &stunpal13, &stunpal12, &stunpal11, &stunpal10, &stunpal9, &stunpal8, &stunpal7, &stunpal6, &stunpal5, &stunpal4, &stunpal3, &stunpal2, &stunpal1, 0);
+        AbilityFind(&idSTEELY, &steely21, &steely20, &steely19, &steely18, &steely17, &steely16, &steely15, &steely14, &steely13, &steely12, &steely11, &steely10, &steely9, &steely8, &steely7, &steely6, &steely5, &steely4, &steely3, &steely2, &steely1, 0);
         AbilityFind(&idSTUN[0], &stunaas3, &stunaas2, &stunaas1, 0);
-        AbilityFind(&idSTUN[1], &stunpal49, &stunpal48, &stunpal47, &stunpal46, &stunpal45, &stunpal44, &stunpal43, &stunpal42, &stunpal41, &stunpal40, &stunpal39, &stunpal38, &stunpal37, &stunpal36, &stunpal35, &stunpal34, &stunpal33, &stunpal32, &stunpal31, &stunpal30, &stunpal29, &stunpal28, &stunpal27, &stunpal26, &stunpal25, &stunpal24, &stunpal23, &stunpal22, &stunpal21, &stunpal20, &stunpal19, &stunpal18, &stunpal17, &stunpal16, &stunpal15, &stunpal14, &stunpal13, &stunpal12, &stunpal11, &stunpal10, &stunpal9, &stunpal8, &stunpal7, &stunpal6, &stunpal5, &stunpal4, &stunpal3, &stunpal2, &stunpal1, 0);
-        AbilityFind(&idWITHSTAND, &withstand18, &withstand17, &withstand16, &withstand15, &withstand14, &withstand13, &withstand12, &withstand11, &withstand10, &withstand9, &withstand8, &withstand7, &withstand6, &withstand5, &withstand4, &withstand3, &withstand2, &withstand1, 0);
-        AbilityFind(&idRIGHTIND, &rightidg12, &rightidg11, &rightidg10, &rightidg9, &rightidg8, &rightidg7, &rightidg6, &rightidg5, &rightidg4, &rightidg3, &rightidg2, &rightidg1, 0);
+        AbilityFind(&idSTUN[1], &stunpal52, &stunpal51, &stunpal50, &stunpal49, &stunpal48, &stunpal47, &stunpal46, &stunpal45, &stunpal44, &stunpal43, &stunpal42, &stunpal41, &stunpal40, &stunpal39, &stunpal38, &stunpal37, &stunpal36, &stunpal35, &stunpal34, &stunpal33, &stunpal32, &stunpal31, &stunpal30, &stunpal29, &stunpal28, &stunpal27, &stunpal26, &stunpal25, &stunpal24, &stunpal23, &stunpal22, &stunpal21, &stunpal20, &stunpal19, &stunpal18, &stunpal17, &stunpal16, &stunpal15, &stunpal14, &stunpal13, &stunpal12, &stunpal11, &stunpal10, &stunpal9, &stunpal8, &stunpal7, &stunpal6, &stunpal5, &stunpal4, &stunpal3, &stunpal2, &stunpal1, 0);
+        AbilityFind(&idWITHSTAND, &withstand21, &withstand20, &withstand19, &withstand18, &withstand17, &withstand16, &withstand15, &withstand14, &withstand13, &withstand12, &withstand11, &withstand10, &withstand9, &withstand8, &withstand7, &withstand6, &withstand5, &withstand4, &withstand3, &withstand2, &withstand1, 0);
+        AbilityFind(&idRIGHTIND, &rightidg15, &rightidg14, &rightidg13, &rightidg12, &rightidg11, &rightidg10, &rightidg9, &rightidg8, &rightidg7, &rightidg6, &rightidg5, &rightidg4, &rightidg3, &rightidg2, &rightidg1, 0);
         break;
     case  Ranger: // RNG
         AbilityFind(&idJOLT, &joltrng2, &joltrng1, 0);
-        AbilityFind(&idJLTKICKS, &jltkicks24, &jltkicks23, &jltkicks22, &jltkicks21, &jltkicks20, &jltkicks19, &jltkicks18, &jltkicks17, &jltkicks16, &jltkicks15, &jltkicks14, &jltkicks13, &jltkicks12, &jltkicks11, &jltkicks10, &jltkicks9, &jltkicks8, &jltkicks7, &jltkicks6, &jltkicks5, &jltkicks4, &jltkicks3, &jltkicks2, &jltkicks1, 0);
-        AbilityFind(&idENRAGINGKICK, &enragingkick12, &enragingkick11, &enragingkick10, &enragingkick9, &enragingkick8, &enragingkick7, &enragingkick6, &enragingkick5, &enragingkick4, &enragingkick3, &enragingkick2, &enragingkick1, 0);
-        AbilityFind(&idSTORMBLADES, &bladesrng6, &bladesrng5, &bladesrng4, &bladesrng3, &bladesrng2, &bladesrng1, 0);
+        AbilityFind(&idJLTKICKS, &jltkicks27, &jltkicks26, &jltkicks25, &jltkicks24, &jltkicks23, &jltkicks22, &jltkicks21, &jltkicks20, &jltkicks19, &jltkicks18, &jltkicks17, &jltkicks16, &jltkicks15, &jltkicks14, &jltkicks13, &jltkicks12, &jltkicks11, &jltkicks10, &jltkicks9, &jltkicks8, &jltkicks7, &jltkicks6, &jltkicks5, &jltkicks4, &jltkicks3, &jltkicks2, &jltkicks1, 0);
+        AbilityFind(&idENRAGINGKICK, &enragingkick15, &enragingkick14, &enragingkick13, &enragingkick12, &enragingkick11, &enragingkick10, &enragingkick9, &enragingkick8, &enragingkick7, &enragingkick6, &enragingkick5, &enragingkick4, &enragingkick3, &enragingkick2, &enragingkick1, 0);
+        AbilityFind(&idSTORMBLADES, &bladesrng21, &bladesrng20, &bladesrng19, &bladesrng18, &bladesrng17, &bladesrng16, &bladesrng15, &bladesrng14, &bladesrng13, &bladesrng12, &bladesrng11, &bladesrng10, &bladesrng9, &bladesrng8, &bladesrng7, &bladesrng6, &bladesrng5, &bladesrng4, &bladesrng3, &bladesrng2, &bladesrng1, 0);
         //AbilityFind(&idFEROCIOUSKICK, &ferociouskick, 0);
         break;
     case  Shadowknight: // SHD
@@ -3532,7 +3612,7 @@ void Configure() {
         AbilityFind(&idHARMTOUCH, &harmtouch, 0);
         AbilityFind(&idGBLADE, &gblade12, &gblade11, &gblade10, &gblade9, &gblade8, &gblade7, &gblade6, &gblade5, &gblade4, &gblade3, &gblade2, &gblade1, 0);
         AbilityFind(&idPROVOKE[1], &terror30, &terror29, &terror28, &terror27, &terror26, &terror25, &terror24, &terror23, &terror22, &terror21, &terror20, &terror19, &terror18, &terror17, &terror16, &terror15, &terror14, &terror13, &terror12, &terror11, &terror10, &terror9, &terror8, &terror7, &terror6, &terror5, &terror4, &terror3, &terror2, &terror1, 0);
-        AbilityFind(&idCHALLENGEFOR, &power24, &power23, &power22, &power21, &power20, &power19, &power18, &power17, &power16, &power15, &power14, &power13, &power12, &power11, &power10, &power9, &power8, &power7, &power6, &power5, &power4, &power3, &power2, &power1, 0);
+        AbilityFind(&idCHALLENGEFOR, &power27, &power26, &power25, &power24, &power23, &power22, &power21, &power20, &power19, &power18, &power17, &power16, &power15, &power14, &power13, &power12, &power11, &power10, &power9, &power8, &power7, &power6, &power5, &power4, &power3, &power2, &power1, 0);
         AbilityFind(&idSTEELY, &steely18, &steely17, &steely16, &steely15, &steely14, &steely13, &steely12, &steely11, &steely10, &steely9, &steely8, &steely7, &steely6, &steely5, &steely4, &steely3, &steely2, &steely1, 0);
         AbilityFind(&idWITHSTAND, &withstand18, &withstand17, &withstand16, &withstand15, &withstand14, &withstand13, &withstand12, &withstand11, &withstand10, &withstand9, &withstand8, &withstand7, &withstand6, &withstand5, &withstand4, &withstand3, &withstand2, &withstand1, 0);
         break;
@@ -3541,7 +3621,7 @@ void Configure() {
         AbilityFind(&idFISTSOFWU, &fistswu, 0);
         AbilityFind(&idDRAGONPUNCH, &sdrpunch, 0);
         AbilityFind(&idEAGLESTRIKE, &sestrike, 0);
-        AbilityFind(&idLEOPARDCLAW, &leop26, &leop25, &leop24, &leop23, &leop22, &leop21, &leop20, &leop19, &leop18, &leop17, &leop16, &leop15, &leop14, &leop13, &leop12, &leop11, &leop10, &leop9, &leop8, &leop7, &leop6, &leop5, &leop4, &leop3, &leop2, &leop1, 0);
+        AbilityFind(&idLEOPARDCLAW, &leop29, &leop28, &leop27, &leop26, &leop25, &leop24, &leop23, &leop22, &leop21, &leop20, &leop19, &leop18, &leop17, &leop16, &leop15, &leop14, &leop13, &leop12, &leop11, &leop10, &leop9, &leop8, &leop7, &leop6, &leop5, &leop4, &leop3, &leop2, &leop1, 0);
         AbilityFind(&idTIGERCLAW, &stigclaw, 0);
         AbilityFind(&idROUNDKICK, &srndkick, 0);
         AbilityFind(&idFLYINGKICK, &sflykick, 0);
@@ -3549,9 +3629,9 @@ void Configure() {
         AbilityFind(&idFEIGN[1], &feignid, 0);
         AbilityFind(&idPROVOKE[0], &stunmnk2, &stunmnk1, 0);
         AbilityFind(&idSTUN[0], &stunmnk2, &stunmnk1, 0);
-        AbilityFind(&idSYNERGY, &synergy18, &synergy17, &synergy16, &synergy15, &synergy14, &synergy13, &synergy12, &synergy11, &synergy10, &synergy9, &synergy8, &synergy7, &synergy6, &synergy5, &synergy4, &synergy3, &synergy2, &synergy1, 0);
+        AbilityFind(&idSYNERGY, &synergy21, &synergy20, &synergy19, &synergy18, &synergy17, &synergy16, &synergy15, &synergy14, &synergy13, &synergy12, &synergy11, &synergy10, &synergy9, &synergy8, &synergy7, &synergy6, &synergy5, &synergy4, &synergy3, &synergy2, &synergy1, 0);
         AbilityFind(&idVIGSHURIKEN, &vigmnk3, &vigmnk2, &vigmnk1, 0);
-        AbilityFind(&idCLOUD, &cloud5, &cloud5, &cloud4, &cloud3, &cloud2, &cloud1, 0);
+        AbilityFind(&idCLOUD, &cloud9, &cloud8, &cloud7, &cloud6, &cloud5, &cloud5, &cloud4, &cloud3, &cloud2, &cloud1, 0);
         AbilityFind(&idMONKEY, &monkey3, &monkey2, &monkey1, 0);
         break;
     case  Bard: // BRD
@@ -3586,7 +3666,7 @@ void Configure() {
             doSTAB = 64;
         break;
     case Necromancer: // NEC
-        AbilityFind(&idFEIGN[0], &feign_n3, &feign_n2, &feign_n1, &feigns3, &feigns2, &feigns1, 0);
+        AbilityFind(&idFEIGN[0], &feign_n9, &feign_n8, &feign_n7, &feign_n6, &feign_n5, &feign_n4, &feign_n3, &feign_n2, &feign_n1, &feigns3, &feigns2, &feigns1, 0);
         AbilityFind(&idFEIGN[1], &feigndp, 0);
         AbilityFind(&idPETMEND, &mendpet2, &mendpet1, 0);
         break;
@@ -3594,7 +3674,7 @@ void Configure() {
         AbilityFind(&idPETMEND, &mendpet2, &mendpet1, 0);
         break;
     case Beastlord: // BST
-        AbilityFind(&idRAKE, &rake22, &rake21, &rake20, &rake19, &rake18, &rake17, &rake16, &rake15, &rake14, &rake13, &rake12, &rake11, &rake10, &rake9, &rake8, &rake7, &rake6, &rake5, &rake4, &rake3, &rake2, &rake1, 0);
+        AbilityFind(&idRAKE, &rake25, &rake24, &rake23, &rake22, &rake21, &rake20, &rake19, &rake18, &rake17, &rake16, &rake15, &rake14, &rake13, &rake12, &rake11, &rake10, &rake9, &rake8, &rake7, &rake6, &rake5, &rake4, &rake3, &rake2, &rake1, 0);
         AbilityFind(&idFERALSWIPE, &feral1, 0);
         AbilityFind(&idPETMEND, &mendpet1, &mendpet2, 0);
         AbilityFind(&idJOLT, &joltbst1, 0);
@@ -3602,7 +3682,7 @@ void Configure() {
         AbilityFind(&idASP, &asp, 0);
         AbilityFind(&idCSTRIKE, &cstrike, 0);
         AbilityFind(&idRAVENS, &ravens, 0);
-        AbilityFind(&idFCLAW, &fclaw18, &fclaw17, &fclaw16, &fclaw15, &fclaw14, &fclaw13, &fclaw12, &fclaw11, &fclaw10, &fclaw9, &fclaw8, &fclaw7, &fclaw6, &fclaw5, &fclaw4, &fclaw3, &fclaw2, &fclaw1, 0);
+        AbilityFind(&idFCLAW, &fclaw21, &fclaw20, &fclaw19, &fclaw18, &fclaw17, &fclaw16, &fclaw15, &fclaw14, &fclaw13, &fclaw12, &fclaw11, &fclaw10, &fclaw9, &fclaw8, &fclaw7, &fclaw6, &fclaw5, &fclaw4, &fclaw3, &fclaw2, &fclaw1, 0);
         AbilityFind(&idBVIVI, &bvivi12, &bvivi11, &bvivi10, &bvivi9, &bvivi8, &bvivi7, &bvivi6, &bvivi5, &bvivi4, &bvivi3, &bvivi2, &bvivi1, 0);
         AbilityFind(&idGORILLASMASH, &gorillasmash, 0);
         break;
@@ -3653,35 +3733,35 @@ void Exporting() {
     e = CmdListe.end();
     for (c = CmdListe.begin(); c != e; c++) {
         output[0] = 0;
-        if ((*c).second.C)
-            if (string *S = (string*)(*c).second.Value())
-                strcpy_s(output, S->c_str());
-        if ((*c).second.A || (*c).second.V)
-            if (long *V = (long*)(*c).second.Value())
-                _itoa_s(*V, output, 10);
+        if ((*c).second.OptionCondition)
+            if (string *OptionShow = (string*)(*c).second.Value())
+                strcpy_s(output, OptionShow->c_str());
+        if ((*c).second.OptionAbility || (*c).second.OptionValue)
+            if (long *OptionValue = (long*)(*c).second.Value())
+                _itoa_s(*OptionValue, output, 10);
         if (output[0]) {
-            strcpy_s(defval, (*c).second.D);
+            strcpy_s(defval, (*c).second.OptionDefault);
             if (defval[0])
                 ParseMacroData(defval, sizeof(defval));
             if (strcmp(output, "0") || strcmp(output, defval))
-                WritePrivateProfileString(section, (*c).second.K, output, INIFileName);
+                WritePrivateProfileString(section, (*c).second.OptionKey, output, INIFileName);
         }
     }
     e = IniListe.end();
     for (c = IniListe.begin(); c != e; c++) {
         output[0] = 0;
-        if ((*c).second.C)
-            if (string *S = (string*)(*c).second.Value())
-                strcpy_s(output, S->c_str());
-        if ((*c).second.A || (*c).second.V)
-            if (long *V = (long*)(*c).second.Value())
-                _itoa_s(*V, output, 10);
+        if ((*c).second.OptionCondition)
+            if (string *OptionShow = (string*)(*c).second.Value())
+                strcpy_s(output, OptionShow->c_str());
+        if ((*c).second.OptionAbility || (*c).second.OptionValue)
+            if (long *OptionValue = (long*)(*c).second.Value())
+                _itoa_s(*OptionValue, output, 10);
         if (output[0]) {
-            strcpy_s(defval, sizeof(defval), (*c).second.D);
+            strcpy_s(defval, sizeof(defval), (*c).second.OptionDefault);
             if (defval[0])
                 ParseMacroData(defval, sizeof(defval));
             if (strcmp(output, "0") || strcmp(output, defval))
-                WritePrivateProfileString(section, (*c).second.K, output, INIFileName);
+                WritePrivateProfileString(section, (*c).second.OptionKey, output, INIFileName);
         }
     }
     sprintf_s(output, "%1.3f", PLUGIN_VERS); WritePrivateProfileString(section, "version", output, INIFileName);
@@ -3689,7 +3769,7 @@ void Exporting() {
 
 void MapInsert(Liste *MyList, Option MyOption)
 {
-    MyList->insert(Liste::value_type(MyOption.K, MyOption));
+    MyList->insert(Liste::value_type(MyOption.OptionKey, MyOption));
 }
 
 void MeleeHelp()
