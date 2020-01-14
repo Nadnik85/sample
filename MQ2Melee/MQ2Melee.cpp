@@ -3610,11 +3610,11 @@ void Configure() {
         AbilityFind(&idFEIGN[0], &feigns24, &feigns23, &feigns22, &feigns21, &feigns20, &feigns19, &feigns18, &feigns17, &feigns16, &feigns15, &feigns14, &feigns13, &feigns12, &feigns11, &feigns10, &feigns9, &feigns8, &feigns7, &feigns6, &feigns5, &feigns4, &feigns3, &feigns2, &feigns1, 0);
         AbilityFind(&idFEIGN[1], &feigndp, 0);
         AbilityFind(&idHARMTOUCH, &harmtouch, 0);
-        AbilityFind(&idGBLADE, &gblade12, &gblade11, &gblade10, &gblade9, &gblade8, &gblade7, &gblade6, &gblade5, &gblade4, &gblade3, &gblade2, &gblade1, 0);
-        AbilityFind(&idPROVOKE[1], &terror30, &terror29, &terror28, &terror27, &terror26, &terror25, &terror24, &terror23, &terror22, &terror21, &terror20, &terror19, &terror18, &terror17, &terror16, &terror15, &terror14, &terror13, &terror12, &terror11, &terror10, &terror9, &terror8, &terror7, &terror6, &terror5, &terror4, &terror3, &terror2, &terror1, 0);
+        AbilityFind(&idGBLADE, &gblade15, &gblade14, &gblade13, &gblade12, &gblade11, &gblade10, &gblade9, &gblade8, &gblade7, &gblade6, &gblade5, &gblade4, &gblade3, &gblade2, &gblade1, 0);
+        AbilityFind(&idPROVOKE[1], &terror33, &terror32, &terror31, &terror30, &terror29, &terror28, &terror27, &terror26, &terror25, &terror24, &terror23, &terror22, &terror21, &terror20, &terror19, &terror18, &terror17, &terror16, &terror15, &terror14, &terror13, &terror12, &terror11, &terror10, &terror9, &terror8, &terror7, &terror6, &terror5, &terror4, &terror3, &terror2, &terror1, 0);
         AbilityFind(&idCHALLENGEFOR, &power27, &power26, &power25, &power24, &power23, &power22, &power21, &power20, &power19, &power18, &power17, &power16, &power15, &power14, &power13, &power12, &power11, &power10, &power9, &power8, &power7, &power6, &power5, &power4, &power3, &power2, &power1, 0);
-        AbilityFind(&idSTEELY, &steely18, &steely17, &steely16, &steely15, &steely14, &steely13, &steely12, &steely11, &steely10, &steely9, &steely8, &steely7, &steely6, &steely5, &steely4, &steely3, &steely2, &steely1, 0);
-        AbilityFind(&idWITHSTAND, &withstand18, &withstand17, &withstand16, &withstand15, &withstand14, &withstand13, &withstand12, &withstand11, &withstand10, &withstand9, &withstand8, &withstand7, &withstand6, &withstand5, &withstand4, &withstand3, &withstand2, &withstand1, 0);
+        AbilityFind(&idSTEELY, &steely21, &steely20, &steely19, &steely18, &steely17, &steely16, &steely15, &steely14, &steely13, &steely12, &steely11, &steely10, &steely9, &steely8, &steely7, &steely6, &steely5, &steely4, &steely3, &steely2, &steely1, 0);
+        AbilityFind(&idWITHSTAND, &withstand21, &withstand20, &withstand19, &withstand18, &withstand17, &withstand16, &withstand15, &withstand14, &withstand13, &withstand12, &withstand11, &withstand10, &withstand9, &withstand8, &withstand7, &withstand6, &withstand5, &withstand4, &withstand3, &withstand2, &withstand1, 0);
         break;
     case  Monk: // MNK
         MonkClass = true;
