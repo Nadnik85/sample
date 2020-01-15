@@ -119,16 +119,14 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
 VOID ReportTell(PCHAR Line)
 {
 	//Actually reports the tell in whatever chat specified in the .ini file
-	if (RelayTellsInGame) DoCommand(NULL, Line);
+	if (RelayTellsInGame) EzCommand(Line);
 	if (RelayToMail) MailRelay();
 }
 
 void MailRelay(VOID) {
-
 	char mailcommand[MAX_STRING];
-
 	sprintf_s(mailcommand, "/system blat -t %s -f %s -s \"%s\" -server %s -body \"%s\" -u %s -pw %s", EmailTo, EmailFrom, Subject, Server, Body, UserName, Password);
-	DoCommand(NULL, mailcommand);
+	EzCommand(mailcommand);
 
 }
 string StringToLower(string strToConvert)
