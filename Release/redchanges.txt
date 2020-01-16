@@ -1,3 +1,61 @@
+Jan 15 2020 by RedGuides
+- MQ2RelayTells (ChatWithThisName, brainiac) Confirmed fix for mail and relaying the tells on my end by sending myself a bunch of tells :-)
+- MQ2DPSAdv (ChatWithThisName) Make columns sizeable again
+- MQ2Status (Sic) Added check for MQ2Cleric and MQ2Bst
+- MQ2AFNuke & MQ2Heals (jimbob) Fixed an issue with /nuke memorize array bound checking that caused a crash. Also, made (only for Wizards 
+  at this point) /nuke memorize try to pick the ideal spells for your current level (of course, you must have them in your spellbook to mem them). 
+  Re-Factored a ton of code to eventually combine MQ2AFNuke and MQ2Heals into a single plug-in. It will be especially handy for Droods and Shaman 
+  that like to DPS (though I haven't added Shaman DPS to AFNuke yet). There is some sort of bug with Drood DPS occasionally breaking. 
+- MQ2FarmTest (Sic) Updated to add an option to toggle off "use discs"
+
+Jan 15 2020
+- Added /invoke to the list of commands that can trigger a bind.
+- Updated for LIVE
+
+Jan 14 2020 by Sic
+- Updated MQ2Melee
+- If you use builder dont forget to recheck it.
+
+Jan 13 2020
+- Updated max level to 115
+- Updated the skillmanager for all builds.
+
+Jan 13 2020 by Chatwiththisname
+- Added MQ2SpellType Members: HastePct, SlowPct.
+- Added GetMeleeSpeedPctFromSpell(PSPELL, bool) (Exported in Main)
+- Added GetMeleeSpeedFromTriggers(PSPELL, bool) (not exported)
+- Added HasTrigger(PSPELL) (not exported)
+		GetMeleeSpeedPctFromSpell is used in HastePct and SlowPct.
+		If the pSpell has a trigger it will automatically check the triggers for the modification speed. 
+		Examples: 
+			${Target.Slowed.SlowPct}
+			${Me.Hasted.HastePct}
+			${Spell[Slowing Helix].SlowPct}
+			etc etc.
+- Fixed GetSelfBuffBySPA(int, bool, int);
+- Fixed GetTargetBuffBySPA(int, bool, int);
+- Fixed GetSelfShortBuffBySPA(int, bool, int);
+- Fixed HasCachedTargetBuffSPA(int, bool, PSPAWNINFO, PcTargetBuff);
+
+	In all the above SPA buff checks if the SPA matched, but wasn't the increase or decrease
+	desired, it would stop checking anymore buffs. 
+	Example: ${Target.Slowed} should return a pSpellType of a slow debuff on the target. But
+		if the target had a haste buff before the slow buff it would find SPA 11 and since it was
+		an increase instead of a decrease it would return -1, or NULL. Changing it to break; for those
+		SPA's allows it to continue checking the buffs and find any subsequent SPA 11's correctly.
+
+Jan 12 2020
+- Updated for TEST
+
+Jan 11 2020 by RedGuides
+- MQ2AFNuke (jimbob) Added wizard new harvest spells
+- MQ2Berzerker, MQ2Cleric, MQ2Rogue (ChatWithThisName) updated
+- MQ2DPSAdv (ChatWithThisName) columns will now save/load their place.
+
+Jan 11 2020
+- Fixed the ZoneGuideManagerClient class for TEST build.
+  (Read: /travelto crash fixed.)
+
 Jan 10 2020
 - ${Me.Spell[blah]} now searches for rank spells as well - brainiac
   Example:  You have Demand For Power Rk. II in your spellbook.
