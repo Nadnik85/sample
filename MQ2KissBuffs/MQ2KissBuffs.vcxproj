@@ -49,6 +49,7 @@
   <ItemGroup>
     <ClInclude Include="..\MQ2Plugin.h" />
     <ClInclude Include="MQ2KissBuffs.h" />
+    <ClInclude Include="SPA.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
