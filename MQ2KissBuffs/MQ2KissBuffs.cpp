@@ -1,5 +1,4 @@
 #include "MQ2KissBuffs.h"
-#include "SPA.h"
 
 char MyLastID[64] = { 0 };
 char CurrentBuffs[MAX_STRING] = { 0 };
@@ -330,26 +329,26 @@ int GetShortBuffCounters(int SPA)
 }
 
 int GetNumDiseaseCounters() {
-	int counters = GetLongBuffCounters(eEQSPA::SPA_DISEASE);
-	counters += GetShortBuffCounters(eEQSPA::SPA_DISEASE);
+	int counters = GetLongBuffCounters(35L);//SPA_DISEASE
+	counters += GetShortBuffCounters(35L);//SPA_DISEASE
 	return counters;
 }
 
 int GetNumPoisonCounters() {
-	int counters = GetLongBuffCounters(eEQSPA::SPA_POISON);
-	counters += GetShortBuffCounters(eEQSPA::SPA_POISON);
+	int counters = GetLongBuffCounters(36L);//SPA_POISON
+	counters += GetShortBuffCounters(36L);//SPA_POISON
 	return counters;
 }
 
 int GetNumCurseCounters() {
-	int counters = GetLongBuffCounters(eEQSPA::SPA_CURSE);
-	counters += GetShortBuffCounters(eEQSPA::SPA_POISON);
+	int counters = GetLongBuffCounters(116L);//SPA_CURSE
+	counters += GetShortBuffCounters(116L);//SPA_CURSE
 	return counters;
 }
 
 int GetNumCorruptionCounters() {
-	int counters = GetLongBuffCounters(eEQSPA::SPA_CORRUPTION);
-	counters += GetShortBuffCounters(eEQSPA::SPA_POISON);
+	int counters = GetLongBuffCounters(369L);//SPA_CORRUPTION
+	counters += GetShortBuffCounters(369L);//SPA_CORRUPTION
 	return counters;
 }
 
