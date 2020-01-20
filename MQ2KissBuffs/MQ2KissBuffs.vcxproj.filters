@@ -26,8 +26,5 @@
     <ClInclude Include="MQ2KissBuffs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SPA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
