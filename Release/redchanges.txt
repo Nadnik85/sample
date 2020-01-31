@@ -1,3 +1,39 @@
+Jan 30 2020 by RedGuides
+- MQ2Relocate (Sic) Updated to ensure we fall to the secondary anchor. Added a check to ensure we don't have the anchor in our inventory
+- CWTN Plugins (CWTN, Sic) MQ2Bst, MQ2Cleric, MQ2EsKay, MQ2Monk updated
+- Bazaar.mac (kaen01) removed alias
+
+Jan 26 2020 by RedGuides
+- MQ2Status (Sic, Knightly, brainiac) Updated to allow toggling off show plugins and/or specific classes
+- MQ2DanNet (dannuic) Updated code, and implemented macro end detection in order to clear out previously used variables so they can be reused.
+- MQ2War (ChatWithThisName) Will now use Wars Sheol's in Tank Mode burn, will also  use Rampage in "Tank Modes" when UseAoE is on
+
+Jan 25 2020
+-// ***************************************************************************
+-// Function:    DoHotbutton
+-// Description: our '/hotbutton' command
+-//              Extends the built in /hotbutton command with multiple lines support
+-// Usage:       /hotbutton [Name] <color> <Line:><Cursor:>[Text]
+-//				<Line can be 1-5
+-//				<Cursor can ONLY be 0 which means DO NOT put the hotbutton on the cursor.
+-//				Usage:
+-//				/hotbutton TheName 14 1:0:/echo hi	(Where 14 1:0: in this case means use color 14, then place /echo hi on LINE 1 and NO Cursor Attachment.)
+-//				/hotbutton TheName 14 1:/echo hi	(Where 14 1: in this case means use color 14, then place /echo hi on LINE 1.)
+-//				/hotbutton TheName 1:0:/echo hi		(Where 1:0: in this case means place /echo hi on LINE 1 and NO Cursor Attachment.)
+-//				/hotbutton TheName 1:/echo hi		(Where 1: in this case means place /echo hi on LINE 1.)
+-//				/hotbutton TheName 0:/echo hi		(Where 0: in this case means NO Cursor Attachment.)
+-//				Finally, just doing /hotbutton TheName 14 /echo hi OR /hotbutton TheName /echo hi just calls the eq function like before.
+-// ***************************************************************************
+
+Jan 21 2020 by RedGuides
+- MQ2LinkDB (eqmule) multiple items fixed
+- MQ2KissBuffs (ChatWithThisName) Now writes anytime updates immediately for changes. Now tracks Disease, Poison, Curse, and Corruption counters. 
+  This includes covering short durations buffs. (Restless Ice for example).
+- MQ2AutoClaim (ChatWithThisName) Fixed an issue with parsing dates.
+
+Jan 20 2020
+- Misc Fixes to triggers etc - braniac
+
 Jan 15 2020 by RedGuides
 - MQ2RelayTells (ChatWithThisName, brainiac) Confirmed fix for mail and relaying the tells on my end by sending myself a bunch of tells :-)
 - MQ2DPSAdv (ChatWithThisName) Make columns sizeable again
