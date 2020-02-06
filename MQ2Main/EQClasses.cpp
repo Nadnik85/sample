@@ -3709,7 +3709,11 @@ FUNCTION_AT_ADDRESS(int  CDisplay::ReplaceCloakMaterials(int,struct T3D_HIERARCH
 //FUNCTION_AT_ADDRESS(void  CDisplay::InitEverQuestLocale(enum EQLocalize::languages),CDisplay__InitEverQuestLocale);
 #endif
 #ifdef CDisplay__ReloadUI_x
+#if defined(TEST)
+FUNCTION_AT_ADDRESS(void  CDisplay::ReloadUI(bool, bool),CDisplay__ReloadUI);
+#else
 FUNCTION_AT_ADDRESS(void  CDisplay::ReloadUI(bool),CDisplay__ReloadUI);
+#endif
 #endif
 #ifdef CDisplay__HandleMaterial_x
 FUNCTION_AT_ADDRESS(void  CDisplay::HandleMaterial(class EQ_PC *,int,class EQ_Item *,class EQ_Item *),CDisplay__HandleMaterial);
@@ -7893,10 +7897,10 @@ FUNCTION_AT_ADDRESS(class CButtonDrawTemplate const *  CXWnd::GetMinimizeBoxTemp
 FUNCTION_AT_ADDRESS(class CButtonDrawTemplate const *  CXWnd::GetTileBoxTemplate(void)const ,CXWnd__GetTileBoxTemplate);
 #endif
 #ifdef CXWnd__GetRelativeRect_x
-FUNCTION_AT_ADDRESS(class CXRect  CXWnd::GetRelativeRect(void)const ,CXWnd__GetRelativeRect);
+FUNCTION_AT_ADDRESS(class CXRect CXWnd::GetRelativeRect(void)const ,CXWnd__GetRelativeRect);
 #endif
 #ifdef CXWnd__GetScreenRect_x
-FUNCTION_AT_ADDRESS(class CXRect  CXWnd::GetScreenRect(void)const ,CXWnd__GetScreenRect);
+FUNCTION_AT_ADDRESS(class CXRect CXWnd::GetScreenRect(void)const ,CXWnd__GetScreenRect);
 #endif
 #ifdef CXWnd__Resize_x
 FUNCTION_AT_ADDRESS(int  CXWnd::Resize(int, int, bool, bool, bool),CXWnd__Resize);
