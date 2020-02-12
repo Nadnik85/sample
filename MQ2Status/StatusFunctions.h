@@ -15,6 +15,7 @@ bool atob(char x[MAX_STRING]);
 void ParseBoolArg(const char* Arg, const char* Arg2, char* Arg3, bool* theOption, char* INIsection);
 void DoINIThings();
 bool VerifyINI(char* Section, char* Key, char* Default);
+bool IHaveSpa(int spa);
 
 enum Subscription {
 	SUB_BRONZE,
