@@ -6,6 +6,7 @@
 	v 1.2 - 12/12/2019 - Re-Write per Brainiac review
 					   - moved variables.h and prototypes.h into mq2tstrophy.cpp, corrected errors per review (inline use, superfluous nesting, updated to const char* where possible, etc)
 					   - updated comma delimited list to a vector
+	v 1.3 - 12/20/2019 - Additional cleanup
 
 	Purpose: Equipping your Tradeskill Trophies when opening an environmental crafting container.
 	Actions: This plugin will see what you already have in your ammo slot,
@@ -17,25 +18,39 @@
 #include "../MQ2Plugin.h"
 
 PreSetup("MQ2TSTrophy");
-PLUGIN_VERSION(1.2f);
+PLUGIN_VERSION(2.0);
 
+bool WorldContainerCheck();
+bool InGame();
 void UpdateTrophyGroup(PCONTENTS* group, const std::vector<std::string>& itemList, const char* groupname);
 void UpdateTrophies();
 void UpdateTrophy(PCONTENTS* TrophyVariable, const char* item, const char* Typename);
-void WorldContainerCheck();
-void SwapSlot(PCONTENTS* Trophy, int slot);
+void SwapSlot(PCONTENTS* Trophy, std::string slot);
 void PluginOn();
-bool InGame();
-PCONTENTS FindSlotDefault(int slot);
+
+PCONTENTS FindSlotCurrent(std::string slot);
 PCONTENTS Cursor();
 
-PCONTENTS BakingTrophy = 0, AlchemistTrophy = 0, BrewingTrophy = 0, FletchingTrophy = 0, JewelerTrophy = 0, TinkeringTrophy = 0, PotteryTrophy = 0, ResearchTrophy = 0, BlacksmithTrophy = 0, TailorTrophy = 0, PoisonTrophy = 0, ammoDefault = 0, FishingTrophy = 0, primaryDefault = 0;
+PCONTENTS BakingTrophy = 0;
+PCONTENTS AlchemistTrophy = 0;
+PCONTENTS BrewingTrophy = 0;
+PCONTENTS FletchingTrophy = 0;
+PCONTENTS JewelerTrophy = 0;
+PCONTENTS TinkeringTrophy = 0;
+PCONTENTS PotteryTrophy = 0;
+PCONTENTS ResearchTrophy = 0;
+PCONTENTS BlacksmithTrophy = 0;
+PCONTENTS TailorTrophy = 0;
+PCONTENTS PoisonTrophy = 0;
+PCONTENTS ammoDefault = 0;
+PCONTENTS FishingTrophy = 0;
 
-bool  bActivated = false, containerfound = false;
-
-int iStep = 1, iPulse = 0;
-
-char szContainerName[MAX_STRING] = { 0 };
+bool bActivated = false;
+bool containerfound = false;
+bool bSilent = false;
+char szContainerName[128] = { 0 };
+int iStep = 1;
+int iPulse = 0;
 
 PLUGIN_API VOID InitializePlugin(VOID)
 {
@@ -48,6 +63,15 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
 	DebugSpewAlways("Shutting down MQ2TSTrophy");
 }
 
+PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color) {
+	// the message we get is "Your Master Smith Strophy has evolved!"
+	// maybe need smarter strstr?
+	if (!strncmp(Line, "Your ", 5) && strstr(Line, " Trophy has evolved!")) { // update Trophies
+		UpdateTrophies();
+	}
+	return 0;
+}
+
 PLUGIN_API VOID OnPulse(VOID)
 {
 	int iPulseDelay = 20;
@@ -57,110 +81,83 @@ PLUGIN_API VOID OnPulse(VOID)
 	if (!bActivated) PluginOn();
 
 	WorldContainerCheck();
-	if (iStep == 3 && ItemOnCursor()) {
-		EzCommand("/autoinv");
+	if (iStep == 3) {
+		if (ItemOnCursor()) {
+			EzCommand("/autoinv");
+		}
 		iStep = 4;
 	}
 
-	PCONTENTS ammoItem = FindSlotDefault(22);
-	PCONTENTS priItem = FindSlotDefault(13);
-
 	if (containerfound) {
 
-		if (!ammoDefault && ammoItem) {
-			ammoDefault = ammoItem;
-		}
-		if (!primaryDefault && priItem) {
-			primaryDefault = priItem;
-		}
 		if (strstr(szContainerName, "Alchemy Table")) {
 			//equip alchemy trophy
-			SwapSlot(&AlchemistTrophy, 22);
+			SwapSlot(&AlchemistTrophy, "ammo");
 		}
 		else if (strstr(szContainerName, "Mixing Bowl") || strstr(szContainerName, "Oven") || strstr(szContainerName, "Ice Cream")) {
 			//equip Baking trophy
-			SwapSlot(&BakingTrophy, 22);
+			SwapSlot(&BakingTrophy,"ammo");
 		}
 		else if (strstr(szContainerName, "Brewing Barrel")) {
 			//equip Brewing trophy
-			SwapSlot(&BrewingTrophy, 22);
+			SwapSlot(&BrewingTrophy,"ammo");
 		}
 		else if (strstr(szContainerName, "Fletching Table")) {
 			//equip Fletching trophy
-			SwapSlot(&FletchingTrophy, 22);
+			SwapSlot(&FletchingTrophy,"ammo");
 		}
 		else if (strstr(szContainerName, "Jewelry Making Table")) {
 			//equip Jewelry trophy
-			SwapSlot(&JewelerTrophy, 22);
+			SwapSlot(&JewelerTrophy,"ammo");
 		}
 		else if (strstr(szContainerName, "Fly Making Bench")) {
 			//equip Fishing trophy
-			SwapSlot(&FishingTrophy, 13);
+			SwapSlot(&FishingTrophy,"mainhand");
 		}
 		else if (strstr(szContainerName, "Kiln") || strstr(szContainerName, "Pottery Wheel")) {
 			//equip Pottery trophy
-			SwapSlot(&PotteryTrophy, 22);
+			SwapSlot(&PotteryTrophy,"ammo");
 		}
 		else if (strstr(szContainerName, "Poisoncrafting Table")) {
 			//equip Poison making trophy
-			SwapSlot(&PoisonTrophy, 22);
+			SwapSlot(&PoisonTrophy,"ammo");
 		}
 		else if (strstr(szContainerName, "Forge")) {
 			//equip Smithing trophy
-			SwapSlot(&BlacksmithTrophy, 22);
+			SwapSlot(&BlacksmithTrophy,"ammo");
 		}
 		else if (strstr(szContainerName, "Spell Research Table")) {
 			//equip research trophy
-			SwapSlot(&ResearchTrophy, 22);
+			SwapSlot(&ResearchTrophy,"ammo");
 		}
 		else if (strstr(szContainerName, "Loom")) {
 			//equip Tailoring trophy
-			SwapSlot(&TailorTrophy, 22);
+			SwapSlot(&TailorTrophy,"ammo");
 		}
 		else if (strstr(szContainerName, "Tinkering")) {
 			//equip Tinkering trophy
-			SwapSlot(&TinkeringTrophy, 22);
+			SwapSlot(&TinkeringTrophy,"ammo");
 		}
+		else {
+			containerfound = false;
+		}
+
 		if (iStep == 4) {
-			iStep = 1;
-		}
-	}
-	else {
-		if ((ammoDefault != NULL && ammoDefault != ammoItem) || (ammoDefault && !ammoItem)) {
-			// we need to switch back to primaryDefault
-			PITEMINFO itemdefault = GetItemFromContents(ammoDefault);
-			PITEMINFO itemtest = GetItemFromContents(ammoItem);
-			SwapSlot(&ammoDefault, 22);
-			if (iStep == 4) {
-				ammoDefault = 0;
-				iStep = 1;
-			}
-			return;
-		}
-		else if (!Cursor() && ammoDefault && ammoDefault == ammoItem) {
-			ammoDefault = 0;
-			iStep = 1;
-			return;
-		}
-		if ((primaryDefault && primaryDefault != priItem) || (primaryDefault && !priItem)) {
-			// we need to switch back to primaryDefault
-			SwapSlot(&primaryDefault, 13);
-			if (iStep == 4) {
-				primaryDefault = 0;
-				iStep = 1;
-			}
-			return;
-		}
-		else if (!Cursor() && primaryDefault && primaryDefault == priItem) {
-			primaryDefault = 0;
 			iStep = 1;
 		}
 	}
 }
 
+PLUGIN_API void OnZoned(void) {
+	if (!InGame()) return;
+	UpdateTrophies();
+	iStep = 1;
+}
+
 void PluginOn() {
 	if (!bActivated) bActivated = true;
 	UpdateTrophies();
+	bSilent = true;
 }
 
 void UpdateTrophies() {
@@ -175,7 +172,7 @@ void UpdateTrophies() {
 		"Apprentice Alchemist Trophy",
 		"Beginner Alchemist Trophy"
 	};
-	UpdateTrophyGroup(&AlchemistTrophy, itemList, "AlchemistTrophy");
+	UpdateTrophyGroup(&AlchemistTrophy, itemList, "Alchemist");
 
 	//Baking Trophy
 	itemList = {
@@ -187,9 +184,9 @@ void UpdateTrophies() {
 		"Apprentice Baker Trophy",
 		"Beginner Baker Trophy"
 	};
-	UpdateTrophyGroup(&BakingTrophy, itemList, "BakingTrophy");
+	UpdateTrophyGroup(&BakingTrophy, itemList, "Baking");
 
-	////Brewer Trophy
+	//Brewer Trophy
 	itemList = {
 		"Brewmaster's Mug",
 		"Master Brewer Trophy",
@@ -199,9 +196,9 @@ void UpdateTrophies() {
 		"Apprentice Brewer Trophy",
 		"Beginner Brewer Trophy"
 	};
-	UpdateTrophyGroup(&BrewingTrophy, itemList, "BrewingTrophy");
+	UpdateTrophyGroup(&BrewingTrophy, itemList, "Brewing");
 
-	////Fletcher Trophy
+	//Fletcher Trophy
 	itemList = {
 		"Fletcher's Arrow",
 		"Master Fletcher Trophy",
@@ -211,9 +208,9 @@ void UpdateTrophies() {
 		"Apprentice Fletcher Trophy",
 		"Beginner Fletcher Trophy"
 	};
-	UpdateTrophyGroup(&FletchingTrophy, itemList, "FletchingTrophy");
+	UpdateTrophyGroup(&FletchingTrophy, itemList, "Fletching");
 
-	////Jeweler Trophy
+	//Jeweler Trophy
 	itemList = {
 		"Intricate Jewelers Glass",
 		"Master Jeweler Trophy",
@@ -223,9 +220,9 @@ void UpdateTrophies() {
 		"Apprentice Jeweler Trophy",
 		"Beginner Jeweler Trophy"
 	};
-	UpdateTrophyGroup(&JewelerTrophy, itemList, "JewelerTrophy");
+	UpdateTrophyGroup(&JewelerTrophy, itemList, "Jewelery");
 
-	////Tinkering Trophy
+	//Tinkering Trophy
 	itemList = {
 		"Hovering Contraption",
 		"Master Mechanist Trophy",
@@ -235,9 +232,9 @@ void UpdateTrophies() {
 		"Apprentice Mechanist Trophy",
 		"Beginner Mechanist Trophy"
 	};
-	UpdateTrophyGroup(&TinkeringTrophy, itemList, "TinkeringTrophy");
+	UpdateTrophyGroup(&TinkeringTrophy, itemList, "Tinkering");
 
-	////Pottery Trophy
+	//Pottery Trophy
 	itemList = {
 		"Clay Flinger's Loop",
 		"Master Potter Trophy",
@@ -247,9 +244,9 @@ void UpdateTrophies() {
 		"Apprentice Potter Trophy",
 		"Beginner Potter Trophy"
 	};
-	UpdateTrophyGroup(&PotteryTrophy, itemList, "PotteryTrophy");
+	UpdateTrophyGroup(&PotteryTrophy, itemList, "Pottery");
 
-	////Research Trophy
+	//Research Trophy
 	itemList = {
 		"Ethereal Quill",
 		"Master Researcher Trophy",
@@ -259,9 +256,9 @@ void UpdateTrophies() {
 		"Apprentice Researcher Trophy",
 		"Beginner Researcher Trophy"
 	};
-	UpdateTrophyGroup(&ResearchTrophy, itemList, "ResearchTrophy");
+	UpdateTrophyGroup(&ResearchTrophy, itemList, "Research");
 
-	////Blacksmithing Trophy
+	//Blacksmithing Trophy
 	itemList = {
 		"Blacksmith's Adamantine Hammer",
 		"Master Smith Trophy",
@@ -271,9 +268,9 @@ void UpdateTrophies() {
 		"Apprentice Smith Trophy",
 		"Beginner Smith Trophy"
 	};
-	UpdateTrophyGroup(&BlacksmithTrophy, itemList, "BlacksmithTrophy");
+	UpdateTrophyGroup(&BlacksmithTrophy, itemList, "Blacksmithing");
 
-	////Tailor Trophy
+	//Tailor Trophy
 	itemList = {
 		"Mystical Bolt",
 		"Master Tailor Trophy",
@@ -283,9 +280,9 @@ void UpdateTrophies() {
 		"Apprentice Tailor Trophy",
 		"Beginner Tailor Trophy"
 	};
-	UpdateTrophyGroup(&TailorTrophy, itemList, "TailorTrophy");
+	UpdateTrophyGroup(&TailorTrophy, itemList, "Tailoring");
 
-	////Poison Trophy
+	//Poison Trophy
 	itemList = {
 		"Peerless Pestle",
 		"Master Toxicologist Trophy",
@@ -295,20 +292,18 @@ void UpdateTrophies() {
 		"Apprentice Toxicologist Trophy",
 		"Beginner Toxicologist Trophy"
 	};
-	UpdateTrophyGroup(&PoisonTrophy, itemList, "PoisonTrophy");
+	UpdateTrophyGroup(&PoisonTrophy, itemList, "Poison");
 
-	////Fishing Rod "Trophy"
+	//Fishing Rod "Trophy"
 	itemList = {
 		"The Bone Rod"
 	};
-	UpdateTrophyGroup(&FishingTrophy, itemList, "FishingTrophy");
+	UpdateTrophyGroup(&FishingTrophy, itemList, "Fishing");
 
 }
 
-void UpdateTrophyGroup(PCONTENTS* group, const std::vector<std::string>& itemList, const char* groupname)
-{
-	for (const std::string& name : itemList)
-	{
+void UpdateTrophyGroup(PCONTENTS* group, const std::vector<std::string>& itemList, const char* groupname) {
+	for (const std::string& name : itemList) {
 		UpdateTrophy(group, name.c_str(), groupname);
 		if (*group) break;
 	}
@@ -320,46 +315,47 @@ void UpdateTrophy(PCONTENTS* TrophyVariable, const char* item, const char* Typen
 	if (PCONTENTS theTrophy = FindItemByName((char*)item)) {
 		if (PITEMINFO thisItem = GetItemFromContents(theTrophy)) {
 			*TrophyVariable = theTrophy;
-			if (*TrophyVariable) {
-				WriteChatf("\ayUpdated - \aw%s: \ap%s", Typename, thisItem->Name);
+			if (*TrophyVariable && !bSilent) {
+				WriteChatf("\ar[\atMQ2TSTROPHY\ar]\aw:: \ao\ayUpdated - \aw%s: \ap%s", Typename, thisItem->Name);
 			}
 		}
 	}
 }
 
-void WorldContainerCheck() {
-	PCONTENTS temp = 0;
+bool WorldContainerCheck() {
 	if (CContainerMgr* pWnd = pContainerMgr) {
-		if (PCONTENTS thiscontaineritem = pWnd->pWorldContainer.pObject) {
-			temp = thiscontaineritem;
+		PCONTENTS thiscontaineritem = pWnd->pWorldContainer.pObject;
+		if (thiscontaineritem && thiscontaineritem->Open == 1) {
 			if (PITEMINFO worldContainer = GetItemFromContents(thiscontaineritem)) {
-				sprintf_s(szContainerName, MAX_STRING, "%s", worldContainer->Name);
+				sprintf_s(szContainerName, 128, "%s", worldContainer->Name);
 				containerfound = true;
 			}
 		}
-	}
-	if (containerfound) {
-		if (!temp)
+		else {
 			containerfound = false;
+		}
 	}
+	return containerfound;
 }
 
-void SwapSlot(PCONTENTS* Trophy, int slot) { // slot 22 is Ammo; slot 13 is Primary
+void SwapSlot(PCONTENTS* Trophy, std::string slot) { // slot ammo = ammo; slot mainhand = Primary
 	if (*Trophy) {
 		if (PITEMINFO item = GetItemFromContents(*Trophy)) {
-			if (!FindSlotDefault(slot) || FindSlotDefault(slot) != *Trophy) {
-				char szBuffer[MAX_STRING] = { 0 };
+			if (FindSlotCurrent(slot)->Item2->Name != item->Name) {
+				char szBuffer[256] = { 0 };
 				if (iStep == 1) {
-					//WriteChatf("\ayPicking up: \ap%s", item->Name);
-					sprintf_s(szBuffer, MAX_STRING, "/squelch /nomodkey /shiftkey /itemnotify \"%s\" leftmouseup", item->Name);
+					WriteChatf("\ar[\atMQ2TSTROPHY\ar]\aw:: \ayPicking up: \ap%s", item->Name);
+					sprintf_s(szBuffer, "/squelch /nomodkey /shiftkey /itemnotify \"%s\" leftmouseup", item->Name);
 					EzCommand(szBuffer);
 					iStep = 2;
 				}
-				else if (iStep == 2 && Cursor() == *Trophy) {
-					//WriteChatf("\aySwapping \ap%s\aw into slot: \ay%i",item->Name, slot);
-					sprintf_s(szBuffer, MAX_STRING, "/squelch /nomodkey /shiftkey /itemnotify %i leftmouseup", slot);
-					EzCommand(szBuffer);
-					iStep = 3;
+				else if (iStep == 2) {
+					if (Cursor() && Cursor()->Item2->Name == item->Name) {
+						WriteChatf("\ar[\atMQ2TSTROPHY\ar]\aw:: \aySwapping: \ap%s\aw into slot: \ay%s", item->Name, slot.c_str());
+						sprintf_s(szBuffer, "/squelch /nomodkey /shiftkey /itemnotify %s leftmouseup", slot.c_str());
+						EzCommand(szBuffer);
+						iStep = 3;
+					}
 				}
 			}
 		}
@@ -369,23 +365,22 @@ void SwapSlot(PCONTENTS* Trophy, int slot) { // slot 22 is Ammo; slot 13 is Prim
 PCONTENTS Cursor() {
 	PCHARINFO2 pChar2 = GetCharInfo2();
 	if (pChar2 && pChar2->pInventoryArray && pChar2->pInventoryArray->Inventory.Cursor) {
-		PCONTENTS cursoritem = pChar2->pInventoryArray->Inventory.Cursor;
-		return cursoritem;
+		return pChar2->pInventoryArray->Inventory.Cursor;
 	}
 	return nullptr;
 }
 
-PCONTENTS FindSlotDefault(int slot) {
+PCONTENTS FindSlotCurrent(std::string slot) {
 	PCHARINFO2 pChar2 = GetCharInfo2();
-	if (pChar2->pInventoryArray && pChar2->pInventoryArray->InventoryArray) {
-		if (PCONTENTS item = pChar2->pInventoryArray->InventoryArray[slot]) {
-			return item;
-		}
+	if (strstr(slot.c_str(), "ammo")) {
+		return pChar2->pInventoryArray->Inventory.Ammo;
+	}
+	else if (strstr(slot.c_str(), "mainhand")) {
+		return pChar2->pInventoryArray->Inventory.Primary;
 	}
 	return nullptr;
 }
 
-inline bool InGame()
-{
+inline bool InGame() {
 	return(GetGameState() == GAMESTATE_INGAME && GetCharInfo() && GetCharInfo()->pSpawn && GetCharInfo2());
 }
