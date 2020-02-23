@@ -332,7 +332,7 @@ bool WorldContainerCheck()
 		PCONTENTS thiscontaineritem = pWnd->pWorldContainer.pObject;
 		if (thiscontaineritem && thiscontaineritem->Open == 1) {
 			if (PITEMINFO worldContainer = GetItemFromContents(thiscontaineritem)) {
-				sprintf_s(szContainerName, "%s", worldContainer->Name);
+				strcpy_s(szContainerName, worldContainer->Name);
 				containerfound = true;
 			}
 		}
