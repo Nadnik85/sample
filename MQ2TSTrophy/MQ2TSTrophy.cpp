@@ -25,10 +25,10 @@ bool InGame();
 void UpdateTrophyGroup(PCONTENTS* group, const std::vector<std::string>& itemList, const char* groupname);
 void UpdateTrophies();
 void UpdateTrophy(PCONTENTS* TrophyVariable, const char* item, const char* Typename);
-void SwapSlot(PCONTENTS* Trophy, std::string slot);
+void SwapSlot(PCONTENTS* Trophy, const char* slot);
 void PluginOn();
 
-PCONTENTS FindSlotCurrent(std::string slot);
+PCONTENTS FindSlotCurrent(const char* slot);
 PCONTENTS Cursor();
 
 PCONTENTS BakingTrophy = 0;
@@ -63,9 +63,8 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
 	DebugSpewAlways("Shutting down MQ2TSTrophy");
 }
 
-PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color) {
-	// the message we get is "Your Master Smith Strophy has evolved!"
-	// maybe need smarter strstr?
+PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color) 
+{
 	if (!strncmp(Line, "Your ", 5) && strstr(Line, " Trophy has evolved!")) { // update Trophies
 		UpdateTrophies();
 	}
@@ -148,19 +147,22 @@ PLUGIN_API VOID OnPulse(VOID)
 	}
 }
 
-PLUGIN_API void OnZoned(void) {
+PLUGIN_API void OnZoned() 
+{
 	if (!InGame()) return;
 	UpdateTrophies();
 	iStep = 1;
 }
 
-void PluginOn() {
+void PluginOn() 
+{
 	if (!bActivated) bActivated = true;
 	UpdateTrophies();
 	bSilent = true;
 }
 
-void UpdateTrophies() {
+void UpdateTrophies() 
+{
 
 	//Alchemist Trophy
 	std::vector<std::string> itemList = {
@@ -302,14 +304,16 @@ void UpdateTrophies() {
 
 }
 
-void UpdateTrophyGroup(PCONTENTS* group, const std::vector<std::string>& itemList, const char* groupname) {
+void UpdateTrophyGroup(PCONTENTS* group, const std::vector<std::string>& itemList, const char* groupname) 
+{
 	for (const std::string& name : itemList) {
 		UpdateTrophy(group, name.c_str(), groupname);
 		if (*group) break;
 	}
 }
 
-void UpdateTrophy(PCONTENTS* TrophyVariable, const char* item, const char* Typename) {
+void UpdateTrophy(PCONTENTS* TrophyVariable, const char* item, const char* Typename) 
+{
 	if (!InGame()) return;
 
 	if (PCONTENTS theTrophy = FindItemByName((char*)item)) {
@@ -322,12 +326,13 @@ void UpdateTrophy(PCONTENTS* TrophyVariable, const char* item, const char* Typen
 	}
 }
 
-bool WorldContainerCheck() {
+bool WorldContainerCheck() 
+{
 	if (CContainerMgr* pWnd = pContainerMgr) {
 		PCONTENTS thiscontaineritem = pWnd->pWorldContainer.pObject;
 		if (thiscontaineritem && thiscontaineritem->Open == 1) {
 			if (PITEMINFO worldContainer = GetItemFromContents(thiscontaineritem)) {
-				sprintf_s(szContainerName, 128, "%s", worldContainer->Name);
+				sprintf_s(szContainerName, "%s", worldContainer->Name);
 				containerfound = true;
 			}
 		}
@@ -338,7 +343,8 @@ bool WorldContainerCheck() {
 	return containerfound;
 }
 
-void SwapSlot(PCONTENTS* Trophy, std::string slot) { // slot ammo = ammo; slot mainhand = Primary
+void SwapSlot(PCONTENTS* Trophy, const char* slot) 
+{ // slot ammo = ammo; slot mainhand = Primary
 	if (*Trophy) {
 		if (PITEMINFO item = GetItemFromContents(*Trophy)) {
 			if (FindSlotCurrent(slot)->Item2->Name != item->Name) {
@@ -351,8 +357,8 @@ void SwapSlot(PCONTENTS* Trophy, std::string slot) { // slot ammo = ammo; slot m
 				}
 				else if (iStep == 2) {
 					if (Cursor() && Cursor()->Item2->Name == item->Name) {
-						WriteChatf("\ar[\atMQ2TSTROPHY\ar]\aw:: \aySwapping: \ap%s\aw into slot: \ay%s", item->Name, slot.c_str());
-						sprintf_s(szBuffer, "/squelch /nomodkey /shiftkey /itemnotify %s leftmouseup", slot.c_str());
+						WriteChatf("\ar[\atMQ2TSTROPHY\ar]\aw:: \aySwapping: \ap%s\aw into slot: \ay%s", item->Name, slot);
+						sprintf_s(szBuffer, "/squelch /nomodkey /shiftkey /itemnotify %s leftmouseup", slot);
 						EzCommand(szBuffer);
 						iStep = 3;
 					}
@@ -362,7 +368,8 @@ void SwapSlot(PCONTENTS* Trophy, std::string slot) { // slot ammo = ammo; slot m
 	}
 }
 
-PCONTENTS Cursor() {
+PCONTENTS Cursor() 
+{
 	PCHARINFO2 pChar2 = GetCharInfo2();
 	if (pChar2 && pChar2->pInventoryArray && pChar2->pInventoryArray->Inventory.Cursor) {
 		return pChar2->pInventoryArray->Inventory.Cursor;
@@ -370,17 +377,19 @@ PCONTENTS Cursor() {
 	return nullptr;
 }
 
-PCONTENTS FindSlotCurrent(std::string slot) {
+PCONTENTS FindSlotCurrent(const char* slot) 
+{
 	PCHARINFO2 pChar2 = GetCharInfo2();
-	if (strstr(slot.c_str(), "ammo")) {
+	if (strstr(slot, "ammo")) {
 		return pChar2->pInventoryArray->Inventory.Ammo;
 	}
-	else if (strstr(slot.c_str(), "mainhand")) {
+	else if (strstr(slot, "mainhand")) {
 		return pChar2->pInventoryArray->Inventory.Primary;
 	}
 	return nullptr;
 }
 
-inline bool InGame() {
+inline bool InGame() 
+{
 	return(GetGameState() == GAMESTATE_INGAME && GetCharInfo() && GetCharInfo()->pSpawn && GetCharInfo2());
 }
