@@ -346,22 +346,22 @@ bool WorldContainerCheck()
 void SwapSlot(PCONTENTS* Trophy, const char* slot) 
 { // slot ammo = ammo; slot mainhand = Primary
 	if (*Trophy) {
-		if (PITEMINFO item = GetItemFromContents(*Trophy)) {
-			if (FindSlotCurrent(slot)->Item2->Name != item->Name) {
-				char szBuffer[256] = { 0 };
-				if (iStep == 1) {
-					WriteChatf("\ar[\atMQ2TSTROPHY\ar]\aw:: \ayPicking up: \ap%s", item->Name);
-					sprintf_s(szBuffer, "/squelch /nomodkey /shiftkey /itemnotify \"%s\" leftmouseup", item->Name);
+		ITEMINFO* pItem = GetItemFromContents(*Trophy);
+		ITEMINFO* pSlotItem = GetItemFromContents(FindSlotCurrent(slot));
+		if (!pSlotItem || strcmp(pSlotItem->Name, pItem->Name)) {
+			char szBuffer[256] = { 0 };
+			if (iStep == 1) {
+				WriteChatf("\ar[\atMQ2TSTROPHY\ar]\aw:: \ayPicking up: \ap%s", pItem->Name);
+				sprintf_s(szBuffer, "/squelch /nomodkey /shiftkey /itemnotify \"%s\" leftmouseup", pItem->Name);
+				EzCommand(szBuffer);
+				iStep = 2;
+			}
+			else if (iStep == 2) {
+				if (Cursor() && Cursor()->Item2->Name == pItem->Name) {
+					WriteChatf("\ar[\atMQ2TSTROPHY\ar]\aw:: \aySwapping: \ap%s\aw into slot: \ay%s", pItem->Name, slot);
+					sprintf_s(szBuffer, "/squelch /nomodkey /shiftkey /itemnotify %s leftmouseup", slot);
 					EzCommand(szBuffer);
-					iStep = 2;
-				}
-				else if (iStep == 2) {
-					if (Cursor() && Cursor()->Item2->Name == item->Name) {
-						WriteChatf("\ar[\atMQ2TSTROPHY\ar]\aw:: \aySwapping: \ap%s\aw into slot: \ay%s", item->Name, slot);
-						sprintf_s(szBuffer, "/squelch /nomodkey /shiftkey /itemnotify %s leftmouseup", slot);
-						EzCommand(szBuffer);
-						iStep = 3;
-					}
+					iStep = 3;
 				}
 			}
 		}
