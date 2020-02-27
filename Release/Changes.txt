@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 Feb 27 2020
 - Updated for TEST
 - Updated for LIVE
@@ -12,7 +10,6 @@ Feb 27 2020
 - Fixed the CursorAttachment Struct
 - Macro Authors, take notice: Fixed ${Me.AltAbility[blah].Rank} it now properly returns 0 if you don't have any points spent in a AA.
 -
->>>>>>> 3684a8af3435afa4591b54e42ab2db9e4988f91f
 Feb 18 2020
 -Updated for TEST
 -Updated for LIVE
