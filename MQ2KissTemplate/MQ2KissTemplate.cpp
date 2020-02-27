@@ -426,8 +426,8 @@ void ParseArg(CHAR Arg[MAX_STRING])
 		}
 		else {
 			if (debugging) WriteChatf("Arg is: %d", atoi(Arg));
-			if (atoi(Arg) < 0 || atoi(Arg) > 115) {
-				WriteChatf("You've provided %s as a level to emulate, but it is not between 1 and 115", tempLevel);
+			if (atoi(Arg) < 0 || atoi(Arg) > MAX_PC_LEVEL) {
+				WriteChatf("You've provided %s as a level to emulate, but it is not between 1 and %d", tempLevel, MAX_PC_LEVEL);
 				return;
 			}
 			else {
