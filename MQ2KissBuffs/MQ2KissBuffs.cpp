@@ -4,6 +4,7 @@ char MyLastID[64] = { 0 };
 char CurrentBuffs[MAX_STRING] = { 0 };
 char CurrentShortBuffs[MAX_STRING] = { 0 };
 char CurrentBlockedBuffs[MAX_STRING] = { 0 };
+char CurrentPetBuffs[MAX_STRING] = { 0 };
 unsigned __int64 WriteBuffsTimer = 0;
 
 int iDiseaseCounters = 0;
@@ -114,6 +115,33 @@ void WriteBuffs() {
 	if (!CurrentBlockedBuffs || _stricmp(CurrentBlockedBuffs, WriteBuffList)) {
 		WritePrivateProfileString(myid, "BlockedBuffs", WriteBuffList, BuffINI);
 		sprintf_s(CurrentBlockedBuffs, WriteBuffList);
+	}
+
+	//If I have a pet. Let's track their buffs too!
+	if (GetCharInfo() && GetCharInfo()->pSpawn && GetCharInfo()->pSpawn->PetID) {
+		strcpy_s(WriteBuffList, "");//clear the buffs list.
+		//lets also write the pet buffs.
+		PEQPETINFOWINDOW pPetInfo = ((PEQPETINFOWINDOW)pPetInfoWnd);//See if there's a pet info window.
+
+		for (int i = 0; i < NUM_BUFF_SLOTS; i++) {
+			if (!pPetInfo)
+				break;
+
+			PSPELL pPetBuff = GetSpellByID(pPetInfo->Buff[i]);
+			if (!pPetBuff)
+				continue;
+
+			strcat_s(WriteBuffList, "|");
+			strcat_s(WriteBuffList, pPetBuff->Name);
+		}
+		strcat_s(WriteBuffList, "|");
+		//Write the Pet buffs to the file
+		if (!CurrentPetBuffs || _stricmp(CurrentPetBuffs, WriteBuffList)) {
+			//WriteChatf("Updating Pet Buffs");
+			WritePrivateProfileString(myid, "PetBuffs", WriteBuffList, BuffINI);
+			sprintf_s(CurrentPetBuffs, MAX_STRING, WriteBuffList);
+		}
+		strcpy_s(WriteBuffList, "");//clear the buffs list.
 	}
 
 	{//Write Disease Counters if needed.

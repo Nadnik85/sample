@@ -28,6 +28,7 @@ extern unsigned __int64 WriteBuffsTimer;
 extern char CurrentBuffs[MAX_STRING];
 extern char CurrentShortBuffs[MAX_STRING];
 extern char CurrentBlockedBuffs[MAX_STRING];
+extern char CurrentPetBuffs[MAX_STRING];
 extern unsigned __int64 WriteBuffsTimer;
 extern int Pulse;
 extern int PulseDelay;
