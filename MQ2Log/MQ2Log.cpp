@@ -9,14 +9,17 @@
 // v1.0 - Sym - 04-18-2012
 // v2.1 - Eqmule 07-22-2016 - Added string safety.
 // v2.2 - wired420 10-22-2019 - Added /mqlogcustom for custom naming file
+// v2.3 - ctaylor22 02-27-2020 - Added option on off command to delay logging turning off until buffered text has completed.
+//								 Syntax: /mlog <on|off> [y] Ex: /mlog off y
 
 #include "../MQ2Plugin.h"
 #include <time.h>
 
 PreSetup("MQ2Log");
-PLUGIN_VERSION(2.2);
+PLUGIN_VERSION(2.3);
 bool bLog = false;
 bool bInit = false;
+bool bWait = false;
 CHAR Filename[MAX_STRING] = { 0 };
 
 bool DirectoryExists(LPCTSTR lpszPath)
@@ -54,17 +57,34 @@ void LogCommand(PSPAWNINFO pChar, PCHAR szLine) {
 	CHAR szArg1[MAX_STRING] = { 0 };
 	GetArg(szArg1, szLine, 1);
 	if (!_strcmpi(szArg1, "")) {
-		WriteChatf("MQ2Log Usage :: /mlog on|off");
+		WriteChatf("MQ2Log Usage :: /mlog on|off y/n");
 		return;
 	}
 	if (!_strcmpi(szArg1, "on")) {
 		bLog = true;
+		bWait = false;
 	}
 	else if (!_strcmpi(szArg1, "off")) {
+		GetArg(szArg1, szLine, 2);
+		if (strlen(szArg1) > 0) {
+			if (!_strnicmp(szArg1, "y", 1)) {
+				bWait = true;
+				//WriteChatf("MQ2Log Marker!");
+				WriteChatColor("MQ2Log Marker!", USERCOLOR_DEFAULT);
+			}
+		}
+		else {
+			bWait = false;
+		}
 		bLog = false;
 	}
 	SaveINI();
-	WriteChatf("MQ2Log :: Logging is %s", bLog ? "\agON\ax" : "\arOFF\ax");
+		if (!bWait) {
+			WriteChatf("MQ2Log :: Logging is %s", bLog ? "\agON\ax" : "\arOFF\ax");
+		}
+		else {
+			WriteChatf("MQ2Log :: Logging is \agDelayed Off\ax");
+		}
 }
 
 VOID MacroLogClean(PSPAWNINFO pChar, PCHAR szLine)
@@ -145,12 +165,62 @@ VOID MacroLogCustom(PSPAWNINFO pChar, PCHAR szLine)
 	fclose(fOut);
 }
 
+class MQ2MlogType *pMlogType = 0;
+class MQ2MlogType : public MQ2Type
+{
+public:
+	enum MlogMembers {
+		Active = 1,
+	};
+
+	MQ2MlogType() :MQ2Type("mlog") {
+		TypeMember(Active);
+	}
+
+	~MQ2MlogType() {}
+
+	bool GetMember(MQ2VARPTR VarPtr, PCHAR Member, PCHAR Index, MQ2TYPEVAR &Dest) {
+		PMQ2TYPEMEMBER pMember = MQ2MlogType::FindMember(Member);
+		if (!pMember)
+			return false;
+		switch ((MlogMembers)pMember->ID) {
+		case Active:
+			// add logic here
+			Dest.Int = bLog;
+			Dest.Type = pBoolType;
+			return true;
+		}
+		return false;
+	}
+
+	bool ToString(MQ2VARPTR VarPtr, PCHAR Destination) {
+		strcpy_s(Destination, MAX_STRING, "TRUE");
+		return true;
+	}
+
+	bool FromData(MQ2VARPTR &VarPtr, MQ2TYPEVAR &Source) {
+		return false;
+	}
+
+	bool FromString(MQ2VARPTR &VarPtr, PCHAR Source) {
+		return false;
+	}
+};
+BOOL dataMlog(PCHAR szName, MQ2TYPEVAR &Dest)
+{
+	Dest.DWord = 1;
+	Dest.Type = pMlogType;
+	return true;
+}
+
 PLUGIN_API VOID InitializePlugin(VOID)
 {
 	DebugSpewAlways("Initializing MQ2Log");
 	AddCommand("/mlog", LogCommand);
 	AddCommand("/mqlogclean", MacroLogClean);
 	AddCommand("/mqlogcustom", MacroLogCustom);
+	pMlogType = new MQ2MlogType;
+	AddMQ2Data("Mlog", dataMlog);
 }
 
 PLUGIN_API VOID ShutdownPlugin(VOID)
@@ -174,6 +244,13 @@ PLUGIN_API DWORD OnWriteChatColor(PCHAR Line, DWORD Color, DWORD Filter)
 {
 	if (!bLog || !bInit) return 0;
 
+	if (bWait) {
+		if (strstr(Line, "MQ2Log Marker!")) {
+			bLog = false;
+			bWait = false;
+			return 0;
+		}
+	}
 	FILE* fOut = NULL;
 	CHAR* szBuffer = new char[MAX_STRING];
 
@@ -200,7 +277,7 @@ PLUGIN_API DWORD OnWriteChatColor(PCHAR Line, DWORD Color, DWORD Filter)
 			OutputDebugString(szBuffer);
 		}
 		delete szBuffer;
-		return 0;;
+		return 0;
 	}
 	char* tmpbuf = new char[128];
 	struct tm today = { 0 };
