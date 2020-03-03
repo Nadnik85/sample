@@ -89,7 +89,7 @@ bool MQ2TrophyType::GetMember(MQ2VARPTR VarPtr, char* Member, char* Index, MQ2TY
 		Dest.Float = MQ2Version;
 		Dest.Type = pFloatType;
 		return true;
-	case Matches: // this will return true/false if our equipped tradeskill trophy matches the world/enviro container we are in 
+	case Matches: // this will return true/false if our equipped tradeskill trophy matches the world/enviro container we are in
 		Dest.DWord = bMatches;
 		Dest.Type = pBoolType;
 		return true;
@@ -216,7 +216,7 @@ PLUGIN_API void ShutdownPlugin()
 	delete pTrophyType;
 }
 
-PLUGIN_API bool OnIncomingChat(const char* pLine, unsigned long Color)
+PLUGIN_API int OnIncomingChat(const char* pLine, unsigned long Color)
 {
 	if (!strncmp(pLine, "Your ", 5) && strstr(pLine, " Trophy has evolved!")) { // update Trophies
 		UpdateTrophies();
@@ -308,14 +308,14 @@ PLUGIN_API void OnZoned()
 	iStep = 1;
 }
 
-void PluginOn() 
+void PluginOn()
 {
 	if (!bActivated) bActivated = true;
 	UpdateTrophies();
 	bSilent = true;
 }
 
-void UpdateTrophies() 
+void UpdateTrophies()
 {
 	//Alchemist Trophy
 	std::vector<std::string> itemList = {
@@ -457,7 +457,7 @@ void UpdateTrophies()
 
 }
 
-void UpdateTrophyGroup(CONTENTS** ppGroup, const std::vector<std::string>& itemList, const char* groupname) 
+void UpdateTrophyGroup(CONTENTS** ppGroup, const std::vector<std::string>& itemList, const char* groupname)
 {
 	for (const std::string& name : itemList) {
 		UpdateTrophy(ppGroup, name.c_str(), groupname);
@@ -465,7 +465,7 @@ void UpdateTrophyGroup(CONTENTS** ppGroup, const std::vector<std::string>& itemL
 	}
 }
 
-void UpdateTrophy(CONTENTS** ppTrophyVariable, const char* item, const char* Typename) 
+void UpdateTrophy(CONTENTS** ppTrophyVariable, const char* item, const char* Typename)
 {
 	if (!InGame()) return;
 
@@ -479,7 +479,7 @@ void UpdateTrophy(CONTENTS** ppTrophyVariable, const char* item, const char* Typ
 	}
 }
 
-bool WorldContainerCheck() 
+bool WorldContainerCheck()
 {
 	if (CContainerMgr* pWnd = pContainerMgr) {
 		PCONTENTS thiscontaineritem = pWnd->pWorldContainer.pObject;
@@ -497,7 +497,7 @@ bool WorldContainerCheck()
 	return containerfound;
 }
 
-void SwapSlot(CONTENTS** ppTrophy, const char* pSlot) 
+void SwapSlot(CONTENTS** ppTrophy, const char* pSlot)
 { // slot ammo = ammo; slot mainhand = Primary
 	if (*ppTrophy) {
 		ITEMINFO* pItem = GetItemFromContents(*ppTrophy);
@@ -526,7 +526,7 @@ void SwapSlot(CONTENTS** ppTrophy, const char* pSlot)
 	}
 }
 
-CONTENTS* Cursor() 
+CONTENTS* Cursor()
 {
 	PCHARINFO2 pChar2 = GetCharInfo2();
 	if (pChar2 && pChar2->pInventoryArray && pChar2->pInventoryArray->Inventory.Cursor) {
@@ -535,7 +535,7 @@ CONTENTS* Cursor()
 	return nullptr;
 }
 
-CONTENTS* FindSlotCurrent(const char* pSlot) 
+CONTENTS* FindSlotCurrent(const char* pSlot)
 {
 	PCHARINFO2 pChar2 = GetCharInfo2();
 	if (strstr(pSlot, "ammo")) {
@@ -547,7 +547,7 @@ CONTENTS* FindSlotCurrent(const char* pSlot)
 	return nullptr;
 }
 
-inline bool InGame() 
+inline bool InGame()
 {
 	return(GetGameState() == GAMESTATE_INGAME && GetCharInfo() && GetCharInfo()->pSpawn && GetCharInfo2());
 }
