@@ -6,7 +6,6 @@
 		and then when you leave the environmental window, it will swap back to what you already had equipped.
 **/
 #include "../MQ2Plugin.h"
-#include "TrophyType.h"
 
 PreSetup("MQ2TSTrophy");
 PLUGIN_VERSION(2.1);
@@ -44,6 +43,177 @@ char szContainerName[128] = { 0 };
 int iStep = 1;
 int iPulse = 0;
 
+class MQ2TrophyType : public MQ2Type
+{
+public:
+	enum TrophyMembers
+	{
+		Version = 1,
+		Matches = 2,
+		Alchemy = 3,
+		Baking = 4,
+		Brewing = 5,
+		Fletching = 6,
+		Jewelry = 7,
+		Tinkering = 8,
+		Pottery = 9,
+		Research = 10,
+		Blacksmithing = 11,
+		Tailoring = 12,
+		Poison = 13,
+		Fishing = 14,
+		Container = 15,
+	};
+
+	MQ2TrophyType() : MQ2Type("Trophy") {
+		TypeMember(Version); // 1,Float
+		TypeMember(Matches); // 2, bool
+		TypeMember(Alchemy); // 3, string
+		TypeMember(Baking); // 4, string
+		TypeMember(Brewing); // 5, string
+		TypeMember(Fletching); // 6, string
+		TypeMember(Jewelry); // 7, string
+		TypeMember(Tinkering); // 8, string
+		TypeMember(Pottery); // 9, string
+		TypeMember(Research); // 10, string
+		TypeMember(Blacksmithing); // 11, string
+		TypeMember(Tailoring); // 12, string
+		TypeMember(Poison); // 13, string
+		TypeMember(Fishing); // 14, string
+		TypeMember(Container); // 15, bool
+	};
+
+	~MQ2TrophyType()
+	{
+	}
+
+	bool GetMember(MQ2VARPTR VarPtr, char* Member, char* Index, MQ2TYPEVAR& Dest)
+	{
+		PMQ2TYPEMEMBER pMember = MQ2TrophyType::FindMember(Member);
+		if (!pMember)
+			return false;
+		if (!pLocalPlayer)
+			return false;
+		switch ((TrophyMembers)pMember->ID)
+		{
+		case Version:
+			Dest.Float = MQ2Version;
+			Dest.Type = pFloatType;
+			return true;
+		case Matches: // this will return true/false if our equipped tradeskill trophy matches the world/enviro container we are in
+			Dest.DWord = bMatches;
+			Dest.Type = pBoolType;
+			return true;
+		case Alchemy:
+			if (AlchemistTrophy) {
+				Dest.Ptr = GetItemFromContents(AlchemistTrophy)->Name;
+				Dest.Type = pStringType;
+				return true;
+			}
+			return false;
+		case Baking:
+			if (BakingTrophy) {
+				Dest.Ptr = GetItemFromContents(BakingTrophy)->Name;
+				Dest.Type = pStringType;
+				return true;
+			}
+			return false;
+		case Brewing:
+			if (BrewingTrophy) {
+				Dest.Ptr = GetItemFromContents(BrewingTrophy)->Name;
+				Dest.Type = pStringType;
+				return true;
+			}
+			return false;
+		case Fletching:
+			if (FletchingTrophy) {
+				Dest.Ptr = GetItemFromContents(FletchingTrophy)->Name;
+				Dest.Type = pStringType;
+				return true;
+			}
+			return false;
+		case Jewelry:
+			if (JewelerTrophy) {
+				Dest.Ptr = GetItemFromContents(JewelerTrophy)->Name;
+				Dest.Type = pStringType;
+				return true;
+			}
+			return false;
+		case Tinkering:
+			if (TinkeringTrophy) {
+				Dest.Ptr = GetItemFromContents(TinkeringTrophy)->Name;
+				Dest.Type = pStringType;
+				return true;
+			}
+			return false;
+		case Pottery:
+			if (PotteryTrophy) {
+				Dest.Ptr = GetItemFromContents(PotteryTrophy)->Name;
+				Dest.Type = pStringType;
+				return true;
+			}
+			return false;
+		case Research:
+			if (ResearchTrophy) {
+				Dest.Ptr = GetItemFromContents(ResearchTrophy)->Name;
+				Dest.Type = pStringType;
+				return true;
+			}
+			return false;
+		case Blacksmithing:
+			if (BlacksmithTrophy) {
+				Dest.Ptr = GetItemFromContents(BlacksmithTrophy)->Name;
+				Dest.Type = pStringType;
+				return true;
+			}
+			return false;
+		case Tailoring:
+			if (TailorTrophy) {
+				Dest.Ptr = GetItemFromContents(TailorTrophy)->Name;
+				Dest.Type = pStringType;
+				return true;
+			}
+			return false;
+		case Poison:
+			if (PoisonTrophy) {
+				Dest.Ptr = GetItemFromContents(PoisonTrophy)->Name;
+				Dest.Type = pStringType;
+				return true;
+			}
+			return false;
+		case Fishing:
+			if (FishingTrophy) {
+				Dest.Ptr = GetItemFromContents(FishingTrophy)->Name;
+				Dest.Type = pStringType;
+				return true;
+			}
+			return false;
+		case Container: // this returns true/false if we see a world/enviro tradeskill container
+			Dest.DWord = containerfound;
+			Dest.Type = pBoolType;
+			return true;
+		default:
+			return false;
+			break;
+		}
+	}
+
+	bool ToString(MQ2VARPTR VarPtr, char* Destination)
+	{
+		return true;
+	}
+
+	bool FromData(MQ2VARPTR& VarPtr, MQ2TYPEVAR& Source)
+	{
+		return false;
+	}
+
+	bool FromString(MQ2VARPTR& VarPtr, char* Source)
+	{
+		return false;
+	}
+};
+
 MQ2TrophyType* pTrophyType = nullptr;
 
 BOOL TrophyData(char* szIndex, MQ2TYPEVAR& Dest)
@@ -51,155 +221,6 @@ BOOL TrophyData(char* szIndex, MQ2TYPEVAR& Dest)
 	Dest.DWord = 1;
 	Dest.Type = pTrophyType;
 	return true;
-}
-
-MQ2TrophyType::MQ2TrophyType() : MQ2Type("Trophy")
-{
-	TypeMember(Version); //1,Float
-	TypeMember(Matches); // 2, bool
-	TypeMember(Alchemy); // 3, string
-	TypeMember(Baking); // 4, string
-	TypeMember(Brewing); // 5, string
-	TypeMember(Fletching); // 6, string
-	TypeMember(Jewelry); // 7, string
-	TypeMember(Tinkering); // 8, string
-	TypeMember(Pottery); // 9, string
-	TypeMember(Research); // 10, string
-	TypeMember(Blacksmithing); // 11, string
-	TypeMember(Tailoring); // 12, string
-	TypeMember(Poison); // 13, string
-	TypeMember(Fishing); // 14, string
-	TypeMember(Container); // 15, bool
-};
-
-MQ2TrophyType::~MQ2TrophyType()
-{
-}
-
-bool MQ2TrophyType::GetMember(MQ2VARPTR VarPtr, char* Member, char* Index, MQ2TYPEVAR& Dest)
-{
-	PMQ2TYPEMEMBER pMember = MQ2TrophyType::FindMember(Member);
-	if (!pMember)
-		return false;
-	if (!pLocalPlayer)
-		return false;
-	switch ((TrophyMembers)pMember->ID)
-	{
-	case Version:
-		Dest.Float = MQ2Version;
-		Dest.Type = pFloatType;
-		return true;
-	case Matches: // this will return true/false if our equipped tradeskill trophy matches the world/enviro container we are in
-		Dest.DWord = bMatches;
-		Dest.Type = pBoolType;
-		return true;
-	case Alchemy:
-		if (AlchemistTrophy) {
-			Dest.Ptr = GetItemFromContents(AlchemistTrophy)->Name;
-			Dest.Type = pStringType;
-			return true;
-		}
-		return false;
-	case Baking:
-		if (BakingTrophy) {
-			Dest.Ptr = GetItemFromContents(BakingTrophy)->Name;
-			Dest.Type = pStringType;
-			return true;
-		}
-		return false;
-	case Brewing:
-		if (BrewingTrophy) {
-			Dest.Ptr = GetItemFromContents(BrewingTrophy)->Name;
-			Dest.Type = pStringType;
-			return true;
-		}
-		return false;
-	case Fletching:
-		if (FletchingTrophy) {
-			Dest.Ptr = GetItemFromContents(FletchingTrophy)->Name;
-			Dest.Type = pStringType;
-			return true;
-		}
-		return false;
-	case Jewelry:
-		if (JewelerTrophy) {
-			Dest.Ptr = GetItemFromContents(JewelerTrophy)->Name;
-			Dest.Type = pStringType;
-			return true;
-		}
-		return false;
-	case Tinkering:
-		if (TinkeringTrophy) {
-			Dest.Ptr = GetItemFromContents(TinkeringTrophy)->Name;
-			Dest.Type = pStringType;
-			return true;
-		}
-		return false;
-	case Pottery:
-		if (PotteryTrophy) {
-			Dest.Ptr = GetItemFromContents(PotteryTrophy)->Name;
-			Dest.Type = pStringType;
-			return true;
-		}
-		return false;
-	case Research:
-		if (ResearchTrophy) {
-			Dest.Ptr = GetItemFromContents(ResearchTrophy)->Name;
-			Dest.Type = pStringType;
-			return true;
-		}
-		return false;
-	case Blacksmithing:
-		if (BlacksmithTrophy) {
-			Dest.Ptr = GetItemFromContents(BlacksmithTrophy)->Name;
-			Dest.Type = pStringType;
-			return true;
-		}
-		return false;
-	case Tailoring:
-		if (TailorTrophy) {
-			Dest.Ptr = GetItemFromContents(TailorTrophy)->Name;
-			Dest.Type = pStringType;
-			return true;
-		}
-		return false;
-	case Poison:
-		if (PoisonTrophy) {
-			Dest.Ptr = GetItemFromContents(PoisonTrophy)->Name;
-			Dest.Type = pStringType;
-			return true;
-		}
-		return false;
-	case Fishing:
-		if (FishingTrophy) {
-			Dest.Ptr = GetItemFromContents(FishingTrophy)->Name;
-			Dest.Type = pStringType;
-			return true;
-		}
-		return false;
-	case Container: // this returns true/false if we see a world/enviro tradeskill container
-		Dest.DWord = containerfound;
-		Dest.Type = pBoolType;
-		return true;
-	default:
-		return false;
-		break;
-	}
-}
-
-bool MQ2TrophyType::ToString(MQ2VARPTR VarPtr, char* Destination)
-{
-	return true;
-}
-
-bool MQ2TrophyType::FromData(MQ2VARPTR& VarPtr, MQ2TYPEVAR& Source)
-{
-	return false;
-}
-
-bool MQ2TrophyType::FromString(MQ2VARPTR& VarPtr, char* Source)
-{
-	return false;
 }
 
 PLUGIN_API void InitializePlugin()
@@ -221,7 +242,7 @@ PLUGIN_API int OnIncomingChat(const char* pLine, unsigned long Color)
 	if (!strncmp(pLine, "Your ", 5) && strstr(pLine, " Trophy has evolved!")) { // update Trophies
 		UpdateTrophies();
 	}
-	return false;
+	return 0;
 }
 
 PLUGIN_API void OnPulse()
