@@ -22,7 +22,7 @@
 		<ScreenID>Zerker_Tab</ScreenID>
 		<RelativePosition>false</RelativePosition>
 		<DrawTemplate>WDT_Def</DrawTemplate>
-		<TabText>Zerker</TabText>
+		<TabText>Plugin Output</TabText>
 		<TabTextColor>
 			<R>255</R>
 			<G>255</G>
