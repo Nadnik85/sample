@@ -314,7 +314,7 @@ void CDPSAdvWnd::SetTotal(int LineNum, DPSMob* Mob) {
 	//Total
 	sprintf_s(szTemp, "%llu", CurListMob->Damage.Total);
 	if (!UseTBMKOutputs)
-		PutCommas(szTemp);
+		PutCommas(szTemp, 2048);
 	else {
 		MakeItTBMK(szTemp);
 		//Need to turn the strings from like 125556 to 125.5k
@@ -323,7 +323,7 @@ void CDPSAdvWnd::SetTotal(int LineNum, DPSMob* Mob) {
 	//DPS
 	sprintf_s(szTemp, "%llu", CurListMob->Damage.Total / (int)((CurListMob->Damage.Last - CurListMob->Damage.First) + 1));
 	if (!UseTBMKOutputs)
-		PutCommas(szTemp);
+		PutCommas(szTemp, 2048);
 	else {
 		MakeItTBMK(szTemp);
 		//Need to turn the strings from like 125556 to 125.5k
@@ -335,26 +335,27 @@ void CDPSAdvWnd::SetTotal(int LineNum, DPSMob* Mob) {
 	//This is where Percentage would go, if it wasn't always going to be 100%, if more columns are added, make sure to skip 5!
 }
 
-void ReverseString(PCHAR szLine) {
-	std::string temp2 = szLine;
-	std::reverse(temp2.rbegin(), temp2.rend());
-	sprintf_s(szLine, MAX_STRING, temp2.c_str());
-}
-
-void PutCommas(PCHAR szLine) {
-	ReverseString(szLine);
-	unsigned int j = 0;
-	char temp[MAX_STRING] = { 0 };
-	for (unsigned int i = 0; i < strlen(szLine) + 1; i++) {
-		if (i % 3 == 0 && i != 0 && i != strlen(szLine)) {
-			temp[j] = ',';
-			j++;
+// Given a string of purely digits, add thousands separators
+void PutCommas(char* szLine, size_t bufferSize)
+{
+	size_t length = strlen(szLine);
+	if (length <= 3)
+		return;
+	size_t paddedLength = length + ((length - 1) / 3);
+	if (paddedLength > bufferSize)
+		return;
+	int count = 0;
+	szLine[paddedLength] = 0;
+	while (paddedLength != 0 && length != 0)
+	{
+		if (count == 3)
+		{
+			count = 0;
+			szLine[--paddedLength] = ',';
 		}
-		temp[j] = szLine[i];
-		j++;
+		szLine[--paddedLength] = szLine[--length];
+		count++;
 	}
-	sprintf_s(szLine, MAX_STRING, temp);
-	ReverseString(szLine);
 }
 
 void MakeItTBMK(PCHAR szLine) {
@@ -441,7 +442,7 @@ void CDPSAdvWnd::DrawList(bool DoDead) {
 		//Total Damage
 		sprintf_s(szTemp, "%llu", Ent->Damage.Total);
 		if (!UseTBMKOutputs)
-			PutCommas(szTemp);
+			PutCommas(szTemp, 2048);
 		else {
 			MakeItTBMK(szTemp);
 			//Need to turn the strings from like 125556 to 125.5k
@@ -452,7 +453,7 @@ void CDPSAdvWnd::DrawList(bool DoDead) {
 		char DPSoutput[MAX_STRING] = { 0 };
 		sprintf_s(DPSoutput, "%llu", Ent->GetDPS());
 		if (!UseTBMKOutputs)
-			PutCommas(DPSoutput);
+			PutCommas(DPSoutput, 2048);
 		else {
 			MakeItTBMK(DPSoutput);
 			//Need to turn the strings from like 125556 to 125.5k
@@ -462,7 +463,7 @@ void CDPSAdvWnd::DrawList(bool DoDead) {
 		char SDPSoutput[MAX_STRING] = { 0 };
 		sprintf_s(SDPSoutput, "%llu", Ent->GetSDPS());
 		if (!UseTBMKOutputs)
-			PutCommas(SDPSoutput);
+			PutCommas(SDPSoutput, 2048);
 		else {
 			MakeItTBMK(SDPSoutput);
 			//Need to turn the strings from like 125556 to 125.5k
@@ -1009,11 +1010,11 @@ template <unsigned int _EntSize, unsigned int _MobSize>bool SplitStringDOT(PCHAR
 	return true;
 }
 
-void AddMyDamage(char EntName[256], int Damage1) {
+void AddMyDamage(char* EntName, int Damage1) {
 	//if Me Do this
 	uint64_t MyTotalBefore = MyTotal;
 	uint64_t MyPetTotalBefore = MyPetTotal;
-	flag1 = 0;
+	int flag1 = 0;
 	if ((!_stricmp(MyName, EntName) || !_stricmp(EntName, "You"))
 		|| (strstr(EntName, "`s pet") && strstr(EntName, MyName))) {
 		if (MyDebug) WriteChatf("[AddMyDamage] 1 -%s-", EntName);
@@ -1181,7 +1182,7 @@ void DPSAdvCmd(PSPAWNINFO pChar, PCHAR szLine) {
 		MyDebug = MyDebug ? false : true;
 		WriteChatf("MyDebug is now: %s", MyDebug ? "\agOn" : "\arOff");
 	}
-	else if (!_stricmp(Arg1, "mstart")) {
+	else if (!_stricmp(Arg1, "MyStart")) {
 		MyFirst = 0;
 		MyLast = 0;
 		MyTime = 0;
@@ -1192,17 +1193,17 @@ void DPSAdvCmd(PSPAWNINFO pChar, PCHAR szLine) {
 		TotalDPSValue = 0;
 		MyActive = true;
 	}
-	else if (!_stricmp(Arg1, "mstop")) {
+	else if (!_stricmp(Arg1, "MyStop")) {
 		if (MyActive) {
 			MyLast = time(nullptr);
 			MyActive = false;
 			MyTime = (MyLast - MyFirst);
-			MyDPSValue = MyTime ? (unsigned int)(MyTotal / MyTime) : (unsigned int)MyTotal;
-			MyPetDPS = MyTime ? (unsigned int)(MyPetTotal / MyTime) : (unsigned int)MyPetTotal;
-			TotalDPSValue = MyTime ? (unsigned int)((MyTotal + MyPetTotal) / MyTime) : (unsigned int)(MyTotal + MyPetTotal);
+			MyDPSValue = MyTime ? (float)MyTotal / MyTime : MyTotal;
+			MyPetDPS = MyTime ? (float)MyPetTotal / MyTime : MyPetTotal;
+			TotalDPSValue = MyTime ? (float)(MyTotal + MyPetTotal) / MyTime : MyTotal + MyPetTotal;
 		}
 	}
-	else if (!_stricmp(Arg1, "mreset")) {
+	else if (!_stricmp(Arg1, "MyReset")) {
 		MyActive = false;
 		MyFirst = 0;
 		MyLast = 0;
@@ -1215,9 +1216,6 @@ void DPSAdvCmd(PSPAWNINFO pChar, PCHAR szLine) {
 	}
 	else if (!_stricmp(Arg1, "tlo")) {
 		DisplayHelp("tlo");
-	}
-	else if (!_stricmp(Arg1, "help")) {
-		DisplayHelp("dps");
 	}
 	else {
 		DisplayHelp("dps");
@@ -1236,9 +1234,9 @@ void DisplayHelp(PCHAR hTemp) {
 		WriteChatf("[DPSAdv]     copy - Copy the DPS window.");
 		WriteChatf("[DPSAdv]     debug - Toggles on/off debug messages.");
 		WriteChatf("[DPSAdv]     mydebug - Toggles on/off myDPS debug messages");
-		WriteChatf("[DPSAdv]     mstart - Starts My DPS capture process.");
-		WriteChatf("[DPSAdv]     mstop - Stops my DPS capture process");
-		WriteChatf("[DPSAdv]     mreset - Truns off my DPS capture and set myDPS totals to zero.");
+		WriteChatf("[DPSAdv]     mystart - Starts My DPS capture process.");
+		WriteChatf("[DPSAdv]     mystop - Stops my DPS capture process");
+		WriteChatf("[DPSAdv]     myreset - Turns off my DPS capture and set myDPS totals to zero.");
 		WriteChatf("[DPSAdv]     tlo - get a list of the DPSAdv TLO members.");
 	}
 	else if (!_stricmp(hTemp, "tlo")) {
@@ -1250,12 +1248,6 @@ void DisplayHelp(PCHAR hTemp) {
 		WriteChatf("[DPSAdv]    PetDPS - My pet DPS as a number");
 		WriteChatf("[DPSAdv]    TotalDPS - My DPS and pet DPS together as a number");
 		WriteChatf("[DPSAdv]    TimeElapsed - Number in seconds of time of fight");
-		WriteChatf("[DPSAdv]    MyDamagef - My Damage formated with commas as a string.");
-		WriteChatf("[DPSAdv]    PetDamagef - My pet Damage formated with commas as a string.");
-		WriteChatf("[DPSAdv]    TotalDamagef - My Damage and Pet Damage together formated with commas as a string.");
-		WriteChatf("[DPSAdv]    MyDPSf - My DPS formated with commas as a string.");
-		WriteChatf("[DPSAdv]    PetDPSf - My pet DPS formated with commas as a string.");
-		WriteChatf("[DPSAdv]    TotalDPSf - My DPS and pet DPS formated with commas as a string.");
 	}
 }
 
@@ -1296,45 +1288,28 @@ PLUGIN_API VOID OnReloadUI(VOID) { if (gGameState == GAMESTATE_INGAME && pCharSp
 // Adding TLO for DPS Meter
 // ***********************************************************************************************************
 
-class MQ2DPSAdvType *pDpsAdvType = 0;
-
 class MQ2DPSAdvType : public MQ2Type
 {
-private:
-	char Temps[MAX_STRING];
-bool addComma = false;
 public:
 	enum DpsAdvMembers {
-		MyDamagef = 1,
-		MyDamage = 2,
-		PetDamagef = 3,
-		PetDamage = 4,
-		TotalDamagef = 5,
-		TotalDamage = 6,
-		MyDPSf = 7,
-		MyDPS = 8,
-		PetDPSf = 9,
-		PetDPS = 10,
-		TotalDPSf = 11,
-		TotalDPS = 12,
-		TimeElapsed = 13,
-		MyStatus = 14,
-		MyPetID = 15
+		MyDamage = 1,
+		PetDamage,
+		TotalDamage,
+		MyDPS,
+		PetDPS,
+		TotalDPS,
+		TimeElapsed,
+		MyStatus,
+		MyPetID
 	};
 
 	MQ2DPSAdvType() :MQ2Type("DPSAdv")
 	{
-		TypeMember(MyDamagef);
 		TypeMember(MyDamage);
-		TypeMember(PetDamagef);
 		TypeMember(PetDamage);
-		TypeMember(TotalDamagef);
 		TypeMember(TotalDamage);
-		TypeMember(MyDPSf);
 		TypeMember(MyDPS);
-		TypeMember(PetDPSf);
 		TypeMember(PetDPS);
-		TypeMember(TotalDPSf);
 		TypeMember(TotalDPS);
 		TypeMember(TimeElapsed);
 		TypeMember(MyStatus);
@@ -1345,57 +1320,34 @@ public:
 	{
 	}
 
-	bool GetMember(MQ2VARPTR VarPtr, PCHAR Member, PCHAR Index, MQ2TYPEVAR &Dest)
+	bool GetMember(MQ2VARPTR VarPtr, PCHAR Member, PCHAR Index, MQ2TYPEVAR& Dest) override
 	{
 		PMQ2TYPEMEMBER pMember = MQ2DPSAdvType::FindMember(Member);
 		if (!pMember)
 			return false;
-		addComma = false;
+
 		switch ((DpsAdvMembers)pMember->ID)
 		{
-		case MyDamagef:
-			if (MyTotal > 999) {
-				sprintf_s(Temps, "%lu", MyTotal);
-				PutCommas(Temps);
-				Dest.Ptr = Temps;
-				Dest.Type = pStringType;
-				return true;
-			}
 		case MyDamage:
  		    Dest.Int64 = MyTotal;
 			Dest.Type = pInt64Type;
 			return true;
-		case PetDamagef:
-			if (MyPetTotal > 999) {
-				sprintf_s(Temps, "%lu", MyPetTotal);
-				PutCommas(Temps);
-				Dest.Ptr = Temps;
-				Dest.Type = pStringType;
-				return true;
-			}
+
 		case PetDamage:
 			Dest.Int64 = MyPetTotal;
 			Dest.Type = pInt64Type;
 			return true;
-		case TotalDamagef:
-			if (MyTotal + MyPetTotal > 999) {
-				sprintf_s(Temps, "%lu", MyTotal + MyPetTotal);
-				PutCommas(Temps);
-				Dest.Ptr = Temps;
-				Dest.Type = pStringType;
-				return true;
-			}
+
 		case TotalDamage:
 			Dest.Int64 = MyTotal + MyPetTotal;
 			Dest.Type = pInt64Type;
 			return true;
-		case MyDPSf:
-			addComma = true;
+
 		case MyDPS:
 			if (MyActive) {
 				if (MyTotal > 0 && MyFirst > 0) {
 					MyTime = time(nullptr) - MyFirst;
-					MyDPSValue = MyTime ? (unsigned int)(MyTotal / MyTime) : (unsigned int)MyTotal;
+					MyDPSValue = MyTime ? (float)MyTotal / MyTime : MyTotal;
 				}
 				else {
 					MyTime = 0;
@@ -1405,7 +1357,7 @@ public:
 			else {
 				if (MyTotal > 0 && MyFirst > 0 && MyLast > 0) {
 					MyTime = MyLast - MyFirst;
-					MyDPSValue = MyTime ? (unsigned int)(MyTotal / MyTime) : (unsigned int)MyTotal;
+					MyDPSValue = MyTime ? (float)MyTotal / MyTime : MyTotal;
 				}
 				else {
 					MyTime = 0;
@@ -1413,24 +1365,16 @@ public:
 				}
 
 			}
-			if (addComma && MyDPSValue > 999) {
-				sprintf_s(Temps, "%I32u", MyDPSValue);
-				PutCommas(Temps);
-				Dest.Ptr = Temps;
-				Dest.Type = pStringType;
-			}
-			else {
-				Dest.Int = MyDPSValue;
-				Dest.Type = pIntType;
-			}
+
+			Dest.Float = MyDPSValue;
+			Dest.Type = pFloatType;
 			return true;
-		case PetDPSf:
-			addComma = true;
+
 		case PetDPS:
 			if (MyActive) {
 				if (MyPetTotal > 0 && MyFirst > 0) {
 					MyTime = time(nullptr) - MyFirst;
-					MyPetDPS = MyTime ? (unsigned int)(MyPetTotal / MyTime) : (unsigned int)MyPetTotal;
+					MyPetDPS = MyTime ? (float)MyPetTotal / MyTime : MyPetTotal;
 				}
 				else {
 					MyTime = 0;
@@ -1440,31 +1384,23 @@ public:
 			else {
 				if (MyPetTotal > 0 && MyFirst > 0 && MyLast > 0) {
 					MyTime = MyLast - MyFirst;
-					MyPetDPS = MyTime ? (unsigned int)(MyPetTotal / MyTime) : (unsigned int)MyPetTotal;
+					MyPetDPS = MyTime ? (float)MyPetTotal / MyTime : MyPetTotal;
 				}
 				else {
 					MyTime = 0;
 					MyPetDPS = 0;
 				}
 			}
-			if (addComma && MyPetDPS > 999) {
-				sprintf_s(Temps, "%I32u", MyPetDPS);
-				PutCommas(Temps);
-				Dest.Ptr = Temps;
-				Dest.Type = pStringType;
-			}
-			else {
-				Dest.Int = MyPetDPS;
-				Dest.Type = pIntType;
-			}
+
+			Dest.Float = MyPetDPS;
+			Dest.Type = pFloatType;
 			return true;
-		case TotalDPSf:
-			addComma = true;
+
 		case TotalDPS:
 			if (MyActive) {
 				if (MyTotal > 0 && MyFirst > 0) {
 					MyTime = time(nullptr) - MyFirst;
-					TotalDPSValue = MyTime ? (unsigned int)((MyTotal + MyPetTotal) / MyTime) : (unsigned int)(MyTotal + MyPetTotal);
+					TotalDPSValue = MyTime ? (float)(MyTotal + MyPetTotal) / MyTime : MyTotal + MyPetTotal;
 				}
 				else {
 					MyTime = 0;
@@ -1474,24 +1410,18 @@ public:
 			else {
 				if (MyTotal > 0 && MyFirst > 0 && MyLast > 0) {
 					MyTime = MyLast - MyFirst;
-					TotalDPSValue = MyTime ? (unsigned int)((MyTotal + MyPetTotal) / MyTime) : (unsigned int)(MyTotal + MyPetTotal);
+					TotalDPSValue = MyTime ? (float)(MyTotal + MyPetTotal) / MyTime : MyTotal + MyPetTotal;
 				}
 				else {
 					MyTime = 0;
 					TotalDPSValue = 0;
 				}
 			}
-			if (addComma && TotalDPSValue > 999) {
-				sprintf_s(Temps, "%I32u", TotalDPSValue);
-				PutCommas(Temps);
-				Dest.Ptr = Temps;
-				Dest.Type = pStringType;
-			}
-			else {
-				Dest.Int = TotalDPSValue;
-				Dest.Type = pIntType;
-			}
+
+			Dest.Float = TotalDPSValue;
+			Dest.Type = pFloatType;
 			return true;
+
 		case TimeElapsed:
 			if (MyActive) {
 				if (MyFirst) {
@@ -1507,9 +1437,10 @@ public:
 			else {
 				MyTime = 0;
 			}
-			Dest.Int = (int)MyTime;
-			Dest.Type = pIntType;
+			Dest.UInt64 = static_cast<uint64_t>(MyTime);
+			Dest.Type = pTimeStampType;
 			return true;
+
 		case MyStatus:
 			if (MyActive) {
 				Dest.Int = 1;
@@ -1520,6 +1451,7 @@ public:
 			Dest.Type = pIntType;
 
 			return true;
+
 		case MyPetID:
 			PSPAWNINFO pSpawn = GetCharInfo()->pSpawn;
 			if (pSpawn && pSpawn->PetID != -1)
@@ -1537,21 +1469,25 @@ public:
 		return false;
 	}
 
-	bool ToString(MQ2VARPTR VarPtr, PCHAR Destination)
+	bool ToString(MQ2VARPTR VarPtr, PCHAR Destination) override
 	{
 		strcpy_s(Destination, MAX_STRING, Active ? "TRUE" : "FALSE");
 		return true;
 	}
 
-	bool FromData(MQ2VARPTR &VarPtr, MQ2TYPEVAR &Source)
+	bool FromData(MQ2VARPTR& VarPtr, MQ2TYPEVAR& Source) override
 	{
 		return false;
 	}
-	bool FromString(MQ2VARPTR &VarPtr, PCHAR Source)
+
+	bool FromString(MQ2VARPTR& VarPtr, PCHAR Source) override
 	{
 		return false;
 	}
 };
+
+MQ2DPSAdvType* pDpsAdvType = nullptr;
+
 
 BOOL dataDPSAdv(PCHAR szName, MQ2TYPEVAR &Dest)
 {
