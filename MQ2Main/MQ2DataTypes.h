@@ -111,7 +111,6 @@ public:
 		return true;
 	}
 };
-
 class MQ2IntType : public MQ2Type
 {
 public:
@@ -123,10 +122,8 @@ public:
 		Reverse = 4,
 		LowPart = 5,
 		HighPart = 6,
-		Prettify = 7,
 	};
-
-	MQ2IntType() : MQ2Type("int")
+	MQ2IntType() :MQ2Type("int")
 	{
 		TypeMember(Float);
 		TypeMember(Double);
@@ -134,7 +131,6 @@ public:
 		TypeMember(Reverse);
 		TypeMember(LowPart);
 		TypeMember(HighPart);
-		TypeMember(Prettify);
 	}
 
 	~MQ2IntType()
@@ -172,7 +168,6 @@ public:
 		Reverse = 4,
 		LowPart = 5,
 		HighPart = 6,
-		Prettify = 7,
 	};
 	MQ2Int64Type() :MQ2Type("int64")
 	{
@@ -182,7 +177,6 @@ public:
 		TypeMember(Reverse);
 		TypeMember(LowPart);
 		TypeMember(HighPart);
-		TypeMember(Prettify);
 	}
 
 	~MQ2Int64Type()
@@ -208,8 +202,8 @@ public:
 		return true;
 	}
 };
-#endif
 
+#endif
 class MQ2ArgbType : public MQ2Type
 {
 public:
@@ -234,6 +228,7 @@ public:
 	{
 	}
 
+
 	bool GETMEMBER();
 
 	bool ToString(MQ2VARPTR VarPtr, PCHAR Destination)
@@ -254,7 +249,6 @@ public:
 		return false;
 	}
 };
-
 #ifndef ISXEQ
 class MQ2ByteType : public MQ2Type
 {
@@ -289,7 +283,6 @@ public:
 		return true;
 	}
 };
-
 class MQ2StringType : public MQ2Type
 {
 public:
@@ -338,7 +331,6 @@ public:
 	~MQ2StringType()
 	{
 	}
-
 	bool MQ2StringType::GETMEMBER();
 	bool ToString(MQ2VARPTR VarPtr, PCHAR Destination)
 	{
@@ -367,7 +359,6 @@ public:
 		return true;
 	}
 };
-
 class MQ2FloatType : public MQ2Type
 {
 public:
@@ -379,10 +370,9 @@ public:
 		Int = 4,
 		Precision = 5,
 		Raw = 6,
-		Prettify = 7,
 	};
 
-	MQ2FloatType() : MQ2Type("float")
+	MQ2FloatType() :MQ2Type("float")
 	{
 		TypeMember(Deci);
 		TypeMember(Centi);
@@ -390,7 +380,6 @@ public:
 		TypeMember(Int);
 		TypeMember(Precision);
 		TypeMember(Raw);
-		TypeMember(Prettify);
 	}
 
 	~MQ2FloatType()
@@ -418,7 +407,6 @@ public:
 		return true;
 	}
 };
-
 class MQ2DoubleType : public MQ2Type
 {
 public:
@@ -429,7 +417,6 @@ public:
 		Milli = 3,
 		Int = 4,
 		Precision = 5,
-		Prettify = 6,
 	};
 
 	MQ2DoubleType() :MQ2Type("double")
@@ -439,7 +426,6 @@ public:
 		TypeMember(Milli);
 		TypeMember(Int);
 		TypeMember(Precision);
-		TypeMember(Prettify);
 	}
 
 	~MQ2DoubleType()
