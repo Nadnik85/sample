@@ -48,6 +48,7 @@ int FightDead;
 bool Saved;
 bool WarnedYHO, WarnedOHO;
 bool Debug;
+bool MyDebug;
 bool Active;
 bool Zoning;
 bool WrongUI;
@@ -62,8 +63,22 @@ int FightTO;//Fight Timeout.
 int EntTO;//Entity Timeout.
 bool UseTBMKOutputs = false;//Intended to show 1.4t, 1.5m, 343k etc outputs for total and DPS.
 
+//----------------------------------------------------------------------------
+// new below here for current character DPS totals, this does NOT show up in the DPS Window.
+char MyName[64];
+uint64_t MyTotal;
+uint64_t MyPetTotal;
+float MyDPSValue;
+float MyPetDPS;
+float TotalDPSValue;
+bool MyActive; // This is to turn on and off the DPS accumlator for just yourself.
+time_t MyFirst;
+time_t MyLast;
+uint64_t MyTime;
+//----------------------------------------------------------------------------
+
 struct EntDamage {
-	unsigned long long Total;
+	uint64_t Total;
 	time_t First;
 	time_t Last;
 	int AddTime;
@@ -90,8 +105,9 @@ void TargetSwitch();
 void CheckActive();
 void DPSAdvCmd(PSPAWNINFO pChar, PCHAR szLine);
 void ReverseString(PCHAR szLine);
-void PutCommas(PCHAR szLine);
+void PutCommas(char* szLine, size_t bufferSize);
 void MakeItTBMK(PCHAR szLine);
+void DisplayHelp(PCHAR hTemp);
 #ifdef DPSDEV
 void         DPSTestCmd(PSPAWNINFO pChar, PCHAR szLine);
 #endif
@@ -116,9 +132,9 @@ public:
 		DPSEntry();
 		DPSEntry(char EntName[64], DPSMob* pParent);
 		void Init();
-		void AddDamage(int aDamage);
-		unsigned long long GetDPS();
-		unsigned long long GetSDPS();
+		void AddDamage(int Damage1);
+		uint64_t GetDPS();
+		uint64_t GetSDPS();
 		void Sort();
 		void GetSpawn();
 		bool CheckMaster();
@@ -140,7 +156,7 @@ public:
 	DPSMob();
 	DPSMob::DPSMob(PCHAR MobName, size_t MobLen);
 	void Init();
-	void AddDamage(int aDamage);
+	void AddDamage(int Damage1);
 	void GetSpawn();
 	bool IsPet();
 	DPSEntry* GetEntry(char EntName[64], bool Create = true);
@@ -186,4 +202,4 @@ public:
 	void SaveSetting(PCHAR Key, PCHAR Value, ...);
 
 };
-CDPSAdvWnd* DPSWnd = 0;
+CDPSAdvWnd* DPSWnd = nullptr;
