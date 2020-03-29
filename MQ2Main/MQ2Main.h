@@ -97,7 +97,7 @@ extern CRITICAL_SECTION gPluginCS;
 //we default to LIVE though...
 #else
 //define LIVE, TEST, EQBETA, ROF2EMU or UFEMU here depending on which eqgame you are building for. -eqmule sep 27 2014
-#define TEST
+#define LIVE
 #endif
 #if defined(LIVE)
 #include "eqgame.h"
@@ -838,6 +838,9 @@ std::string ModifyMacroString(const std::string &strOriginal, bool bParseOnce = 
 
 LEGACY_API BOOL Calculate(PCHAR szFormula, DOUBLE& Dest);
 
+// Given a string that contains a number, make the number "pretty" by adding things like
+// comma separators, or decimals.
+EQLIB_API void PrettifyNumber(char* string, size_t bufferSize, int decimals = 0);
 
 #ifndef ISXEQ
 #include "MQ2TopLevelObjects.h"
