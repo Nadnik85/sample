@@ -72,6 +72,7 @@ namespace MQ2Globals
 	EQLIB_VAR HANDLE ghCCommandLock;
 	EQLIB_VAR HANDLE ghVariableLock;
 	EQLIB_VAR HANDLE ghGetClassMemberLock;
+	EQLIB_VAR HANDLE ghCachedBuffsLock;
 	
 	EQLIB_VAR BOOL g_Loaded;
 	EQLIB_VAR DWORD ThreadID;
@@ -370,6 +371,7 @@ namespace MQ2Globals
 	EQLIB_VAR fEQCommand			cmdCast;
 	EQLIB_VAR fEQCommand			cmdUseItem;
 	EQLIB_VAR fEQCommand			cmdHotbutton;
+	EQLIB_VAR fEQCommand			cmdTaskQuit;
 	EQLIB_VAR fEQCommand			cmdPet;
 	EQLIB_VAR fEQCommand			cmdMercSwitch;
 	EQLIB_VAR fEQCommand			cmdAdvLoot;
@@ -1604,6 +1606,9 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD EQGroundItemListManager__Instance;
 	EQLIB_VAR DWORD EverQuestinfo__IsItemPending;
 	EQLIB_VAR DWORD CAAWnd__ShowAbility;
+	EQLIB_VAR DWORD CAAWnd__UpdateSelected;
+	EQLIB_VAR DWORD CAAWnd__Update;
+	EQLIB_VAR DWORD CXRect__operator_and;
 	
 	EQLIB_VAR DWORD ProfileManager__GetCurrentProfile;
 
@@ -1764,6 +1769,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD CTargetWnd__GetBuffCaster;
 	EQLIB_VAR DWORD CTargetWnd__WndNotification;
 	EQLIB_VAR DWORD CTaskWnd__UpdateTaskTimers;
+	EQLIB_VAR DWORD CTaskWnd__ConfirmAbandonTask;
 	EQLIB_VAR DWORD CTaskManager__GetEntry;
 	EQLIB_VAR DWORD CTaskManager__GetTaskStatus;
 	EQLIB_VAR DWORD CTaskManager__GetElementDescription;
@@ -1775,6 +1781,8 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD ActorClient__GetPosition;
 	EQLIB_VAR DWORD ActorClient__GetPosition1;
 	EQLIB_VAR DWORD CTextureAnimation__SetCurCell;
+	EQLIB_VAR DWORD CTextureAnimation__Draw;
+	EQLIB_VAR DWORD CTAFrameDraw__Draw; 
 	EQLIB_VAR DWORD CSidlManager__FindAnimation1;
 	EQLIB_VAR DWORD msg_spell_worn_off;
 	EQLIB_VAR DWORD msg_new_text;

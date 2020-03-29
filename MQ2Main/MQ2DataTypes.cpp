@@ -171,6 +171,16 @@ bool MQ2FloatType::GETMEMBER()
 		Dest.Type = pIntType;
 		Dest.DWord = VarPtr.DWord;
 		return true;
+	case Prettify: {
+		int digits = 2;
+		if (ISNUMBER())
+			digits = GETNUMBER();
+		sprintf_s(DataTypeTemp, "%f", VarPtr.Float);
+		PrettifyNumber(DataTypeTemp, sizeof(DataTypeTemp), digits);
+		Dest.Ptr = &DataTypeTemp[0];
+		Dest.Type = pStringType;
+		return true;
+	}
 	}
 	return false;
 }
@@ -212,6 +222,16 @@ bool MQ2DoubleType::GETMEMBER()
 			return true;
 		}
 		return false;
+	case Prettify: {
+		int digits = 2;
+		if (ISNUMBER())
+			digits = GETNUMBER();
+		sprintf_s(DataTypeTemp, "%f", VarPtr.Float);
+		PrettifyNumber(DataTypeTemp, sizeof(DataTypeTemp), digits);
+		Dest.Ptr = &DataTypeTemp[0];
+		Dest.Type = pStringType;
+		return true;
+	}
 	}
 	return false;
 }
@@ -256,7 +276,18 @@ bool MQ2IntType::GETMEMBER()
 		Dest.DWord = HIWORD(VarPtr.DWord);
 		Dest.Type = pIntType;
 		return true;
+	case Prettify: {
+		int digits = 0;
+		if (ISNUMBER())
+			digits = GETNUMBER();
+		sprintf_s(DataTypeTemp, "%d", VarPtr.Int);
+		PrettifyNumber(DataTypeTemp, sizeof(DataTypeTemp), digits);
+		Dest.Ptr = &DataTypeTemp[0];
+		Dest.Type = pStringType;
+		return true;
 	}
+	}
+
 	return false;
 }
 bool MQ2Int64Type::GETMEMBER()
@@ -301,10 +332,20 @@ bool MQ2Int64Type::GETMEMBER()
 		Dest.DWord = HIDWORD(VarPtr.UInt64);
 		Dest.Type = pIntType;
 		return true;
+	case Prettify: {
+		int digits = 0;
+		if (ISNUMBER())
+			digits = GETNUMBER();
+		sprintf_s(DataTypeTemp, "%lld", VarPtr.Int64);
+		PrettifyNumber(DataTypeTemp, sizeof(DataTypeTemp), digits);
+		Dest.Ptr = &DataTypeTemp[0];
+		Dest.Type = pStringType;
+		return true;
+	}
 	}
 	return false;
 }
- 
+
 bool MQ2StringType::GETMEMBER()
 {
 	if (!VarPtr.Ptr)
@@ -887,7 +928,7 @@ bool MQ2MacroType::GETMEMBER()
 					for (std::map<std::string, int>::iterator i = gUndeclaredVars.begin(); i != gUndeclaredVars.end(); i++)
 					{
 						MACROLINE ml = gMacroBlock->Line[i->second];
-						WriteChatf("[%d] %s see: %d@%s: %s", count++, i->first.c_str(),ml.LineNumber,ml.SourceFile.c_str(),ml.Command.c_str());
+						WriteChatf("[%d] %s see: %d@%s: %s", count++, i->first.c_str(), ml.LineNumber, ml.SourceFile.c_str(), ml.Command.c_str());
 					}
 				}
 				else {
@@ -899,7 +940,7 @@ bool MQ2MacroType::GETMEMBER()
 				return false;
 		}
 	}
-		
+
 	PMQ2TYPEMEMBER pMember = MQ2MacroType::FindMember(Member);
 	if (!pMember)
 		return false;
@@ -980,11 +1021,14 @@ bool MQ2MacroType::GETMEMBER()
 		break;
 	case CurSub:
         if (gMacroBlock) {
-            GetSubFromLine(gMacroBlock->Line[gMacroBlock->CurrIndex].LineNumber, DataTypeTemp, MAX_STRING);
-            Dest.Ptr = DataTypeTemp;
-            Dest.Type = pStringType;
-            return true;
-        }
+			if (PMACROSTACK pMS = gMacroStack)
+			{
+				GetSubFromLine(pMS->LocationIndex, DataTypeTemp, MAX_STRING);
+				Dest.Ptr = DataTypeTemp;
+				Dest.Type = pStringType;
+				return true;
+			}
+		}
         return false;
 	case CurCommand:
 		Dest.Type = pStringType;
@@ -2253,13 +2297,14 @@ bool MQ2SpawnType::GETMEMBER()
 	case CachedBuff:
 	{
 		Dest.Type = pCachedBuffType;
+		lockit lk(ghCachedBuffsLock);
 		if (CachedBuffsMap.empty())
 			return false;
 		DWORD SpellID = 0;
 		bool bBySlot = false;
 		bool bByIndex = false;
 		bool bByKeyword = false;
-		
+
 		PCHAR pIndex = GETFIRST();
 		if (pIndex[0])
 		{
@@ -2532,6 +2577,7 @@ bool MQ2SpawnType::GETMEMBER()
 	}
 	case CachedBuffCount:
 	{
+		lockit lk(ghCachedBuffsLock);
 		Dest.Type = pIntType;
 		Dest.DWord = -1;
 		std::map<int, std::map<int, cTargetBuff>>::iterator ps = CachedBuffsMap.find(pSpawn->SpawnID);
@@ -2573,7 +2619,7 @@ bool MQ2BuffType::GETMEMBER()
 	{
 		if (PSPELL pSpell = GetSpellByID(pBuff->SpellID))
 		{
-#ifndef ISXEQ 
+#ifndef ISXEQ
 			return pSpellType->GetMember(*(MQ2VARPTR*)&pSpell, Member, Index, Dest);
 #else
 			return pSpellType->GetMember(*(LSVARPTR*)&pSpell, Member, argc, argv, Dest);
@@ -2767,7 +2813,7 @@ bool MQ2TargetBuffType::GETMEMBER()
 	{
 		if (PSPELL pSpell = GetSpellByID(buffid))
 		{
-#ifndef ISXEQ 
+#ifndef ISXEQ
 			return pSpellType->GetMember(*(MQ2VARPTR*)&pSpell, Member, Index, Dest);
 #else
 			return pSpellType->GetMember(*(LSVARPTR*)&pSpell, Member, argc, argv, Dest);
@@ -2807,7 +2853,7 @@ bool MQ2CachedBuffType::GETMEMBER()
 	{
 		if (PSPELL pSpell = GetSpellByID(buffid))
 		{
-#ifndef ISXEQ 
+#ifndef ISXEQ
 			return pSpellType->GetMember(*(MQ2VARPTR*)&pSpell, Member, Index, Dest);
 #else
 			return pSpellType->GetMember(*(LSVARPTR*)&pSpell, Member, argc, argv, Dest);
@@ -3766,7 +3812,7 @@ bool MQ2CharacterType::GETMEMBER()
 		{
 			if (ISNUMBER())
 			{
-				// number 
+				// number
 				int nCombatAbility = GETNUMBER() - 1;
 				if (nCombatAbility < 0)
 					return false;
@@ -3801,7 +3847,7 @@ bool MQ2CharacterType::GETMEMBER()
 			}
 			else
 			{
-				// by name 
+				// by name
 				for (unsigned long nCombatAbility = 0; nCombatAbility < NUM_COMBAT_ABILITIES; nCombatAbility++)
 				{
 					if (pCombatSkillsSelectWnd->ShouldDisplayThisSkill(nCombatAbility)) {
@@ -3873,7 +3919,7 @@ bool MQ2CharacterType::GETMEMBER()
 			}
 			else
 			{
-				// by name 
+				// by name
 				for (unsigned long nCombatAbility = 0; nCombatAbility < NUM_COMBAT_ABILITIES; nCombatAbility++)
 				{
 					if (pCombatSkillsSelectWnd->ShouldDisplayThisSkill(nCombatAbility)) {
@@ -4159,7 +4205,7 @@ bool MQ2CharacterType::GETMEMBER()
 		if (ISINDEX())
 		{
 			if (ISNUMBER())
-			{	
+			{
 				// numeric
 				if (unsigned long nSkill = GETNUMBER())
 				{
@@ -4222,7 +4268,7 @@ bool MQ2CharacterType::GETMEMBER()
 			else
 			{
 				// name
-				
+
 				for (int i = 0; i < NUM_SKILLS; i++) {
 					DWORD nToken = pCSkillMgr->GetNameToken(i);
 					if (char *thename = pStringTable->getString(nToken, 0)) {
@@ -4441,7 +4487,7 @@ bool MQ2CharacterType::GETMEMBER()
 
 			if (ISNUMBER())
 			{
-				// numeric 
+				// numeric
 				int nGem = GETNUMBER() - 1;
 				if (nGem < 0 || nGem > NUM_SPELL_GEMS)
 					return false;
@@ -4782,8 +4828,8 @@ bool MQ2CharacterType::GETMEMBER()
 						if (n > pAura->NumAuras)
 							return false;
 						n--;
-						Dest.Ptr = &pAuras->Aura[n]; 
-						Dest.HighPart = n; 
+						Dest.Ptr = &pAuras->Aura[n];
+						Dest.HighPart = n;
 						return true;
 					}
 					else
@@ -4792,18 +4838,18 @@ bool MQ2CharacterType::GETMEMBER()
 						{
 							if (!_strnicmp(GETFIRST(), pAuras->Aura[n].Name, strlen(GETFIRST())))
 							{
-								Dest.Ptr = &pAuras->Aura[n]; 
-								Dest.HighPart = n; 
-								return true; 
+								Dest.Ptr = &pAuras->Aura[n];
+								Dest.HighPart = n;
+								return true;
 							}
 						}
 					}
 				}
 				else
 				{
-					Dest.Ptr = &pAuras->Aura[0]; 
-					Dest.HighPart = 0; 
-					return true; 
+					Dest.Ptr = &pAuras->Aura[0];
+					Dest.HighPart = 0;
+					return true;
 				}
 			}
 		}
@@ -5741,7 +5787,7 @@ bool MQ2CharacterType::GETMEMBER()
 						Dest.Ptr = &pChar2->Buff[nBuff];
 						return true;
 					}
-				}		
+				}
 			}
 		}
 		return false;
@@ -6348,7 +6394,7 @@ bool MQ2CharacterType::GETMEMBER()
 		if (PCHARINFO2 pChar2 = GetCharInfo2())
 		{
 			if (ISNUMBER()) {
-			
+
 				int index = GETNUMBER();
 				index--;
 				if (index < 0)
@@ -6542,7 +6588,10 @@ bool MQ2CharacterType::GETMEMBER()
 		Dest.DWord = pPlayerPointManager->GetAltCurrency(ALTCURRENCY_CRYSTALLIZEDLUCK);
 		Dest.Type = pIntType;
 		return true;
-
+	case ParcelStatus://309
+		Dest.DWord = pChar->ParcelStatus;
+		Dest.Type = pIntType;
+		return true;
 	//end of MQ2CharacterType
 	}
 	return false;
@@ -6808,7 +6857,7 @@ bool MQ2SpellType::GETMEMBER()
 	case Stacks:
 	case NewStacks://stacks on self
 	{
-		unsigned long buffduration;
+		//unsigned long buffduration;
 		unsigned long duration = 99999;
 		if (ISNUMBER())
 			duration = GETNUMBER();
@@ -6839,26 +6888,9 @@ bool MQ2SpellType::GETMEMBER()
 			}
 		}
 		return true;
-
-		/*PSPELL thespell = pSpell;
-		Dest.DWord = 0;
-		Dest.Type = pBoolType;
-		if (pLocalPlayer)
-		{
-			CharacterZoneClient*pCZC = (CharacterZoneClient*)((PSPAWNINFO)pLocalPlayer)->GetCharacter();
-			if (pCZC)
-			{
-				int SlotIndex = -1;
-				EQ_Affect*ret = pCZC->FindAffectSlot(thespell->ID, (PSPAWNINFO)pLocalPlayer, &SlotIndex, true, ((PSPAWNINFO)pLocalPlayer)->Level, NULL, 0, true);
-				if (!ret || SlotIndex==-1)
-					Dest.DWord = false;
-				else
-					Dest.DWord = true;
-			}
-		}
-		return true;*/
 	}
 	case WillStack:
+	case StacksWith:
 	case NewStacksWith://if a spell stack with another spell
 	{
 		Dest.DWord = false;
@@ -6878,16 +6910,16 @@ bool MQ2SpellType::GETMEMBER()
 		{
 			if (CharacterZoneClient*pCZC = (CharacterZoneClient*)((PSPAWNINFO)pLocalPlayer)->GetCharacter())
 			{
-			EQ_Affect eff = { 0 };
-				eff.ID = tmpSpell->ID;
-				eff.CasterLevel = ((PSPAWNINFO)pLocalPlayer)->Level;
+				EQ_Affect eff = { 0 };
+				eff.SpellID = tmpSpell->ID;
+				eff.Level = ((PSPAWNINFO)pLocalPlayer)->Level;
 				eff.Type = 2;
-				eff.BaseDmgMod = 1.0;
+				eff.Modifier = 1.0;
 				int SlotIndex = -1;
 
 				EQ_Affect*ret = pCZC->FindAffectSlot(thespell->ID, (PSPAWNINFO)pLocalPlayer, &SlotIndex, true, ((PSPAWNINFO)pLocalPlayer)->Level, &eff, 1, false);
-				//call below is correct but it always seem to return false so i don't
-				//think its useful to clientside... also call above calls it...
+				//call below is correct but it always seem to return false when we feed it a &eff so i don't
+				//think its useful here... also the call above calls it for us...
 				//Dest.DWord = pCZC->IsStackBlocked((EQ_Spell*)thespell, (PSPAWNINFO)pLocalPlayer, &eff, 1);
 				if (!ret || SlotIndex==-1)
 					Dest.DWord = false;
@@ -6897,53 +6929,6 @@ bool MQ2SpellType::GETMEMBER()
 		}
 		return true;
 	}
-	/*case Stacks:
-	{
-		unsigned long buffduration;
-		unsigned long duration = 99999;
-		if (ISNUMBER())
-			duration = GETNUMBER();
-		unsigned long nBuff;
-		Dest.DWord = true;
-		Dest.Type = pBoolType;
-		// Check Buffs
-		if (PCHARINFO2 pChar2 = GetCharInfo2())
-		{
-			for (nBuff = 0; nBuff < NUM_LONG_BUFFS; nBuff++) {
-				if (pChar2->Buff[nBuff].SpellID > 0) {
-					if (PSPELL buffSpell = GetSpellByID(pChar2->Buff[nBuff].SpellID)) {
-						buffduration = pChar2->Buff[nBuff].Duration;
-						if (GetSpellDuration(buffSpell, (PSPAWNINFO)pLocalPlayer) >= 0xFFFFFFFE) {
-							buffduration = 99999 + 1;
-						}
-						if (buffSpell == pSpell) WriteChatf("Spell.Stacks(%d:%d,%d)", buffSpell->ID, duration, buffduration);
-						if (!BuffStackTest(pSpell, buffSpell, TRUE) || ((buffSpell == pSpell) && (buffduration > duration))) {
-							Dest.DWord = false;
-							return true;
-						}
-					}
-				}
-			}
-			// Check Songs
-			for (nBuff = 0; nBuff < NUM_SHORT_BUFFS; nBuff++) {
-				if (pChar2->ShortBuff[nBuff].SpellID > 0) {
-					if (PSPELL buffSpell = GetSpellByID(pChar2->Buff[nBuff].SpellID)) {
-						buffduration = pChar2->ShortBuff[nBuff].Duration;
-						if (!IsBardSong(buffSpell) && !((IsSPAEffect(pSpell, SPA_CHANGE_FORM) && !pSpell->DurationWindow))) {		// Don't check against bard songs or buff window illusions
-							if (GetSpellDuration(buffSpell, (PSPAWNINFO)pLocalPlayer) >= 0xFFFFFFFE) {
-								buffduration = 99999 + 1;
-							}
-							if (!BuffStackTest(pSpell, buffSpell, TRUE) || ((buffSpell == pSpell) && (buffduration > duration))) {
-								Dest.DWord = false;
-								return true;
-							}
-						}
-					}
-				}
-			}
-		}
-		return true;
-	}*/
 	case StacksSpawn:
 	{
 		Dest.DWord = false;
@@ -6951,6 +6936,7 @@ bool MQ2SpellType::GETMEMBER()
 
 		if (!ISINDEX())
 			return true;
+		lockit lk(ghCachedBuffsLock);
 		if (CachedBuffsMap.empty())
 			return true;
 		PSPAWNINFO pSpawn = 0;
@@ -6975,10 +6961,10 @@ bool MQ2SpellType::GETMEMBER()
 					{
 						if (PSPELL pBuff = GetSpellByID(k->first)) {
 							pAffects[j].Type = 2;
-							pAffects[j].ID = pBuff->ID;
+							pAffects[j].SpellID = pBuff->ID;
 							pAffects[j].Activatable = 0;// pBuff->Activated;
-							pAffects[j].CasterLevel = ((PSPAWNINFO)pLocalPlayer)->Level;
-							pAffects[j].BaseDmgMod = 1.0;
+							pAffects[j].Level = ((PSPAWNINFO)pLocalPlayer)->Level;
+							pAffects[j].Modifier = 1.0;
 							j++;
 						}
 					}
@@ -6995,6 +6981,7 @@ bool MQ2SpellType::GETMEMBER()
 	}
 	case StacksTarget:
 	{
+		lockit lk(ghCachedBuffsLock);
 		Dest.DWord = false;
 		Dest.Type = pBoolType;
 		if (pLocalPlayer)
@@ -7016,15 +7003,15 @@ bool MQ2SpellType::GETMEMBER()
 							{
 								if (PSPELL pBuff = GetSpellByID(k->first)) {
 									pAffects[j].Type = 2;
-									pAffects[j].ID = pBuff->ID;
+									pAffects[j].SpellID = pBuff->ID;
 									pAffects[j].Activatable = 0;// pBuff->Activated;
 #if !defined(ROF2EMU) && !defined(UFEMU)
 									pAffects[j].CasterGuid = pMe->Guid;
 #else
 									pAffects[j].CasterID = ((PSPAWNINFO)pLocalPlayer)->SpawnID;
 #endif
-									pAffects[j].CasterLevel = ((PSPAWNINFO)pLocalPlayer)->Level;
-									pAffects[j].BaseDmgMod = 1.0;
+									pAffects[j].Level = ((PSPAWNINFO)pLocalPlayer)->Level;
+									pAffects[j].Modifier = 1.0;
 									j++;
 								}
 							}
@@ -7033,23 +7020,23 @@ bool MQ2SpellType::GETMEMBER()
 						{
 
 							int buffID = 0;
-					for (int i = 0; i < NUM_BUFF_SLOTS; i++) {
-						if (buffID = ((PCTARGETWND)pTargetWnd)->BuffSpellID[i]) {
-							if (PSPELL pBuff = GetSpellByID((DWORD)buffID)) {
+							for (int i = 0; i < NUM_BUFF_SLOTS; i++) {
+								if (buffID = ((PCTARGETWND)pTargetWnd)->BuffSpellID[i]) {
+									if (PSPELL pBuff = GetSpellByID((DWORD)buffID)) {
 										pAffects[j].Type = 2;
-								pAffects[j].ID = pBuff->ID;
-								pAffects[j].Activatable = 0;// pBuff->Activated;
+										pAffects[j].SpellID = pBuff->ID;
+										pAffects[j].Activatable = 0;// pBuff->Activated;
 #if !defined(ROF2EMU) && !defined(UFEMU)
-								pAffects[j].CasterGuid = pMe->Guid;
+										pAffects[j].CasterGuid = pMe->Guid;
 #else
-								pAffects[j].CasterID = ((PSPAWNINFO)pLocalPlayer)->SpawnID;
+										pAffects[j].CasterID = ((PSPAWNINFO)pLocalPlayer)->SpawnID;
 #endif
-								pAffects[j].CasterLevel = ((PSPAWNINFO)pLocalPlayer)->Level;
-								pAffects[j].BaseDmgMod = 1.0;
-								j++;
+										pAffects[j].Level = ((PSPAWNINFO)pLocalPlayer)->Level;
+										pAffects[j].Modifier = 1.0;
+										j++;
+									}
+								}
 							}
-						}
-					}
 						}
 						int SlotIndex = -1;
 						EQ_Affect*ret = pCZC->FindAffectSlot(pSpell->ID, (PSPAWNINFO)pLocalPlayer, &SlotIndex, true, ((PSPAWNINFO)pLocalPlayer)->Level, pAffects, j, false);
@@ -7065,15 +7052,52 @@ bool MQ2SpellType::GETMEMBER()
 	}
 	case StacksPet:
 	{
-		unsigned long petbuffduration;
+		//unsigned long petbuffduration;
 		unsigned long duration = 99999;
 		if (ISNUMBER())
 			duration = GETNUMBER();
-		unsigned long nBuff;
-		Dest.DWord = true;
+		Dest.DWord = false;
 		Dest.Type = pBoolType;
-		PEQPETINFOWINDOW pPet = ((PEQPETINFOWINDOW)pPetInfoWnd);
-		for (nBuff = 0; nBuff < NUM_BUFF_SLOTS; nBuff++) {
+		if (pLocalPlayer)
+		{
+			if (CharacterZoneClient* pCZC = (CharacterZoneClient*)((PSPAWNINFO)pLocalPlayer)->GetCharacter())
+			{
+				if (PCHARINFO pMe = GetCharInfo())
+				{
+					if (PEQPETINFOWINDOW pPet = ((PEQPETINFOWINDOW)pPetInfoWnd))
+					{
+						EQ_Affect pAffects[NUM_BUFF_SLOTS] = { 0 };
+						int buffID = 0;
+						int j = 0;
+						for (int i = 0; i < NUM_BUFF_SLOTS; i++)
+						{
+							if (buffID = pPet->Buff[i]) {
+								if (PSPELL pBuff = GetSpellByID((DWORD)buffID)) {
+									pAffects[j].Type = 2;
+									pAffects[j].SpellID = pBuff->ID;
+									pAffects[j].Activatable = 0;// pBuff->Activated;
+#if !defined(ROF2EMU) && !defined(UFEMU)
+									pAffects[j].CasterGuid = pMe->Guid;
+#else
+									pAffects[j].CasterID = ((PSPAWNINFO)pLocalPlayer)->SpawnID;
+#endif
+									pAffects[j].Level = ((PSPAWNINFO)pLocalPlayer)->Level;
+									pAffects[j].Modifier = 1.0;
+									j++;
+								}
+							}
+						}
+						int SlotIndex = -1;
+						EQ_Affect*ret = pCZC->FindAffectSlot(pSpell->ID, (PSPAWNINFO)pLocalPlayer, &SlotIndex, true, ((PSPAWNINFO)pLocalPlayer)->Level, pAffects, j, false);
+						if (!ret || SlotIndex == -1)
+							Dest.DWord = false;
+						else
+							Dest.DWord = true;
+					}
+				}
+			}
+		}
+		/*for (nBuff = 0; nBuff < NUM_BUFF_SLOTS; nBuff++) {
 			if (pPet->Buff[nBuff] > 0 && !(pPet->Buff[nBuff] == 0xFFFFFFFF || pPet->Buff[nBuff] == 0)) {
 				if (PSPELL buffSpell = GetSpellByID(pPet->Buff[nBuff])) {
 					petbuffduration = ((pPet->PetBuffTimer[nBuff] + 5999) / 1000) / 6;
@@ -7086,44 +7110,9 @@ bool MQ2SpellType::GETMEMBER()
 					}
 				}
 			}
-		}
+		}*/
 		return true;
 	}
-	case StacksWith:
-	{
-		Dest.DWord = false;
-		Dest.Type = pBoolType;
-
-		if (!ISINDEX())
-			return true;
-		PSPELL tmpSpell = NULL;
-		if (ISNUMBER())
-			tmpSpell = GetSpellByID(GETNUMBER());
-		else
-			tmpSpell = GetSpellByName(GETFIRST());
-		if (!tmpSpell)
-			return true;
-		Dest.DWord = BuffStackTest(pSpell, tmpSpell, TRUE);
-		return true;
-	}
-	/*case WillStack:
-	{
-		Dest.DWord = false;
-		Dest.Type = pBoolType;
-
-		if (!ISINDEX())
-			return true;
-		PSPELL tmpSpell = NULL;
-		if (ISNUMBER())
-			tmpSpell = GetSpellByID(GETNUMBER());
-		else
-			tmpSpell = GetSpellByName(GETFIRST());
-		if (!tmpSpell)
-			return true;
-
-		Dest.DWord = BuffStackTest(pSpell, tmpSpell);
-		return true;
-	}*/
 	case MyRange:
 	{
 		VePointer<CONTENTS> n;
@@ -8049,17 +8038,17 @@ bool MQ2ItemType::GETMEMBER()
 		return false;
 	case EffectType:
 		Dest.Type = pStringType;
-		//0 Proc 
-		//1 Clickable from inventory (any class) 
-		//2 Worn effect (haste, cleave) 
-		//3 Unknown 
-		//4 Clickable must be worn 
-		//5 Clickable from inventory (class restricted) 
-		//6 Focus effect 
-		//7 Memmable spell scroll 
-		// This used to return an int type with a case statment, items could have 
-		// only one effect. For backwards compatibility we return based on a hierarchy. 
-		// A zero in any field indicates no effect (others will also be zero) 
+		//0 Proc
+		//1 Clickable from inventory (any class)
+		//2 Worn effect (haste, cleave)
+		//3 Unknown
+		//4 Clickable must be worn
+		//5 Clickable from inventory (class restricted)
+		//6 Focus effect
+		//7 Memmable spell scroll
+		// This used to return an int type with a case statment, items could have
+		// only one effect. For backwards compatibility we return based on a hierarchy.
+		// A zero in any field indicates no effect (others will also be zero)
 		if (!GetItemFromContents(pItem)->Clicky.SpellID)
 		{
 			return false;
@@ -8070,7 +8059,7 @@ bool MQ2ItemType::GETMEMBER()
 		}
 		else if (GetItemFromContents(pItem)->Clicky.SpellID != -1)
 		{
-			// code to detect must-be-worn etc here 
+			// code to detect must-be-worn etc here
 			switch (GetItemFromContents(pItem)->Clicky.EffectType)
 			{
 			case 4:
@@ -10186,7 +10175,7 @@ bool MQ2GroundType::GETMEMBER()
 {
 	if (!VarPtr.Ptr)
 		return false;
-	
+
 	PGROUNDOBJECT pGroundObject = (PGROUNDOBJECT)VarPtr.Ptr;
 	if(pGroundObject->Type==GO_None)
 		return false;
@@ -10266,7 +10255,7 @@ bool MQ2GroundType::GETMEMBER()
 					tSpawn.mActorClient.Race = Placed->RealEstateItemID;
 					GroundObject.Type = GO_ObjectType;
 					GroundObject.ObjPtr = (void*)Placed;
-					
+
 					GroundObject.GroundItem.DropID = Placed->RealEstateItemID;
 					GroundObject.GroundItem.DropSubID = Placed->RealEstateID;
 					GroundObject.GroundItem.Expires = 0;
@@ -10648,7 +10637,7 @@ bool MQ2MacroQuestType::GETMEMBER()
 		CHAR szBuffer[MAX_STRING];
 		sprintf_s(szBuffer, "%s\\MQ2Main.dll", gszINIPath);
 		hFile = FindFirstFile(szBuffer, &FileData);
-		// Convert the creation time time to local time. 
+		// Convert the creation time time to local time.
 		FileTimeToSystemTime(&FileData.ftLastWriteTime, &st);
 		FindClose(hFile);
 		sprintf_s(DataTypeTemp, "%04d%02d%02d", st.wYear, st.wMonth, st.wDay);
@@ -10760,7 +10749,7 @@ bool MQ2MacroQuestType::GETMEMBER()
 		Dest.Type = pIntType;
 		return true;
 	}
-		
+
 	}
 	return false;
 }
@@ -11267,7 +11256,7 @@ bool MQ2CorpseType::GETMEMBER()
 	switch ((CorpseMembers)pMember->ID)
 	{
 	case Open:
-		Dest.DWord = 1; // obviously, since we're this far 
+		Dest.DWord = 1; // obviously, since we're this far
 		Dest.Type = pBoolType;
 		return true;
 	case Item:
@@ -11750,7 +11739,7 @@ bool MQ2PointMerchantType::GETMEMBER()
 	}
 	return false;
 }
-#else 
+#else
 bool MQ2PointMerchantItemType::GETMEMBER()
 {
 	PointMerchantWnd *pPointWnd = (PointMerchantWnd *)pPointMerchantWnd;
@@ -11904,7 +11893,7 @@ bool MQ2MercenaryType::GETMEMBER()
 				strcpy_s(DataTypeTemp, "ACTIVE");
 			}
 			else {
-				strcpy_s(DataTypeTemp, "NOMERC");	
+				strcpy_s(DataTypeTemp, "NOMERC");
 			}
 			break;
 		}
@@ -12720,12 +12709,12 @@ bool MQ2SkillType::GETMEMBER()
 		{
 			if (ISNUMBER())
 			{
-				// class by number 
+				// class by number
 				nIndex = GETNUMBER();
 			}
 			else
 			{
-				// class by name or shortname 
+				// class by name or shortname
 				for (int N = 1; N < 17; N++)
 				{
 					if (
@@ -15413,13 +15402,10 @@ bool MQ2TaskType::GETMEMBER()
 			{
 				DWORD ft = GetFastTime();
 				int timer = 0;
-				CHAR szTime[256] = { 0 };
 				if (((DWORD)ts->MovingStartTime + (DWORD)entry->DurationSeconds) > ft)
 				{
 					timer = (ts->MovingStartTime + entry->DurationSeconds) - ft;
 				}
-				sprintf_s(szTime, "%02d:%02d:%02d", timer / 3600, (timer % 3600) / 60, timer % 60);
-				WriteChatf("%s", szTime);
 				Dest.UInt64 = timer * 1000;
 					return true;
 				}
@@ -15980,7 +15966,7 @@ bool MQ2AdvLootType::GETMEMBER()
 #endif
 // /echo ${Alert[a].List[b].bGM}
 // /echo ${Alert[a].Size}
-// /echo ${Alert} 
+// /echo ${Alert}
 bool MQ2AlertType::GETMEMBER()
 {
 	try {
@@ -16367,7 +16353,7 @@ bool MQ2WorldLocationType::GETMEMBER()
 		switch ((WorldLocationTypeMembers)pMember->ID)
 		{
 			case ID:
-			{	
+			{
 				int zindex = pChar2->BoundLocations[index].ZoneBoundID;
 				Dest.DWord = zindex;
 				Dest.Type = pIntType;
@@ -16446,7 +16432,7 @@ bool MQ2SolventType::GETMEMBER()
 				{
 					if (PITEMINFO pItem = GetItemFromContents(pCont))
 					{
-						Dest.DWord = FindItemCountByName(pItem->Name);		
+						Dest.DWord = FindItemCountByName(pItem->Name);
 					}
 				}
 				return true;

@@ -254,10 +254,14 @@ FUNCTION_AT_VIRTUAL_ADDRESS( bool ClientSpellManager::GetSpellAffectEmpty(bool),
 FUNCTION_AT_ADDRESS( CAAWnd::CAAWnd(class CXWnd *),CAAWnd__CAAWnd);
 #endif
 #ifdef CAAWnd__Update_x
-FUNCTION_AT_ADDRESS(void  CAAWnd::Update(void),CAAWnd__Update);
+#if defined(ROF2EMU) || defined(UFEMU)
+FUNCTION_AT_ADDRESS(void CAAWnd::Update(void), CAAWnd__Update);
+#else
+FUNCTION_AT_ADDRESS(void CAAWnd::Update(bool),CAAWnd__Update);
+#endif
 #endif
 #ifdef CAAWnd__UpdateSelected_x
-FUNCTION_AT_ADDRESS(void  CAAWnd::UpdateSelected(void),CAAWnd__UpdateSelected);
+FUNCTION_AT_ADDRESS(void CAAWnd::UpdateSelected(void),CAAWnd__UpdateSelected);
 #endif
 #ifdef CAAWnd__UpdateTimer_x
 FUNCTION_AT_ADDRESS(void  CAAWnd::UpdateTimer(void),CAAWnd__UpdateTimer);
@@ -2432,7 +2436,8 @@ FUNCTION_AT_ADDRESS(void  MapViewMap::RemoveLabel(struct _mapviewlabel *),MapVie
 FUNCTION_AT_ADDRESS(void  CXRect::Normalize(void),CXRect__Normalize);
 #endif
 #ifdef CXRect__operator_and_x
-FUNCTION_AT_ADDRESS(class CXRect  CXRect::operator&(class CXRect)const ,CXRect__operator_and);
+FUNCTION_AT_ADDRESS(CXRect CXRect::operator &(const CXRect&) const ,CXRect__operator_and);
+//FUNCTION_AT_ADDRESS(class CXRect  CXRect::operator&(class CXRect)const ,CXRect__operator_and);
 #endif
 #ifdef MapViewMap__JoinLinesAtIntersect_x
 FUNCTION_AT_ADDRESS(void  MapViewMap::JoinLinesAtIntersect(bool),MapViewMap__JoinLinesAtIntersect);
@@ -3020,6 +3025,9 @@ FUNCTION_AT_ADDRESS(class CXStr *CTargetWnd::GetBuffCaster(int),CTargetWnd__GetB
 #endif
 #ifdef CTaskWnd__UpdateTaskTimers_x
 FUNCTION_AT_ADDRESS(int CTaskWnd::UpdateTaskTimers(unsigned long),CTaskWnd__UpdateTaskTimers);
+#endif
+#ifdef CTaskWnd__ConfirmAbandonTask_x
+FUNCTION_AT_ADDRESS(void CTaskWnd::ConfirmAbandonTask(int),CTaskWnd__ConfirmAbandonTask);
 #endif
 #ifdef CTaskManager__GetEntry_x
 FUNCTION_AT_ADDRESS(CTaskEntry *CTaskManager::GetEntry(int Index, int System, bool bCheckEmpty), CTaskManager__GetEntry);
@@ -9280,7 +9288,8 @@ FUNCTION_AT_ADDRESS(int CTextureFont::GetTextExtent(const CXStr& str),CTextureFo
 FUNCTION_AT_ADDRESS(class CXStr  CTextureFont::GetName(void)const ,CTextureFont__GetName);
 #endif
 #ifdef CTextureFont__DrawWrappedText_x
-FUNCTION_AT_ADDRESS(int  CTextureFont::DrawWrappedText(CXStr *, int, int, int, CXRect *, COLORREF, WORD, int)const ,CTextureFont__DrawWrappedText);
+FUNCTION_AT_ADDRESS(int  CTextureFont::DrawWrappedText(const CXStr&, int, int, int, const CXRect&, COLORREF, WORD, int) const ,CTextureFont__DrawWrappedText);
+//FUNCTION_AT_ADDRESS(int  CTextureFont::DrawWrappedText(CXStr *, int, int, int, CXRect *, COLORREF, WORD, int)const ,CTextureFont__DrawWrappedText);
 #endif
 #ifdef CTextureFont__DrawWrappedText1_x
 FUNCTION_AT_ADDRESS(int  CTextureFont::DrawWrappedText(class CXStr,class CXRect,class CXRect,unsigned long,unsigned short,int)const ,CTextureFont__DrawWrappedText1);
@@ -9322,7 +9331,7 @@ FUNCTION_AT_ADDRESS(void  CTextureAnimation::SetCurFrame(int),CTextureAnimation_
 FUNCTION_AT_ADDRESS(int  CTextureAnimation::GetCurFrame(void)const ,CTextureAnimation__GetCurFrame);
 #endif
 #ifdef CTextureAnimation__Draw_x
-FUNCTION_AT_ADDRESS(int  CTextureAnimation::Draw(class CXRect,class CXRect,unsigned long,unsigned long)const ,CTextureAnimation__Draw);
+FUNCTION_AT_ADDRESS(int CTextureAnimation::Draw(const CXRect&, const CXRect&, COLORREF, COLORREF) const ,CTextureAnimation__Draw);
 #endif
 #ifdef CTextureAnimation__Draw1_x
 FUNCTION_AT_ADDRESS(int  CTextureAnimation::Draw(class CXPoint,class CXRect,unsigned long,unsigned long)const ,CTextureAnimation__Draw1);
@@ -9530,7 +9539,7 @@ FUNCTION_AT_ADDRESS( CTAFrameDraw::CTAFrameDraw(class CXStr),CTAFrameDraw__CTAFr
 FUNCTION_AT_ADDRESS(void  CTAFrameDraw::Set(class CTextureAnimation * * const),CTAFrameDraw__Set);
 #endif
 #ifdef CTAFrameDraw__Draw_x
-FUNCTION_AT_ADDRESS(int  CTAFrameDraw::Draw(class CXRect,class CXRect)const ,CTAFrameDraw__Draw);
+FUNCTION_AT_ADDRESS(int CTAFrameDraw::Draw(const CXRect& Rect, const CXRect& ClipRect) const ,CTAFrameDraw__Draw);
 #endif
 #ifdef CTAFrameDraw__Draw1_x
 FUNCTION_AT_ADDRESS(int  CTAFrameDraw::Draw(class CXRect,class CXRect,int)const ,CTAFrameDraw__Draw1);

@@ -4675,7 +4675,7 @@ PCHAR ParseSpellEffect(PSPELL pSpell, int i, PCHAR szBuffer, SIZE_T BufferSize, 
 	return szBuffer;
 }
 
-PCHAR ShowSpellSlotInfo(PSPELL pSpell, PCHAR szBuffer, SIZE_T BufferSize)
+PCHAR ShowSpellSlotInfo(PSPELL pSpell, PCHAR szBuffer, SIZE_T BufferSize, PCHAR LineBreak)
 {
 	CHAR szTemp[MAX_STRING] = { 0 };
 	CHAR szBuff[MAX_STRING] = { 0 };
@@ -4687,7 +4687,7 @@ PCHAR ShowSpellSlotInfo(PSPELL pSpell, PCHAR szBuffer, SIZE_T BufferSize)
 		size_t len = strlen(szBuff);
 		if (len > 0 && count + len < BufferSize) {
 			strcat_s(szBuffer,BufferSize, szBuff);
-			strcat_s(szBuffer,BufferSize, "<br>");
+			strcat_s(szBuffer, BufferSize, LineBreak);
 		}
 		count += len + 4;
 	}
@@ -10271,6 +10271,7 @@ int GetTargetBuffBySubCat(PCHAR subcat, DWORD classmask, int startslot)
 }
 bool HasCachedTargetBuffSubCat(const char*subcat, PSPAWNINFO pSpawn, PcTargetBuff pcTargetBuff, DWORD classmask)
 {
+	lockit lk(ghCachedBuffsLock);
 	if (CachedBuffsMap.empty())
 		return false;
 	std::map<int, std::map<int, cTargetBuff>>::iterator i = CachedBuffsMap.find(pSpawn->SpawnID);
@@ -10305,6 +10306,7 @@ bool HasCachedTargetBuffSubCat(const char*subcat, PSPAWNINFO pSpawn, PcTargetBuf
 }
 bool HasCachedTargetBuffSPA(int spa, bool bIncrease, PSPAWNINFO pSpawn,PcTargetBuff pcTargetBuff)
 {
+	lockit lk(ghCachedBuffsLock);
 	if (CachedBuffsMap.empty())
 		return false;
 	std::map<int, std::map<int, cTargetBuff>>::iterator i = CachedBuffsMap.find(pSpawn->SpawnID);
@@ -10364,8 +10366,43 @@ bool HasCachedTargetBuffSPA(int spa, bool bIncrease, PSPAWNINFO pSpawn,PcTargetB
 	}
 	return false;
 }
+
+size_t CachedBuffs::GetCount(int SpawnID)
+{
+	lockit lk(ghCachedBuffsLock);
+	if (CachedBuffsMap.find(SpawnID) != CachedBuffsMap.end())
+	{
+		return CachedBuffsMap[SpawnID].size();
+	}
+	return 0;
+}
+bool CachedBuffs::Get(int SpawnID, int index, cTargetBuff*out)
+{
+	lockit lk(ghCachedBuffsLock);
+	if (CachedBuffsMap.find(SpawnID) != CachedBuffsMap.end())
+	{
+		std::map<int,cTargetBuff>::iterator i = CachedBuffsMap[SpawnID].begin();
+		int Dist = std::distance(i, CachedBuffsMap[SpawnID].end());
+		if (index > Dist)
+			return false;
+		std::advance(i, index);
+		if (i != CachedBuffsMap[SpawnID].end())
+		{
+			strcpy_s(out->casterName, i->second.casterName);
+			out->count = i->second.count;
+			out->duration = i->second.duration;
+			out->slot = i->second.slot;
+			out->spellId = i->second.spellId;
+			out->timeStamp = i->second.timeStamp;
+			return true;
+		}
+	}
+	return false;
+}
+//forget this, exporting a map is doomed to fail... work in progress. -eqmule
 void GetCachedBuffs(std::map<int, std::map<int,cTargetBuff>>& CBMap)
 {
+	lockit lk(ghCachedBuffsLock);
 	CBMap = CachedBuffsMap;
 }
 bool IsEvolvingItem(PCONTENTS pCont)
@@ -11203,7 +11240,9 @@ BOOL IsActiveAA(PCHAR pSpellName)
 	}
 	for (DWORD nAbility = 0; nAbility<AA_CHAR_MAX_REAL; nAbility++) {
 		if (PALTABILITY pAbility = GetAAByIdWrapper(pPCData->GetAlternateAbilityId(nAbility), level)) {
-			if (!_stricmp(pSpellName, pCDBStr->GetString(pAbility->nName, 1, NULL))) {
+			PCHAR pName = pCDBStr->GetString(pAbility->nName, 1, NULL);
+			//WriteChatf("%s", pName);
+			if (!_stricmp(pSpellName, pName)) {
 				if (pAbility->SpellID <= 0) {
 					return TRUE;
 				}
@@ -12190,4 +12229,36 @@ long GetMeleeSpeedPctFromSpell(PSPELL pSpell, bool bIncrease) {
 		}
 	}
 	return 0;
+}
+
+void PrettifyNumber(char* string, size_t bufferSize, int decimals /* = 0 */)
+{
+	if (strlen(string) >= 64)
+		return;
+	char temp[64];
+	strcpy_s(temp, string);
+
+	static char decimalSep[] = ".";
+	static char thousandSep[] = ",";
+
+	if (decimals < 0)
+		decimals = 0;
+	else if (decimals > 9)
+		decimals = 9;
+
+	NUMBERFMTA fmt;
+	fmt.Grouping = 3;                    // group every 3 digits to the left of the decimal
+	fmt.NumDigits = decimals;            // display N digits after the decimal point
+	fmt.LeadingZero = decimals ? 1 : 0;  // display zeroes after the decimal point
+	fmt.lpDecimalSep = decimalSep;       // character to use for decimal separator.
+	fmt.lpThousandSep = thousandSep;     // use a comma for thousands separator
+	fmt.NegativeOrder = 1;               // Negative sign, number: -1.1
+
+	GetNumberFormatA(
+		LOCALE_INVARIANT,
+		0,
+		temp,
+		&fmt,
+		string,
+		bufferSize);
 }

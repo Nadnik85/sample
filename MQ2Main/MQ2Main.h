@@ -653,7 +653,7 @@ inline bool ItemHasStat(PCONTENTS pCont, int*num, char(&Buffer)[_Size])
 EQLIB_API PCHAR GetLoginName();
 EQLIB_API FLOAT DistanceToPoint(PSPAWNINFO pSpawn, FLOAT xLoc, FLOAT yLoc);
 EQLIB_API FLOAT Distance3DToPoint(PSPAWNINFO pSpawn, FLOAT xLoc, FLOAT yLoc, FLOAT zLoc);
-EQLIB_API PCHAR ShowSpellSlotInfo(PSPELL pSpell, PCHAR szBuffer, SIZE_T BufferSize);
+EQLIB_API PCHAR ShowSpellSlotInfo(PSPELL pSpell, PCHAR szBuffer, SIZE_T BufferSize, PCHAR LineBreak = "<br>");
 EQLIB_API PCHAR ParseSpellEffect(PSPELL pSpell, int i, PCHAR szBuffer, SIZE_T BufferSize, LONG level = 100);
 
 EQLIB_API LONG GetSpellAttrib(PSPELL pSpell, int index);
@@ -838,6 +838,9 @@ std::string ModifyMacroString(const std::string &strOriginal, bool bParseOnce = 
 
 LEGACY_API BOOL Calculate(PCHAR szFormula, DOUBLE& Dest);
 
+// Given a string that contains a number, make the number "pretty" by adding things like
+// comma separators, or decimals.
+EQLIB_API void PrettifyNumber(char* string, size_t bufferSize, int decimals = 0);
 
 #ifndef ISXEQ
 #include "MQ2TopLevelObjects.h"

@@ -111,6 +111,7 @@ public:
 		return true;
 	}
 };
+
 class MQ2IntType : public MQ2Type
 {
 public:
@@ -122,8 +123,10 @@ public:
 		Reverse = 4,
 		LowPart = 5,
 		HighPart = 6,
+		Prettify = 7,
 	};
-	MQ2IntType() :MQ2Type("int")
+
+	MQ2IntType() : MQ2Type("int")
 	{
 		TypeMember(Float);
 		TypeMember(Double);
@@ -131,6 +134,7 @@ public:
 		TypeMember(Reverse);
 		TypeMember(LowPart);
 		TypeMember(HighPart);
+		TypeMember(Prettify);
 	}
 
 	~MQ2IntType()
@@ -168,6 +172,7 @@ public:
 		Reverse = 4,
 		LowPart = 5,
 		HighPart = 6,
+		Prettify = 7,
 	};
 	MQ2Int64Type() :MQ2Type("int64")
 	{
@@ -177,6 +182,7 @@ public:
 		TypeMember(Reverse);
 		TypeMember(LowPart);
 		TypeMember(HighPart);
+		TypeMember(Prettify);
 	}
 
 	~MQ2Int64Type()
@@ -202,8 +208,8 @@ public:
 		return true;
 	}
 };
-
 #endif
+
 class MQ2ArgbType : public MQ2Type
 {
 public:
@@ -228,7 +234,6 @@ public:
 	{
 	}
 
-
 	bool GETMEMBER();
 
 	bool ToString(MQ2VARPTR VarPtr, PCHAR Destination)
@@ -249,6 +254,7 @@ public:
 		return false;
 	}
 };
+
 #ifndef ISXEQ
 class MQ2ByteType : public MQ2Type
 {
@@ -283,6 +289,7 @@ public:
 		return true;
 	}
 };
+
 class MQ2StringType : public MQ2Type
 {
 public:
@@ -331,6 +338,7 @@ public:
 	~MQ2StringType()
 	{
 	}
+
 	bool MQ2StringType::GETMEMBER();
 	bool ToString(MQ2VARPTR VarPtr, PCHAR Destination)
 	{
@@ -359,6 +367,7 @@ public:
 		return true;
 	}
 };
+
 class MQ2FloatType : public MQ2Type
 {
 public:
@@ -370,9 +379,10 @@ public:
 		Int = 4,
 		Precision = 5,
 		Raw = 6,
+		Prettify = 7,
 	};
 
-	MQ2FloatType() :MQ2Type("float")
+	MQ2FloatType() : MQ2Type("float")
 	{
 		TypeMember(Deci);
 		TypeMember(Centi);
@@ -380,6 +390,7 @@ public:
 		TypeMember(Int);
 		TypeMember(Precision);
 		TypeMember(Raw);
+		TypeMember(Prettify);
 	}
 
 	~MQ2FloatType()
@@ -407,6 +418,7 @@ public:
 		return true;
 	}
 };
+
 class MQ2DoubleType : public MQ2Type
 {
 public:
@@ -417,6 +429,7 @@ public:
 		Milli = 3,
 		Int = 4,
 		Precision = 5,
+		Prettify = 6,
 	};
 
 	MQ2DoubleType() :MQ2Type("double")
@@ -426,6 +439,7 @@ public:
 		TypeMember(Milli);
 		TypeMember(Int);
 		TypeMember(Precision);
+		TypeMember(Prettify);
 	}
 
 	~MQ2DoubleType()
@@ -1255,6 +1269,7 @@ public:
 		EntwinedDjinnCoins = 306,
 		CrystallizedLuck = 307,
 		Spell = 308,
+		ParcelStatus = 309,
 	};
 	enum CharacterMethods
 	{
@@ -1565,6 +1580,7 @@ public:
 		TypeMember(EntwinedDjinnCoins);//306,
 		TypeMember(CrystallizedLuck);//307
 		TypeMember(Spell);//308
+		TypeMember(ParcelStatus);//309
 
 		TypeMethod(Stand);
 		TypeMethod(Sit);
@@ -1723,9 +1739,9 @@ public:
 		TypeMember(SpellType);//16,
 		TypeMember(TargetType);//17,
 		TypeMember(ResistType);//18,
-		TypeMember(CastOnYou);//19, 
-		TypeMember(CastOnAnother);//20, 
-		TypeMember(WearOff);//21, 
+		TypeMember(CastOnYou);//19,
+		TypeMember(CastOnAnother);//20,
+		TypeMember(WearOff);//21,
 		TypeMember(CounterType);//22,
 		TypeMember(CounterNumber);//23,
 		TypeMember(Stacks);//24,
@@ -2034,7 +2050,7 @@ public:
 	};
 	MQ2ItemSpellType() :MQ2Type("itemspell")
 	{
-		TypeMember(SpellID); 
+		TypeMember(SpellID);
 		TypeMember(RequiredLevel);
 		TypeMember(EffectType);
 		TypeMember(EffectiveCasterLevel);
@@ -2805,7 +2821,7 @@ public:
 		TypeMember(Full);
 		TypeMember(ItemsReceived);
 		TypeMember(SelectedItem);
-		
+
 		TypeMethod(SelectItem);
 		TypeMethod(Buy);
 		TypeMethod(Sell);
@@ -3279,7 +3295,7 @@ public:
 		TypeMember(GetCurSel);
 		TypeMember(Address);
 		TypeMember(Size);
-		
+
 		TypeMethod(LeftMouseDown);
 		TypeMethod(LeftMouseUp);
 		TypeMethod(LeftMouseHeld);
@@ -3366,7 +3382,7 @@ public:
 		TypeMember(Name);
 		TypeMember(NumItems);
 		TypeMember(Items);
-		
+
 		TypeMethod(Select);
 	}
 
@@ -3448,7 +3464,7 @@ public:
 		TypeMember(IsTLO);
 		TypeMember(IsOuterVariable);
 		TypeMember(CurSub);
-		
+
 		TypeMethod(Undeclared);
 	}
 

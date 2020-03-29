@@ -301,6 +301,7 @@ namespace MQ2Globals
 	HANDLE ghVariableLock = 0;
 	HANDLE ghMacroBlockLock = 0;
 	HANDLE ghGetClassMemberLock = 0;
+	HANDLE ghCachedBuffsLock = 0;
 
 	/* BENCHMARKS */
 	DWORD bmWriteChatColor = 0;
@@ -504,6 +505,7 @@ namespace MQ2Globals
 	fEQCommand        cmdCast = NULL;
 	fEQCommand        cmdUseItem = NULL;
 	fEQCommand        cmdHotbutton = NULL;
+	fEQCommand        cmdTaskQuit = NULL;	
 	fEQCommand        cmdPet = NULL;
 	fEQCommand        cmdMercSwitch = NULL;
 	fEQCommand        cmdAdvLoot = NULL;
@@ -2162,6 +2164,9 @@ namespace MQ2Globals
 	INITIALIZE_EQGAME_OFFSET(EQGroundItemListManager__Instance);
 	INITIALIZE_EQGAME_OFFSET(EverQuestinfo__IsItemPending);
 	INITIALIZE_EQGAME_OFFSET(CAAWnd__ShowAbility);
+	INITIALIZE_EQGAME_OFFSET(CAAWnd__UpdateSelected);
+	INITIALIZE_EQGAME_OFFSET(CAAWnd__Update);
+	INITIALIZE_EQGAME_OFFSET(CXRect__operator_and);
 	
 	INITIALIZE_EQGAME_OFFSET(ArrayClass__DeleteElement);
 	INITIALIZE_EQGAME_OFFSET(__GameLoop);
@@ -2310,6 +2315,7 @@ namespace MQ2Globals
 	INITIALIZE_EQGAME_OFFSET(CTargetWnd__GetBuffCaster);
 	INITIALIZE_EQGAME_OFFSET(CTargetWnd__WndNotification);
 	INITIALIZE_EQGAME_OFFSET(CTaskWnd__UpdateTaskTimers);
+	INITIALIZE_EQGAME_OFFSET(CTaskWnd__ConfirmAbandonTask);
 	INITIALIZE_EQGAME_OFFSET(CTaskManager__GetEntry);
 	INITIALIZE_EQGAME_OFFSET(CTaskManager__GetTaskStatus);
 	INITIALIZE_EQGAME_OFFSET(CTaskManager__GetElementDescription);
@@ -2319,6 +2325,8 @@ namespace MQ2Globals
 	INITIALIZE_EQGAME_OFFSET(EqSoundManager__WaveInstancePlay);
 	INITIALIZE_EQGAME_OFFSET(CCombatSkillsSelectWnd__ShouldDisplayThisSkill);
 	INITIALIZE_EQGAME_OFFSET(CTextureAnimation__SetCurCell);
+	INITIALIZE_EQGAME_OFFSET(CTextureAnimation__Draw);
+	INITIALIZE_EQGAME_OFFSET(CTAFrameDraw__Draw);
 	INITIALIZE_EQGAME_OFFSET(CSidlManager__FindAnimation1);
 	//INITIALIZE_EQGAME_OFFSET(ActorClient__GetPosition);
 	//INITIALIZE_EQGAME_OFFSET(ActorClient__GetPosition1);

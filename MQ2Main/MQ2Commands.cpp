@@ -2983,6 +2983,7 @@ VOID Target(PSPAWNINFO pChar, PCHAR szLine)
 			if (pTarget)
 			{
 				int id = pTarget->Data.SpawnID;
+				lockit lk(ghCachedBuffsLock);
 				if (CachedBuffsMap.find(id) != CachedBuffsMap.end())
 				{
 					pTarget = NULL;
@@ -2998,6 +2999,7 @@ VOID Target(PSPAWNINFO pChar, PCHAR szLine)
 				pTarget = NULL;
 			}
 			WriteChatColor("Cached Buffs for ALL Targets cleared.", USERCOLOR_WHO);
+			lockit lk(ghCachedBuffsLock);
 			CachedBuffsMap.clear();
 			return;
 		}
@@ -4034,6 +4036,84 @@ VOID DoHotbutton(PSPAWNINFO pChar, PCHAR pBuffer)
 	cmdHotbutton(pChar, pBuffer);
 	return;
 }
+
+
+// ***************************************************************************
+// Function:    TaskQuitCmd
+// Description: our '/taskquit' command
+//              Extends the built in /taskquit command with support for solo tasks.
+// Usage:       /taskquit <Name>
+//
+//				Usage:
+//				/taskquit Name of task
+// ***************************************************************************
+void TaskQuitCmd(PSPAWNINFO pChar, PCHAR pBuffer)
+{
+	CHAR szName[MAX_STRING] = { 0 };
+	strcpy_s(szName, pBuffer);
+
+	if (szName[0])
+	{
+		if (CTaskManager* tm = ppTaskManager)
+		{
+			CHAR szOut[MAX_STRING] = { 0 };
+			CTaskEntry* sharedentry = (CTaskEntry*)&tm->SharedTaskEntries[0];
+
+			if (sharedentry && sharedentry->TaskID)
+			{
+				if (!_stricmp(sharedentry->TaskTitle, szName))
+				{
+					if (CListWnd* clist = (CListWnd*)pTaskWnd->GetChildItem("TASK_TaskList"))
+					{
+						CXStr str;
+						for (int i = 0; i < clist->ItemsArray.Count; i++)
+						{
+							clist->GetItemText(&str, i, 2);
+							GetCXStr(str.Ptr, szOut);
+							if (!_stricmp(szName, szOut))
+							{
+								clist->SetCurSel(i);
+								pTaskWnd->ConfirmAbandonTask(sharedentry->TaskID);
+								break;
+							}
+						}
+					}
+					return;
+				}
+			}
+
+			for (int i = 0; i < 29; i++)
+			{
+				if (CTaskEntry* entry = &tm->QuestEntries[i])
+				{
+					if (!_stricmp(entry->TaskTitle, szName))
+					{
+						if (CListWnd* clist = (CListWnd*)pTaskWnd->GetChildItem("TASK_TaskList"))
+						{
+							CXStr str;
+							for (int i = 0; i < clist->ItemsArray.Count; i++)
+							{
+								clist->GetItemText(&str, i, 2);
+								GetCXStr(str.Ptr, szOut);
+								if (!_stricmp(szName, szOut))
+								{
+									clist->SetCurSel(i);
+									pTaskWnd->ConfirmAbandonTask(entry->TaskID);
+									break;
+								}
+							}
+						}
+						return;
+					}
+				}
+			}
+		}
+		return;
+	}
+
+	cmdTaskQuit(pChar, pBuffer);
+}
+
 // /timed
 VOID DoTimedCmd(PSPAWNINFO pChar, PCHAR szLine)
 {
