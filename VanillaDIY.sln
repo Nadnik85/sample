@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29326.143
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.902
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2Main", "MQ2Main\MQ2Main.vcxproj", "{2A0A06A4-E9C6-4229-82EE-BD2D4E0A7221}"
 EndProject
@@ -427,6 +427,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2Status", "MQ2Status\MQ2S
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2AutoClaim", "MQ2AutoClaim\MQ2AutoClaim.vcxproj", "{2E7C685B-5301-4FBA-A463-AB7B178731AE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2TSTrophy", "MQ2TSTrophy\MQ2TSTrophy.vcxproj", "{EC7A69E1-2682-4DA9-9D14-26824C4ADE63}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1444,6 +1446,16 @@ Global
 		{2E7C685B-5301-4FBA-A463-AB7B178731AE}.xDebug|Win32.Build.0 = Debug|Win32
 		{2E7C685B-5301-4FBA-A463-AB7B178731AE}.xDebug|x64.ActiveCfg = Release|Win32
 		{2E7C685B-5301-4FBA-A463-AB7B178731AE}.xDebug|x64.Build.0 = Release|Win32
+		{EC7A69E1-2682-4DA9-9D14-26824C4ADE63}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EC7A69E1-2682-4DA9-9D14-26824C4ADE63}.Debug|Win32.Build.0 = Debug|Win32
+		{EC7A69E1-2682-4DA9-9D14-26824C4ADE63}.Debug|x64.ActiveCfg = Debug|Win32
+		{EC7A69E1-2682-4DA9-9D14-26824C4ADE63}.Release|Win32.ActiveCfg = Release|Win32
+		{EC7A69E1-2682-4DA9-9D14-26824C4ADE63}.Release|Win32.Build.0 = Release|Win32
+		{EC7A69E1-2682-4DA9-9D14-26824C4ADE63}.Release|x64.ActiveCfg = Release|Win32
+		{EC7A69E1-2682-4DA9-9D14-26824C4ADE63}.xDebug|Win32.ActiveCfg = Debug|Win32
+		{EC7A69E1-2682-4DA9-9D14-26824C4ADE63}.xDebug|Win32.Build.0 = Debug|Win32
+		{EC7A69E1-2682-4DA9-9D14-26824C4ADE63}.xDebug|x64.ActiveCfg = Release|Win32
+		{EC7A69E1-2682-4DA9-9D14-26824C4ADE63}.xDebug|x64.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

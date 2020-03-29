@@ -3,7 +3,7 @@
 *.sdf
 *.suo
 .vs/
-
+*.ffs_db
 MQ2Auth0.h
 
 *.exp
