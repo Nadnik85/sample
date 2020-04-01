@@ -864,7 +864,7 @@ VOID CreateMQ2NewsWindow()
 	//int sizeofCXWnd = sizeof(CXWnd);
 	//int sizeofCSidlScreenWnd = sizeof(CSidlScreenWnd);
     CHAR Filename[MAX_STRING]={0};
-    sprintf_s(Filename,"%s\\redchanges.txt",gszINIPath);
+    sprintf_s(Filename,"%s\\changes.txt",gszINIPath);
     if (!pNewsWindow && _FileExists(Filename))
     {
         pNewsWindow = new CMQNewsWnd("ChatWindow");
@@ -906,7 +906,7 @@ VOID InsertMQ2News()
     if (!pNewsWindow)
         return;
     CHAR Filename[MAX_STRING]={0};
-    sprintf_s(Filename,"%s\\redchanges.txt",gszINIPath);
+    sprintf_s(Filename,"%s\\changes.txt",gszINIPath);
 	FILE *file = 0;
 	errno_t err = fopen_s(&file,Filename, "rb");
     if (err)
@@ -930,7 +930,7 @@ VOID InsertMQ2News()
         nLines++;
         if (nLines>200)
         {
-            AddNewsLine("...read redchanges.txt for more.",CONCOLOR_RED);
+            AddNewsLine("...read changes.txt for more.",CONCOLOR_RED);
             break;
         }
     }
