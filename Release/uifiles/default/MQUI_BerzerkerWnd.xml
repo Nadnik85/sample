@@ -1,7 +1,7 @@
 <?xml version = "1.0"?>
 <XML ID = "EQInterfaceDefinitionLanguage">
 	<Schema xmlns = "EverQuestData" xmlns:dt = "EverQuestDataTypes"/>
-	
+
 	<STMLbox item="Zerker_ChatOutput">
 		<ScreenID>Zerker_ChatOutput</ScreenID>
 		<DrawTemplate>WDT_Inner</DrawTemplate>
@@ -18,7 +18,538 @@
 		<Style_Transparent>true</Style_Transparent>
 	</STMLbox>
 
-	<Page item="Zerker_Tab">
+  <!--             ManaStart                 -->
+  <Slider item="ManaMedStart_Slider">
+    <ScreenID>ManaMedStart_Slider</ScreenID>
+    <Location>
+      <X>10</X>
+      <Y>16</Y>
+    </Location>
+    <Size>
+      <CX>100</CX>
+      <CY>16</CY>
+    </Size>
+    <SliderArt>SDT_DefSlider</SliderArt>
+  </Slider>
+
+  <Label item="ManaMedStart_Value">
+    <ScreenID>ManaMedStart_Value</ScreenID>
+    <Font>4</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>50</X>
+      <Y>31</Y>
+    </Location>
+    <Size>
+      <CX>150</CX>
+      <CY>20</CY>
+    </Size>
+    <Text>100</Text>
+    <TextColor>
+      <R>255</R>
+      <G>255</G>
+      <B>255</B>
+    </TextColor>
+    <NoWrap>true</NoWrap>
+    <AlignCenter>false</AlignCenter>
+    <AlignRight>false</AlignRight>
+  </Label>
+
+  <Label item="ManaMedStart_Label">
+    <ScreenID>ManaMedStart_Label</ScreenID>
+    <Font>4</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>17</X>
+      <Y>1</Y>
+    </Location>
+    <Size>
+      <CX>150</CX>
+      <CY>20</CY>
+    </Size>
+    <Text>ManaMedStart</Text>
+    <TextColor>
+      <R>66</R>
+      <G>66</G>
+      <B>255</B>
+    </TextColor>
+    <NoWrap>true</NoWrap>
+    <AlignCenter>false</AlignCenter>
+    <AlignRight>false</AlignRight>
+  </Label>
+
+  <!--             ManaEnd                 -->
+  <Slider item="ManaMedEnd_Slider">
+    <ScreenID>ManaMedEnd_Slider</ScreenID>
+    <Location>
+      <X>10</X>
+      <Y>65</Y>
+    </Location>
+    <Size>
+      <CX>100</CX>
+      <CY>16</CY>
+    </Size>
+    <SliderArt>SDT_DefSlider</SliderArt>
+  </Slider>
+
+  <Label item="ManaMedEnd_Value">
+    <ScreenID>ManaMedEnd_Value</ScreenID>
+    <Font>4</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>50</X>
+      <Y>80</Y>
+    </Location>
+    <Size>
+      <CX>150</CX>
+      <CY>20</CY>
+    </Size>
+    <Text>100</Text>
+    <TextColor>
+      <R>255</R>
+      <G>255</G>
+      <B>255</B>
+    </TextColor>
+    <NoWrap>true</NoWrap>
+    <AlignCenter>false</AlignCenter>
+    <AlignRight>false</AlignRight>
+  </Label>
+
+  <Label item="ManaMedEnd_Label">
+    <ScreenID>ManaMedEnd_Label</ScreenID>
+    <Font>4</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>20</X>
+      <Y>50</Y>
+    </Location>
+    <Size>
+      <CX>150</CX>
+      <CY>20</CY>
+    </Size>
+    <Text>ManaMedEnd</Text>
+    <TextColor>
+      <R>66</R>
+      <G>66</G>
+      <B>255</B>
+    </TextColor>
+    <NoWrap>true</NoWrap>
+    <AlignCenter>false</AlignCenter>
+    <AlignRight>false</AlignRight>
+  </Label>
+
+
+  <!--             HPStart                 -->
+  <Slider item="HPMedStart_Slider">
+    <ScreenID>HPMedStart_Slider</ScreenID>
+    <Location>
+      <X>175</X>
+      <Y>16</Y>
+    </Location>
+    <Size>
+      <CX>100</CX>
+      <CY>16</CY>
+    </Size>
+    <SliderArt>SDT_DefSlider</SliderArt>
+  </Slider>
+
+  <Label item="HPMedStart_Value">
+    <ScreenID>HPMedStart_Value</ScreenID>
+    <Font>4</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>215</X>
+      <Y>31</Y>
+    </Location>
+    <Size>
+      <CX>150</CX>
+      <CY>20</CY>
+    </Size>
+    <Text>100</Text>
+    <TextColor>
+      <R>255</R>
+      <G>255</G>
+      <B>255</B>
+    </TextColor>
+    <NoWrap>true</NoWrap>
+    <AlignCenter>false</AlignCenter>
+    <AlignRight>false</AlignRight>
+  </Label>
+
+  <Label item="HPMedStart_Label">
+    <ScreenID>HPMedStart_Label</ScreenID>
+    <Font>4</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>190</X>
+      <Y>1</Y>
+    </Location>
+    <Size>
+      <CX>150</CX>
+      <CY>20</CY>
+    </Size>
+    <Text>HPMedStart</Text>
+    <TextColor>
+      <R>255</R>
+      <G>0</G>
+      <B>0</B>
+    </TextColor>
+    <NoWrap>true</NoWrap>
+    <AlignCenter>false</AlignCenter>
+    <AlignRight>false</AlignRight>
+  </Label>
+
+  <!--             HPEnd                 -->
+  <Slider item="HPMedEnd_Slider">
+    <ScreenID>HPMedEnd_Slider</ScreenID>
+    <Location>
+      <X>175</X>
+      <Y>65</Y>
+    </Location>
+    <Size>
+      <CX>100</CX>
+      <CY>16</CY>
+    </Size>
+    <SliderArt>SDT_DefSlider</SliderArt>
+  </Slider>
+
+  <Label item="HPMedEnd_Value">
+    <ScreenID>HPMedEnd_Value</ScreenID>
+    <Font>4</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>215</X>
+      <Y>80</Y>
+    </Location>
+    <Size>
+      <CX>150</CX>
+      <CY>20</CY>
+    </Size>
+    <Text>100</Text>
+    <TextColor>
+      <R>255</R>
+      <G>255</G>
+      <B>255</B>
+    </TextColor>
+    <NoWrap>true</NoWrap>
+    <AlignCenter>false</AlignCenter>
+    <AlignRight>false</AlignRight>
+  </Label>
+
+  <Label item="HPMedEnd_Label">
+    <ScreenID>HPMedEnd_Label</ScreenID>
+    <Font>4</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>195</X>
+      <Y>50</Y>
+    </Location>
+    <Size>
+      <CX>150</CX>
+      <CY>20</CY>
+    </Size>
+    <Text>HPMedEnd</Text>
+    <TextColor>
+      <R>255</R>
+      <G>0</G>
+      <B>0</B>
+    </TextColor>
+    <NoWrap>true</NoWrap>
+    <AlignCenter>false</AlignCenter>
+    <AlignRight>false</AlignRight>
+  </Label>
+
+  <!--             EndStart                 -->
+  <Slider item="EndMedStart_Slider">
+    <ScreenID>EndMedStart_Slider</ScreenID>
+    <Location>
+      <X>340</X>
+      <Y>16</Y>
+    </Location>
+    <Size>
+      <CX>100</CX>
+      <CY>16</CY>
+    </Size>
+    <SliderArt>SDT_DefSlider</SliderArt>
+  </Slider>
+
+  <Label item="EndMedStart_Value">
+    <ScreenID>EndMedStart_Value</ScreenID>
+    <Font>4</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>385</X>
+      <Y>31</Y>
+    </Location>
+    <Size>
+      <CX>150</CX>
+      <CY>20</CY>
+    </Size>
+    <Text>100</Text>
+    <TextColor>
+      <R>255</R>
+      <G>255</G>
+      <B>255</B>
+    </TextColor>
+    <NoWrap>true</NoWrap>
+    <AlignCenter>false</AlignCenter>
+    <AlignRight>false</AlignRight>
+  </Label>
+
+  <Label item="EndMedStart_Label">
+    <ScreenID>EndMedStart_Label</ScreenID>
+    <Font>4</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>355</X>
+      <Y>1</Y>
+    </Location>
+    <Size>
+      <CX>150</CX>
+      <CY>20</CY>
+    </Size>
+    <Text>EndMedStart</Text>
+    <TextColor>
+      <R>150</R>
+      <G>150</G>
+      <B>0</B>
+    </TextColor>
+    <NoWrap>true</NoWrap>
+    <AlignCenter>false</AlignCenter>
+    <AlignRight>false</AlignRight>
+  </Label>
+
+  <!--             EndMedEnd                 -->
+  <Slider item="EndMedEnd_Slider">
+    <ScreenID>EndMedEnd_Slider</ScreenID>
+    <Location>
+      <X>340</X>
+      <Y>65</Y>
+    </Location>
+    <Size>
+      <CX>100</CX>
+      <CY>16</CY>
+    </Size>
+    <SliderArt>SDT_DefSlider</SliderArt>
+  </Slider>
+
+  <Label item="EndMedEnd_Value">
+    <ScreenID>EndMedEnd_Value</ScreenID>
+    <Font>4</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>385</X>
+      <Y>80</Y>
+    </Location>
+    <Size>
+      <CX>150</CX>
+      <CY>20</CY>
+    </Size>
+    <Text>100</Text>
+    <TextColor>
+      <R>255</R>
+      <G>255</G>
+      <B>255</B>
+    </TextColor>
+    <NoWrap>true</NoWrap>
+    <AlignCenter>false</AlignCenter>
+    <AlignRight>false</AlignRight>
+  </Label>
+
+  <Label item="EndMedEnd_Label">
+    <ScreenID>EndMedEnd_Label</ScreenID>
+    <Font>4</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>355</X>
+      <Y>50</Y>
+    </Location>
+    <Size>
+      <CX>150</CX>
+      <CY>20</CY>
+    </Size>
+    <Text>EndMedEnd</Text>
+    <TextColor>
+      <R>150</R>
+      <G>150</G>
+      <B>0</B>
+    </TextColor>
+    <NoWrap>true</NoWrap>
+    <AlignCenter>false</AlignCenter>
+    <AlignRight>false</AlignRight>
+  </Label>
+
+  <!--             PullRadius              -->
+  <Slider item="PullRadius_Slider">
+    <ScreenID>PullRadius_Slider</ScreenID>
+    <Location>
+      <X>90</X>
+      <Y>105</Y>
+    </Location>
+    <Size>
+      <CX>100</CX>
+      <CY>16</CY>
+    </Size>
+    <SliderArt>SDT_DefSlider</SliderArt>
+  </Slider>
+
+  <Label item="PullRadius_Value">
+    <ScreenID>PullRadius_Value</ScreenID>
+    <Font>4</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>125</X>
+      <Y>120</Y>
+    </Location>
+    <Size>
+      <CX>150</CX>
+      <CY>20</CY>
+    </Size>
+    <Text>100</Text>
+    <TextColor>
+      <R>255</R>
+      <G>255</G>
+      <B>255</B>
+    </TextColor>
+    <NoWrap>true</NoWrap>
+    <AlignCenter>false</AlignCenter>
+    <AlignRight>false</AlignRight>
+  </Label>
+
+  <Label item="PullRadius_Label">
+    <ScreenID>PullRadius_Label</ScreenID>
+    <Font>4</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>110</X>
+      <Y>90</Y>
+    </Location>
+    <Size>
+      <CX>150</CX>
+      <CY>20</CY>
+    </Size>
+    <Text>PullRadius</Text>
+    <TextColor>
+      <R>255</R>
+      <G>255</G>
+      <B>255</B>
+    </TextColor>
+    <NoWrap>true</NoWrap>
+    <AlignCenter>false</AlignCenter>
+    <AlignRight>false</AlignRight>
+  </Label>
+
+  <!--             ZRadius                 -->
+  <Slider item="ZRadius_Slider">
+    <ScreenID>ZRadius_Slider</ScreenID>
+    <Location>
+      <X>260</X>
+      <Y>105</Y>
+    </Location>
+    <Size>
+      <CX>100</CX>
+      <CY>16</CY>
+    </Size>
+    <SliderArt>SDT_DefSlider</SliderArt>
+  </Slider>
+
+  <Label item="ZRadius_Value">
+    <ScreenID>ZRadius_Value</ScreenID>
+    <Font>4</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>300</X>
+      <Y>120</Y>
+    </Location>
+    <Size>
+      <CX>150</CX>
+      <CY>20</CY>
+    </Size>
+    <Text>100</Text>
+    <TextColor>
+      <R>255</R>
+      <G>255</G>
+      <B>255</B>
+    </TextColor>
+    <NoWrap>true</NoWrap>
+    <AlignCenter>false</AlignCenter>
+    <AlignRight>false</AlignRight>
+  </Label>
+
+  <Label item="ZRadius_Label">
+    <ScreenID>ZRadius_Label</ScreenID>
+    <Font>4</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>285</X>
+      <Y>90</Y>
+    </Location>
+    <Size>
+      <CX>150</CX>
+      <CY>20</CY>
+    </Size>
+    <Text>ZRadius</Text>
+    <TextColor>
+      <R>255</R>
+      <G>255</G>
+      <B>255</B>
+    </TextColor>
+    <NoWrap>true</NoWrap>
+    <AlignCenter>false</AlignCenter>
+    <AlignRight>false</AlignRight>
+  </Label>
+
+  <!--           GroupWatch            -->
+  <Combobox item="GroupWatch_ComboBox">
+    <ScreenID>GroupWatch_ComboBox</ScreenID>
+    <Font>1</Font>
+    <DrawTemplate>WDT_Inner</DrawTemplate>
+
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>85</X>
+      <Y>150</Y>
+    </Location>
+    <Size>
+      <CX>150</CX>
+      <CY>18</CY>
+    </Size>
+
+    <ListHeight>90</ListHeight>
+    <Button>BDT_Combo</Button>
+    <Style_Border>true</Style_Border>
+    <TextColor>
+      <R>255</R>
+      <G>255</G>
+      <B>255</B>
+    </TextColor>
+  </Combobox>
+
+  <Label item="GroupWatch_Label">
+    <ScreenID>GroupWatch_Label</ScreenID>
+    <Font>4</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>5</X>
+      <Y>150</Y>
+    </Location>
+    <Size>
+      <CX>80</CX>
+      <CY>20</CY>
+    </Size>
+    <Text>Group Watch</Text>
+    <TextColor>
+      <R>255</R>
+      <G>255</G>
+      <B>255</B>
+    </TextColor>
+    <NoWrap>true</NoWrap>
+    <AlignCenter>false</AlignCenter>
+    <AlignRight>false</AlignRight>
+  </Label>
+
+  <!--   Plugin Output    -->
+  <Page item="Zerker_Tab">
 		<ScreenID>Zerker_Tab</ScreenID>
 		<RelativePosition>false</RelativePosition>
 		<DrawTemplate>WDT_Def</DrawTemplate>
@@ -33,16 +564,21 @@
 			<G>255</G>
 			<B>0</B>
 		</TabTextActiveColor>
+
 		<Pieces>Zerker_ChatOutput</Pieces>
+
 		<Style_Sizable>true</Style_Sizable>
+
 		<Location>
 			<X>0</X>
 			<Y>22</Y>
 		</Location>
+
 		<Size>
 			<CX>578</CX>
 			<CY>302</CY>
 		</Size>
+
 	</Page>
 
 	<!--Check Boxes start here -->
@@ -98,7 +634,7 @@
 		<AlignCenter>false</AlignCenter>
 		<AlignRight>false</AlignRight>
 	</Label>
-	
+
 	<Button item="Zerker_Checkbox1">
 		<ScreenID>Zerker_Checkbox1</ScreenID>
 		<Font>2</Font>
@@ -151,7 +687,7 @@
 		<AlignCenter>false</AlignCenter>
 		<AlignRight>false</AlignRight>
 	</Label>
-	
+
 	<Button item="Zerker_Checkbox2">
 		<ScreenID>Zerker_Checkbox2</ScreenID>
 		<Font>2</Font>
@@ -416,7 +952,7 @@
 		<AlignCenter>false</AlignCenter>
 		<AlignRight>false</AlignRight>
 	</Label>
-	
+
 	<Button item="Zerker_Checkbox7">
 		<ScreenID>Zerker_Checkbox7</ScreenID>
 		<Font>2</Font>
@@ -681,7 +1217,7 @@
 		<AlignCenter>false</AlignCenter>
 		<AlignRight>false</AlignRight>
 	</Label>
-	
+
 	<Button item="Zerker_Checkbox12">
 		<ScreenID>Zerker_Checkbox12</ScreenID>
 		<Font>2</Font>
@@ -894,7 +1430,7 @@
 		<AlignRight>false</AlignRight>
 	</Label>
 	<!--Check Boxes End Here-->
-	
+
 	<!--Input Boxes start here -->
 	<Label item="Zerker_InputBox_Label0">
 		<ScreenID>Zerker_InputBox_Label0</ScreenID>
@@ -1068,7 +1604,7 @@
 		</TextColor>
 	</Editbox>
 	<!--InputBoxes End Here-->
-	
+
 	<!--Combo Boxes start here -->
 	<Combobox item="Zerker_Mode_ComboBox">
 		<ScreenID>Zerker_Mode</ScreenID>
@@ -1163,7 +1699,7 @@
 		<AlignCenter>false</AlignCenter>
 		<AlignRight>false</AlignRight>
 	</Label>
-		
+
 	<!--Combo Boxes End Here-->
 
 	<Page item="Zerker_Settings">
@@ -1187,83 +1723,160 @@
 			<Y>22</Y>
 		</Location>
 		<Size>
-		
+
 			<CX>578</CX>
 			<CY>302</CY>
 		</Size>
-		
+
 		<Pieces>Zerker_CheckboxLabel0</Pieces>
 		<Pieces>Zerker_Checkbox0</Pieces>
-		
+
 		<Pieces>Zerker_CheckboxLabel1</Pieces>
 		<Pieces>Zerker_Checkbox1</Pieces>
-		
+
 		<Pieces>Zerker_CheckboxLabel2</Pieces>
 		<Pieces>Zerker_Checkbox2</Pieces>
-		
+
 		<Pieces>Zerker_Checkbox3</Pieces>
 		<Pieces>Zerker_CheckboxLabel3</Pieces>
-		
+
 		<Pieces>Zerker_Checkbox4</Pieces>
 		<Pieces>Zerker_CheckboxLabel4</Pieces>
-		
+
 		<Pieces>Zerker_Checkbox5</Pieces>
 		<Pieces>Zerker_CheckboxLabel5</Pieces>
 
 		<Pieces>Zerker_Checkbox6</Pieces>
 		<Pieces>Zerker_CheckboxLabel6</Pieces>
-		
+
 		<Pieces>Zerker_Checkbox7</Pieces>
 		<Pieces>Zerker_CheckboxLabel7</Pieces>
-		
+
 		<Pieces>Zerker_Checkbox8</Pieces>
 		<Pieces>Zerker_CheckboxLabel8</Pieces>
-		
+
 		<Pieces>Zerker_Checkbox9</Pieces>
 		<Pieces>Zerker_CheckboxLabel9</Pieces>
-		
+
 		<Pieces>Zerker_Checkbox10</Pieces>
 		<Pieces>Zerker_CheckboxLabel10</Pieces>
-		
+
 		<Pieces>Zerker_Checkbox11</Pieces>
 		<Pieces>Zerker_CheckboxLabel11</Pieces>
-		
+
 		<Pieces>Zerker_Checkbox12</Pieces>
 		<Pieces>Zerker_CheckboxLabel12</Pieces>
-		
+
 		<Pieces>Zerker_Checkbox13</Pieces>
 		<Pieces>Zerker_CheckboxLabel13</Pieces>
-		
+
 		<Pieces>Zerker_Checkbox14</Pieces>
 		<Pieces>Zerker_CheckboxLabel14</Pieces>
-		
+
 		<Pieces>Zerker_Checkbox15</Pieces>
 		<Pieces>Zerker_CheckboxLabel15</Pieces>
-		
+
 		<Pieces>Zerker_InputBox_Input0</Pieces>
 		<Pieces>Zerker_InputBox_Label0</Pieces>
-		
+
 		<Pieces>Zerker_InputBox_Input1</Pieces>
 		<Pieces>Zerker_InputBox_Label1</Pieces>
-		
+
 		<Pieces>Zerker_InputBox_Input2</Pieces>
 		<Pieces>Zerker_InputBox_Label2</Pieces>
-		
+
 		<Pieces>Zerker_InputBox_Input3</Pieces>
 		<Pieces>Zerker_InputBox_Label3</Pieces>
-		
+
 		<Pieces>Zerker_Mode_Label</Pieces>
 		<Pieces>Zerker_Mode_ComboBox</Pieces>
-		
+
 		<Pieces>Zerker_RaidAssist_Label</Pieces>
 		<Pieces>Zerker_RaidAssist_ComboBox</Pieces>
+
 	</Page>
+
+  <Page item="Pulling">
+    <ScreenID>Pulling</ScreenID>
+    <RelativePosition>false</RelativePosition>
+    <DrawTemplate>WDT_Def</DrawTemplate>
+    <TabText>Pulling</TabText>
+    <TabTextColor>
+      <R>255</R>
+      <G>255</G>
+      <B>255</B>
+    </TabTextColor>
+    <TabTextActiveColor>
+      <R>255</R>
+      <G>255</G>
+      <B>0</B>
+    </TabTextActiveColor>
+    <Style_Sizable>true</Style_Sizable>
+    <Location>
+      <X>0</X>
+      <Y>22</Y>
+    </Location>
+    <Size>
+
+      <CX>578</CX>
+      <CY>302</CY>
+    </Size>
+    <!--          Mana              -->
+    <!--ManaMedStart-->
+    <Pieces>ManaMedStart_Value</Pieces>
+    <Pieces>ManaMedStart_Label</Pieces>
+    <Pieces>ManaMedStart_Slider</Pieces>
+
+    <!--ManaMedEnd-->
+    <Pieces>ManaMedEnd_Value</Pieces>
+    <Pieces>ManaMedEnd_Label</Pieces>
+    <Pieces>ManaMedEnd_Slider</Pieces>
+
+    <!--          Health              -->
+    <!--HPMedStart-->
+    <Pieces>HPMedStart_Value</Pieces>
+    <Pieces>HPMedStart_Label</Pieces>
+    <Pieces>HPMedStart_Slider</Pieces>
+
+    <!--HPMedEnd-->
+    <Pieces>HPMedEnd_Value</Pieces>
+    <Pieces>HPMedEnd_Label</Pieces>
+    <Pieces>HPMedEnd_Slider</Pieces>
+
+    <!--          Endurance              -->
+    <!--EndMedStart-->
+    <Pieces>EndMedStart_Value</Pieces>
+    <Pieces>EndMedStart_Label</Pieces>
+    <Pieces>EndMedStart_Slider</Pieces>
+
+    <!--EndMedEnd-->
+    <Pieces>EndMedEnd_Value</Pieces>
+    <Pieces>EndMedEnd_Label</Pieces>
+    <Pieces>EndMedEnd_Slider</Pieces>
+
+    <!--          Pulling              -->
+    <!--Pull Radius-->
+    <Pieces>PullRadius_Value</Pieces>
+    <Pieces>PullRadius_Label</Pieces>
+    <Pieces>PullRadius_Slider</Pieces>
+
+    <!--ZRadius-->
+    <Pieces>ZRadius_Value</Pieces>
+    <Pieces>ZRadius_Label</Pieces>
+    <Pieces>ZRadius_Slider</Pieces>
+
+    <!--Group Watch-->
+    <Pieces>GroupWatch_Label</Pieces>
+    <Pieces>GroupWatch_ComboBox</Pieces>
+
+
+    </Page>
 
 	<TabBox item="Zerker_Tabs">
 		<ScreenID>Subwindows</ScreenID>
 		<RelativePosition>true</RelativePosition>
 		<AutoStretch>true</AutoStretch>
-		
+
 		<LeftAnchorOffset>0</LeftAnchorOffset>
 		<TopAnchorOffset>0</TopAnchorOffset>
 		<RightAnchorOffset>0</RightAnchorOffset>
@@ -1278,6 +1891,7 @@
 
 		<Pages>Zerker_Tab</Pages>
 		<Pages>Zerker_Settings</Pages>
+    <Pages>Pulling</Pages>
 	</TabBox>
 
 	<Screen item = "BerzerkerWnd">
@@ -1287,8 +1901,8 @@
 			<Y>15</Y>
 		</Location>
 		<Size>
-			<CX>510</CX>
-			<CY>240</CY>
+			<CX>475</CX>
+			<CY>220</CY>
 		</Size>
 		<Text>Advanced DPS Display</Text>
 		<Style_Transparent>false</Style_Transparent>
@@ -1302,4 +1916,4 @@
 		<Pieces>Zerker_Tabs</Pieces>
 	</Screen>
 
-</XML> 
+</XML>

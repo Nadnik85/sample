@@ -1,6 +1,292 @@
+Apr 09 2020 by RedGuides
+- MQ2DPSAdv (wired420, brainiac, Knightly, ctaylor22, Redbot, drwhomphd) Added DPS Meter logic for self and pet. Added a TLO so you can access the information.
+  This update does not require the DPSADV UI window to be open. Added MyStart, MyStop, MyReset, and help commands.
+  New TLO DPSAdv and members: MyDamage, PetDamage, TotalDamage, MyDPS, PetDPS, TotalDPS, TimeElapsed, MyStatus.
+- CWTN Plugins (ChatWithThisName) Huntertank mode added, plus MQ2Cleric, MQ2Eskay, and MQ2Berzerker all updated with new fixes.
+  Full changelog in the CWTN subforum of Plugins.
+- MQ2Rez (ChatWithThisName, brainiac, Knightly) Fixed a slew of bugs including the switching characters error, massive code cleanup, added "/rez silent" option which will suppress
+  MQ2 window spam when accepting a rez.
+
+Apr 09 2020
+- Updated for TEST
+- Fixed the ITEMINFO struct.
+
+Apr 08 2020
+- Updated for TEST
+- Todo: go over the newcharinfo struct there are 0x104 bytes of stuff left to check.
+
+Apr 06 2020
+- Added .MyDuration to the Spell TLO. It returns a ticktype of YOUR duration for the spell in question.
+- Caption redrawing has been optimized to use less cpu cycles.
+
+Apr 02 2020
+- Add bSeeInvis, bSeeSOS and bSeeIVU to SpawnSearch - CTWN
+
+Apr 01 2020
+- Fixed ZoneFlags
+- Fixed the _ZONELIST struct
+- Added .CanMount to the Character TLO it's a bool it returns true if u can mount in the zone u are in and if it won't collide with an illusion u have on. 
+- Added .ToiletPaper to the Character TLO it returns true if you need to go out and get more.
+
+Mar 31 2020
+- Fixed all Spell Stack checks. (yes again, hopefully for good this time.)
+
+Mar 28 2020
+- Fixed all Spell Stack checks.
+- Stacks, WillStack, StacksWith, StacksSpawn
+  StacksTarget and StacksPet
+- Added a lock for CachedBuffsMap access
+- Removed a WriteChatf from Task.Timer
+- Added a function which can be used by plugins to format numbers:
+    EQLIB_API void PrettifyNumber(char* string, size_t bufferSize, int decimals = 0);
+  If the given string is a number, it will add commas and set the desired number of decimals.
+  For integers, leave decimals as 0. For floats, a value of 2 is recommended. Min is 0, max is 9.
+- Added .Prettify to Int, Int64, Float and Double types. 
+    Example: ${Me.MaxHPs.Prettify} => 30,103
+    Example: ${Target.Distance.Prettify} => 1,151.24
+  Prettify takes a number of decimals of precision as a parameter:
+    Example: ${Target.Distance.Prettify[4]} => 1,151.2395
+	
+MAR 28 2020
+- CWTN Plugins (ChatWithThisName, Sic) Fixed some casting issues, pet buffs. MQ2BerZerker: ${Berzerker.Mode} will 
+  now correctly display all modes  MQ2Rogue: Add some missing discs. 
+		
+MAR 27 2020 by RedGuides
+- CWTN Plugins (ChatWithThisName, Sic) Bug fixes, Targeting for AA's now happens before use rather than when ready.
+  Added "ShowTargeting" option. IE: /zerk showtargeting on, which will output when the plugin is targeting something. 
+  Class shortnames for commands added, which will allow you to /docommand /${Me.Class.ShortName} mode 1.
+  MQ2Cleric: Will rez before buff, healing overhauled, bug fixes.
+  MQ2Bst: Added Spiritual regen to gems in certain cases.
+  MQ2Monk: Should no longer use Purify Body when inappropriate, Add FeignAtAggro and FeignAtHealth values for Feign control.
+  MQ2Eskay: Added buffing for Concordant in our spell/buffs check so we don't only check it on downtime.
+		
+Mar 26 2020 by RedGuides
+- MQ2Relocate (Sic) Added /relocate Bronze to use Harbinger's Staff
+- CWTN Plugins (ChatWithThisName, Sic) Improved stun handling. More CLI options, i.e.: /zerk HPMedStart 60. 
+  Spellbook searching more accurate. Better buff handling. Safe zones updated. Clearer reporting of missing spells/abilities.
+  Hopefully fixed "intermittent screen stalling" that was reported. Improved pulling. 
+  MQ2Eskay: Added logic for those without Azia AA, added Remorseless Demeanor, EndRegen. 
+  MQ2Cleric: Checks for GroupHot or GroupHotCure before trying to re-cast them. 
+  MQ2Monk: "Swift Tails' Chant" and burn options should now work. Destructive Force and Vehement Rage bugs fixed. 
+		
+Mar 26 2020
+- Updated for TEST
+- Added CAAWnd__UpdateSelected_x
+- Added CAAWnd__Update_x
+- Changed ShowSpellSlotInfo so it takes a custom linebreak.
+
+Mar 25 2020 by ChatWithThisName
+- MQ2ChatWnd: Added ingame toggles for SaveByChar, Autoscroll, NoCharSelect to the /mqchat command
+  Available options are:
+    no parameter, will output what it's currently set to. Example: /mqchat SaveByChar
+    On - Turn on the option. Example: /mqchat autoscroll on
+    Off - Turn off the option. Example: /mqchat NoCharSelect off
+
+Mar 19 2020 by RedGuides
+- CWTN Plugins (ChatWithThisName) PercentMana will show correct value.
+  Classes with SpellCheck/Memorize/Buff section should no longer check when they're pulling
+  MQ2Cleric: Added Hand and Vie and options to toggle
+
+Mar 19 2020
+- Updated for LIVE
+- Added CXRect__operator_and
+- Fixed CTextureFont::DrawWrappedText
+- Added CTextureAnimation::Draw
+- Added CTAFrameDraw::Draw
+- Fixed the CPageWnd class for EMU
+- Added members to the CTAFrameDraw class
+- Made the CTabWnd class a proper CXWnd class and added members to it.
+
+Mar 19 2020 by brainiac
+- Made a couple additional changes to /taskquit from the update on Mar 16 2020:
+  - fix /taskquit <name> to search solo tasks when a shared task is present.
+  - fix /taskquit <name> to be exact match only
+  - change /taskquit <name> to no longer use quotes.
+
+Mar 18 2020 by RedGuides
+- CWTN Plugins (ChatWithThisName) Any class using the window will now have the first tab called "Plugin Output" instead of "Zerker". 
+  Added a window to the rogue, warrior and monk classes. type "/rog show", "/war show" and "/monk show" respectively  to show the window.
+
+Mar 18 2020
+- Updated for LIVE
+
+Mar 17 2020
+- Updated for TEST
+- Fixed the SListWndCell struct
+
+Mar 17 2020 by RedGuides
+- CWTN Plugins - ALL
+  Characters should now cast other spells, even if there is an empty spell slot above the spell needing to be casted.
+- MQ2Cleric
+  Updated the list of spells in the "Ward" group.
+  Dissident/Undyling life are no longer linked to normal heals.
+  Normal heals (Category Heal, Subcategory Heal) currently will not function, this means Minor healing, light healing, complete healing etc.
+  A change for this will be added at a later date.
+- MQ2Bst
+  New spell group "SlowSpell" was added. (in case we don't have the AA yet)
+  New spell group "STHaste" (single target haste) was added.
+		
+Mar 16 2020
+- Extended the /taskquit command. It now takes an optional argument, "Name of Task" so we can use it to remove solo tasks as well. -Feature Cred: drwhomphd
+   /taskquit without any argument works like before, i.e it removes the shared task if there is one.
+- Usage /taskquit "No Heroism Without Fear"
+
+Mar 15 2020
+- Fixed a bug with ${Macro.CurSub} it will now correctly return the sub its used in.
+- Fixed a bug where tells you would not be detected in all languages. Thanks Kaen01 for report.
+
+Mar 14 2020 by RedGuides
+- CWTN Plugins (ChatWithThisName, Sic) Fix incorrect order of the GroupWatch help output for Healer and Healer and Crowd Control.
+  MQ2BerZerker: Revert a change to the cry havoc/cry canage line. Two zerkers should no longer fight over who's buff should be active. Cry Havoc and 
+  Cry Carnage will overwrite each other. It will also not work with Secondary Burn, so it won't fire during a secondary burn. 
+  MQ2Cleric: Clerics should no longer try to buff in combat (Like when someone dies and doesn't have the HP buff).
+
+Mar 14 2020 by Sic
+- Added ParcelStatus to the character TLO.
+  Usage: /echo ${Me.ParcelStatus}
+
+Mar 11 2020 by RedGuides
+- MQ2DanNet (dannuic) The elusive Zoning crash should now be fixed. Please notify me if you believe you are having ANY DanNet related crash.
+
+Mar 11 2020
+- Updated for LIVE
+- Fixed the Lucy Button on itemdisplay for the internal browser. (you can still right click to launch externally)
+
+Mar 09 2020 by RedGuides
+- MQ2Eskay (CWTN) Spire will now fire during burn, not waiting for Guardian
+- MQ2Cleric (CWTN) if UseDivineIntervention is on, we will DI ourselves as well as the tank
+- MQ2Status (Sic) Fixed some issues about which macro is running and other display issues.
+  Requests to Report back ${Role} even if your macro doesn't have kissassist in the name. The original intention of this was to report back 
+  if your macro has "kiss" in the name to accomodate beta/dev verisons of kissassist, kissmule/muleassist, and anyone running a custom/modified kiss version.
+  I specifically don't want to check it against ${MacroName} to equal kissassist because again - the intention is to include any 
+  forks or kissasist like kissmule/muleassist and the like.
+
+Mar 08 2020
+- Updated for TEST
+- Updated for LIVE
+- Fixed ${Spell[permanent spell here].Stack} so it actually returns true when they DO stack.
+
+Mar 06 2020
+- Added CTabWnd::RemovePage
+- Fixed CXWnd::DrawColoredRect crash
+
+Mar 03 2020 by Redguides
+- MQ2TSTrophy (Sic) Added TLO's to TSTrophy as well as a new video explaining the functionality and the available TLOs
+- MQ2Relocate (Sic, Knightly) Updated to version 2.0, cleaned up code
+- MQ2Status (Sic, brainiac) Will now use Dannet if you have dannet loaded and don't have eqbc loaded, Standardized output color/format 
+  for readability. Fixed some typos and spacing issues, Huge refactoring "under the hood", check the resource for a video of the new features!
+- CWTN Plugins (ChatWIthThisName, Sic) Autodismounting has a message, target switch issues with switchwithma fixed, spelling issues fixed, 
+  MQ2Bst: Corrected issue with Alliance, spell memorization. MQ2War: Correct a "Can I Bash" error
+
+Mar 03 2020
+- Updated for TEST
+- Updated for LIVE
+- Added CPageWnd::FlashTab
+
+Feb 28 2020 by Redguides
+- CWTN Plugins (ChatWithThisName) Fix overlooked crash dealing with pulling with AA. Thanks to everyone who sent crash reports. 
+
+Feb 27 2020 by RedGuides
+- CWTN Plugins (ChatWithThisName) fixed various crashes, detect unusable abilities, added "/addclicky pullitem" for item-click pulls
+  Fixed multiple spelling and zone errors, improved SwitchWithMA, improved pet healing with MQ2Cleric.
+- MQ2KissBuffs (ChatWithThisName) Update MQ2KissBuffs to also track pet buffs if you have a pet. 
+- MQ2TSTrophy (Sic, brainiac, Knightly) - Added check if your trophy evolves !Ding. Improved custom UI compatibility. Fixed issues when
+  zoning. Eliminted "spam swaps", improved compatibility with other macros/plugins.
+
+Feb 27 2020
+- Updated for TEST
+- Updated for LIVE
+- Added support for spaces in /hotbutton Name. Use /hotbutton "Button Name With Spaces" in quotes.
+- Fixed GetChildWndAt
+- Updated CAAWnd::ShowAbility
+- Filled in CPageWnd members
+- Updated CHARINFO struct etc.
+- Previously Updated:
+- Fixed the CursorAttachment Struct
+- Macro Authors, take notice: Fixed ${Me.AltAbility[blah].Rank} it now properly returns 0 if you don't have any points spent in a AA.
+
+Feb 18 2020
+-Updated for TEST
+-Updated for LIVE
+
+Feb 17 2020 by Redguides
+- CWTN Plugins (ChatWithThisName, Sic)
+ 	CWTN Plugins - ALL
+		Backend fixes
+		QuickHeal fix for self
+		Chasemode will no longer chase corpses (lul)
+		Should no longer send in your pet if you are melee pulling until you are back to camp
+		ValidateTarget should no longer allow you to attack a player's pet.
+		New autodetection for stuck gems and hard coded autofix for them.
+		Should no longer spam trying to memorize a spell during group watch downtime.
+		Melee pulls should now correctly turn on attack when near the mob to pull.
+		When last stood check added to waiting for valid targets or aggro downtime.
+		No longer allowed to set Group Main Tank's Target as one of your XTarget slots.
+		PullAbility (Shadow Knight) should no longer shuffle step as the margin for inrange/out of range was adjusted.
+	MQ2Rogue:
+		MQ2Rogues have re-discovered thier lost book of "Rogue Tips and Tricks" and will now use all their abilities again
+		Added a toggle for Ligament Slice
+		Corrected output for UsePet to display correctly
+		Backend updates
+	MQ2Cleric:
+		Will now automatically use Yaulp to fix stuck gems.
+		Backend updates
+		in !byos we will use syllable (synergy proc) instead of seventeenth - we will use seventeenth if usecurate is off
+	MQ2Bst:
+		No longer checking group pets for group shrink (issue with some pets who don't have AA)
+		Added some additional PetTanking functionality for mode 4, 5, or 7
+		We won't send in our pet if we are pulling
+		Added GroupShrink and toggle.
+		Added Paragon of Spirit Toggle.
+		Added Memming alliance if UseAlliance is on.
+	MQEskay:
+		Will use "Bobbing Corpse" to break our stuck spell gems
+		We won't send in our pet if we are pulling
+
+Feb 14 2020 by Redguides
+- MQ2Status (Sic) Small fix for output of MQ2Eskay during /status
+
+Feb 14 2020
+-Updated for LIVE
+
+Feb 12 2020 by Redguides
+- MQ2Status (Sic, brainiac) Added /status parcel to return if we have any parcels (thanks CWTN) 
+  Added /status invis
+- CWTN Plugins - All: 
+		Correct bug in triggers checking.
+		ShowSettings should now report the correct ZRadius being used for pulling - my bad :-)
+	MQ2Cleric:
+		Re-add Shining Defense now that triggers are checking correctly.
+		Check Restless Ice on Pulse and moved all other cures to after heals.
+		Adjustments were made to Quiet Prayer and Yaulp checks.
+		UseYaulp is now a toggle.
+		DivineIntervention now has a toggle.
+	MQ2BerZerker:
+		Make sure to check that the disc is ready for Synergy Specific Demolishing Frenzy to fire the Synergy.
+	MQ2Bst:
+		Fix mana checks for Paragon and Focused Paragon.
+		Fix pet taunt toggle output message to output correctly.
+	MQ2Monk:
+		Added UseIntimidate options
+	MQ2War:
+		Blade guardian should now be used full time.
+
+Feb 11 2020
+-Updated for LIVE
+
+Feb 09 2020
+- Fixed a bug where our version of /hotbutton would not save the button to the ini. - reported by DrWhomPhd
+
+Feb 06 2020
+- Updated for TEST
+
+Feb 05 2020
+- Updated for TEST
+
 Jan 30 2020 by RedGuides
 - MQ2Relocate (Sic) Updated to ensure we fall to the secondary anchor. Added a check to ensure we don't have the anchor in our inventory
-- CWTN Plugins (CWTN, Sic) MQ2Bst, MQ2Cleric, MQ2EsKay, MQ2Monk updated
+- CWTN Plugins (CWTN, Sic) 	MQ2Cleric will now use gem slot 8 for "buffing/misc" and will save domelee settings. 
+  MQ2War will kick if you don't have a shield and you have a stunning kick AA.
 - Bazaar.mac (kaen01) removed alias
 
 Jan 26 2020 by RedGuides
@@ -33,6 +319,7 @@ Jan 21 2020 by RedGuides
 
 Jan 20 2020
 - Misc Fixes to triggers etc - braniac
+- Me.CountersXXX now also count ShortBuffs (${Me.Cursed} now returns Restless Ice, for example.)
 
 Jan 15 2020 by RedGuides
 - MQ2RelayTells (ChatWithThisName, brainiac) Confirmed fix for mail and relaying the tells on my end by sending myself a bunch of tells :-)
