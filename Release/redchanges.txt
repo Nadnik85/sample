@@ -1,3 +1,12 @@
+Apr 11 2020 by RedGuides
+- MQ2XAssist (drwhomphd, brainiac) two new TLO's: XTFullHaterCount and XTAggroCount. These provide alternatives to the core MQ2 TLOs for XTargets XTHaterCount and XTAggroCount. 
+  XTFullHaterCount returns all auto haters including the one that is being targeted. XTXAggroCount allows the aggro range to be expanded to 1000 for situations where someone 
+  wants to check the >=100 aggro values. The original XTAggroCount TLO only allows for 1-99.
+- MQ2DPSAdv (Knightly) Fix crash in setting name
+- MQ2AutoLoot (Plure) fixed a fash, thanks to Sic for the report
+- Buy.inc (cannonballdex) Addresses the issue with the declarations being called in a loop causing error messages when purchasing more than 100 items from a vendor in a macro.
+- LazyLobbyRez (cannonballdex) Uses Throne of Heroes if available or Origin, MQ2Nav and MQ2EasyFind.
+
 Apr 09 2020 by RedGuides
 - MQ2DPSAdv (wired420, brainiac, Knightly, ctaylor22, Redbot, drwhomphd) Added DPS Meter logic for self and pet. Added a TLO so you can access the information.
   This update does not require the DPSADV UI window to be open. Added MyStart, MyStop, MyReset, and help commands.
