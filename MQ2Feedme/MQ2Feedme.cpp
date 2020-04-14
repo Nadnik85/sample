@@ -389,10 +389,10 @@ PLUGIN_API void SetGameState(DWORD GameState)
         if (GetCharInfo2()) {
             DrnkAt     = GetPrivateProfileInt(GetCharInfo()->Name, "AutoDrink", 0, INIFileName);
             FeedAt     = GetPrivateProfileInt(GetCharInfo()->Name, "AutoFeed",  0, INIFileName);
-            bAnnLevels = GetPrivateProfileInt("Settings",          "Announce",  true, INIFileName);
-			bAnnConsume = GetPrivateProfileInt("Settings",         "Announce", true, INIFileName);
-            bFoodWarn  = GetPrivateProfileInt("Settings",          "FoodWarn",  false, INIFileName);
-            bDrinkWarn = GetPrivateProfileInt("Settings",          "DrinkWarn",  false, INIFileName);
+            bAnnLevels = GetPrivateProfileInt("Settings",          "Announce",  true, INIFileName) != 0;;
+            bAnnConsume = GetPrivateProfileInt("Settings",         "Announce", true, INIFileName) != 0;;
+            bFoodWarn  = GetPrivateProfileInt("Settings",          "FoodWarn",  false, INIFileName) != 0;;
+            bDrinkWarn = GetPrivateProfileInt("Settings",          "DrinkWarn",  false, INIFileName) != 0;;
 
             WritePrivateProfileString("Settings", "Announce", SafeItoa(bAnnLevels, Buffer, 10), INIFileName);
             WritePrivateProfileString("Settings", "FoodWarn", SafeItoa(bFoodWarn, Buffer, 10), INIFileName);
