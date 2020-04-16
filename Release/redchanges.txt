@@ -1,6 +1,16 @@
+Apr 15 2020
+- Updated for LIVE
+
+Apr 14 2020
+- Updated the FellowShip struct for TEST
+- Updated the FellowShip struct for LIVE
+
+Apr 13 2020
+- Updated for TEST
+
 Apr 11 2020 by RedGuides
 - MQ2XAssist (drwhomphd, brainiac) two new TLO's: XTFullHaterCount and XTAggroCount. These provide alternatives to the core MQ2 TLOs for XTargets XTHaterCount and XTAggroCount. 
-  XTFullHaterCount returns all auto haters including the one that is being targeted. XTXAggroCount allows the aggro range to be expanded to 1000 for situations where someone 
+  XTFullHaterCount returns all auto haters including the one that is being targted. XTXAggroCount allows the aggro range to be expanded to 1000 for situations where someone 
   wants to check the >=100 aggro values. The original XTAggroCount TLO only allows for 1-99.
 - MQ2DPSAdv (Knightly) Fix crash in setting name
 - MQ2AutoLoot (Plure) fixed a fash, thanks to Sic for the report
