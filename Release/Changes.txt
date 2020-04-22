@@ -1,3 +1,11 @@
+Apr 21 2020
+- Updated for TEST
+-
+Apr 15 2020
+- Added back Leader and FellowshipID to FELLOWSHIP struct
+  Plugin authors: If you already made changes, just leave it alone. Or not, up to you.
+  Either way, struct is now backwards compatible.
+-
 Apr 15 2020
 - Updated for LIVE
 - Fixed ${Me.CanMount} for some indoor zones that where not flagged as nomount and added bazaar, nexus to zones where its ok to mount.

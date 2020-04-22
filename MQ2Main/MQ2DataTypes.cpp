@@ -6593,33 +6593,11 @@ bool MQ2CharacterType::GETMEMBER()
 		Dest.Type = pIntType;
 		return true;
 	case CanMount://310
-	{
-		Dest.DWord = 0;
-		Dest.Type = pBoolType;
-		int zid = ((PSPAWNINFO)pLocalPlayer)->GetZoneID() & 0x7FFF;
-		if (PZONEINFO pthezone = (PZONEINFO)pZoneInfo)
-		{
-			if (zid == 151 /*bazaar*/ || zid == 152 /*nexus*/)
-			{
-				Dest.DWord = 1;
-				return true;
-			}
-			if (pthezone->OutDoor == IndoorDungeon || pthezone->OutDoor == IndoorCity ||
-				pthezone->OutDoor == DungeonCity)
-				return true;
-		}
 		if (PlayerZoneClient*pzc = (PlayerZoneClient*)pLocalPlayer)
 		{
-			if (zid < MAX_ZONES)
-			{
-				if (PZONELIST pZList = ((PWORLDDATA)pWorldData)->ZoneArray[zid])
-				{
-					if (pZList->ZoneFlags & 0x200)
-					{
-						return true;
-					}
-				}
-			}
+			Dest.DWord = 0;
+			Dest.Type = pBoolType;
+			int zid = ((PSPAWNINFO)pLocalPlayer)->GetZoneID() & 0x7FFF;
 			if (((PSPAWNINFO)pLocalPlayer)->HeadWet != 0 || ((PSPAWNINFO)pLocalPlayer)->Vehicle != NULL)
 			{
 				return true;
@@ -6629,10 +6607,30 @@ bool MQ2CharacterType::GETMEMBER()
 			{
 				return true;
 			}
-			Dest.DWord = 1;
+			if (PZONEINFO pthezone = (PZONEINFO)pZoneInfo)
+			{
+				if (zid == 151 /*bazaar*/ || zid == 152 /*nexus*/)
+				{
+					Dest.DWord = 1;
+					return true;
+				}
+				if (pthezone->OutDoor == IndoorDungeon || pthezone->OutDoor == IndoorCity ||
+					pthezone->OutDoor == DungeonCity)
+					return true;
+			}
+			if (zid < MAX_ZONES)
+			{
+				if (PZONELIST pZList = ((PWORLDDATA)pWorldData)->ZoneArray[zid])
+				{
+					if (pZList->ZoneFlags & 0x200)
+					{
+						return true;
+					}
+				}
+				Dest.DWord = 1;
+			}
+			return true;
 		}
-		return true;
-	}
 	//end of MQ2CharacterType
 	}
 	return false;
@@ -14035,24 +14033,11 @@ bool MQ2FellowshipType::GETMEMBER()
 	switch ((FellowshipTypeMembers)pMember->ID)
 	{
 	case ID:
-		#if defined(ROF2EMU) || defined(UFEMU)
 		Dest.DWord = pFellowship->FellowshipID;
-		#else
-		Dest.DWord = pFellowship->FellowshipGUID.UniqueEntityID;
-		#endif
 		Dest.Type = pIntType;
 		return true;
 	case Leader:
-		DataTypeTemp[0] = '\0';
-		if (pFellowship->Members)
-		{
-			//from eqgame dated Mar 09 2020 and onward, Leader is ALWAYS at index 0 -eqmule
-			#if defined(ROF2EMU) || defined(UFEMU)
-			strcpy_s(DataTypeTemp, pFellowship->Leader);
-			#else
-			strcpy_s(DataTypeTemp, pFellowship->FellowshipMember[0].Name);
-			#endif
-		}
+		strcpy_s(DataTypeTemp, pFellowship->Leader);
 		Dest.Ptr = &DataTypeTemp[0];
 		Dest.Type = pStringType;
 		return true;
