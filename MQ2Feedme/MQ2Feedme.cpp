@@ -49,7 +49,7 @@ PLUGIN_VERSION(4.2);
 #define	SKIP_PULSES	50
 #define	NOID -1
 
-bool         Loaded=0;                           // List Loaded?
+bool         Loaded=false;                           // List Loaded?
 long         Pulses=0;                           // Pulses Skipped Counter
 
 long         FeedAt=0;                           // Feed Level
@@ -60,9 +60,10 @@ char         Buffer[16]={0};
 list<string> Hunger;                             // Hunger Fix List
 list<string> Thirst;                             // Thirst Fix List
 
-int          bAnnLevels = 1;                     // Announce Levels
-int          bFoodWarn = 0;                      // Announce No Food
-int          bDrinkWarn = 0;                     // Announce No Drink
+bool          bAnnLevels = true;                     // Announce Levels
+bool          bAnnConsume = true;                    // Announce Consumption
+bool          bFoodWarn = false;                      // Announce No Food
+bool          bDrinkWarn = false;                     // Announce No Drink
 
 bool IAmCamping = false;						 // Defining if we are camping out or not
 
@@ -150,7 +151,7 @@ void Consume(BYTE fTYPE, list<string> fLIST)
         strcpy_s(FindName, pTempList->c_str());
         if (PCONTENTS pItem = FindItemByName(FindName,true)) {
             if (GetItemFromContents(pItem)->ItemType == fTYPE) {
-                WriteChatf("\ay%s\aw:: Consuming -> \ag%s.", PLUGIN_NAME, FindName);
+                if (bAnnConsume) WriteChatf("\ay%s\aw:: Consuming -> \ag%s.", PLUGIN_NAME, FindName);
                 Execute("/useitem %d %d", pItem->Contents.ItemSlot, pItem->Contents.ItemSlot2);
                 return;
 	        }
@@ -243,6 +244,16 @@ void AutoFeedCmd(PSPAWNINFO pLPlayer, char* szLine)
         WriteChatf("\ay%s\aw:: AutoFeed(\ag%s\ax).", PLUGIN_NAME, (FeedAt) ? Buffer : "\aroff");
         if (bAnnLevels) WriteChatf("\ay%s\aw:: Current Thirst(\ag%d\ax) Hunger(\ag%d\ax)", PLUGIN_NAME, GetCharInfo2()->thirstlevel, GetCharInfo2()->hungerlevel);
     }
+	else if (!_stricmp(Arg, "announceConsume")) {
+		if (bAnnConsume) {
+			bAnnConsume = false;
+			WriteChatf("\ay%s\aw::Consumption Notification Off", PLUGIN_NAME);
+		}
+		else {
+			bAnnConsume = true;
+			WriteChatf("\ay%s\aw::Consumption Notification On", PLUGIN_NAME);
+		}
+	}
 
 }
 
@@ -325,6 +336,16 @@ void AutoDrinkCmd(PSPAWNINFO pLPlayer, char* szLine)
         WriteChatf("\ay%s\aw:: AutoDrink(\ag%s\ax).", PLUGIN_NAME, (DrnkAt) ? Buffer :"\aroff");
         if (bAnnLevels) WriteChatf("\ay%s\aw:: Current Thirst(\ag%d\ax) Hunger(\ag%d\ax)", PLUGIN_NAME, GetCharInfo2()->thirstlevel, GetCharInfo2()->hungerlevel);
     }
+	else if (!_stricmp(Arg, "announceConsume")) {
+		if (bAnnConsume) {
+			bAnnConsume = false;
+			WriteChatf("\ay%s\aw::Consumption Notification Off", PLUGIN_NAME);
+		}
+		else {
+			bAnnConsume = true;
+			WriteChatf("\ay%s\aw::Consumption Notification On", PLUGIN_NAME);
+		}
+	}
 }
 
 PLUGIN_API void OnPulse()
@@ -368,9 +389,10 @@ PLUGIN_API void SetGameState(DWORD GameState)
         if (GetCharInfo2()) {
             DrnkAt     = GetPrivateProfileInt(GetCharInfo()->Name, "AutoDrink", 0, INIFileName);
             FeedAt     = GetPrivateProfileInt(GetCharInfo()->Name, "AutoFeed",  0, INIFileName);
-            bAnnLevels = GetPrivateProfileInt("Settings",          "Announce",  1, INIFileName);
-            bFoodWarn  = GetPrivateProfileInt("Settings",          "FoodWarn",  0, INIFileName);
-            bDrinkWarn = GetPrivateProfileInt("Settings",          "DrinkWarn",  0, INIFileName);
+            bAnnLevels = GetPrivateProfileInt("Settings",          "Announce",  1, INIFileName) != 0;
+            bAnnConsume = GetPrivateProfileInt("Settings",         "Announce", 1, INIFileName) != 0;
+            bFoodWarn  = GetPrivateProfileInt("Settings",          "FoodWarn",  0, INIFileName) != 0;
+            bDrinkWarn = GetPrivateProfileInt("Settings",          "DrinkWarn",  0, INIFileName) != 0;
 
             WritePrivateProfileString("Settings", "Announce", SafeItoa(bAnnLevels, Buffer, 10), INIFileName);
             WritePrivateProfileString("Settings", "FoodWarn", SafeItoa(bFoodWarn, Buffer, 10), INIFileName);
