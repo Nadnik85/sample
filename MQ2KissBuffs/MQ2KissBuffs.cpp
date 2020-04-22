@@ -5,7 +5,8 @@ char CurrentBuffs[MAX_STRING] = { 0 };
 char CurrentShortBuffs[MAX_STRING] = { 0 };
 char CurrentBlockedBuffs[MAX_STRING] = { 0 };
 char CurrentPetBuffs[MAX_STRING] = { 0 };
-unsigned __int64 WriteBuffsTimer = 0;
+uint64_t WriteBuffsTimer = 0;
+uint64_t RecentlyZonedTimer = 0;
 
 int iDiseaseCounters = 0;
 int iPoisonCounters = 0;
@@ -21,12 +22,14 @@ PLUGIN_API VOID OnPulse(VOID)
 	if (!InGame()) return;
 	if (++Pulse < PulseDelay) return;
 	Pulse = 0;
-	WriteBuffs();
+	if (RecentlyZonedTimer < GetTickCount64())
+		WriteBuffs();
 }
 
 PLUGIN_API VOID OnZoned(VOID)
 {
 	if (!InGame()) return;
+	RecentlyZonedTimer = GetTickCount64() + 3000;
 	strcpy_s(CurrentBuffs, MAX_STRING, "");
 	strcpy_s(CurrentShortBuffs, MAX_STRING, "");
 	strcpy_s(CurrentBlockedBuffs, MAX_STRING, "");
@@ -34,7 +37,6 @@ PLUGIN_API VOID OnZoned(VOID)
 	iPoisonCounters = 0;
 	iCurseCounters = 0;
 	iCorruptionCounters = 0;
-	WriteBuffs();
 }
 
 PLUGIN_API VOID ShutdownPlugin(VOID)
