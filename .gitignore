@@ -17,6 +17,10 @@ MQ2Auth0.h
 ISX*
 !DSurface.dll #allow dsurface.dll for mq2radar
 
+#mq2 specific
+EQBCS.exe
+LootSort.exe
+
 Debug/
 Intermediate/
 bin/
@@ -45,8 +49,6 @@ UpgradeLog.htm
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
 x64/
 x86/
 [Aa][Rr][Mm]/
