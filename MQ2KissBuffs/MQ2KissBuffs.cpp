@@ -5,7 +5,8 @@ char CurrentBuffs[MAX_STRING] = { 0 };
 char CurrentShortBuffs[MAX_STRING] = { 0 };
 char CurrentBlockedBuffs[MAX_STRING] = { 0 };
 char CurrentPetBuffs[MAX_STRING] = { 0 };
-unsigned __int64 WriteBuffsTimer = 0;
+uint64_t WriteBuffsTimer = 0;
+uint64_t RecentlyZonedTimer = 0;
 
 int iDiseaseCounters = 0;
 int iPoisonCounters = 0;
@@ -21,12 +22,14 @@ PLUGIN_API VOID OnPulse(VOID)
 	if (!InGame()) return;
 	if (++Pulse < PulseDelay) return;
 	Pulse = 0;
-	WriteBuffs();
+	if (RecentlyZonedTimer < GetTickCount64())
+		WriteBuffs();
 }
 
 PLUGIN_API VOID OnZoned(VOID)
 {
 	if (!InGame()) return;
+	RecentlyZonedTimer = GetTickCount64() + 3000;
 	strcpy_s(CurrentBuffs, MAX_STRING, "");
 	strcpy_s(CurrentShortBuffs, MAX_STRING, "");
 	strcpy_s(CurrentBlockedBuffs, MAX_STRING, "");
@@ -34,7 +37,6 @@ PLUGIN_API VOID OnZoned(VOID)
 	iPoisonCounters = 0;
 	iCurseCounters = 0;
 	iCorruptionCounters = 0;
-	WriteBuffs();
 }
 
 PLUGIN_API VOID ShutdownPlugin(VOID)
@@ -137,7 +139,7 @@ void WriteBuffs() {
 		strcat_s(WriteBuffList, "|");
 		//Write the Pet buffs to the file
 		if (!CurrentPetBuffs || _stricmp(CurrentPetBuffs, WriteBuffList)) {
-			//WriteChatf("Updating Pet Buffs");
+			//WriteChatf("Updating PetBuffs");
 			WritePrivateProfileString(myid, "PetBuffs", WriteBuffList, BuffINI);
 			sprintf_s(CurrentPetBuffs, MAX_STRING, WriteBuffList);
 		}
@@ -200,7 +202,7 @@ void WriteBuffs() {
 	char ZoneID[8] = { 0 };
 	//Get ZoneID.
 	_itoa_s((((PSPAWNINFO)pLocalPlayer)->GetZoneID() & 0x7FFF), ZoneID, 8, 10);
-	
+
 	//Write the day hour and ZoneID for this buff list to an INI section of myid
 	WritePrivateProfileString(myid, "Day", day, BuffINI);
 	WritePrivateProfileString(myid, "Hour", hour, BuffINI);
@@ -215,7 +217,7 @@ void WriteBuffs() {
 			WritePrivateProfileString(myid, "MyRole", theRole, BuffINI);
 		}
 		else if (GetGroupMainAssistTargetID() == atoi(myid)) {
-			//if for whatever reason the macro is kiss but ${Role} isn't defined. Lets see if I'm the MA. 
+			//if for whatever reason the macro is kiss but ${Role} isn't defined. Lets see if I'm the MA.
 			WritePrivateProfileString(myid, "MyRole", "tank", BuffINI);
 		}
 		else {
@@ -267,11 +269,11 @@ PSPELL MyBlockedBuff(int i) {
 	PCHARINFONEW pCharinfo = (PCHARINFONEW)GetCharInfo();
 	if (!pCharinfo || !pCharinfo->BlockedSpell[i])
 		return nullptr;
-	
+
 	PSPELL BlockedSpell = GetSpellByID(pCharinfo->BlockedSpell[i]);
 	if (!BlockedSpell)
 		return nullptr;
-	
+
 	return BlockedSpell;
 #endif
 }
@@ -283,7 +285,7 @@ inline bool InGame()
 
 PSPAWNINFO Me()
 {
-	if (!InGame()) 
+	if (!InGame())
 		return nullptr;
 	PSPAWNINFO me = GetCharInfo()->pSpawn;
 	if (!me)
@@ -393,12 +395,12 @@ unsigned long MainAssistID()
 	{
 		if (!pChar->pGroupInfo->pMember[i])
 			continue;
-		
+
 		if (pChar->pGroupInfo->pMember[i]->MainAssist && pChar->pGroupInfo->pMember[i]->pSpawn)
 		{
 			return pChar->pGroupInfo->pMember[i]->pSpawn->SpawnID;
 		}
-		
+
 	}
 	return 0;
 }
