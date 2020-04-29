@@ -1913,7 +1913,7 @@ bool MQ2SpawnType::GETMEMBER()
 	case Assist:
 		Dest.DWord = 0;
 		Dest.Type = pBoolType;
-		if (gGameState == GAMESTATE_INGAME && GetCharInfo()->pSpawn && pSpawn)
+		if (gGameState == GAMESTATE_INGAME && pSpawn)
 		{
 			if (DWORD AssistID = GetGroupMainAssistTargetID()) {
 				if (AssistID == pSpawn->SpawnID) {
@@ -1934,12 +1934,12 @@ bool MQ2SpawnType::GETMEMBER()
 	case Mark:
 		Dest.DWord = 0;
 		Dest.Type = pIntType;
-		if (gGameState == GAMESTATE_INGAME && GetCharInfo()->pSpawn && pSpawn)
+		if (gGameState == GAMESTATE_INGAME && pLocalPlayer && pSpawn)
 		{
 			DWORD nMark;
 			for (nMark = 0; nMark < 3; nMark++)
 			{
-				if (GetCharInfo()->pSpawn->RaidMarkNPC[nMark] == pSpawn->SpawnID)
+				if (((PSPAWNINFO)pLocalPlayer)->RaidMarkNPC[nMark] == pSpawn->SpawnID)
 				{
 					Dest.DWord = nMark + 1;
 					return true;
@@ -1947,7 +1947,7 @@ bool MQ2SpawnType::GETMEMBER()
 			}
 			for (nMark = 0; nMark < 3; nMark++)
 			{
-				if (GetCharInfo()->pSpawn->GroupMarkNPC[nMark] == pSpawn->SpawnID)
+				if (((PSPAWNINFO)pLocalPlayer)->GroupMarkNPC[nMark] == pSpawn->SpawnID)
 				{
 					Dest.DWord = nMark + 1;
 					return true;
@@ -2301,6 +2301,8 @@ bool MQ2SpawnType::GETMEMBER()
 		if (CachedBuffsMap.empty())
 			return false;
 		DWORD SpellID = 0;
+		BOOL bExact = false;
+		bool bByName = false;
 		bool bBySlot = false;
 		bool bByIndex = false;
 		bool bByKeyword = false;
@@ -2315,7 +2317,10 @@ bool MQ2SpawnType::GETMEMBER()
 			}
 			else
 			{
-				BOOL bExact = false;
+				if (*pIndex == '=') {
+					bExact = true;
+					pIndex++;
+				}
 				if (*pIndex == '#') {
 					//by buff slot
 					bBySlot = true;
@@ -2333,21 +2338,49 @@ bool MQ2SpawnType::GETMEMBER()
 				}
 				else
 				{
-					//by spell name
-					if (PSPELL pSpell = GetSpellByName(pIndex))
+					bByName = true;
+					if (bExact)
 					{
-						SpellID = pSpell->ID;
+						//by exact spell name
+						if (PSPELL pSpell = GetSpellByName(pIndex))
+						{
+							SpellID = pSpell->ID;
+						}
+					}
+					else
+					{
+						TruncateSpellRankName(pIndex);
 					}
 				}
 			}
-			if (SpellID)
+			if (bByName)
 			{
+				//CHAR szTemp[MAX_STRING];
 				std::map<int, std::map<int, cTargetBuff>>::iterator ps = CachedBuffsMap.find(pSpawn->SpawnID);
 				if (ps != CachedBuffsMap.end())
 				{
+					bool bFound = false;
 					for (std::map<int, cTargetBuff>::iterator i = ps->second.begin(); i != ps->second.end(); i++)
 					{
-						if (i->first == SpellID)
+						if (bExact)
+						{
+							if (i->first == SpellID)
+							{
+								bFound = true;
+							}
+						}
+						else
+						{
+							if (PSPELL pSpell = GetSpellByID(i->first))
+							{
+								//strcpy_s(szTemp, pSpell->Name);
+								if (!_strnicmp(pSpell->Name, pIndex, strlen(pIndex)))
+								{
+									bFound = true;
+								}
+							}
+						}
+						if (bFound)
 						{
 							strcpy_s(TargetBuffTemp.casterName, i->second.casterName);
 							TargetBuffTemp.count = i->second.count;
@@ -6631,6 +6664,21 @@ bool MQ2CharacterType::GETMEMBER()
 			}
 			return true;
 		}
+	case SpellRankCap://311
+		Dest.DWord = 1;
+		Dest.Type = pIntType;
+		if (PCHARINFO pChar = GetCharInfo())
+		{
+			if (CharacterBase *cb = (CharacterBase *)&pChar->CharacterBase_vftable)
+			{
+				int ret = cb->GetGameFeature(3);
+				if (ret == -1 || ret >= 10)
+					Dest.DWord = 3;
+				else if (ret >= 5)
+					Dest.DWord = 2;
+			}
+		}
+		return true;
 	//end of MQ2CharacterType
 	}
 	return false;
@@ -9782,6 +9830,7 @@ bool MQ2CurrentZoneType::GETMEMBER()
 #endif
 			}
 		}
+		return false;
 	}
 	switch ((CurrentZoneMembers)pMember->ID)
 	{

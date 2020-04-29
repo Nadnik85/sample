@@ -204,6 +204,14 @@ extern DWORD CountFrees;
     __asm{mov eax, [eax]};\
     __asm{jmp eax};\
 }
+#define FUNCTION_AT_VIRTUAL_TABLE_ADDRESS(function,address,virtualoffset) __declspec(naked) function\
+{\
+    __asm{mov edx, virtualoffset};\
+    __asm{mov eax, [address]};\
+    __asm{lea eax, [eax + edx * 4]};\
+    __asm{mov eax, [eax]};\
+    __asm{jmp eax};\
+}
 #endif
 
 #define PreserveRegisters(code) \
@@ -798,7 +806,7 @@ EQLIB_API BOOL		  CloseContainer(PCONTENTS pItem);
 EQLIB_API int		  GetTargetBuffByCategory(DWORD category, DWORD classmask = 0, int startslot = 0);
 EQLIB_API int		  GetTargetBuffBySubCat(PCHAR subcat, DWORD classmask = 0, int startslot = 0);
 EQLIB_API int		  GetTargetBuffBySPA(int spa, bool bIncrease, int startslot = 0);
-EQLIB_API void        GetCachedBuffs(std::map<int, std::map<int, cTargetBuff>>& CBMap);
+EQLIB_API void        ClearCachedBuffs(int ID);
 EQLIB_API bool		  HasCachedTargetBuffSubCat(const char*subcat, PSPAWNINFO pSpawn, PcTargetBuff pcTargetBuff, DWORD classmask = 0);
 EQLIB_API bool		  HasCachedTargetBuffSPA(int spa, bool bIncrease, PSPAWNINFO pSpawn,PcTargetBuff pcTargetBuff);
 EQLIB_API int		  GetSelfBuffByCategory(DWORD category, DWORD classmask = 0, int startslot = 0);
