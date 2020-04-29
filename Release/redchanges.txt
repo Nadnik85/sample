@@ -1,3 +1,10 @@
+Apr 22 2020 by Redguides
+- MQ2DataVars (drwhomphd, Knightly) a minor patch expanding EQMule's original Chat event fix for tells spoken in different languages. 
+- MQ2FeedMe (Sic, brainiac) Added an option to turn off consumption messages.
+
+Apr 21 2020
+- Updated for TEST
+
 Apr 15 2020
 - Updated for LIVE
 
