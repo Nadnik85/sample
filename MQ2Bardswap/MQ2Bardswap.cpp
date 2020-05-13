@@ -10,6 +10,7 @@
 #include "../MQ2Plugin.h"
 
 PreSetup("MQ2BardSwap");
+PLUGIN_VERSION(2009.1109);
 
 typedef struct _EXCLUDED {
    CHAR Song[MAX_STRING];
