@@ -263,52 +263,55 @@ PLUGIN_API void OnPulse()
 	}
 
 	if (containerfound) {
-
-		if (strstr(szContainerName, "Alchemy Table")) {
+		// We are updating trophies anytime we open a container, in case someone put their trophy in the bank, or deleted it, or it changed between last time it was used
+		// This is understood it might not be the best fix, but it was a good short-term solution
+		UpdateTrophies();
+		// We are now doing a FindSlotCurrent to check ranged and ammo slots, in case you already have it equipped in another slot
+		if (strstr(szContainerName, "Alchemy Table") && (FindSlotCurrent("ammo") != AlchemistTrophy && FindSlotCurrent("range") != AlchemistTrophy)) {
 			//equip alchemy trophy
 			SwapSlot(&AlchemistTrophy, "ammo");
 		}
-		else if (strstr(szContainerName, "Mixing Bowl") || strstr(szContainerName, "Oven") || strstr(szContainerName, "Ice Cream")) {
+		else if (strstr(szContainerName, "Mixing Bowl") || strstr(szContainerName, "Oven") || strstr(szContainerName, "Ice Cream") && (FindSlotCurrent("ammo") != BakingTrophy && FindSlotCurrent("range") != BakingTrophy)) {
 			//equip Baking trophy
 			SwapSlot(&BakingTrophy,"ammo");
 		}
-		else if (strstr(szContainerName, "Brewing Barrel")) {
+		else if (strstr(szContainerName, "Brewing Barrel") && (FindSlotCurrent("ammo") != BrewingTrophy && FindSlotCurrent("range") != BrewingTrophy)) {
 			//equip Brewing trophy
 			SwapSlot(&BrewingTrophy,"ammo");
 		}
-		else if (strstr(szContainerName, "Fletching Table")) {
+		else if (strstr(szContainerName, "Fletching Table") && (FindSlotCurrent("ammo") != FletchingTrophy && FindSlotCurrent("range") != FletchingTrophy)) {
 			//equip Fletching trophy
 			SwapSlot(&FletchingTrophy,"ammo");
 		}
-		else if (strstr(szContainerName, "Jewelry Making Table")) {
+		else if (strstr(szContainerName, "Jewelry Making Table") && (FindSlotCurrent("ammo") != JewelerTrophy && FindSlotCurrent("range") != JewelerTrophy)) {
 			//equip Jewelry trophy
 			SwapSlot(&JewelerTrophy,"ammo");
 		}
-		else if (strstr(szContainerName, "Fly Making Bench")) {
+		else if (strstr(szContainerName, "Fly Making Bench") && (FindSlotCurrent("mainhand") != FishingTrophy && FindSlotCurrent("ammo") != FishingTrophy && FindSlotCurrent("range") != FishingTrophy)) {
 			//equip Fishing trophy
 			SwapSlot(&FishingTrophy,"mainhand");
 		}
-		else if (strstr(szContainerName, "Kiln") || strstr(szContainerName, "Pottery Wheel")) {
+		else if (strstr(szContainerName, "Kiln") || strstr(szContainerName, "Pottery Wheel") && (FindSlotCurrent("ammo") != PotteryTrophy && FindSlotCurrent("range") != PotteryTrophy)) {
 			//equip Pottery trophy
 			SwapSlot(&PotteryTrophy,"ammo");
 		}
-		else if (strstr(szContainerName, "Poisoncrafting Table")) {
+		else if (strstr(szContainerName, "Poisoncrafting Table") && (FindSlotCurrent("ammo") != PoisonTrophy && FindSlotCurrent("range") != PoisonTrophy)) {
 			//equip Poison making trophy
 			SwapSlot(&PoisonTrophy,"ammo");
 		}
-		else if (strstr(szContainerName, "Forge")) {
+		else if (strstr(szContainerName, "Forge") && (FindSlotCurrent("ammo") != BlacksmithTrophy && FindSlotCurrent("range") != BlacksmithTrophy)) {
 			//equip Smithing trophy
 			SwapSlot(&BlacksmithTrophy,"ammo");
 		}
-		else if (strstr(szContainerName, "Spell Research Table")) {
+		else if (strstr(szContainerName, "Spell Research Table") && (FindSlotCurrent("ammo") != ResearchTrophy && FindSlotCurrent("range") != ResearchTrophy)) {
 			//equip research trophy
 			SwapSlot(&ResearchTrophy,"ammo");
 		}
-		else if (strstr(szContainerName, "Loom")) {
+		else if (strstr(szContainerName, "Loom") && (FindSlotCurrent("ammo") != TailorTrophy && FindSlotCurrent("range") != TailorTrophy)) {
 			//equip Tailoring trophy
 			SwapSlot(&TailorTrophy,"ammo");
 		}
-		else if (strstr(szContainerName, "Tinkering")) {
+		else if (strstr(szContainerName, "Tinkering") && (FindSlotCurrent("ammo") != TinkeringTrophy && FindSlotCurrent("range") != TinkeringTrophy)) {
 			//equip Tinkering trophy
 			SwapSlot(&TinkeringTrophy,"ammo");
 		}
@@ -561,6 +564,9 @@ CONTENTS* FindSlotCurrent(const char* pSlot)
 	PCHARINFO2 pChar2 = GetCharInfo2();
 	if (strstr(pSlot, "ammo")) {
 		return pChar2->pInventoryArray->Inventory.Ammo;
+	}
+	else if (strstr(pSlot, "range")) {
+		return pChar2->pInventoryArray->Inventory.Range;
 	}
 	else if (strstr(pSlot, "mainhand")) {
 		return pChar2->pInventoryArray->Inventory.Primary;
