@@ -1,19 +1,18 @@
-[submodule "MQ2Dan"]
-	path = MQ2Dan
-	url = https://github.com/dannuic/MQ2Dan.git
-	
-[submodule "MQ2Nav"]
-	path = MQ2Nav
-	url = https://github.com/brainiac/MQ2Nav.git
-
-[submodule "MQ2Py"]
-	path = MQ2Py
-	url = https://github.com/brainiac/MQ2Py.git
-
-[submodule "MQ2DotNet"]
-	path = MQ2DotNet
-	url = https://gitlab.com/alynel/MQ2DotNet.git
-
+[submodule "MQ2Camera"]
+	path = MQ2Camera
+	url = https://github.com/brainiac/MQ2Camera.git
 [submodule "MQ2Collections"]
 	path = MQ2Collections
 	url = https://github.com/TypePun/MQ2Collections.git
+[submodule "MQ2Dan"]
+	path = MQ2Dan
+	url = https://github.com/dannuic/MQ2Dan.git
+[submodule "MQ2DotNet"]
+	path = MQ2DotNet
+	url = https://gitlab.com/alynel/MQ2DotNet.git
+[submodule "MQ2Nav"]
+	path = MQ2Nav
+	url = https://github.com/brainiac/MQ2Nav.git
+[submodule "MQ2Py"]
+	path = MQ2Py
+	url = https://github.com/brainiac/MQ2Py.git
