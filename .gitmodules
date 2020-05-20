@@ -16,6 +16,9 @@
 [submodule "MQ2Py"]
 	path = MQ2Py
 	url = https://github.com/brainiac/MQ2Py.git
-[submodule "mq2react"]
+[submodule "MQ2React"]
 	path = MQ2React
 	url = https://gitlab.com/redguides/plugins/mq2react.git
+[submodule "MQ2Sql"]
+	path = MQ2Sql
+	url = https://github.com/dencelle/MQ2Sql.git
