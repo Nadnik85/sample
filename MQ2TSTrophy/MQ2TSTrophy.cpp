@@ -475,7 +475,8 @@ void UpdateTrophies()
 
 	//Fishing Rod "Trophy" - will return with ${Trophy.Fishing}
 	itemList = {
-		"The Bone Rod"
+		"The Bone Rod",
+		"Collapsible Fishing Pole"
 	};
 	UpdateTrophyGroup(&FishingTrophy, itemList, "Fishing");
 
