@@ -193,6 +193,7 @@ void StatusCmd(SPAWNINFO* pChar, char* szLine)
 		WriteChatf("\ao/status \agcampfire\aw: Reports campfire information including Active, Duration, and Zone.");
 		WriteChatf("\ao/status \agfellowship\aw: This returns to your mq2window (does not eqbc/dannet) information on your fellowship");
 		WriteChatf("\ao/status \agbagspace\aw: Reports how many open bagspaces you have.");
+		WriteChatf("\ao/status \agquest\aw or \agtask\aw \ayQuest name\aw: Reports if you have a quest/task matching \ayQuest name\aw.");
 #if !defined(ROF2EMU)
 		WriteChatf("\ao/status \agsub\aw: Reports to eqbc our subscription level, and if we are gold, how many days are left.");
 #endif
@@ -254,6 +255,34 @@ void StatusCmd(SPAWNINFO* pChar, char* szLine)
 			stringBuffer += LabeledText(findItem, FindBankItemCountByName(&findItem[0], 0)); // FindBankItemCountByName requires bExact
 			strcat_s(buffer, stringBuffer.c_str());
 			EzCommand(buffer);
+		}
+		return;
+	}
+
+	if (!_stricmp(Arg, "quest") || !_stricmp(Arg, "task")) {
+		GetArg(Arg, szLine, 2);
+		if (Arg[0] == 0) { // if an Argument after quest/task wasn't made, we need to ask for one
+			WriteChatf("\arPlease provide a valid Quest/Task Name to search for.\aw");
+		}
+		else {
+			const char* tempArg = GetNextArg(szLine);
+			stringBuffer += GetColorCode('o', false);
+			stringBuffer += "Quest/Task \"";
+			stringBuffer += GetColorCode('t', true);
+			stringBuffer += tempArg;
+			stringBuffer += GetColorCode('o', false);
+			stringBuffer += "\": ";
+			char tempTask[MAX_STRING] = "";
+			sprintf_s(tempTask, "${Task[%s]}", tempArg);
+			ParseMacroData(tempTask, MAX_STRING);
+			if (_stricmp(tempTask, "NULL")) {
+				stringBuffer += GetColorCode('g', false);
+			}
+			else {
+				stringBuffer += GetColorCode('r', false);
+			}
+			stringBuffer += tempTask;
+			EzCommand(&stringBuffer[0]);
 		}
 		return;
 	}
@@ -1017,8 +1046,12 @@ std::string LabeledText(const std::string& Label, T Value)
 
 std::string GetColorCode(char Color, bool Dark)
 {
-	if (Dark)
-		return bConnectedToDannet ? std::string("\a-") + Color : std::string("-[+") + Color + "+]";
+	if (Dark) {
+		char ColorU = toupper(Color);
+		return bConnectedToDannet ? std::string("\a-") + Color : std::string("[+") + ColorU + "+]";
+	}
 	else
 		return bConnectedToDannet ? std::string("\a") + Color : std::string("[+") + Color + "+]";
+
+
 }
