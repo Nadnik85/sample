@@ -340,18 +340,18 @@ void PluginOn()
 
 void UpdateTrophies()
 {
-	BakingTrophy = 0;
-	AlchemistTrophy = 0;
-	BrewingTrophy = 0;
-	FletchingTrophy = 0;
-	JewelerTrophy = 0;
-	TinkeringTrophy = 0;
-	PotteryTrophy = 0;
-	ResearchTrophy = 0;
-	BlacksmithTrophy = 0;
-	TailorTrophy = 0;
-	PoisonTrophy = 0;
-	FishingTrophy = 0;
+	BakingTrophy = nullptr;
+	AlchemistTrophy = nullptr;
+	BrewingTrophy = nullptr;
+	FletchingTrophy = nullptr;
+	JewelerTrophy = nullptr;
+	TinkeringTrophy = nullptr;
+	PotteryTrophy = nullptr;
+	ResearchTrophy = nullptr;
+	BlacksmithTrophy = nullptr;
+	TailorTrophy = nullptr;
+	PoisonTrophy = nullptr;
+	FishingTrophy = nullptr;
 
 	//Alchemist Trophy
 	std::vector<std::string> itemList = {
