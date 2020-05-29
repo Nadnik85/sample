@@ -347,7 +347,7 @@ bool CheckNavCommand()
 		}
 		if (!bConnectedtoEqBCs)
 		{
-			WriteChatf("%s only works if mq2eqbc is loaded and eqbcs is started, Please run /plugin mq2eqbc load and then /bccmd connect", szNavCommand);
+			WriteChatf("%s only works if mq2eqbc is loaded and eqbcs is started, Please run /plugin mq2eqbc and then /bccmd connect", szNavCommand);
 			return 1;
 		}
 	}
@@ -356,7 +356,7 @@ bool CheckNavCommand()
 		bool bConnectedtoEqBCs = false;
 		if (!GetModuleHandle("mq2dannet"))
 		{
-			WriteChatf("%s only works if mq2dannet is loaded, Please run /plugin mq2dannet load", szNavCommand);
+			WriteChatf("%s only works if mq2dannet is loaded, Please run /plugin mq2dannet", szNavCommand);
 			return 1;
 		}
 	}
@@ -1634,7 +1634,7 @@ public:
 					{
 						if (!GetModuleHandle("mq2advpath"))
 						{
-							WriteChatf("%s only works if mq2advpath is loaded, Please run /plugin mq2advpath load",szFollowMe);
+							WriteChatf("%s only works if mq2advpath is loaded, Please run /plugin mq2advpath",szFollowMe);
 							StopMovement();
 							return 1;
 						}
@@ -1643,7 +1643,7 @@ public:
 					{
 						if (!GetModuleHandle("mq2moveutils"))
 						{
-							WriteChatf("%s only works if mq2moveutils is loaded, Please run /plugin mq2moveutils load", szFollowMe);
+							WriteChatf("%s only works if mq2moveutils is loaded, Please run /plugin mq2moveutils", szFollowMe);
 							StopMovement();
 							return 1;
 						}
@@ -2067,7 +2067,7 @@ void CMD_GroupInfo(PSPAWNINFO pPlayer, char* szLine)
 			{
 				if (!GetModuleHandle("mq2advpath"))
 				{
-					WriteChatf("%s only works if mq2advpath is loaded, Please run /plugin mq2advpath load", szFollowMe);
+					WriteChatf("%s only works if mq2advpath is loaded, Please run /plugin mq2advpath", szFollowMe);
 					StopMovement();
 					return;
 				}
@@ -2076,7 +2076,7 @@ void CMD_GroupInfo(PSPAWNINFO pPlayer, char* szLine)
 			{
 				if (!GetModuleHandle("mq2moveutils"))
 				{
-					WriteChatf("%s only works if mq2moveutils is loaded, Please run /plugin mq2moveutils load", szFollowMe);
+					WriteChatf("%s only works if mq2moveutils is loaded, Please run /plugin mq2moveutils", szFollowMe);
 					StopMovement();
 					return;
 				}
