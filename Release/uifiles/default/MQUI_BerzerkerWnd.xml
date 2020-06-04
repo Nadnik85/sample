@@ -9,7 +9,6 @@
 	</TextureInfo>
 	
 	<Ui2DAnimation item="Zerk">
-	
 		<Frames>
 			<Texture>Zerk.tga</Texture>
 			<Location>
@@ -2442,18 +2441,20 @@
 	</TileLayoutBox>
 	
 	<TileLayoutBox item="CheckboxLayout">
+	<DrawTemplate>WDT_Inner</DrawTemplate>
 		<RelativePosition>true</RelativePosition>
 		<AutoStretch>true</AutoStretch>
 		<Style_Border>false</Style_Border>
 		<TopAnchorToTop>true</TopAnchorToTop>
 		<BottomAnchorToTop>false</BottomAnchorToTop>
 		<RightAnchorToLeft>false</RightAnchorToLeft>
-		<LeftAnchorOffset>10</LeftAnchorOffset>
+		<LeftAnchorOffset>200</LeftAnchorOffset>
 		<TopAnchorOffset>10</TopAnchorOffset>
-		<HorizontalFirst>false</HorizontalFirst>	
+		<HorizontalFirst>false</HorizontalFirst>
+		<Style_Transparent>true</Style_Transparent>
+		<Style_HScroll>true</Style_HScroll>
 		<Spacing>5</Spacing>
 	
-		<Pieces>TileLayoutBox:InputboxLayout</Pieces>
 		<Pieces>Zerker_Checkbox0</Pieces>
 		<Pieces>Zerker_Checkbox1</Pieces>
 		<Pieces>Zerker_Checkbox2</Pieces>
@@ -2511,6 +2512,7 @@
 			<CX>578</CX>
 			<CY>302</CY>
 		</Size>
+		<Pieces>TileLayoutBox:InputboxLayout</Pieces>
 		<Pieces>TileLayoutBox:CheckboxLayout</Pieces>
 	</Page>
 
