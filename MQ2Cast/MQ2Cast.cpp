@@ -25,6 +25,7 @@
 //    Added blocked spell handling.
 //    Fixed compile typecast warning.
 // 11.3 - SwiftyMUSE 11-17-2019 - Fixed: Casting interrupted identification on Live
+// 11.4 - EqMule 06-01-2020 - Fixed: Casting fizzled and interrupted identifications on Live
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
 
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
@@ -35,7 +36,7 @@ bool DEBUGGING = false;
 #include "../MQ2Plugin.h"
 #include "../Blech/Blech.h"
 PreSetup("MQ2Cast");
-PLUGIN_VERSION(11.3);
+PLUGIN_VERSION(11.4);
 #endif
 
 #define         DELAY_CAST    16000
@@ -1536,8 +1537,10 @@ PLUGIN_API VOID InitializePlugin(VOID)
 	aCastEvent(UNKNOWN, CAST_IMMUNE, "Your target looks unaffected#*#");
 	aCastEvent(LIST289, CAST_INTERRUPTED, "Your #*# is interrupted#*#");
 	aCastEvent(LIST264, CAST_INTERRUPTED, "Your spell is interrupted#*#");
+	aCastEvent(LIST264, CAST_INTERRUPTED, "Your #*# spell is interrupted#*#");
 	aCastEvent(UNKNOWN, CAST_INTERRUPTED, "Your casting has been interrupted#*#");
 	aCastEvent(LIST289, CAST_FIZZLE, "Your spell fizzles#*#");
+	aCastEvent(LIST289, CAST_FIZZLE, "Your #*# spell fizzles#*#");
 	aCastEvent(LIST289, CAST_FIZZLE, "You miss a note, bringing your song to a close#*#");
 	aCastEvent(LIST289, CAST_NOTARGET, "You must first select a target for this spell#*#");
 	aCastEvent(LIST289, CAST_NOTARGET, "This spell only works on#*#");
