@@ -32,7 +32,6 @@ CONTENTS* ResearchTrophy = 0;
 CONTENTS* BlacksmithTrophy = 0;
 CONTENTS* TailorTrophy = 0;
 CONTENTS* PoisonTrophy = 0;
-CONTENTS* ammoDefault = 0;
 CONTENTS* FishingTrophy = 0;
 
 bool bActivated = false;
@@ -341,6 +340,19 @@ void PluginOn()
 
 void UpdateTrophies()
 {
+	BakingTrophy = nullptr;
+	AlchemistTrophy = nullptr;
+	BrewingTrophy = nullptr;
+	FletchingTrophy = nullptr;
+	JewelerTrophy = nullptr;
+	TinkeringTrophy = nullptr;
+	PotteryTrophy = nullptr;
+	ResearchTrophy = nullptr;
+	BlacksmithTrophy = nullptr;
+	TailorTrophy = nullptr;
+	PoisonTrophy = nullptr;
+	FishingTrophy = nullptr;
+
 	//Alchemist Trophy
 	std::vector<std::string> itemList = {
 		"Mundunugu Medicine Stick",
