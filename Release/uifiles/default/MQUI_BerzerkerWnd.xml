@@ -568,7 +568,7 @@
 
     <RelativePosition>true</RelativePosition>
     <Location>
-      <X>85</X>
+      <X>105</X>
       <Y>150</Y>
     </Location>
     <Size>
@@ -595,7 +595,7 @@
       <Y>150</Y>
     </Location>
     <Size>
-      <CX>80</CX>
+      <CX>90</CX>
       <CY>20</CY>
     </Size>
     <Text>Group Watch</Text>
@@ -608,6 +608,150 @@
     <AlignCenter>false</AlignCenter>
     <AlignRight>false</AlignRight>
   </Label>
+  
+  <!--      PullLevelMax_ComboBox   -->
+	<Combobox item="PullLevelMax_ComboBox">
+    <ScreenID>PullLevelMax_ComboBox</ScreenID>
+    <Font>1</Font>
+    <DrawTemplate>WDT_Inner</DrawTemplate>
+
+    <RelativePosition>true</RelativePosition>
+   <Location>
+      <X>105</X>
+      <Y>190</Y>
+    </Location>
+    <Size>
+      <CX>150</CX>
+      <CY>18</CY>
+    </Size>
+
+    <ListHeight>90</ListHeight>
+    <Button>BDT_Combo</Button>
+    <Style_Border>true</Style_Border>
+    <TextColor>
+      <R>255</R>
+      <G>255</G>
+      <B>255</B>
+    </TextColor>
+  </Combobox>
+
+	<Label item="PullLevelMax_Label">
+    <ScreenID>PullLevelMax_Label</ScreenID>
+    <Font>4</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>5</X>
+      <Y>190</Y>
+    </Location>
+    <Size>
+      <CX>90</CX>
+      <CY>20</CY>
+    </Size>
+    <Text>Pull Level Max</Text>
+    <TextColor>
+      <R>255</R>
+      <G>255</G>
+      <B>255</B>
+    </TextColor>
+    <NoWrap>true</NoWrap>
+    <AlignCenter>false</AlignCenter>
+    <AlignRight>false</AlignRight>
+  </Label>
+  
+  <!--      PullLevelMin_ComboBox   -->
+	<Combobox item="PullLevelMin_ComboBox">
+    <ScreenID>PullLevelMin_ComboBox</ScreenID>
+    <Font>1</Font>
+    <DrawTemplate>WDT_Inner</DrawTemplate>
+
+    <RelativePosition>true</RelativePosition>
+    <Location>
+	  <X>105</X>
+      <Y>170</Y>
+    </Location>
+    <Size>
+      <CX>150</CX>
+      <CY>18</CY>
+    </Size>
+
+    <ListHeight>90</ListHeight>
+    <Button>BDT_Combo</Button>
+    <Style_Border>true</Style_Border>
+    <TextColor>
+      <R>255</R>
+      <G>255</G>
+      <B>255</B>
+    </TextColor>
+  </Combobox>
+
+	<Label item="PullLevelMin_Label">
+    <ScreenID>PullLevelMin_Label</ScreenID>
+    <Font>4</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>5</X>
+      <Y>170</Y>
+    </Location>
+    <Size>
+      <CX>90</CX>
+      <CY>20</CY>
+    </Size>
+    <Text>Pull Level Min</Text>
+    <TextColor>
+      <R>255</R>
+      <G>255</G>
+      <B>255</B>
+    </TextColor>
+    <NoWrap>true</NoWrap>
+    <AlignCenter>false</AlignCenter>
+    <AlignRight>false</AlignRight>
+  </Label>
+
+	<!--Pull Arc start here -->
+	<Label item="PullArc_InputBox_Label">
+		<ScreenID>PullArc_InputBox_Label</ScreenID>
+		<Font>3</Font>
+		<RelativePosition>true</RelativePosition>
+		<Location>
+			<X>265</X>
+			<Y>150</Y>
+		</Location>
+		<Size>
+			<CX>125</CX>
+			<CY>20</CY>
+		</Size>
+		<Text>Pull Arc</Text>
+		<TextColor>
+			<R>255</R>
+			<G>255</G>
+			<B>255</B>
+		</TextColor>
+		<NoWrap>true</NoWrap>
+		<AlignCenter>false</AlignCenter>
+		<AlignRight>false</AlignRight>
+	</Label>
+	<Editbox item="PullArc_InputBox_Input">
+		<ScreenID>PullArc_InputBox_Input</ScreenID>
+		<DrawTemplate>WDT_Inner</DrawTemplate>
+		<Style_Border>true</Style_Border>
+		<Font>3</Font>
+		<RelativePosition>true</RelativePosition>
+		<Location>
+			<X>315</X>
+			<Y>148</Y>
+		</Location>
+		<Size>
+			<CX>40</CX>
+			<CY>20</CY>
+		</Size>
+		<TextColor>
+			<R>255</R>
+			<G>255</G>
+			<B>255</B>
+		</TextColor>
+	</Editbox>
+
+
 
 	<!--   Plugin Output    -->
 	<Page item="Zerker_Tab">
@@ -1373,7 +1517,7 @@
 			<Y>85</Y>
 		</Location>
 		<Size>
-			<CX>120</CX>
+			<CX>125</CX>
 			<CY>20</CY>
 		</Size>
 		<Text>InputBox0</Text>
@@ -1416,7 +1560,7 @@
 			<Y>105</Y>
 		</Location>
 		<Size>
-			<CX>120</CX>
+			<CX>125</CX>
 			<CY>20</CY>
 		</Size>
 		<Text>InputBox1</Text>
@@ -1459,7 +1603,7 @@
 			<Y>125</Y>
 		</Location>
 		<Size>
-			<CX>120</CX>
+			<CX>125</CX>
 			<CY>20</CY>
 		</Size>
 		<Text>InputBox2</Text>
@@ -1502,7 +1646,7 @@
 			<Y>145</Y>
 		</Location>
 		<Size>
-			<CX>120</CX>
+			<CX>125</CX>
 			<CY>20</CY>
 		</Size>
 		<Text>InputBox3</Text>
@@ -1545,7 +1689,7 @@
 			<Y>145</Y>
 		</Location>
 		<Size>
-			<CX>120</CX>
+			<CX>125</CX>
 			<CY>20</CY>
 		</Size>
 		<Text>InputBox3</Text>
@@ -1588,7 +1732,7 @@
 			<Y>145</Y>
 		</Location>
 		<Size>
-			<CX>120</CX>
+			<CX>125</CX>
 			<CY>20</CY>
 		</Size>
 		<Text>InputBox3</Text>
@@ -1631,7 +1775,7 @@
 			<Y>145</Y>
 		</Location>
 		<Size>
-			<CX>120</CX>
+			<CX>125</CX>
 			<CY>20</CY>
 		</Size>
 		<Text>InputBox3</Text>
@@ -1674,7 +1818,7 @@
 			<Y>145</Y>
 		</Location>
 		<Size>
-			<CX>120</CX>
+			<CX>125</CX>
 			<CY>20</CY>
 		</Size>
 		<Text>InputBox3</Text>
@@ -1717,7 +1861,7 @@
 			<Y>145</Y>
 		</Location>
 		<Size>
-			<CX>120</CX>
+			<CX>125</CX>
 			<CY>20</CY>
 		</Size>
 		<Text>InputBox3</Text>
@@ -1760,7 +1904,7 @@
 			<Y>145</Y>
 		</Location>
 		<Size>
-			<CX>120</CX>
+			<CX>125</CX>
 			<CY>20</CY>
 		</Size>
 		<Text>InputBox3</Text>
@@ -1803,7 +1947,7 @@
 			<Y>145</Y>
 		</Location>
 		<Size>
-			<CX>120</CX>
+			<CX>125</CX>
 			<CY>20</CY>
 		</Size>
 		<Text>InputBox3</Text>
@@ -1846,7 +1990,7 @@
 			<Y>145</Y>
 		</Location>
 		<Size>
-			<CX>120</CX>
+			<CX>125</CX>
 			<CY>20</CY>
 		</Size>
 		<Text>InputBox3</Text>
@@ -1889,7 +2033,7 @@
 			<Y>145</Y>
 		</Location>
 		<Size>
-			<CX>120</CX>
+			<CX>125</CX>
 			<CY>20</CY>
 		</Size>
 		<Text>InputBox3</Text>
@@ -1932,7 +2076,7 @@
 			<Y>145</Y>
 		</Location>
 		<Size>
-			<CX>120</CX>
+			<CX>125</CX>
 			<CY>20</CY>
 		</Size>
 		<Text>InputBox3</Text>
@@ -1975,7 +2119,7 @@
 			<Y>145</Y>
 		</Location>
 		<Size>
-			<CX>120</CX>
+			<CX>125</CX>
 			<CY>20</CY>
 		</Size>
 		<Text>InputBox3</Text>
@@ -2018,7 +2162,7 @@
 			<Y>145</Y>
 		</Location>
 		<Size>
-			<CX>120</CX>
+			<CX>125</CX>
 			<CY>20</CY>
 		</Size>
 		<Text>InputBox3</Text>
@@ -2061,7 +2205,7 @@
 			<Y>145</Y>
 		</Location>
 		<Size>
-			<CX>120</CX>
+			<CX>125</CX>
 			<CY>20</CY>
 		</Size>
 		<Text>InputBox3</Text>
@@ -2104,7 +2248,7 @@
 			<Y>145</Y>
 		</Location>
 		<Size>
-			<CX>120</CX>
+			<CX>125</CX>
 			<CY>20</CY>
 		</Size>
 		<Text>InputBox3</Text>
@@ -2147,7 +2291,7 @@
 			<Y>145</Y>
 		</Location>
 		<Size>
-			<CX>120</CX>
+			<CX>125</CX>
 			<CY>20</CY>
 		</Size>
 		<Text>InputBox3</Text>
@@ -2190,7 +2334,7 @@
 			<Y>145</Y>
 		</Location>
 		<Size>
-			<CX>120</CX>
+			<CX>125</CX>
 			<CY>20</CY>
 		</Size>
 		<Text>InputBox3</Text>
@@ -2233,7 +2377,7 @@
 			<Y>145</Y>
 		</Location>
 		<Size>
-			<CX>120</CX>
+			<CX>125</CX>
 			<CY>20</CY>
 		</Size>
 		<Text>InputBox3</Text>
@@ -2372,14 +2516,14 @@
 		<BottomAnchorToTop>false</BottomAnchorToTop>
 		<RightAnchorToLeft>true</RightAnchorToLeft>
 		<RightAnchorOffset>190</RightAnchorOffset>
-		<LeftAnchorOffset>0</LeftAnchorOffset>
+		<LeftAnchorOffset>5</LeftAnchorOffset>
 		<TopAnchorOffset>0</TopAnchorOffset>
 		<AutoStretch>true</AutoStretch>
+		<Spacing>5</Spacing>
 		<!-- <Size> -->
 			<!-- <CX>150</CX> -->
 			<!-- <CY>300</CY> -->
 		<!-- </Size> -->
-		<Spacing>0</Spacing>
 		<ResizeLast>false</ResizeLast>
 		<Style_Transparent>true</Style_Transparent>
 		<HorizontalFirst>true</HorizontalFirst>
@@ -2588,8 +2732,19 @@
     <!--Group Watch-->
     <Pieces>GroupWatch_Label</Pieces>
     <Pieces>GroupWatch_ComboBox</Pieces>
-
-
+	
+	<!--Pull Level Minimum-->
+	<Pieces>PullLevelMin_Label</Pieces>
+    <Pieces>PullLevelMin_ComboBox</Pieces>
+	
+	<!--Pull Level Max-->
+	<Pieces>PullLevelMax_Label</Pieces>
+    <Pieces>PullLevelMax_ComboBox</Pieces>
+	
+	<!--Pull Level Max-->
+	<Pieces>PullArc_InputBox_Label</Pieces>
+    <Pieces>PullArc_InputBox_Input</Pieces>
+	
     </Page>
 
 	<TabBox item="Zerker_Tabs">
