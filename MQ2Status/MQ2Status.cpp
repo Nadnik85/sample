@@ -46,6 +46,7 @@ void ParseBoolArg(const char* Arg, const char* Arg2, char* Arg3, bool* theOption
 void PutCommas(char* szLine);
 void ReverseString(char* szLine);
 void StatusCmd(SPAWNINFO* pChar, char* szLine);
+int AltCurrencyCheck(std::string tempArg);
 
 template <typename T>
 std::string LabeledText(const std::string& Label, T Value);
@@ -186,21 +187,25 @@ void StatusCmd(SPAWNINFO* pChar, char* szLine)
 		WriteChatf("\ao/status will output to eqbc/dannet: If we have a CWTN Class Plugin loaded, if we have a macro, if our macro is kiss - it will say what our role is, if we are paused, if we are hidden, and if we have a merc that is alive.");
 		WriteChatf("\ao/status \agitem\aw \ayitem name\aw: reports how many \ayitem name\aw you have in your inventory.");
 		WriteChatf("\ao/status \agitembank\aw \ayitem name\aw: reports how many \ayitem name\aw you have in your bank.");
-		WriteChatf("\ao/status \agstat\aw \ayoption\aw: reports the following options to eqbc: Hdex, HStr, HSta, HInt, HAgi, HWis, HCha, HPS, Mana, Endurance, and, Money.");
+		WriteChatf("\ao/status \agstat\aw \ayoption\aw: reports the following options to eqbc: Hdex, HStr, HSta, HInt, HAgi, HWis, HCha, HPS, Mana, Endurance, Weight, and, Money.");
 		WriteChatf("\ao/status \agaa\aw: Reports how many \"banked\" AA points you have.");
+		WriteChatf("\ao/status \aglogin\aw: Reports your login account name.");
 		WriteChatf("\ao/status \agmerc\aw: Reports mercenary information including class, and role.");
 		WriteChatf("\ao/status \agcampfire\aw: Reports campfire information including Active, Duration, and Zone.");
 		WriteChatf("\ao/status \agfellowship\aw: This returns to your mq2window (does not eqbc/dannet) information on your fellowship");
 		WriteChatf("\ao/status \agbagspace\aw: Reports how many open bagspaces you have.");
+		WriteChatf("\ao/status \agcurrency\aw: Reports how many of an alt currency you have.");
+		WriteChatf("\ao/status \agkrono\aw: Reports how many krono we have.");
 		WriteChatf("\ao/status \agquest\aw or \agtask\aw \ayQuest name\aw: Reports if you have a quest/task matching \ayQuest name\aw.");
-#if !defined(ROF2EMU)
+		#if !defined(ROF2EMU)
 		WriteChatf("\ao/status \agsub\aw: Reports to eqbc our subscription level, and if we are gold, how many days are left.");
-#endif
+		#endif
 		WriteChatf("\ao/status \agxp\aw: Reports to eqbc our level, Current XP %%, Banked AA, and our AAXP %%.");
 		WriteChatf("\ao/status \agaaxp\aw: Reports to eqbc our Spent AA, our AAXP %%, and our Banked AA.");
 		WriteChatf("\ao/status \agshow\aw: Allows toggling on/off of the CWTN Class Plugins to be visible during /status.");
 		WriteChatf("\ao/status \agparcel\aw: Reports our \"Parcel\" status.");
 		WriteChatf("\ao/status \aginvis\aw: Reports our Invis and IVU status, so we can check we are \"Double Invis\".");
+		WriteChatf("\ao/status \agzone\aw: Reports what zone we are in.");
 		return;
 	}
 
@@ -256,6 +261,24 @@ void StatusCmd(SPAWNINFO* pChar, char* szLine)
 		return;
 	}
 
+	if (!_stricmp(Arg, "krono")) {
+		stringBuffer += LabeledText("Krono", pCharInfo->Krono);
+		EzCommand(&stringBuffer[0]);
+		return;
+	}
+
+	if (!_stricmp(Arg, "login")) {
+		stringBuffer += LabeledText("Login Name", GetLoginName());
+		EzCommand(&stringBuffer[0]);
+		return;
+	}
+
+	if (!_stricmp(Arg, "zone")) {
+		stringBuffer += LabeledText("Zone", GetFullZone(pCharInfo->zoneId));
+		EzCommand(&stringBuffer[0]);
+		return;
+	}
+
 	if (!_stricmp(Arg, "quest") || !_stricmp(Arg, "task")) {
 		GetArg(Arg, szLine, 2);
 		if (Arg[0] == 0) { // if an Argument after quest/task wasn't made, we need to ask for one
@@ -284,12 +307,48 @@ void StatusCmd(SPAWNINFO* pChar, char* szLine)
 		return;
 	}
 
+	if (!_stricmp(Arg, "currency")) {
+		GetArg(Arg, szLine, 2);
+		if (Arg[0] == 0) { // if an Argument after currency wasn't made, we need to ask for one
+			WriteChatf("\arPlease provide a valid Currency Name to search for.\aw");
+		}
+		else { // We need to lowercase and be able to do a "find" in case someone puts an "s" on a currency
+			std::string tempArg = GetNextArg(szLine); // convert our arg to string for transform
+			std::transform(tempArg.begin(), tempArg.end(), tempArg.begin(), tolower); // lowercase
+			if (tempArg.find("loyalty") == 0)
+				stringBuffer += LabeledText("Loyalty Tokens", pCharInfo->LoyaltyRewardBalance); // Using LoyaltyRewardBalance instead of AltCurrency since we can access directly
+			else if (tempArg.find("dbc") == 0 || tempArg.find("daybreak") == 0) { // DayBreakCurrency
+				if (CSidlScreenWnd* MarketWnd = (CSidlScreenWnd*)FindMQ2Window("MarketPlaceWnd")) {
+					if (CXWnd* Funds = MarketWnd->GetChildItem("MKPW_AvailableFundsUpper")) {
+						if (Funds) {
+							char szCash[64] = { 0 };
+							GetCXStr(Funds->CGetWindowText(), szCash, 64);
+							stringBuffer += LabeledText("Daybreak Cash", szCash);
+						}
+					}
+				}
+				else
+					stringBuffer += LabeledText("Daybreak Cash", "Unable to access");
+			}
+			else {
+				int altCurrency = AltCurrencyCheck(tempArg);
+				if (altCurrency != -1)
+					stringBuffer += LabeledText(tempArg, altCurrency);
+				else {
+					stringBuffer += LabeledText(tempArg, "Is not a valid currency");
+				}
+			}
+		}
+		EzCommand(&stringBuffer[0]);
+		return;
+	}
+
 	if (!_stricmp(Arg, "stat")) {
 		SPAWNINFO* me = GetCharInfo()->pSpawn;
 		GetArg(Arg, szLine, 2);
 		if (!strlen(Arg)) {
 			WriteChatf("\arPlease provide a valid MQ2Status stat\aw");
-			WriteChatf("\aoThese are currently: \aghstr, hsta, hint, hwis, hagi, hdex, hcha, hps, endurance, money, and mana.\aw");
+			WriteChatf("\aoThese are currently: \aghstr, hsta, hint, hwis, hagi, hdex, hcha, hps, mana, endurance, weight, and money.\aw");
 		}
 		else {
 			bool bFound = true;
@@ -335,8 +394,13 @@ void StatusCmd(SPAWNINFO* pChar, char* szLine)
 				PutCommas(szmyPlat);
 				stringBuffer += LabeledText("Plat", szmyPlat);
 			}
+			else if (!_stricmp(Arg, "weight")) {
+				stringBuffer += LabeledText("Current Weight", pCharInfo->CurrWeight) +
+					LabeledText(" Max Weight", pCharInfo->STR) +
+					LabeledText(" Remaining", (long)(pCharInfo->STR - pCharInfo->CurrWeight));
+			}
 			else {
-				WriteChatf("\arThat was not a valid stat, \agplease use hstr, hsta, hint, hwis, hagi, hdex, hcha, hps, mana, endurance, or money for this option!\aw");
+				WriteChatf("\arThat was not a valid stat, \agplease use hstr, hsta, hint, hwis, hagi, hdex, hcha, hps, mana, endurance, weight, or money for this option!\aw");
 				bFound = false;
 			}
 			if (bFound) {
@@ -1047,4 +1111,59 @@ std::string GetColorCode(char Color, bool Dark)
 		return bConnectedToDannet ? std::string("\a") + Color : std::string("[+") + Color + "+]";
 
 
+}
+
+const std::map<std::string, int>  mAltCurrency = {
+
+	{ "doubloon", ALTCURRENCY_DOUBLOONS },
+	{ "orux", ALTCURRENCY_ORUX },
+	{ "phosphene", ALTCURRENCY_PHOSPHENES },
+	{ "phosphite", ALTCURRENCY_PHOSPHITES },
+	{ "faycitum", ALTCURRENCY_FAYCITES },
+	{ "chronobine", ALTCURRENCY_CHRONOBINES },
+	{ "silver token", ALTCURRENCY_SILVERTOKENS },
+	{ "gold token", ALTCURRENCY_GOLDTOKENS },
+	{ "mckenzie", ALTCURRENCY_MCKENZIE },
+	{ "bayle mark", ALTCURRENCY_BAYLE },
+	{ "tokens of reclamation", ALTCURRENCY_RECLAMATION },
+	{ "brellium", ALTCURRENCY_BRELLIUM },
+	{ "dream mote", ALTCURRENCY_MOTES },
+	{ "rebellion chit", ALTCURRENCY_REBELLIONCHITS },
+	{ "diamond coin", ALTCURRENCY_DIAMONDCOINS },
+	{ "bronze fiat", ALTCURRENCY_BRONZEFIATS },
+	{ "expedient delivery voucher", ALTCURRENCY_VOUCHER },
+	{ "velium shard", ALTCURRENCY_VELIUMSHARDS },
+	{ "crystallized fear", ALTCURRENCY_CRYSTALLIZEDFEAR },
+	{ "shadowstone", ALTCURRENCY_SHADOWSTONES },
+	{ "dreadstone", ALTCURRENCY_DREADSTONES },
+	{ "marks of valor", ALTCURRENCY_MARKSOFVALOR },
+	{ "medals of heroism", ALTCURRENCY_MEDALSOFHEROISM },
+	{ "commemorative coin", ALTCURRENCY_COMMEMORATIVE_COINS },
+	{ "fists of bayle", ALTCURRENCY_FISTSOFBAYLE },
+	{ "nobles", ALTCURRENCY_NOBLES },
+	{ "arx energy crystal", ALTCURRENCY_ENERGYCRYSTALS },
+	{ "pieces of eight",ALTCURRENCY_PIECESOFEIGHT },
+	{ "remnants of tranquility", ALTCURRENCY_REMNANTSOFTRANQUILITY },
+	{ "bifurcated coin", ALTCURRENCY_BIFURCATEDCOIN },
+	{ "adoption coin", ALTCURRENCY_ADOPTIVE },
+	{ "sathir's trade gem", ALTCURRENCY_SATHIRSTRADEGEMS },
+	{ "ancient sebilisian coin", ALTCURRENCY_ANCIENTSEBILISIANCOINS },
+	{ "bathezid trade gem", ALTCURRENCY_BATHEZIDTRADEGEMS },
+	{ "ancient draconic coin", ALTCURRENCY_ANCIENTDRACONICCOIN },
+	{ "fetterred ifrit coin", ALTCURRENCY_FETTERREDIFRITCOINS },
+	{ "entwined djinn coin", ALTCURRENCY_ENTWINEDDJINNCOINS },
+	{ "crystallized luck", ALTCURRENCY_CRYSTALLIZEDLUCK },
+	{ "froststone ducat", ALTCURRENCY_FROSTSTONEDUCAT },
+	{ "warlord's symbol", ALTCURRENCY_WARLORDSSYMBOL },
+	{ "overseer", ALTCURRENCY_OVERSEERTETRADRACHM }
+};
+
+int AltCurrencyCheck(std::string tempArg) {
+
+	for (auto& key_val : mAltCurrency) {
+		if (tempArg.find(key_val.first) != std::string::npos) {
+			return pPlayerPointManager->GetAltCurrency(key_val.second);
+		}
+	}
+	return -1;
 }
