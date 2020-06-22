@@ -19,6 +19,9 @@
 [submodule "MQ2React"]
 	path = MQ2React
 	url = https://gitlab.com/redguides/plugins/mq2react.git
+[submodule "MQ2ShellCmd"]
+	path = MQ2ShellCmd
+	url = https://gitlab.com/Knightly1/MQ2ShellCmd.git
 [submodule "MQ2Sql"]
 	path = MQ2Sql
 	url = https://github.com/dencelle/MQ2Sql.git
