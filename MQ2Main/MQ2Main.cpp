@@ -864,7 +864,7 @@ VOID CreateMQ2NewsWindow()
 	//int sizeofCXWnd = sizeof(CXWnd);
 	//int sizeofCSidlScreenWnd = sizeof(CSidlScreenWnd);
     CHAR Filename[MAX_STRING]={0};
-    sprintf_s(Filename,"%s\\changes.txt",gszINIPath);
+    sprintf_s(Filename,"%s\\redchanges.txt",gszINIPath);
     if (!pNewsWindow && _FileExists(Filename))
     {
         pNewsWindow = new CMQNewsWnd("ChatWindow");
@@ -906,7 +906,7 @@ VOID InsertMQ2News()
     if (!pNewsWindow)
         return;
     CHAR Filename[MAX_STRING]={0};
-    sprintf_s(Filename,"%s\\changes.txt",gszINIPath);
+    sprintf_s(Filename,"%s\\redchanges.txt",gszINIPath);
 	FILE *file = 0;
 	errno_t err = fopen_s(&file,Filename, "rb");
     if (err)
@@ -930,7 +930,7 @@ VOID InsertMQ2News()
         nLines++;
         if (nLines>200)
         {
-            AddNewsLine("...read changes.txt for more.",CONCOLOR_RED);
+            AddNewsLine("...read redchanges.txt for more.",CONCOLOR_RED);
             break;
         }
     }
@@ -980,9 +980,6 @@ FUNCTION_AT_ADDRESS(float HeadingDiff(float h1, float h2, float *DiffOut),__Head
 #endif
 #ifdef __FixHeading_x
 FUNCTION_AT_ADDRESS(float FixHeading(float Heading),__FixHeading);
-#endif
-#ifdef __FlushDxKeyboard_x
-FUNCTION_AT_ADDRESS(int FlushDxKeyboard(), __FlushDxKeyboard);
 #endif
 #ifdef __get_bearing_x
 FUNCTION_AT_ADDRESS(float get_bearing(float x1, float y1, float x2, float y2),__get_bearing)

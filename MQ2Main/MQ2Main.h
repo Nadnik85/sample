@@ -97,7 +97,7 @@ extern CRITICAL_SECTION gPluginCS;
 //we default to LIVE though...
 #else
 //define LIVE, TEST, EQBETA, ROF2EMU or UFEMU here depending on which eqgame you are building for. -eqmule sep 27 2014
-#define TEST
+#define LIVE
 #endif
 #if defined(LIVE)
 #include "eqgame.h"
@@ -500,7 +500,6 @@ EQLIB_API CXStr *__cdecl CleanItemTags(CXStr *Out, const CXStr &In, bool bFlag);
 #endif
 EQLIB_API float HeadingDiff(float h1, float h2, float *DiffOut);
 EQLIB_API float FixHeading(float Heading);
-EQLIB_API int FlushDxKeyboard();
 EQLIB_API float get_bearing(float x1, float y1, float x2, float y2);
 EQLIB_API unsigned long GetFastTime(void);
 EQLIB_API bool CopyLayout(const CXStr& currlayout, const CXStr& newlayout, bool bHotbuttons, bool bLoadouts, bool bSocials, CXStr& ErrorOut, bool bForceReload = false);

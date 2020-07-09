@@ -363,7 +363,6 @@ GNU General Public License for more details.
 #define __EQGetTime_x                                              0x919900
 #define __ExecuteCmd_x                                             0x5B93E0
 #define __FixHeading_x                                             0x9AE8E0
-#define __FlushDxKeyboard_x                                        0x6CADC0
 #define __GameLoop_x                                               0x6CE0F0
 #define __get_bearing_x                                            0x5C06A0
 #define __get_melee_range_x                                        0x5C0D80
@@ -389,8 +388,6 @@ GNU General Public License for more details.
 #define Teleport_Table_x                                           0xEC9CD8
 #define Util__FastTime_x                                           0x9194D0
 #define __CopyLayout_x                                             0x63B8C0
-#define __WndProc_x                                                0x6CD3B0
-#define __ProcessKeyboardEvent_x                                   0x6CC950
 
 //// 
 // Section 4: Function Offsets 
