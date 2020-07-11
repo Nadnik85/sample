@@ -1092,6 +1092,9 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD __EQGetTime;
 	EQLIB_VAR DWORD __ExecuteCmd;
 	EQLIB_VAR DWORD __FixHeading;
+	#if defined(NAVUSESOFFSETS)
+	EQLIB_VAR DWORD __FlushDxKeyboard;
+	#endif
 	EQLIB_VAR DWORD __get_bearing;
 	EQLIB_VAR DWORD __get_melee_range;
 	EQLIB_VAR DWORD __GetAnimationCache;
@@ -1116,7 +1119,11 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD Teleport_Table_Size;
 	EQLIB_VAR DWORD Util__FastTime;
 	EQLIB_VAR DWORD __CopyLayout;
-	
+	#if defined(NAVUSESOFFSETS)
+	EQLIB_VAR DWORD __WndProc;
+	EQLIB_VAR DWORD __ProcessKeyboardEvent;
+	EQLIB_VAR DWORD __ProcessMouseEvent;
+	#endif
 	EQLIB_VAR DWORD wwsCrashReportCheckForUploader;
 	EQLIB_VAR DWORD wwsCrashReportPlatformLaunchUploader;
 	
