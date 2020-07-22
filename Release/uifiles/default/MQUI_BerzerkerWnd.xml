@@ -7,7 +7,7 @@
 			<CY>64</CY>
 		</Size>
 	</TextureInfo>
-	
+
 	<Ui2DAnimation item="Zerk">
 		<Frames>
 			<Texture>Zerk.tga</Texture>
@@ -25,7 +25,7 @@
 			</Hotspot>
 		</Frames>
 	</Ui2DAnimation>
-	
+
 	<!-- Zerk Container -->
 	<StaticAnimation item= "ZerkCont">
 		<ScreenID>ZerkCont</ScreenID>
@@ -40,7 +40,7 @@
 		</Size>
 		<Animation>Zerk</Animation>
 	</StaticAnimation>
-	
+
 	<TileLayoutBox item="LogoLayout">
 		<DrawTemplate>WDT_Inner</DrawTemplate>
 		<RelativePosition>true</RelativePosition>
@@ -62,7 +62,7 @@
 		<Style_VScroll>true</Style_VScroll>
 		<Pieces>ZerkCont</Pieces>
 	</TileLayoutBox>
-	
+
 	<STMLbox item="Zerker_ChatOutput">
 		<ScreenID>Zerker_ChatOutput</ScreenID>
 		<DrawTemplate>WDT_Inner</DrawTemplate>
@@ -79,174 +79,103 @@
 		<Style_Transparent>true</Style_Transparent>
 	</STMLbox>
 
-	<!--             ManaStart                 -->
-	<Slider item="ManaMedStart_Slider">
-    <ScreenID>ManaMedStart_Slider</ScreenID>
-    <Location>
-      <X>10</X>
-      <Y>16</Y>
-    </Location>
-    <Size>
-      <CX>100</CX>
-      <CY>16</CY>
-    </Size>
-    <SliderArt>SDT_DefSlider</SliderArt>
-  </Slider>
-
-	<Label item="ManaMedStart_Value">
-    <ScreenID>ManaMedStart_Value</ScreenID>
-    <Font>4</Font>
+	<Label item="PullManaMedStart_InputBox_Label">
+    <ScreenID>PullManaMedStart_InputBox_Label</ScreenID>
+    <Font>3</Font>
     <RelativePosition>true</RelativePosition>
     <Location>
-      <X>50</X>
-      <Y>31</Y>
+      <X>5</X>
+      <Y>5</Y>
     </Location>
     <Size>
-      <CX>150</CX>
-      <CY>20</CY>
-    </Size>
-    <Text>100</Text>
-    <TextColor>
-      <R>255</R>
-      <G>255</G>
-      <B>255</B>
-    </TextColor>
-    <NoWrap>true</NoWrap>
-    <AlignCenter>false</AlignCenter>
-    <AlignRight>false</AlignRight>
-  </Label>
-
-	<Label item="ManaMedStart_Label">
-    <ScreenID>ManaMedStart_Label</ScreenID>
-    <Font>4</Font>
-    <RelativePosition>true</RelativePosition>
-    <Location>
-      <X>17</X>
-      <Y>1</Y>
-    </Location>
-    <Size>
-      <CX>150</CX>
+      <CX>125</CX>
       <CY>20</CY>
     </Size>
     <Text>ManaMedStart</Text>
     <TextColor>
-      <R>66</R>
-      <G>66</G>
+      <R>0</R>
+      <G>125</G>
       <B>255</B>
     </TextColor>
     <NoWrap>true</NoWrap>
     <AlignCenter>false</AlignCenter>
     <AlignRight>false</AlignRight>
   </Label>
-
-	<!--             ManaEnd                 -->
-	<Slider item="ManaMedEnd_Slider">
-    <ScreenID>ManaMedEnd_Slider</ScreenID>
-    <Location>
-      <X>10</X>
-      <Y>65</Y>
-    </Location>
-    <Size>
-      <CX>100</CX>
-      <CY>16</CY>
-    </Size>
-    <SliderArt>SDT_DefSlider</SliderArt>
-  </Slider>
-
-	<Label item="ManaMedEnd_Value">
-    <ScreenID>ManaMedEnd_Value</ScreenID>
-    <Font>4</Font>
+  <Editbox item="PullManaMedStart_InputBox_Input">
+    <ScreenID>PullManaMedStart_InputBox_Input</ScreenID>
+    <DrawTemplate>WDT_Inner</DrawTemplate>
+    <Style_Border>true</Style_Border>
+    <Font>3</Font>
     <RelativePosition>true</RelativePosition>
     <Location>
-      <X>50</X>
-      <Y>80</Y>
+      <X>100</X>
+      <Y>3</Y>
     </Location>
     <Size>
-      <CX>150</CX>
+      <CX>40</CX>
       <CY>20</CY>
     </Size>
-    <Text>100</Text>
     <TextColor>
       <R>255</R>
       <G>255</G>
       <B>255</B>
     </TextColor>
-    <NoWrap>true</NoWrap>
-    <AlignCenter>false</AlignCenter>
-    <AlignRight>false</AlignRight>
-  </Label>
+  </Editbox>
 
-	<Label item="ManaMedEnd_Label">
-    <ScreenID>ManaMedEnd_Label</ScreenID>
-    <Font>4</Font>
+  <Label item="PullManaMedEnd_InputBox_Label">
+    <ScreenID>PullManaMedEnd_InputBox_Label</ScreenID>
+    <Font>3</Font>
     <RelativePosition>true</RelativePosition>
     <Location>
-      <X>20</X>
-      <Y>50</Y>
+      <X>5</X>
+      <Y>25</Y>
     </Location>
     <Size>
-      <CX>150</CX>
+      <CX>125</CX>
       <CY>20</CY>
     </Size>
     <Text>ManaMedEnd</Text>
     <TextColor>
-      <R>66</R>
-      <G>66</G>
+      <R>0</R>
+      <G>125</G>
       <B>255</B>
     </TextColor>
     <NoWrap>true</NoWrap>
     <AlignCenter>false</AlignCenter>
     <AlignRight>false</AlignRight>
   </Label>
-
-
-	<!--             HPStart                 -->
-	<Slider item="HPMedStart_Slider">
-    <ScreenID>HPMedStart_Slider</ScreenID>
-    <Location>
-      <X>175</X>
-      <Y>16</Y>
-    </Location>
-    <Size>
-      <CX>100</CX>
-      <CY>16</CY>
-    </Size>
-    <SliderArt>SDT_DefSlider</SliderArt>
-  </Slider>
-
-	<Label item="HPMedStart_Value">
-    <ScreenID>HPMedStart_Value</ScreenID>
-    <Font>4</Font>
+  <Editbox item="PullManaMedEnd_InputBox_Input">
+    <ScreenID>PullManaMedEnd_InputBox_Input</ScreenID>
+    <DrawTemplate>WDT_Inner</DrawTemplate>
+    <Style_Border>true</Style_Border>
+    <Font>3</Font>
     <RelativePosition>true</RelativePosition>
     <Location>
-      <X>215</X>
-      <Y>31</Y>
+      <X>100</X>
+      <Y>23</Y>
     </Location>
     <Size>
-      <CX>150</CX>
+      <CX>40</CX>
       <CY>20</CY>
     </Size>
-    <Text>100</Text>
     <TextColor>
       <R>255</R>
       <G>255</G>
       <B>255</B>
     </TextColor>
-    <NoWrap>true</NoWrap>
-    <AlignCenter>false</AlignCenter>
-    <AlignRight>false</AlignRight>
-  </Label>
+  </Editbox>
 
-	<Label item="HPMedStart_Label">
-    <ScreenID>HPMedStart_Label</ScreenID>
-    <Font>4</Font>
+
+  <Label item="PullHPMedStart_InputBox_Label">
+    <ScreenID>PullHPMedStart_InputBox_Label</ScreenID>
+    <Font>3</Font>
     <RelativePosition>true</RelativePosition>
     <Location>
-      <X>190</X>
-      <Y>1</Y>
+      <X>5</X>
+      <Y>45</Y>
     </Location>
     <Size>
-      <CX>150</CX>
+      <CX>125</CX>
       <CY>20</CY>
     </Size>
     <Text>HPMedStart</Text>
@@ -259,54 +188,37 @@
     <AlignCenter>false</AlignCenter>
     <AlignRight>false</AlignRight>
   </Label>
-
-	<!--             HPEnd                 -->
-	<Slider item="HPMedEnd_Slider">
-    <ScreenID>HPMedEnd_Slider</ScreenID>
-    <Location>
-      <X>175</X>
-      <Y>65</Y>
-    </Location>
-    <Size>
-      <CX>100</CX>
-      <CY>16</CY>
-    </Size>
-    <SliderArt>SDT_DefSlider</SliderArt>
-  </Slider>
-
-	<Label item="HPMedEnd_Value">
-    <ScreenID>HPMedEnd_Value</ScreenID>
-    <Font>4</Font>
+  <Editbox item="PullHPMedStart_InputBox_Input">
+    <ScreenID>PullHPMedStart_InputBox_Input</ScreenID>
+    <DrawTemplate>WDT_Inner</DrawTemplate>
+    <Style_Border>true</Style_Border>
+    <Font>3</Font>
     <RelativePosition>true</RelativePosition>
     <Location>
-      <X>215</X>
-      <Y>80</Y>
+      <X>100</X>
+      <Y>43</Y>
     </Location>
     <Size>
-      <CX>150</CX>
+      <CX>40</CX>
       <CY>20</CY>
     </Size>
-    <Text>100</Text>
     <TextColor>
       <R>255</R>
       <G>255</G>
       <B>255</B>
     </TextColor>
-    <NoWrap>true</NoWrap>
-    <AlignCenter>false</AlignCenter>
-    <AlignRight>false</AlignRight>
-  </Label>
+  </Editbox>
 
-	<Label item="HPMedEnd_Label">
-    <ScreenID>HPMedEnd_Label</ScreenID>
-    <Font>4</Font>
+  <Label item="PullHPMedEnd_InputBox_Label">
+    <ScreenID>PullHPMedEnd_InputBox_Label</ScreenID>
+    <Font>3</Font>
     <RelativePosition>true</RelativePosition>
     <Location>
-      <X>195</X>
-      <Y>50</Y>
+      <X>5</X>
+      <Y>65</Y>
     </Location>
     <Size>
-      <CX>150</CX>
+      <CX>125</CX>
       <CY>20</CY>
     </Size>
     <Text>HPMedEnd</Text>
@@ -319,154 +231,127 @@
     <AlignCenter>false</AlignCenter>
     <AlignRight>false</AlignRight>
   </Label>
-
-	<!--             EndStart                 -->
-	<Slider item="EndMedStart_Slider">
-    <ScreenID>EndMedStart_Slider</ScreenID>
-    <Location>
-      <X>340</X>
-      <Y>16</Y>
-    </Location>
-    <Size>
-      <CX>100</CX>
-      <CY>16</CY>
-    </Size>
-    <SliderArt>SDT_DefSlider</SliderArt>
-  </Slider>
-
-	<Label item="EndMedStart_Value">
-    <ScreenID>EndMedStart_Value</ScreenID>
-    <Font>4</Font>
+  <Editbox item="PullHPMedEnd_InputBox_Input">
+    <ScreenID>PullHPMedEnd_InputBox_Input</ScreenID>
+    <DrawTemplate>WDT_Inner</DrawTemplate>
+    <Style_Border>true</Style_Border>
+    <Font>3</Font>
     <RelativePosition>true</RelativePosition>
     <Location>
-      <X>385</X>
-      <Y>31</Y>
+      <X>100</X>
+      <Y>63</Y>
     </Location>
     <Size>
-      <CX>150</CX>
+      <CX>40</CX>
       <CY>20</CY>
     </Size>
-    <Text>100</Text>
     <TextColor>
       <R>255</R>
       <G>255</G>
       <B>255</B>
     </TextColor>
-    <NoWrap>true</NoWrap>
-    <AlignCenter>false</AlignCenter>
-    <AlignRight>false</AlignRight>
-  </Label>
+  </Editbox>
 
-	<Label item="EndMedStart_Label">
-    <ScreenID>EndMedStart_Label</ScreenID>
-    <Font>4</Font>
+  <Label item="PullEndMedStart_InputBox_Label">
+    <ScreenID>PullEndMedStart_InputBox_Label</ScreenID>
+    <Font>3</Font>
     <RelativePosition>true</RelativePosition>
     <Location>
-      <X>355</X>
-      <Y>1</Y>
+      <X>5</X>
+      <Y>85</Y>
     </Location>
     <Size>
-      <CX>150</CX>
+      <CX>125</CX>
       <CY>20</CY>
     </Size>
     <Text>EndMedStart</Text>
     <TextColor>
-      <R>150</R>
-      <G>150</G>
+      <R>255</R>
+      <G>255</G>
       <B>0</B>
     </TextColor>
     <NoWrap>true</NoWrap>
     <AlignCenter>false</AlignCenter>
     <AlignRight>false</AlignRight>
   </Label>
-
-	<!--             EndMedEnd                 -->
-	<Slider item="EndMedEnd_Slider">
-    <ScreenID>EndMedEnd_Slider</ScreenID>
-    <Location>
-      <X>340</X>
-      <Y>65</Y>
-    </Location>
-    <Size>
-      <CX>100</CX>
-      <CY>16</CY>
-    </Size>
-    <SliderArt>SDT_DefSlider</SliderArt>
-  </Slider>
-
-	<Label item="EndMedEnd_Value">
-    <ScreenID>EndMedEnd_Value</ScreenID>
-    <Font>4</Font>
+  <Editbox item="PullEndMedStart_InputBox_Input">
+    <ScreenID>PullEndMedStart_InputBox_Input</ScreenID>
+    <DrawTemplate>WDT_Inner</DrawTemplate>
+    <Style_Border>true</Style_Border>
+    <Font>3</Font>
     <RelativePosition>true</RelativePosition>
     <Location>
-      <X>385</X>
-      <Y>80</Y>
+      <X>100</X>
+      <Y>83</Y>
     </Location>
     <Size>
-      <CX>150</CX>
+      <CX>40</CX>
       <CY>20</CY>
     </Size>
-    <Text>100</Text>
     <TextColor>
       <R>255</R>
       <G>255</G>
       <B>255</B>
     </TextColor>
-    <NoWrap>true</NoWrap>
-    <AlignCenter>false</AlignCenter>
-    <AlignRight>false</AlignRight>
-  </Label>
+  </Editbox>
 
-	<Label item="EndMedEnd_Label">
-    <ScreenID>EndMedEnd_Label</ScreenID>
-    <Font>4</Font>
+  <Label item="PullEndMedEnd_InputBox_Label">
+    <ScreenID>PullHPMedEnd_InputBox_Label</ScreenID>
+    <Font>3</Font>
     <RelativePosition>true</RelativePosition>
     <Location>
-      <X>355</X>
-      <Y>50</Y>
+      <X>5</X>
+      <Y>105</Y>
     </Location>
     <Size>
-      <CX>150</CX>
+      <CX>125</CX>
       <CY>20</CY>
     </Size>
     <Text>EndMedEnd</Text>
     <TextColor>
-      <R>150</R>
-      <G>150</G>
+      <R>255</R>
+      <G>255</G>
       <B>0</B>
     </TextColor>
     <NoWrap>true</NoWrap>
     <AlignCenter>false</AlignCenter>
     <AlignRight>false</AlignRight>
   </Label>
-
-	<!--             PullRadius              -->
-	<Slider item="PullRadius_Slider">
-    <ScreenID>PullRadius_Slider</ScreenID>
-    <Location>
-      <X>90</X>
-      <Y>105</Y>
-    </Location>
-    <Size>
-      <CX>100</CX>
-      <CY>16</CY>
-    </Size>
-    <SliderArt>SDT_DefSlider</SliderArt>
-  </Slider>
-
-	<Label item="PullRadius_Value">
-    <ScreenID>PullRadius_Value</ScreenID>
-    <Font>4</Font>
+  <Editbox item="PullEndMedEnd_InputBox_Input">
+    <ScreenID>PullHPMedEnd_InputBox_Input</ScreenID>
+    <DrawTemplate>WDT_Inner</DrawTemplate>
+    <Style_Border>true</Style_Border>
+    <Font>3</Font>
     <RelativePosition>true</RelativePosition>
     <Location>
-      <X>125</X>
-      <Y>120</Y>
+      <X>100</X>
+      <Y>103</Y>
     </Location>
     <Size>
-      <CX>150</CX>
+      <CX>40</CX>
       <CY>20</CY>
     </Size>
-    <Text>100</Text>
+    <TextColor>
+      <R>255</R>
+      <G>255</G>
+      <B>255</B>
+    </TextColor>
+  </Editbox>
+
+
+  <Label item="PullRadius_InputBox_Label">
+    <ScreenID>PullRadius_InputBox_Label</ScreenID>
+    <Font>3</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>160</X>
+      <Y>5</Y>
+    </Location>
+    <Size>
+      <CX>125</CX>
+      <CY>20</CY>
+    </Size>
+    <Text>Pull Radius</Text>
     <TextColor>
       <R>255</R>
       <G>255</G>
@@ -476,20 +361,41 @@
     <AlignCenter>false</AlignCenter>
     <AlignRight>false</AlignRight>
   </Label>
-
-	<Label item="PullRadius_Label">
-    <ScreenID>PullRadius_Label</ScreenID>
-    <Font>4</Font>
+  <Editbox item="PullRadius_InputBox_Input">
+    <ScreenID>PullRadius_InputBox_Input</ScreenID>
+    <DrawTemplate>WDT_Inner</DrawTemplate>
+    <Style_Border>true</Style_Border>
+    <Font>3</Font>
     <RelativePosition>true</RelativePosition>
     <Location>
-      <X>110</X>
-      <Y>90</Y>
+      <X>238</X>
+      <Y>3</Y>
     </Location>
     <Size>
-      <CX>150</CX>
+      <CX>40</CX>
       <CY>20</CY>
     </Size>
-    <Text>PullRadius</Text>
+    <TextColor>
+      <R>255</R>
+      <G>255</G>
+      <B>255</B>
+    </TextColor>
+  </Editbox>
+
+
+  <Label item="PullZRadius_InputBox_Label">
+    <ScreenID>PullZRadius_InputBox_Label</ScreenID>
+    <Font>3</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>160</X>
+      <Y>25</Y>
+    </Location>
+    <Size>
+      <CX>125</CX>
+      <CY>20</CY>
+    </Size>
+    <Text>Pull ZRadius</Text>
     <TextColor>
       <R>255</R>
       <G>255</G>
@@ -499,34 +405,40 @@
     <AlignCenter>false</AlignCenter>
     <AlignRight>false</AlignRight>
   </Label>
-
-	<!--             ZRadius                 -->
-	<Slider item="ZRadius_Slider">
-    <ScreenID>ZRadius_Slider</ScreenID>
-    <Location>
-      <X>260</X>
-      <Y>105</Y>
-    </Location>
-    <Size>
-      <CX>100</CX>
-      <CY>16</CY>
-    </Size>
-    <SliderArt>SDT_DefSlider</SliderArt>
-  </Slider>
-
-	<Label item="ZRadius_Value">
-    <ScreenID>ZRadius_Value</ScreenID>
-    <Font>4</Font>
+  <Editbox item="PullZRadius_InputBox_Input">
+    <ScreenID>PullZRadius_InputBox_Input</ScreenID>
+    <DrawTemplate>WDT_Inner</DrawTemplate>
+    <Style_Border>true</Style_Border>
+    <Font>3</Font>
     <RelativePosition>true</RelativePosition>
     <Location>
-      <X>300</X>
-      <Y>120</Y>
+      <X>238</X>
+      <Y>23</Y>
     </Location>
     <Size>
-      <CX>150</CX>
+      <CX>40</CX>
       <CY>20</CY>
     </Size>
-    <Text>100</Text>
+    <TextColor>
+      <R>255</R>
+      <G>255</G>
+      <B>255</B>
+    </TextColor>
+  </Editbox>
+
+  <Label item="PullLevelMin_InputBox_Label">
+    <ScreenID>PullLevelMin_InputBox_Label</ScreenID>
+    <Font>3</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>160</X>
+      <Y>65</Y>
+    </Location>
+    <Size>
+      <CX>125</CX>
+      <CY>20</CY>
+    </Size>
+    <Text>Pull Level Min</Text>
     <TextColor>
       <R>255</R>
       <G>255</G>
@@ -536,20 +448,41 @@
     <AlignCenter>false</AlignCenter>
     <AlignRight>false</AlignRight>
   </Label>
-
-	<Label item="ZRadius_Label">
-    <ScreenID>ZRadius_Label</ScreenID>
-    <Font>4</Font>
+  <Editbox item="PullLevelMin_InputBox_Input">
+    <ScreenID>PullLevelMin_InputBox_Input</ScreenID>
+    <DrawTemplate>WDT_Inner</DrawTemplate>
+    <Style_Border>true</Style_Border>
+    <Font>3</Font>
     <RelativePosition>true</RelativePosition>
     <Location>
-      <X>285</X>
-      <Y>90</Y>
+      <X>238</X>
+      <Y>63</Y>
     </Location>
     <Size>
-      <CX>150</CX>
+      <CX>40</CX>
       <CY>20</CY>
     </Size>
-    <Text>ZRadius</Text>
+    <TextColor>
+      <R>255</R>
+      <G>255</G>
+      <B>255</B>
+    </TextColor>
+  </Editbox>
+
+
+  <Label item="PullLevelMax_InputBox_Label">
+    <ScreenID>PullLevelMax_InputBox_Label</ScreenID>
+    <Font>3</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>160</X>
+      <Y>85</Y>
+    </Location>
+    <Size>
+      <CX>125</CX>
+      <CY>20</CY>
+    </Size>
+    <Text>Pull Level Max</Text>
     <TextColor>
       <R>255</R>
       <G>255</G>
@@ -559,6 +492,28 @@
     <AlignCenter>false</AlignCenter>
     <AlignRight>false</AlignRight>
   </Label>
+  <Editbox item="PullLevelMax_InputBox_Input">
+    <ScreenID>PullLevelMax_InputBox_Input</ScreenID>
+    <DrawTemplate>WDT_Inner</DrawTemplate>
+    <Style_Border>true</Style_Border>
+    <Font>3</Font>
+    <RelativePosition>true</RelativePosition>
+    <Location>
+      <X>238</X>
+      <Y>83</Y>
+    </Location>
+    <Size>
+      <CX>40</CX>
+      <CY>20</CY>
+    </Size>
+    <TextColor>
+      <R>255</R>
+      <G>255</G>
+      <B>255</B>
+    </TextColor>
+  </Editbox>
+
+
 
 	<!--           GroupWatch            -->
 	<Combobox item="GroupWatch_ComboBox">
@@ -608,7 +563,7 @@
     <AlignCenter>false</AlignCenter>
     <AlignRight>false</AlignRight>
   </Label>
-  
+
   <!--      PullLevelMax_ComboBox   -->
 	<Combobox item="PullLevelMax_ComboBox">
     <ScreenID>PullLevelMax_ComboBox</ScreenID>
@@ -657,7 +612,7 @@
     <AlignCenter>false</AlignCenter>
     <AlignRight>false</AlignRight>
   </Label>
-  
+
   <!--      PullLevelMin_ComboBox   -->
 	<Combobox item="PullLevelMin_ComboBox">
     <ScreenID>PullLevelMin_ComboBox</ScreenID>
@@ -713,8 +668,8 @@
 		<Font>3</Font>
 		<RelativePosition>true</RelativePosition>
 		<Location>
-			<X>265</X>
-			<Y>150</Y>
+			<X>160</X>
+			<Y>45</Y>
 		</Location>
 		<Size>
 			<CX>125</CX>
@@ -737,8 +692,8 @@
 		<Font>3</Font>
 		<RelativePosition>true</RelativePosition>
 		<Location>
-			<X>315</X>
-			<Y>148</Y>
+			<X>238</X>
+			<Y>43</Y>
 		</Location>
 		<Size>
 			<CX>40</CX>
@@ -750,8 +705,6 @@
 			<B>255</B>
 		</TextColor>
 	</Editbox>
-
-
 
 	<!--   Plugin Output    -->
 	<Page item="Zerker_Tab">
@@ -809,7 +762,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-	
+
 	<Button item="Zerker_Checkbox1">
 		<ScreenID>Zerker_Checkbox1</ScreenID>
 		<Size>
@@ -905,7 +858,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-	
+
 	<Button item="Zerker_Checkbox5">
 		<ScreenID>Zerker_Checkbox5</ScreenID>
 		<Size>
@@ -929,7 +882,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-	
+
 	<Button item="Zerker_Checkbox6">
 		<ScreenID>Zerker_Checkbox6</ScreenID>
 		<Size>
@@ -953,7 +906,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-		
+
 	<Button item="Zerker_Checkbox7">
 		<ScreenID>Zerker_Checkbox7</ScreenID>
 		<Size>
@@ -977,7 +930,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-		
+
 	<Button item="Zerker_Checkbox8">
 		<ScreenID>Zerker_Checkbox8</ScreenID>
 		<Size>
@@ -1001,7 +954,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-	
+
 	<Button item="Zerker_Checkbox9">
 		<ScreenID>Zerker_Checkbox9</ScreenID>
 		<Size>
@@ -1025,7 +978,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-		
+
 	<Button item="Zerker_Checkbox10">
 		<ScreenID>Zerker_Checkbox10</ScreenID>
 		<Size>
@@ -1049,7 +1002,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-		
+
 	<Button item="Zerker_Checkbox11">
 		<ScreenID>Zerker_Checkbox11</ScreenID>
 		<Size>
@@ -1073,7 +1026,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-		
+
 	<Button item="Zerker_Checkbox12">
 		<ScreenID>Zerker_Checkbox12</ScreenID>
 		<Size>
@@ -1097,7 +1050,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-	
+
 	<Button item="Zerker_Checkbox13">
 		<ScreenID>Zerker_Checkbox13</ScreenID>
 		<Size>
@@ -1121,7 +1074,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-	
+
 	<Button item="Zerker_Checkbox14">
 		<ScreenID>Zerker_Checkbox14</ScreenID>
 		<Size>
@@ -1145,7 +1098,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-	
+
 	<Button item="Zerker_Checkbox15">
 		<ScreenID>Zerker_Checkbox15</ScreenID>
 		<Size>
@@ -1169,7 +1122,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-	
+
 	<Button item="Zerker_Checkbox16">
 		<ScreenID>Zerker_Checkbox16</ScreenID>
 		<Size>
@@ -1193,7 +1146,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-	
+
 	<Button item="Zerker_Checkbox17">
 		<ScreenID>Zerker_Checkbox17</ScreenID>
 		<Size>
@@ -1217,7 +1170,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-	
+
 	<Button item="Zerker_Checkbox18">
 		<ScreenID>Zerker_Checkbox18</ScreenID>
 		<Size>
@@ -1241,7 +1194,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-	
+
 	<Button item="Zerker_Checkbox19">
 		<ScreenID>Zerker_Checkbox19</ScreenID>
 		<Size>
@@ -1265,7 +1218,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-	
+
 	<Button item="Zerker_Checkbox20">
 		<ScreenID>Zerker_Checkbox20</ScreenID>
 		<Size>
@@ -1289,7 +1242,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-	
+
 	<Button item="Zerker_Checkbox21">
 		<ScreenID>Zerker_Checkbox21</ScreenID>
 		<Size>
@@ -1313,7 +1266,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-	
+
 	<Button item="Zerker_Checkbox22">
 		<ScreenID>Zerker_Checkbox22</ScreenID>
 		<Size>
@@ -1337,7 +1290,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-	
+
 	<Button item="Zerker_Checkbox23">
 		<ScreenID>Zerker_Checkbox23</ScreenID>
 		<Size>
@@ -1361,7 +1314,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-	
+
 	<Button item="Zerker_Checkbox24">
 		<ScreenID>Zerker_Checkbox24</ScreenID>
 		<Size>
@@ -1385,7 +1338,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-	
+
 	<Button item="Zerker_Checkbox25">
 		<ScreenID>Zerker_Checkbox25</ScreenID>
 		<Size>
@@ -1409,7 +1362,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-	
+
 	<Button item="Zerker_Checkbox26">
 		<ScreenID>Zerker_Checkbox26</ScreenID>
 		<Size>
@@ -1432,8 +1385,8 @@
 			<G>255</G>
 			<B>0</B>
 		</PressedColor>
-	</Button>	
-	
+	</Button>
+
 	<Button item="Zerker_Checkbox27">
 		<ScreenID>Zerker_Checkbox27</ScreenID>
 		<Size>
@@ -1457,7 +1410,7 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-	
+
 	<Button item="Zerker_Checkbox28">
 		<ScreenID>Zerker_Checkbox28</ScreenID>
 		<Size>
@@ -1481,9 +1434,129 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
-	
+
 	<Button item="Zerker_Checkbox29">
 		<ScreenID>Zerker_Checkbox29</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox30">
+		<ScreenID>Zerker_Checkbox30</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox31">
+		<ScreenID>Zerker_Checkbox31</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox32">
+		<ScreenID>Zerker_Checkbox32</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox33">
+		<ScreenID>Zerker_Checkbox33</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox34">
+		<ScreenID>Zerker_Checkbox34</ScreenID>
 		<Size>
 			<CX>150</CX>
 			<CY>18</CY>
@@ -1679,7 +1752,7 @@
 			<B>255</B>
 		</TextColor>
 	</Editbox>
-	
+
 	<Label item="Zerker_InputBox_Label4">
 		<ScreenID>Zerker_InputBox_Label4</ScreenID>
 		<Font>3</Font>
@@ -1722,7 +1795,7 @@
 			<B>255</B>
 		</TextColor>
 	</Editbox>
-	
+
 	<Label item="Zerker_InputBox_Label5">
 		<ScreenID>Zerker_InputBox_Label5</ScreenID>
 		<Font>3</Font>
@@ -1765,7 +1838,7 @@
 			<B>255</B>
 		</TextColor>
 	</Editbox>
-	
+
 	<Label item="Zerker_InputBox_Label6">
 		<ScreenID>Zerker_InputBox_Label6</ScreenID>
 		<Font>3</Font>
@@ -1808,7 +1881,7 @@
 			<B>255</B>
 		</TextColor>
 	</Editbox>
-	
+
 	<Label item="Zerker_InputBox_Label7">
 		<ScreenID>Zerker_InputBox_Label7</ScreenID>
 		<Font>3</Font>
@@ -1851,7 +1924,7 @@
 			<B>255</B>
 		</TextColor>
 	</Editbox>
-	
+
 	<Label item="Zerker_InputBox_Label8">
 		<ScreenID>Zerker_InputBox_Label8</ScreenID>
 		<Font>3</Font>
@@ -1894,7 +1967,7 @@
 			<B>255</B>
 		</TextColor>
 	</Editbox>
-	
+
 	<Label item="Zerker_InputBox_Label9">
 		<ScreenID>Zerker_InputBox_Label9</ScreenID>
 		<Font>3</Font>
@@ -1937,7 +2010,7 @@
 			<B>255</B>
 		</TextColor>
 	</Editbox>
-	
+
 	<Label item="Zerker_InputBox_Label10">
 		<ScreenID>Zerker_InputBox_Label10</ScreenID>
 		<Font>3</Font>
@@ -1980,7 +2053,7 @@
 			<B>255</B>
 		</TextColor>
 	</Editbox>
-	
+
 	<Label item="Zerker_InputBox_Label11">
 		<ScreenID>Zerker_InputBox_Label11</ScreenID>
 		<Font>3</Font>
@@ -2023,7 +2096,7 @@
 			<B>255</B>
 		</TextColor>
 	</Editbox>
-	
+
 	<Label item="Zerker_InputBox_Label12">
 		<ScreenID>Zerker_InputBox_Label12</ScreenID>
 		<Font>3</Font>
@@ -2066,7 +2139,7 @@
 			<B>255</B>
 		</TextColor>
 	</Editbox>
-	
+
 	<Label item="Zerker_InputBox_Label13">
 		<ScreenID>Zerker_InputBox_Label13</ScreenID>
 		<Font>3</Font>
@@ -2109,7 +2182,7 @@
 			<B>255</B>
 		</TextColor>
 	</Editbox>
-	
+
 	<Label item="Zerker_InputBox_Label14">
 		<ScreenID>Zerker_InputBox_Label14</ScreenID>
 		<Font>3</Font>
@@ -2152,7 +2225,7 @@
 			<B>255</B>
 		</TextColor>
 	</Editbox>
-	
+
 	<Label item="Zerker_InputBox_Label15">
 		<ScreenID>Zerker_InputBox_Label15</ScreenID>
 		<Font>3</Font>
@@ -2195,7 +2268,7 @@
 			<B>255</B>
 		</TextColor>
 	</Editbox>
-	
+
 	<Label item="Zerker_InputBox_Label16">
 		<ScreenID>Zerker_InputBox_Label16</ScreenID>
 		<Font>3</Font>
@@ -2238,7 +2311,7 @@
 			<B>255</B>
 		</TextColor>
 	</Editbox>
-	
+
 	<Label item="Zerker_InputBox_Label17">
 		<ScreenID>Zerker_InputBox_Label17</ScreenID>
 		<Font>3</Font>
@@ -2281,7 +2354,7 @@
 			<B>255</B>
 		</TextColor>
 	</Editbox>
-	
+
 	<Label item="Zerker_InputBox_Label18">
 		<ScreenID>Zerker_InputBox_Label18</ScreenID>
 		<Font>3</Font>
@@ -2324,7 +2397,7 @@
 			<B>255</B>
 		</TextColor>
 	</Editbox>
-	
+
 	<Label item="Zerker_InputBox_Label19">
 		<ScreenID>Zerker_InputBox_Label19</ScreenID>
 		<Font>3</Font>
@@ -2367,7 +2440,7 @@
 			<B>255</B>
 		</TextColor>
 	</Editbox>
-	
+
 	<Label item="Zerker_InputBox_Label20">
 		<ScreenID>Zerker_InputBox_Label20</ScreenID>
 		<Font>3</Font>
@@ -2413,6 +2486,28 @@
 	<!--InputBoxes End Here-->
 
 	<!--Combo Boxes start here -->
+	<Label item="Zerker_Mode_Label">
+		<ScreenID>Zerker_Mode_Label</ScreenID>
+		<Font>3</Font>
+		<RelativePosition>true</RelativePosition>
+		<Location>
+			<X>5</X>
+			<Y>125</Y>
+		</Location>
+		<Size>
+			<CX>65</CX>
+			<CY>20</CY>
+		</Size>
+		<Text>Mode</Text>
+		<TextColor>
+			<R>255</R>
+			<G>255</G>
+			<B>255</B>
+		</TextColor>
+		<NoWrap>true</NoWrap>
+		<AlignCenter>false</AlignCenter>
+		<AlignRight>false</AlignRight>
+	</Label>
 	<Combobox item="Zerker_Mode_ComboBox">
 		<ScreenID>Zerker_Mode</ScreenID>
 		<Font>1</Font>
@@ -2420,8 +2515,8 @@
 
 		<RelativePosition>true</RelativePosition>
 		<Location>
-			<X>40</X>
-			<Y>125</Y>
+			<X>305</X>
+			<Y>145</Y>
 		</Location>
 		<Size>
 			<CX>100</CX>
@@ -2437,19 +2532,20 @@
 			<B>255</B>
 		</TextColor>
 	</Combobox>
-	<Label item="Zerker_Mode_Label">
-		<ScreenID>Zerker_Mode_Label</ScreenID>
+	
+	<Label item="Zerker_RaidAssist_Label">
+		<ScreenID>Zerker_RaidAssist_Label</ScreenID>
 		<Font>3</Font>
 		<RelativePosition>true</RelativePosition>
 		<Location>
-			<X>5</X>
+			<X>155</X>
 			<Y>125</Y>
 		</Location>
 		<Size>
-			<CX>60</CX>
+			<CX>125</CX>
 			<CY>20</CY>
 		</Size>
-		<Text>Mode</Text>
+		<Text>RaidAssist</Text>
 		<TextColor>
 			<R>255</R>
 			<G>255</G>
@@ -2459,7 +2555,7 @@
 		<AlignCenter>false</AlignCenter>
 		<AlignRight>false</AlignRight>
 	</Label>
-
+	
 	<Combobox item="Zerker_RaidAssist_ComboBox">
 		<ScreenID>Zerker_RaidAssist_ComboBox</ScreenID>
 		<Font>1</Font>
@@ -2484,8 +2580,9 @@
 			<B>255</B>
 		</TextColor>
 	</Combobox>
-	<Label item="Zerker_RaidAssist_Label">
-		<ScreenID>Zerker_RaidAssist_Label</ScreenID>
+	
+	<Label item="Zerker_Stance_Label">
+		<ScreenID>Zerker_Stance_Label</ScreenID>
 		<Font>3</Font>
 		<RelativePosition>true</RelativePosition>
 		<Location>
@@ -2493,10 +2590,10 @@
 			<Y>125</Y>
 		</Location>
 		<Size>
-			<CX>120</CX>
+			<CX>65</CX>
 			<CY>20</CY>
 		</Size>
-		<Text>RaidAssist</Text>
+		<Text>Stance</Text>
 		<TextColor>
 			<R>255</R>
 			<G>255</G>
@@ -2506,6 +2603,31 @@
 		<AlignCenter>false</AlignCenter>
 		<AlignRight>false</AlignRight>
 	</Label>
+
+	<Combobox item="Zerker_Stance_ComboBox">
+		<ScreenID>Zerker_Stance_ComboBox</ScreenID>
+		<Font>1</Font>
+		<DrawTemplate>WDT_Inner</DrawTemplate>
+
+		<RelativePosition>true</RelativePosition>
+		<Location>
+			<X>0</X>
+			<Y>0</Y>
+		</Location>
+		<Size>
+			<CX>100</CX>
+			<CY>20</CY>
+		</Size>
+
+		<ListHeight>90</ListHeight>
+		<Button>BDT_Combo</Button>
+		<Style_Border>true</Style_Border>
+		<TextColor>
+			<R>255</R>
+			<G>255</G>
+			<B>255</B>
+		</TextColor>
+	</Combobox>
 	<!--Combo Boxes End Here-->
 
 	<TileLayoutBox item="InputboxLayout">
@@ -2519,7 +2641,7 @@
 		<LeftAnchorOffset>5</LeftAnchorOffset>
 		<TopAnchorOffset>0</TopAnchorOffset>
 		<AutoStretch>true</AutoStretch>
-		<Spacing>5</Spacing>
+		<Spacing>0</Spacing>
 		<!-- <Size> -->
 			<!-- <CX>150</CX> -->
 			<!-- <CY>300</CY> -->
@@ -2528,17 +2650,25 @@
 		<Style_Transparent>true</Style_Transparent>
 		<HorizontalFirst>true</HorizontalFirst>
 		<Style_VScroll>true</Style_VScroll>
-	
+
 		<Pieces>LogoLayout</Pieces>
+		<Pieces>Zerker_Mode_Label</Pieces>
+		<Pieces>Zerker_Mode_ComboBox</Pieces>
+		
+		<Pieces>Zerker_Stance_Label</Pieces>
+		<Pieces>Zerker_Stance_ComboBox</Pieces>
+
+		<Pieces>Zerker_RaidAssist_Label</Pieces>
+		<Pieces>Zerker_RaidAssist_ComboBox</Pieces>
 		<Pieces>Zerker_InputBox_Label0</Pieces>
 		<Pieces>Zerker_InputBox_Input0</Pieces>
-		
+
 		<Pieces>Zerker_InputBox_Label1</Pieces>
 		<Pieces>Zerker_InputBox_Input1</Pieces>
-		
+
 		<Pieces>Zerker_InputBox_Label2</Pieces>
 		<Pieces>Zerker_InputBox_Input2</Pieces>
-		
+
 		<Pieces>Zerker_InputBox_Label3</Pieces>
 		<Pieces>Zerker_InputBox_Input3</Pieces>
 		<Pieces>Zerker_InputBox_Label4</Pieces>
@@ -2575,15 +2705,9 @@
 		<Pieces>Zerker_InputBox_Input19</Pieces>
 		<Pieces>Zerker_InputBox_Label20</Pieces>
 		<Pieces>Zerker_InputBox_Input20</Pieces>
-			
-		<Pieces>Zerker_Mode_Label</Pieces>
-		<Pieces>Zerker_Mode_ComboBox</Pieces>
-		
-		<Pieces>Zerker_RaidAssist_Label</Pieces>
-		<Pieces>Zerker_RaidAssist_ComboBox</Pieces>
-		
+
 	</TileLayoutBox>
-	
+
 	<TileLayoutBox item="CheckboxLayout">
 	<DrawTemplate>WDT_Inner</DrawTemplate>
 		<RelativePosition>true</RelativePosition>
@@ -2598,7 +2722,7 @@
 		<Style_Transparent>true</Style_Transparent>
 		<Style_HScroll>true</Style_HScroll>
 		<Spacing>5</Spacing>
-	
+
 		<Pieces>Zerker_Checkbox0</Pieces>
 		<Pieces>Zerker_Checkbox1</Pieces>
 		<Pieces>Zerker_Checkbox2</Pieces>
@@ -2629,8 +2753,13 @@
 		<Pieces>Zerker_Checkbox27</Pieces>
 		<Pieces>Zerker_Checkbox28</Pieces>
 		<Pieces>Zerker_Checkbox29</Pieces>
+		<Pieces>Zerker_Checkbox30</Pieces>
+		<Pieces>Zerker_Checkbox31</Pieces>
+		<Pieces>Zerker_Checkbox32</Pieces>
+		<Pieces>Zerker_Checkbox33</Pieces>
+		<Pieces>Zerker_Checkbox34</Pieces>
 	</TileLayoutBox>
-	
+
 	<Page item="Zerker_Settings">
 		<ScreenID>Zerker_Settings</ScreenID>
 		<!-- <RelativePosition>true</RelativePosition> -->
@@ -2664,6 +2793,7 @@
     <ScreenID>Pulling</ScreenID>
     <RelativePosition>true</RelativePosition>
     <DrawTemplate>WDT_Def</DrawTemplate>
+	<Style_VScroll>true</Style_VScroll>
     <TabText>Pulling</TabText>
     <TabTextColor>
       <R>255</R>
@@ -2681,70 +2811,51 @@
       <Y>22</Y>
     </Location>
     <Size>
-
       <CX>578</CX>
       <CY>302</CY>
     </Size>
-    <!--          Mana              -->
-    <!--ManaMedStart-->
-    <Pieces>ManaMedStart_Value</Pieces>
-    <Pieces>ManaMedStart_Label</Pieces>
-    <Pieces>ManaMedStart_Slider</Pieces>
 
-    <!--ManaMedEnd-->
-    <Pieces>ManaMedEnd_Value</Pieces>
-    <Pieces>ManaMedEnd_Label</Pieces>
-    <Pieces>ManaMedEnd_Slider</Pieces>
 
-    <!--          Health              -->
-    <!--HPMedStart-->
-    <Pieces>HPMedStart_Value</Pieces>
-    <Pieces>HPMedStart_Label</Pieces>
-    <Pieces>HPMedStart_Slider</Pieces>
+    <Pieces>PullManaMedStart_InputBox_Label</Pieces>
+    <Pieces>PullManaMedStart_InputBox_Input</Pieces>
 
-    <!--HPMedEnd-->
-    <Pieces>HPMedEnd_Value</Pieces>
-    <Pieces>HPMedEnd_Label</Pieces>
-    <Pieces>HPMedEnd_Slider</Pieces>
+    <Pieces>PullManaMedEnd_InputBox_Label</Pieces>
+    <Pieces>PullManaMedEnd_InputBox_Input</Pieces>
 
-    <!--          Endurance              -->
-    <!--EndMedStart-->
-    <Pieces>EndMedStart_Value</Pieces>
-    <Pieces>EndMedStart_Label</Pieces>
-    <Pieces>EndMedStart_Slider</Pieces>
+    <Pieces>PullHPMedStart_InputBox_Label</Pieces>
+    <Pieces>PullHPMedStart_InputBox_Input</Pieces>
 
-    <!--EndMedEnd-->
-    <Pieces>EndMedEnd_Value</Pieces>
-    <Pieces>EndMedEnd_Label</Pieces>
-    <Pieces>EndMedEnd_Slider</Pieces>
+    <Pieces>PullHPMedEnd_InputBox_Label</Pieces>
+    <Pieces>PullHPMedEnd_InputBox_Input</Pieces>
 
-    <!--          Pulling              -->
-    <!--Pull Radius-->
-    <Pieces>PullRadius_Value</Pieces>
-    <Pieces>PullRadius_Label</Pieces>
-    <Pieces>PullRadius_Slider</Pieces>
+    <Pieces>PullEndMedStart_InputBox_Label</Pieces>
+    <Pieces>PullEndMedStart_InputBox_Input</Pieces>
 
-    <!--ZRadius-->
-    <Pieces>ZRadius_Value</Pieces>
-    <Pieces>ZRadius_Label</Pieces>
-    <Pieces>ZRadius_Slider</Pieces>
+    <Pieces>PullEndMedEnd_InputBox_Label</Pieces>
+    <Pieces>PullEndMedEnd_InputBox_Input</Pieces>
 
-    <!--Group Watch-->
+    <Pieces>PullRadius_InputBox_Label</Pieces>
+    <Pieces>PullRadius_InputBox_Input</Pieces>
+
+    <Pieces>PullZRadius_InputBox_Label</Pieces>
+    <Pieces>PullZRadius_InputBox_Input</Pieces>
+	
+	<!--Group Watch-->
     <Pieces>GroupWatch_Label</Pieces>
     <Pieces>GroupWatch_ComboBox</Pieces>
-	
-	<!--Pull Level Minimum-->
+
+   <!--Pull Level Minimum-->
 	<Pieces>PullLevelMin_Label</Pieces>
     <Pieces>PullLevelMin_ComboBox</Pieces>
-	
+
 	<!--Pull Level Max-->
 	<Pieces>PullLevelMax_Label</Pieces>
     <Pieces>PullLevelMax_ComboBox</Pieces>
-	
-	<!--Pull Level Max-->
+
+	<!--Pull Arc Input-->
 	<Pieces>PullArc_InputBox_Label</Pieces>
     <Pieces>PullArc_InputBox_Input</Pieces>
-	
+
     </Page>
 
 	<TabBox item="Zerker_Tabs">
@@ -2755,19 +2866,19 @@
 		</Location>
 		<RelativePosition>true</RelativePosition>
 		<AutoStretch>true</AutoStretch>
-		
+
 		<LeftAnchorToLeft>true</LeftAnchorToLeft>
 		<LeftAnchorOffset>0</LeftAnchorOffset>
-		
+
 		<RightAnchorOffset>0</RightAnchorOffset>
 		<RightAnchorToLeft>false</RightAnchorToLeft>
-		
+
 		<TopAnchorOffset>0</TopAnchorOffset>
 		<TopAnchorToTop>true</TopAnchorToTop>
-		
+
 		<BottomAnchorOffset>0</BottomAnchorOffset>
 		<BottomAnchorToTop>false</BottomAnchorToTop>
-		
+
 		<TabBorderTemplate>FT_DefTabBorder</TabBorderTemplate>
 		<PageBorderTemplate>FT_DefPageBorder</PageBorderTemplate>
 
@@ -2775,7 +2886,7 @@
 		<Pages>Zerker_Settings</Pages>
 		<Pages>Pulling</Pages>
 	</TabBox>
-	
+
 	<Screen item = "BerzerkerWnd">
 		<RelativePosition>false</RelativePosition>
 		<Location>
