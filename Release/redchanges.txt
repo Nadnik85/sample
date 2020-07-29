@@ -1,7 +1,154 @@
-May 26 2020 by RedGuides
+July 22 2020
+- Updated for TEST
+- Added ${Me.CastTimeLeft} - Kaen01
+  It returns the cast time left as a timestamp of currently casting spell.
+  
+July 15 2020 by RedGuides
+- MQ2Status (Sic) minor code cleanup
+- MQ2XAssist (eqmule) minor changes with assisting
+- MQ2Main (alynel, drwhomphd) patched to allow parsing of macro data for includes. This will allow the resolution of TLOs as part of an #include statement.
+
+July 15 2020
+- Updated for LIVE
+
+July 10 2020 by RedGuides
+- MQ2React (drwhomphd) Added globaldadd and globalrem slash commands, various bug fixes.
+
+July 10 2020
+- Fixed a bug in EQClasses.h in the LegalPlayerRace function.
+- Reverted mq2nav offsets to support patterns again. - @redbot
+
+July 10 2020
+- Updated for TEST
+
+July 08 2020
+- Updated for TEST
+
+July 8 2020 by RedGuides
+- MQ2Status (Sic) "/status tribute" now returns your tribute state and current favor
+  "/status gtribute" or "guildtribute" now returns your guild tribute state and your current guild favor
+- MQ2Nav MeshGenerator (drwhomphd) This pull request allows the user to fine tune their camera speed via a slider in the Properties windows. The properties window seemed like the most logical/convenient place for such a slider. Tested for fine grain movement support on exalted which is painful to navigate with the default keyboard speed setting.
+
+July 08 2020
+- Updated for TEST
+
+July 7 2020 by RedGuides
+- MQ2Status (Sic, Knightly) /status will report if kissassist is in a "BackOff" state
+- MQ2XAssist (brainiac, dannuic, Knightly) major code cleanup
+
+Jun 27 2020 by RedGuides
+- MQ2XAssist (eqmule) Added Dynamic setting of xtarget so it only uses unused auto hater slots
+- MQ2Status (Sic, brainiac) added "/status itemall" which returns inventory + bank item count. Code cleanup
+- New Plugin! MQ2CWTNBuffs (ChatWithThisName) MQ2CWTNBuffs is now used instead of MQ2KissBuffs to track user buffs.
+
+Jun 20 2020 by RedGuides
+- MQ2SQLite (Knightly) Major update - Added advanced functionality 
+	  Can now choose to keep a database open rather than open and close on each query
+	  Deprecated the .clear TLO in favor of the clear command line argument (in Live this will only notify you 5 times per plugin load/unload)
+	  Added the query verb to specify that this is a standard query
+	  Added the open/close verbs to open and close databases
+	  Added the AdvQuery verb to specify that you want an advanced query
+	  Code cleanup
+- MQ2XAssist (Knightly) - Code cleanup
+- MQ2AutoLoot (Plure) - Fixed issues relating to change in text for ConfirmationDialogBox for no trade/ and lore-equip items
+- MQ2React (Knightly) - Code cleanup
+
+Jun 17 2020 by RedGuides
+- MQ2React (drwhomphd) Replaced the .ini file with a .yaml - please update your reacts. Added logic to avoid crashing on parse errors, improved save & loading functions, improved enable/disable commands, and made executing actions more aggressive to avoid other issues.
+- MQ2Status (Sic) New "/status" commands: login (returns login name) zone (returns current zone) krono (returns # of krono) stat weight (returns weight, limit and difference) currency blah (returns amount of any type of currency: overseer, loyalty, dbc, etc.)
+
+June 17 2020
+- Updated for LIVE
+- Fixed the PLOOTITEM struct for TEST
+- Added ${EverQuest.FloorAtLoc[x y]} it returns z
+  Example: /echo ${EverQuest.FloorAtLoc[123 456]} returns 789
+
+Jun 14 2020 by RedGuides
+- MQ2Nav (brainiac) updated to 1.3.3 
+	The navmesh compatibility version has changed in this release. MQ2Nav is backwards compatible, so meshes do not need to be re-made. Conversion is optional, but recommended to improve performance and memory usage. New MQ2Nav can load old meshes. Old MQ2Nav cannot load new meshes generated with this version.
+	
+    Highlights
+
+        Previous versions of MQ2Nav had an issue when loading navmesh files that caused it to rapidly reallocate a buffer as it was decompressing the zone file. This release makes some changes to the navmesh file format to avoid the need for these allocations and reduce the number of out-of-memory errors.
+            Meshes can be updated by saving in the meshgen or using meshtool (see below)
+        New command line tool introduced: meshtool.exe
+        Updated fingerprints for latest EverQuest build (6/9/2020) (#103).
+
+    Features
+
+        Add command line tool for managing navmesh files. The tool provides a way to update navmesh from the command line. (#109)
+            Running meshtool.exe convert <filename> will convert the specified file to the latest version of the mesh.
+
+    Improvements
+
+        Display Mesh version number in new Info panel in MeshGen (#106)
+        Catch out of memory errors when trying to load a navmesh file and display an error (#105).
+        Add option to toggle the bounding box that is drawn around the door target (#98)
+            Added an ini setting "RenderDoorTarget" as well as a setting in the nav ui.
+
+    Bug Fixes
+
+        Fix bad memory usage when loading a navmesh file. (#102)
+        Fix crash that could occur when shutting down EverQuest without unloading (#85)
+        Fix "Could not locate X" error when navigation cross a zone boundary. (#100)
+
+    Other Changes
+
+        Add decompressed data size to navmesh header. (#102)
+            This change breaks compatibility with older meshes, thus a new navmesh file format is created (v5).
+            This version of MQ2Nav can load both v4 and v5 meshes.
+            v4 meshes will require the plugin to pre-comput the decompressed navmesh size, while v5 have the size in the file already.
+        Add navmesh header size to navmesh file format (#104)
+            This change is to provide forwards compatibility in the future.
+        Project files updated to VS 2019 (#107)
+        Dependencies updated: (#108)
+            spdlog to 1.6.1
+            fmt to 6.2.1
+            boost to 1.72.0
+- MeshUpdater (wired420) Now on its own server an in full release. Admins will be getting access to the control panel in a day or two.
+- CWTN Plugins (ChatWithThisName, Sic) MQ2Beast, MQ2Berzerker, MQ2Cleric, MQ2EsKay, MQ2Beast, MQ2Monk, MQ2War, MQ2Rogue and CWTNCommons updated. Full changelogs are on the resource pages & the plugin forum.
+- MQ2FeedMe (Knightly) Code cleanup
+- MQ2EasyFind (eqmule) updated to 2.0, includes better Dannet support 
+- MQ2Mule (eqmule) New commands: "/mule show" to bring up the window, and "/mule reset" to reset the window's position.
+
+June 10 2020
+- Updated for TEST
+
+June 09 2020 by Sic
+- Added ToV and Overseer currency
+	Example: /echo ${Me.FroststoneDucat}
+	Example: /echo ${Me.OverseerTetradrachm}
+	Example: /echo ${Me.WarlordsSymbol}
+	
+Jun 06 2020
+- Fixed a crash in CUnSerializeBuffer::GetString (the one where the address ends in 22) -Brainiac
+
+Jun 05 2020 by RedGuides
+- MQ2TSTrophy (Sic, Knightly) Fixed an issue when updating trophies that caused bad info to remain
+- MQ2AutoLoog (Knightly) partial code cleanup
+- CWTN Plugins (ChatWithThisName, Sic) updated, including MQ2BerZerker, MQ2Bst, MQ2Cleric, MQ2Eskay. Changelog in the CWTN forum.
+
+Jun 03 2020 by RedGuides
+- MQ2Cast (eqmule) fixed fizzled and interrupted identifications on Live
+
+Jun 03 2020
+- Added ${Me.AbilityTimer[x]} where x is a bility ad or the name, it returns a pTimeStampType of the timer left on a Ability
+  Example: /echo ${Me.AbilityTimer[Hide].TimeHMS}
+  returns 0:06 (or whatever it's at)
+
+May 29 2020 by RedGuides
+- CWTN Plugins (ChatWithThisName, Sic) Heal routine while melee is fixed. Updated MercFerocity/SharedMercFero, autobuffing fixes.
+
+May 28 2020
+- Updated MQ2AutoLogin to support rizlona logins.
+
+May 27 2020 by RedGuides
 - MQ2Rez (Knightly) Fix issue with Rez not being consistent 
 - MQ2Status (Sic) Code cleanup
 - MQ2AdvPath (Knightly) Remove "failed to create directory" message when dir exists
+- New paid plugin! MQ2Eskay (ChatWithThisName, Sic) For when you need a good tank.
+- New paid plugin! MQ2Bst (ChatWithThisName, Sic) It's a Beastlord.
+- CWTN Plugins: fixed issues with MQ2Headshots, MQ2Cleric updated low-level healing, MQ2Bst & MQ2Eskay fixed pet issues.
 
 May 26 2020
 - Updated for TEST
@@ -1587,12 +1734,12 @@ Jan 18 2019 by EqMule
 
 Jan 16 2019 by RedGuides
 - MQ2AutoLoot (plure) 
-  1) When items are marked “destroy” MQ2Autoloot will ignore your “SaveBagSlots” limit and will keep looting and destroying items.  
+  1) When items are marked ï¿½destroyï¿½ MQ2Autoloot will ignore your ï¿½SaveBagSlotsï¿½ limit and will keep looting and destroying items.  
   This means that if you want to clear all the corpses in your camp your loot.ini needs to have SaveBagSlots greater then 0.
-  2) There is a new loot setting. “NewItemDelay”, this allows people who are playing manually to pass out any new items before the plugin decides 
+  2) There is a new loot setting. ï¿½NewItemDelayï¿½, this allows people who are playing manually to pass out any new items before the plugin decides 
   where they go.  The command to change this setting is: /AutoLoot newitemdelay #n -> Master looter waits #n seconds when a new item drops 
   before looting that item.
-  3) Fixed CTD related to “/autoloot buy “Item Name” #Quantity” command.
+  3) Fixed CTD related to ï¿½/autoloot buy ï¿½Item Nameï¿½ #Quantityï¿½ command.
   4) Removed the patterns code stuff by eqholic, it was only implemented for people not grouped. Since no one was using it, I pulled the code out.
 
 Jan 16 2019 by EqMule
@@ -2462,7 +2609,7 @@ May 25 2018 by RedGuides
 May 24 2018 by RedGuides
 - MQ2EasyFind (eqmule) can now take door ID as a parameter in the ini file for locations
   Example: Fortress Mecanotus is a click door but the loc for it in find is in mid air, kinda where it catapults u so 
-  without the door ID easyfind won’t know where to go and where to click
+  without the door ID easyfind wonï¿½t know where to go and where to click
   Now I just made it Fortress Mecanotus=door:6 1234 4321 123
 - New Macro! ShrinkEm (sl968) Shrinks all members of your group.
 - New Utility! EQBCI (jimbob) gives eqbcs a beautiful GUI, check the utilities folder.
@@ -5230,10 +5377,10 @@ when doing ${AdvLoot.SList[x].AlwaysGreed} - cred hoosierbilly
   Recent changes to the client released with the new Broken Mirror expansion
   added a new type of MQ2 detection which is meant to prevent mq2 usage on the new Phinigel server.
   We fully support the NO MQ2 policy on Phinigel, and we want to continue
-  supporting that policy and backup DBG any way we can that’s within reason.
+  supporting that policy and backup DBG any way we can thatï¿½s within reason.
   We have therefor decided to add a new type of integrity checker to MQ2.
   We have placed the code in a MQ2 plugin that has been named MQ2Ic.dll. (MQ2 Integrity checker)
-  We feel strongly that MQ2 is in a symbiosis with Everquest, and it’s important to us
+  We feel strongly that MQ2 is in a symbiosis with Everquest, and itï¿½s important to us
   that all MQ2 users feel safe while they use MQ2.
   MQ2 users are an important part of the Everquest community and we wish to keep it that way.
   In short, we recommend you keep MQ2Ic.dll loaded while you are playing Everquest.
