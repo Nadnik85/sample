@@ -227,8 +227,7 @@ DWORD Include(PCHAR szFile, int *LineNumber, bool bIgnoreFileCheck)
 	char *tmp;
 	if (err) {
 		if (bIgnoreFileCheck) {
-			// Optional include. Return 1 so we don't end macro but let
-			// the user know we could not include the file.
+			// Optional include. Return 1 so we don't end macro.
 			return 1;
 		}
 		else {
