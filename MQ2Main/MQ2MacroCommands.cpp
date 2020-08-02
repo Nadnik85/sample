@@ -307,7 +307,7 @@ BOOL AddMacroLine(PCHAR FileName, PCHAR szLine, size_t Linelen, int *LineNumber,
 			return (BOOL)Include(Filename, LineNumber, 0);
 		} else if (!_strnicmp(szLine, "#include_optional ", 18)) {
 			CHAR Filename[MAX_STRING] = { 0 };
-			szLine += 8;
+			szLine += 18;
 			while (szLine[0] == ' ') szLine++;
 			ParseMacroData(szLine, Linelen);
 			if (!strstr(szLine, "."))
