@@ -1,3 +1,24 @@
+Aug 13 2020
+- MQ2FeedMe (Sic, Knightly) No more eating while feigned death, as it wasn't convincing.
+- MQ2WorstHurt (Sic, Knightly, dannuic) Backported Knightly's Next Updates for MQ2WorstHurt, as well as Rizlona fixes and code cleanup.
+- MQ2Mule (eqmule) Fixed to work on RoF2 emu compile
+
+Aug 12 2020
+- Updated for TEST
+
+Aug 10 2020
+- Fixed a bunch of misc stuff mainly cleaning up after new by using delete[] instead of delete.
+- Moved some function buffer allocations to the heap.
+- Added #include_optional by knightly/drwhomphd
+- Fixed CPageWnd::GetTabText() for emu
+- Fixed uninitialized class and struct members here and there.
+
+August 8 2020 by RedGuides
+- MQ2Mule (eqmule) Added a Start Button and Mode selection. Stability fixes for Rof2
+- MQ2AfNuke/MQ2Heals (jimbob) Updated Magician burn AAs and added code to use Gather spells and mod rods. 
+  Updated Ranger Burn section and melee/bow code. Replaced Copestalker's line with Pureshot, and removed Scout's Mastery of fire. Ranger updates are untested. Updated some healing logic in MQ2Heals to add some AA heals to single target section that may not have been firing. 
+  Fixed a copy/paste error in Magician's Gather spell, and added Enchanter "Gather Mana" AA support in harvest/med check.
+
 July 22 2020
 - Updated for TEST
 - Added ${Me.CastTimeLeft} - Kaen01
