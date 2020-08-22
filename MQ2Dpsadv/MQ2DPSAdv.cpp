@@ -89,37 +89,38 @@ void DPSMob::DPSEntry::AddDamage(int Damage1) {
 		DoSort = true;
 		return;
 	}
+
 	DoSort = true;
-	if (Damage.First && (time(nullptr) - Damage.Last >= EntTO)) {
+	time_t timenow = time(nullptr);
+
+	if (Damage.First && (timenow - Damage.Last >= EntTO)) {
 		Damage.AddTime += (int)(Damage.Last - Damage.First) + 1;
 		Damage.First = 0;
 	}
+
 	Damage.Total += Damage1;
-	Damage.Last = time(nullptr);
-	if (!Damage.First) Damage.First = time(nullptr);
+	if (!Damage.First)
+		Damage.First = timenow;
+
+	Damage.Last = timenow;
+
 	Parent->AddDamage(Damage1);
 }
 
 uint64_t DPSMob::DPSEntry::GetDPS() {
-	//Damage.Total is:		475082
-	//Damage.Last is:		1580130211
-	//Damage.First is:		1580130212
-	//Damage.AddTime is:	0
-	//below code fixes this corner case scenario. -eqmule
-	int64_t dividetotal = (((Damage.Last - Damage.First) + 1) + Damage.AddTime);
+	uint64_t dividetotal = (((Damage.Last - Damage.First) + 1) + Damage.AddTime);
 	if (dividetotal == 0)
-	{
-		dividetotal++;
-	}
-	return (int64_t)(Damage.Total / dividetotal);
+		return 0;
+
+	return (Damage.Total / dividetotal);
 }
 
 uint64_t DPSMob::DPSEntry::GetSDPS() {
-	auto val = ((CurListMob->Damage.Last - CurListMob->Damage.First) + 1) + CurListMob->Damage.AddTime;
-	if (val == 0)
+	uint64_t dividetotal = ((CurListMob->Damage.Last - CurListMob->Damage.First) + 1) + CurListMob->Damage.AddTime;
+	if (dividetotal == 0)
 		return 0;
-	//why is this cast to an int?
-	return (int)(Damage.Total / val);
+
+	return (Damage.Total / dividetotal);
 }
 
 void DPSMob::DPSEntry::Sort() {
@@ -197,12 +198,19 @@ bool DPSMob::IsPet() {
 
 void DPSMob::AddDamage(int Damage1) {
 	Damage.Total += Damage1;
-	Damage.Last = time(nullptr);
-	if (!Damage.First) Damage.First = time(nullptr);
+	time_t timenow = time(nullptr);
+
+	if (!Damage.First)
+		Damage.First = timenow;
+
+	Damage.Last = timenow;
+
 	if (!Active) {
 		Active = true;
 		sprintf_s(Tag, "[A] ");
-		if (!IsPet() && !Mercenary) DPSWnd->DrawCombo();
+
+		if (!IsPet() && !Mercenary)
+			DPSWnd->DrawCombo();
 	}
 }
 
@@ -253,7 +261,7 @@ CDPSAdvWnd::CDPSAdvWnd() :CCustomWnd("DPSAdvWnd") {
 	//DPS Tab
 	if (!(LTopList = (CListWnd*)GetChildItem("DPS_TopList"))) CheckUI = true;
 	if (!(CMobList = (CComboWnd*)GetChildItem("DPS_MobList"))) CheckUI = true;
-	
+
 	this->SetBGColor(0xFF000000);//Setting this here sets it for the entire window. Setting everything individually was blacking out the checkboxes!
 
 	if (CheckUI) {
@@ -600,11 +608,11 @@ void CDPSAdvWnd::LoadLoc(char szChar[256]) {
 	else strcpy_s(szName, szChar);
 	Saved = (GetPrivateProfileInt(szName, "Saved", 0, INIFileName) > 0 ? true : false);
 	if (Saved) {
-		SetLocation({ 
+		SetLocation({
 			(LONG)GetPrivateProfileInt(szName, "Left", 0, INIFileName),
 			(LONG)GetPrivateProfileInt(szName, "Top", 0, INIFileName),
 			(LONG)GetPrivateProfileInt(szName, "Right", 0, INIFileName),
-			(LONG)GetPrivateProfileInt(szName, "Bottom", 0, INIFileName) 
+			(LONG)GetPrivateProfileInt(szName, "Bottom", 0, INIFileName)
 		});
 
 		SetAlpha((BYTE)GetPrivateProfileInt(szName, "Alpha", 0, INIFileName));
@@ -977,12 +985,13 @@ void AddMyDamage(char* EntName, int Damage1) {
 	//if Me Do this
 	uint64_t MyTotalBefore = MyTotal;
 	uint64_t MyPetTotalBefore = MyPetTotal;
+	time_t timenow = time(nullptr);
 	int flag1 = 0;
 	if ((!_stricmp(MyName, EntName) || !_stricmp(EntName, "You"))
 		|| (strstr(EntName, "`s pet") && strstr(EntName, MyName))) {
 		if (MyDebug) WriteChatf("[AddMyDamage] 1 -%s-", EntName);
-		if (!MyFirst) MyFirst = (int)time(nullptr);
-		MyLast = (int)time(nullptr);
+		if (!MyFirst) MyFirst = timenow;
+		MyLast = timenow;
 		if (!_stricmp(MyName, EntName) || !_stricmp(EntName, "You")) {
 			MyTotal += Damage1;
 			flag1 = 1;
@@ -1002,8 +1011,8 @@ void AddMyDamage(char* EntName, int Damage1) {
 				if (MyDebug) WriteChatf("[AddMyDamage] 4 -%s-", dPet->DisplayedName);
 				if (!_stricmp(dPet->DisplayedName, EntName)) {
 					if (MyDebug) WriteChatf("[AddMyDamage] 5 %i", Damage1);
-					if (!MyFirst) MyFirst = (int)time(nullptr);
-					MyLast = (int)time(nullptr);
+					if (!MyFirst) MyFirst = timenow;
+					MyLast = timenow;
 					MyPetTotal += Damage1;
 					flag1 = 3;
 				}
@@ -1128,7 +1137,7 @@ void DPSAdvCmd(PSPAWNINFO pChar, PCHAR szLine) {
 			DPSWnd->LoadLoc(szCopy);
 			DPSWnd->SaveLoc();
 		}
-		else 
+		else
 			WriteChatf("\arFailed to Copy: DPS Window not loaded.");
 	}
 	else if (!_stricmp(Arg1, "Debug")) {
@@ -1699,9 +1708,11 @@ PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color) {
 }
 
 bool CheckInterval() {
-	if (!Intervals) Intervals = time(nullptr);
-	else if (Intervals != time(nullptr)) {
-		Intervals = time(nullptr);
+	time_t timenow = time(nullptr);
+	if (!Intervals)
+		Intervals = timenow;
+	else if (Intervals != timenow) {
+		Intervals = timenow;
 		return true;
 	}
 	return false;
@@ -1737,16 +1748,17 @@ void IntPulse() {
 			i--;
 		}
 		else {
-			if (Mob->Active && !Mob->Dead && time(nullptr) - Mob->Damage.Last > FightTO) {
+			time_t timenow = time(nullptr);
+			if (Mob->Active && !Mob->Dead && timenow - Mob->Damage.Last > FightTO) {
 				HandleDeath(Mob);
 				CChange = true;
 			}
-			else if (Mob->Active && !Mob->Dead && !Mob->InActive && time(nullptr) - Mob->Damage.Last > FightIA) {
+			else if (Mob->Active && !Mob->Dead && !Mob->InActive && timenow - Mob->Damage.Last > FightIA) {
 				Mob->InActive = true;
 				sprintf_s(Mob->Tag, "[IA] ");
 				if (!Mob->IsPet() && !Mob->Mercenary) CChange = true;
 			}
-			else if (Mob->Active && !Mob->Dead && Mob->InActive && time(nullptr) - Mob->Damage.Last < FightIA) {
+			else if (Mob->Active && !Mob->Dead && Mob->InActive && timenow - Mob->Damage.Last < FightIA) {
 				Mob->InActive = false;
 				sprintf_s(Mob->Tag, "[A] ");
 				if (!Mob->IsPet() && !Mob->Mercenary) CChange = true;
