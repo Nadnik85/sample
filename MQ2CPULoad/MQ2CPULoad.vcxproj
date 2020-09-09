@@ -59,7 +59,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="MQ2CpuLoad.cpp" />
+    <ClCompile Include="MQ2CPULoad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\MQ2Plugin.h" />
