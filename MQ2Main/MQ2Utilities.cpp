@@ -8378,6 +8378,7 @@ PCONTENTS FindItemByName(PCHAR pName, BOOL bExact)
 				}
 			}
 		}
+
 	}
 
 	//check toplevel slots
@@ -8400,7 +8401,7 @@ PCONTENTS FindItemByName(PCHAR pName, BOOL bExact)
 					}
 				}
 				// Check for augs next
-				if (pItem->Contents.ContainedItems.pItems && pItem->Contents.ContainedItems.Size && GetItemFromContents(pItem)->Type != ITEMTYPE_PACK) {
+				if (pItem->Contents.ContainedItems.pItems && pItem->Contents.ContainedItems.Size) {
 					for (unsigned long nAug = 0; nAug < pItem->Contents.ContainedItems.Size; nAug++) {
 						if (PCONTENTS pAugItem = pItem->Contents.ContainedItems.pItems->Item[nAug]) {
 							if (GetItemFromContents(pAugItem)->Type == ITEMTYPE_NORMAL && GetItemFromContents(pAugItem)->AugType) {
@@ -8605,7 +8606,7 @@ PCONTENTS FindItemByID(int ItemID)
 					return pItem;
 				}
 				// Check for augs next
-				if (pItem->Contents.ContainedItems.pItems && pItem->Contents.ContainedItems.Size && GetItemFromContents(pItem)->Type != ITEMTYPE_PACK) {
+				if (pItem->Contents.ContainedItems.pItems && pItem->Contents.ContainedItems.Size) {
 					for (unsigned long nAug = 0; nAug < pItem->Contents.ContainedItems.Size; nAug++) {
 						if (PCONTENTS pAugItem = pItem->Contents.ContainedItems.pItems->Item[nAug]) {
 							if (GetItemFromContents(pAugItem)->Type == ITEMTYPE_NORMAL && GetItemFromContents(pAugItem)->AugType && ItemID == GetItemFromContents(pAugItem)->ItemNumber) {
@@ -8837,7 +8838,7 @@ DWORD FindItemCountByName(PCHAR pName, BOOL bExact)
 					}
 				}
 				// Check for augs next
-				if (pItem->Contents.ContainedItems.pItems && pItem->Contents.ContainedItems.Size && GetItemFromContents(pItem)->Type != ITEMTYPE_PACK) {
+				if (pItem->Contents.ContainedItems.pItems && pItem->Contents.ContainedItems.Size) {
 					for (unsigned long nAug = 0; nAug < pItem->Contents.ContainedItems.Size; nAug++) {
 						if (PCONTENTS pAugItem = pItem->Contents.ContainedItems.pItems->Item[nAug]) {
 							if (GetItemFromContents(pAugItem)->Type == ITEMTYPE_NORMAL && GetItemFromContents(pAugItem)->AugType) {
