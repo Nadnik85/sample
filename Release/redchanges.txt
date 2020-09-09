@@ -1,4 +1,43 @@
-Aug 13 2020
+Sep 09 2020 by RedGuides
+- MQ2AFNuke (jimbob) Fixed Enchanter burns. Added /nuke doswarm on|off for wizard swarm pets (Call of Xuzl AA). 
+- MQ2Heals (jimbob) fixed rez abilities for cleric/drood/shaman. Should try to rez group/raid/fellowship corpses.
+- MQ2Main (drwhomphd) Made sure the other chat events in DataVars follow the same fix that eqmule put in for Tells in order to work on FV or different languages. 
+- MQ2Main (ChatWithThisName) fixed FindItem/FindItemCount, it will no longer report twice as many augments found.
+- MQ2CPULoad (Knightly, brainiac) Code cleanup
+
+Sep 09 2020
+- Updated for TEST
+
+Aug 26 2020 by RedGuides
+- MQ2Mule (SwiftyMuse) Added .Classes TLO to cond builder
+
+Aug 26 2026
+- Updated for TEST
+
+Aug 21 2020 by RedGuides
+- MQ2Gmail (Sic) Changed Oauth to work again, new video & guide posted on the resource page.
+- MQ2DPSAdv (ChatWithThisName, Knightly, dannuic) Code cleanup, corrects an issue where sometimes SDPS would show 0 erroneously.
+
+Aug 20 2020 by RedGuides
+- MQ2AFNuke (jimbob) Started on Enchanter buff support (it's not nearly done yet). Updated Ranger spell/aa order a bit.
+
+Aug 20 2020
+- Updated for LIVE
+- Updated for TEST
+- Fixed the CMerchantWnd class
+- Fixed the findwindow feature
+
+Aug 19 2020 by RedGuides
+- MQ2AFNuke/MQ2Heals (Jimbob) A few more ranger burn changes, and updates Magician Frenzied Burnout to Companion's Fury.   Fixed some MQ2Heals issues that didn't have HP checks before a heal was cast.
+
+Aug 19 2020
+- Updated for LIVE
+- Fixed Me.CombatState for TEST
+- Fixed CButtonWnd::SetCheck
+- Added CHotButton::SetCheck
+- Possibly Fixed Target.MyBuff, somone who has a target with more than 55 spells going on it, will have to check.
+
+Aug 13 2020 by RedGuides
 - MQ2FeedMe (Sic, Knightly) No more eating while feigned death, as it wasn't convincing.
 - MQ2WorstHurt (Sic, Knightly, dannuic) Backported Knightly's Next Updates for MQ2WorstHurt, as well as Rizlona fixes and code cleanup.
 - MQ2Mule (eqmule) Fixed to work on RoF2 emu compile
@@ -266,7 +305,7 @@ Apr 28 2020
 Apr 24 2020
 - Optimized the GetRaidMainAssistTargetID inline.
 
-Apr 22 2020 by Redguides
+Apr 22 2020 by RedGuides
 - MQ2DataVars (drwhomphd, Knightly) a minor patch expanding EQMule's original Chat event fix for tells spoken in different languages. 
 - MQ2FeedMe (Sic, brainiac) Added an option to turn off consumption messages.
 
@@ -464,7 +503,7 @@ Mar 06 2020
 - Added CTabWnd::RemovePage
 - Fixed CXWnd::DrawColoredRect crash
 
-Mar 03 2020 by Redguides
+Mar 03 2020 by RedGuides
 - MQ2TSTrophy (Sic) Added TLO's to TSTrophy as well as a new video explaining the functionality and the available TLOs
 - MQ2Relocate (Sic, Knightly) Updated to version 2.0, cleaned up code
 - MQ2Status (Sic, brainiac) Will now use Dannet if you have dannet loaded and don't have eqbc loaded, Standardized output color/format 
@@ -477,7 +516,7 @@ Mar 03 2020
 - Updated for LIVE
 - Added CPageWnd::FlashTab
 
-Feb 28 2020 by Redguides
+Feb 28 2020 by RedGuides
 - CWTN Plugins (ChatWithThisName) Fix overlooked crash dealing with pulling with AA. Thanks to everyone who sent crash reports. 
 
 Feb 27 2020 by RedGuides
@@ -503,7 +542,7 @@ Feb 18 2020
 -Updated for TEST
 -Updated for LIVE
 
-Feb 17 2020 by Redguides
+Feb 17 2020 by RedGuides
 - CWTN Plugins (ChatWithThisName, Sic)
  	CWTN Plugins - ALL
 		Backend fixes
@@ -537,13 +576,13 @@ Feb 17 2020 by Redguides
 		Will use "Bobbing Corpse" to break our stuck spell gems
 		We won't send in our pet if we are pulling
 
-Feb 14 2020 by Redguides
+Feb 14 2020 by RedGuides
 - MQ2Status (Sic) Small fix for output of MQ2Eskay during /status
 
 Feb 14 2020
 -Updated for LIVE
 
-Feb 12 2020 by Redguides
+Feb 12 2020 by RedGuides
 - MQ2Status (Sic, brainiac) Added /status parcel to return if we have any parcels (thanks CWTN) 
   Added /status invis
 - CWTN Plugins - All: 
@@ -778,7 +817,7 @@ Dec 12 2019
 Dec 11 2019
 - Updated for BETA
 
-Dec 10 2019 by Redguides
+Dec 10 2019 by RedGuides
 - CWTN Plugins updated
 - MQ2AFNuke (Jimbob) Updated Mage: Heart of Flames to Heart of Skyfire
 
@@ -826,7 +865,7 @@ Dec 01 2019
 Nov 30 2019
 - Updated for BETA
 
-Nov 29 2019 by Redguides
+Nov 29 2019 by RedGuides
 - MQ2Status (Sic) added "/status sub" to check for EQ subscriptions, /status will now also return if you are silver or bronze
 
 Nov 29 2019
