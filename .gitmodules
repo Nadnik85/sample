@@ -13,6 +13,9 @@
 [submodule "MQ2Nav"]
 	path = MQ2Nav
 	url = https://github.com/brainiac/MQ2Nav.git
+[submodule "MQ2Node"]
+	path = MQ2Node
+	url = https://gitlab.com/knervous/MQ2Node.git
 [submodule "MQ2Py"]
 	path = MQ2Py
 	url = https://github.com/brainiac/MQ2Py.git
