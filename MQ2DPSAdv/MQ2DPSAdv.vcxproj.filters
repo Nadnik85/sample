@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MQ2Dpsadv.cpp">
+    <ClCompile Include="MQ2DPSAdv.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -23,11 +23,11 @@
     <ClInclude Include="..\MQ2Plugin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MQ2Dpsadv.h">
+    <ClInclude Include="MQ2DPSAdv.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
+    <None Include="README.md" />
   </ItemGroup>
 </Project>

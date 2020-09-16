@@ -72,7 +72,7 @@
     <Link>
       <AdditionalOptions>/OPT:NOICF %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)MQ2Dpsadv.dll</OutputFile>
+      <OutputFile>$(OutDir)MQ2DPSAdv.dll</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <MapExports>true</MapExports>
@@ -83,7 +83,7 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <ImportLibrary>$(OutDir)MQ2Dpsadv.lib</ImportLibrary>
+      <ImportLibrary>$(OutDir)MQ2DPSAdv.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
@@ -110,19 +110,19 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <ImportLibrary>$(OutDir)MQ2Dpsadv.lib</ImportLibrary>
+      <ImportLibrary>$(OutDir)MQ2DPSAdv.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="MQ2Dpsadv.cpp" />
+    <ClCompile Include="MQ2DPSAdv.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\MQ2Plugin.h" />
-    <ClInclude Include="MQ2Dpsadv.h" />
+    <ClInclude Include="MQ2DPSAdv.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
