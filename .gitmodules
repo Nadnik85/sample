@@ -25,9 +25,6 @@
 [submodule "MQ2ShellCmd"]
 	path = MQ2ShellCmd
 	url = https://gitlab.com/Knightly1/MQ2ShellCmd.git
-[submodule "MQ2Sql"]
-	path = MQ2Sql
-	url = https://github.com/dencelle/MQ2Sql.git
 [submodule "MQ2SQLite"]
 	path = MQ2SQLite
 	url = https://gitlab.com/Knightly1/mq2sqlite.git
