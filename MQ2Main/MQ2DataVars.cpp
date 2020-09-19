@@ -748,12 +748,12 @@ VOID CheckChatForEvent(PCHAR szMsg)
 			CHAR Arg2[MAX_STRING] = {0}; 
 			CHAR Arg3[MAX_STRING] = {0}; 
 			char *pDest = 0;
-			if ((CHATEVENT(CHAT_GUILD)) && (pDest = strstr(szClean," tells the guild, '"))) { 
+			if ((CHATEVENT(CHAT_GUILD)) && (pDest = strstr(szClean," tells the guild, "))) { 
 				strncpy_s(Arg1,szClean,(DWORD)(pDest-szClean));
 				strcpy_s(Arg2, pDest +19);
 				Arg2[strlen(Arg2)-1]=0; 
 				AddEvent(EVENT_CHAT,"guild",Arg1,Arg2,NULL); 
-			} else if ((CHATEVENT(CHAT_GROUP)) && (pDest = strstr(szClean," tells the group, '"))) {
+			} else if ((CHATEVENT(CHAT_GROUP)) && (pDest = strstr(szClean," tells the group, "))) {
 				strncpy_s(Arg1,szClean,(DWORD)(pDest -szClean));
 				strcpy_s(Arg2, pDest +19);
 				Arg2[strlen(Arg2)-1]=0; 
@@ -773,12 +773,12 @@ VOID CheckChatForEvent(PCHAR szMsg)
 				strcpy_s(Arg2, pDest +25);
 				Arg2[strlen(Arg2)-1]=0; 
 				AddEvent(EVENT_CHAT,"ooc",Arg1,Arg2,NULL); 
-			} else if ((CHATEVENT(CHAT_SHOUT)) && (pDest = strstr(szClean," shouts, '"))) {
+			} else if ((CHATEVENT(CHAT_SHOUT)) && (pDest = strstr(szClean," shouts, "))) {
 				strncpy_s(Arg1,szClean,(DWORD)(pDest -szClean));
 				strcpy_s(Arg2, pDest +10);
 				Arg2[strlen(Arg2)-1]=0; 
 				AddEvent(EVENT_CHAT,"shout",Arg1,Arg2,NULL); 
-			} else if ((CHATEVENT(CHAT_AUC)) && (pDest = strstr(szClean," auctions, '"))) {
+			} else if ((CHATEVENT(CHAT_AUC)) && (pDest = strstr(szClean," auctions, "))) {
 				strncpy_s(Arg1,szClean,(DWORD)(pDest -szClean));
 				strcpy_s(Arg2,pDest+12); 
 				Arg2[strlen(Arg2)-1]=0; 
@@ -788,7 +788,7 @@ VOID CheckChatForEvent(PCHAR szMsg)
 				strcpy_s(Arg2,pDest+7);
 				Arg2[strlen(Arg2)-1]=0; 
 				AddEvent(EVENT_CHAT,"say",Arg1,Arg2,NULL); 
-			} else if ((CHATEVENT(CHAT_SAY)) && (pDest = strstr(szClean," says, '"))) {
+			} else if ((CHATEVENT(CHAT_SAY)) && (pDest = strstr(szClean," says, "))) {
 				strncpy_s(Arg1,szClean,(DWORD)(pDest -szClean));
 				strcpy_s(Arg2, pDest +8);
 				Arg2[strlen(Arg2)-1]=0; 
