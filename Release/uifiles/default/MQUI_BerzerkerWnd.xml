@@ -1578,6 +1578,392 @@
 			<B>0</B>
 		</PressedColor>
 	</Button>
+	
+	<Button item="Zerker_Checkbox35">
+		<ScreenID>Zerker_Checkbox35</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox36">
+		<ScreenID>Zerker_Checkbox36</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox37">
+		<ScreenID>Zerker_Checkbox37</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox38">
+		<ScreenID>Zerker_Checkbox38</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox39">
+		<ScreenID>Zerker_Checkbox39</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox40">
+		<ScreenID>Zerker_Checkbox40</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox41">
+		<ScreenID>Zerker_Checkbox41</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox42">
+		<ScreenID>Zerker_Checkbox42</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox43">
+		<ScreenID>Zerker_Checkbox43</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox44">
+		<ScreenID>Zerker_Checkbox44</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox45">
+		<ScreenID>Zerker_Checkbox45</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox46">
+		<ScreenID>Zerker_Checkbox46</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox47">
+		<ScreenID>Zerker_Checkbox47</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox48">
+		<ScreenID>Zerker_Checkbox48</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox49">
+		<ScreenID>Zerker_Checkbox49</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox50">
+		<ScreenID>Zerker_Checkbox50</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	
 	<!--Check Boxes End Here-->
 
 	<!--Input Boxes start here -->
@@ -2758,6 +3144,22 @@
 		<Pieces>Zerker_Checkbox32</Pieces>
 		<Pieces>Zerker_Checkbox33</Pieces>
 		<Pieces>Zerker_Checkbox34</Pieces>
+		<Pieces>Zerker_Checkbox35</Pieces>
+		<Pieces>Zerker_Checkbox36</Pieces>
+		<Pieces>Zerker_Checkbox37</Pieces>
+		<Pieces>Zerker_Checkbox38</Pieces>
+		<Pieces>Zerker_Checkbox39</Pieces>
+		<Pieces>Zerker_Checkbox40</Pieces>
+		<Pieces>Zerker_Checkbox41</Pieces>
+		<Pieces>Zerker_Checkbox42</Pieces>
+		<Pieces>Zerker_Checkbox43</Pieces>
+		<Pieces>Zerker_Checkbox44</Pieces>
+		<Pieces>Zerker_Checkbox45</Pieces>
+		<Pieces>Zerker_Checkbox46</Pieces>
+		<Pieces>Zerker_Checkbox47</Pieces>
+		<Pieces>Zerker_Checkbox48</Pieces>
+		<Pieces>Zerker_Checkbox49</Pieces>
+		<Pieces>Zerker_Checkbox50</Pieces>
 	</TileLayoutBox>
 
 	<Page item="Zerker_Settings">
