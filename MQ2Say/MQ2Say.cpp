@@ -223,7 +223,8 @@ std::string SayCheckGM(std::string strCheckName)
 	PSPAWNINFO pSpawn = (PSPAWNINFO)GetSpawnByName(&strCheckName[0]);
 	if (pSpawn)
 	{
-		if (pSpawn->GM) {
+		if (pSpawn->GM)
+		{
 			return " \ar(GM)\ax ";
 		}
 		if (pSpawn->Type == PC)
@@ -238,14 +239,16 @@ std::string SayCheckGM(std::string strCheckName)
 	return "";
 }
 
-std::vector<std::string> SplitSay(const std::string& strLine) {
+std::vector<std::string> SplitSay(const std::string& strLine)
+{
 	std::vector<std::string> vReturn;
 	// Create a string and assign it the value of strLine, if we end up not formatting, then the original string is returned.
 	std::string strOut = strLine;
 	// Find the first space
 	size_t Pos = strLine.find(' ');
 	// If the first space is found (ie, it's not npos)
-	if (Pos != std::string::npos) {
+	if (Pos != std::string::npos)
+	{
 		// Set strName to the substring starting from 2 and going to Pos - 3 (check the math on this, I'm trying to exclude the space)
 		vReturn.push_back(strLine.substr(2, Pos - 3));
 		// Find the first quote
@@ -253,7 +256,8 @@ std::vector<std::string> SplitSay(const std::string& strLine) {
 		// Find the last quote
 		size_t Pos2 = strLine.rfind('\'');
 		// Make sure we found the first quote and it's not the same quote as the last quote
-		if (Pos != std::string::npos && Pos != Pos2) {
+		if (Pos != std::string::npos && Pos != Pos2)
+		{
 			//  Set the say text to the substring starting at 1 after the position (excluding the quote itself, and ending at one before the other quote -- again check the math)
 			vReturn.push_back('"' + strLine.substr(Pos + 1, Pos2 - Pos - 1) + '"');
 		}
@@ -267,7 +271,8 @@ std::string FormatSay(const std::string& strSenderIn, const std::string& strText
 	std::string strTimestamp = " ";
 	// Concatenate and color here...example:
 	std::string strOut = "\at" + strSenderIn + SayCheckGM(strSenderIn) + "\ax \a-wsays, '\ax\aw" + strTextIn + "\ax\a-w'\ax";
-	if (bSayTimestamps) {
+	if (bSayTimestamps)
+	{
 		char* tmpbuf = new char[128];
 		struct tm today = { 0 };
 		time_t tm = { 0 };
@@ -279,7 +284,8 @@ std::string FormatSay(const std::string& strSenderIn, const std::string& strText
 		strTimestamp += "\ax\ar]\ax ";
 		return strTimestamp + strOut;
 	}
-	else {
+	else
+	{
 		return strOut;
 	}
 }
@@ -308,7 +314,8 @@ void DoAlerts(std::string Line)
 	if (bSayStatus)
 	{
 		std::vector<std::string> strSaySplit = SplitSay(Line);
-		if (strSaySplit.size() == 2) {
+		if (strSaySplit.size() == 2)
+		{
 			WriteSay(strSaySplit[0], strSaySplit[1]);
 			if (bSayAlerts)
 			{
@@ -385,7 +392,8 @@ void LoadSayFromINI(PCSIDLWND pWindow)
 	pWindow->CSetWindowText(szTemp);
 	GetPrivateProfileString(szSayINISection, "Alerts", bSayAlerts ? "on" : "off", szTemp, MAX_STRING, INIFileName);
 	int i = GetPrivateProfileString(szSayINISection, "AlertCommand", "/multiline ; /beep ; /timed 1 /beep ; /timed 2 /beep", strSayAlertCommand, MAX_STRING, INIFileName);
-	if (i == 0) {
+	if (i == 0)
+	{
 		strcpy_s(strSayAlertCommand, "/multiline ; /beep ; /timed 1 /beep ; /timed 2 /beep");
 	}
 	GetPrivateProfileString(szSayINISection, "Timestamps", bSayTimestamps ? "on" : "off", szTemp, MAX_STRING, INIFileName);
@@ -395,7 +403,8 @@ void LoadSayFromINI(PCSIDLWND pWindow)
 template <unsigned int _Size>LPSTR SafeItoa(int _Value, char(&_Buffer)[_Size], int _Radix)
 {
 	errno_t err = _itoa_s(_Value, _Buffer, _Radix);
-	if (!err) {
+	if (!err)
+	{
 		return _Buffer;
 	}
 	return "";
@@ -542,7 +551,8 @@ void MQSay(PSPAWNINFO pChar, PCHAR Line)
 	char Arg[MAX_STRING] = { 0 };
 	GetArg(Arg, Line, 1);
 	//Display Command Syntax
-	if (Arg[0] == '\0') {
+	if (Arg[0] == '\0')
+	{
 		WriteChatf("[\arMQ2Say\ax] \awPlugin is:\ax %s", bSayStatus ? "\agOn\ax" : "\arOff\ax");
 		WriteChatf("Usage: /mqsay <on/off>");
 		WriteChatf("/mqsay [Option Name] <value/on/off>");
@@ -550,60 +560,73 @@ void MQSay(PSPAWNINFO pChar, PCHAR Line)
 		return;
 	}
 	//user wants to adjust Say Status
-	if (!_stricmp(Arg, "on")) {
+	if (!_stricmp(Arg, "on"))
+	{
 		CreateSayWnd();
 		bSayStatus = true;
 		WriteChatf("Say Status is now: \agOn.");
 		WritePrivateProfileString("Settings", "SayStatus", bSayStatus ? "on" : "off", INIFileName);
 		return;
 	}
-	if (!_stricmp(Arg, "off")) {
+	if (!_stricmp(Arg, "off"))
+	{
 		DestroySayWnd();
 		bSayStatus = false;
 		WriteChatf("Say Status is now: \arOff.");
 		WritePrivateProfileString("Settings", "SayStatus", bSayDebug ? "on" : "off", INIFileName);
 		return;
 	}
-	if (!_stricmp(Arg, "reload")) {
+	if (!_stricmp(Arg, "reload"))
+	{
 		LoadSayFromINI((PCSIDLWND)MQSayWnd);
 		WriteChatf("[\arMQ2Say\ax] \a-wPlugin Settings Reloaded.\ax");
 		return;
 	}
 	//user wants to adjust debug
-	if (!_stricmp(Arg, "debug")) {
+	if (!_stricmp(Arg, "debug"))
+	{
 		GetArg(Arg, Line, 2);
-		if (Arg[0] == '\0') {
+		if (Arg[0] == '\0')
+		{
 			WriteChatf("Debug is currently: %s", (bSayDebug ? "\agOn" : "\arOff"));
 			return;
 		}
 		//turn it on.
-		if (!_stricmp(Arg, "on")) {
+		if (!_stricmp(Arg, "on"))
+		{
 			bSayDebug = true;
 			WriteChatf("Debug is now: \agOn.");
 		}
 		//turn it off.
-		else if (!_stricmp(Arg, "off")) {
+		else if (!_stricmp(Arg, "off"))
+		{
 			bSayDebug = false;
 			WriteChatf("Debug is now: \arOff.");
 		}
-		else {
+		else
+		{
 			WriteChatf("Usage: /mqsay debug [on | off]\n IE: /mqsay debug on");
 		}
 		WritePrivateProfileString("Settings", "SayDebug", bSayDebug ? "on" : "off", INIFileName);
 		return;
 	}
 	//user wants to change the window title
-	if (!_stricmp(Arg, "title")) {
+	if (!_stricmp(Arg, "title"))
+	{
 		GetArg(Arg, Line, 2);
-		if (Arg[0] == '\0') {
-			if (pWindow != nullptr) {
+		if (Arg[0] == '\0')
+		{
+			if (pWindow != nullptr)
+			{
 				GetCXStr(pWindow->CGetWindowText(), szTemp, MAX_STRING);
 				WriteChatf("The Window title is currently: \ar%s\ax", szTemp);
 			}
 		}
-		else {
+		else
+		{
 			const char* szPos = GetNextArg(Line, 1);
-			if (szPos[0] != '\"') {
+			if (szPos[0] != '\"')
+			{
 				strcpy_s(Arg, szPos);
 			}
 			MQSayWnd->CSetWindowText(Arg);
@@ -612,125 +635,153 @@ void MQSay(PSPAWNINFO pChar, PCHAR Line)
 		return;
 	}
 	//user wants to adjust the font size
-	if (!_stricmp(Arg, "font")) {
+	if (!_stricmp(Arg, "font"))
+	{
 		GetArg(Arg, Line, 2);
-		if (Arg[0] == '\0') {
+		if (Arg[0] == '\0')
+		{
 			WriteChatf("The font size is currently: %s", MQSayWnd->FontSize);
 			return;
 		}
-		else if (atoi(Arg) > 0) {
+		else if (atoi(Arg) > 0)
+		{
 			MQSayWnd->SetSayFont(atoi(Arg));
 		}
-		else {
+		else
+		{
 			WriteChatf("Usage: /mqsay font <font size>\n IE: /mqsay font 5");
 		}
 		WritePrivateProfileString(szSayINISection, "FontSize", SafeItoa(MQSayWnd->FontSize, szTemp, 10), INIFileName);
 		return;
 	}
 	//user wants to adjust the Alert Ignore Timer
-	if (!_stricmp(Arg, "IgnoreDelay")) {
+	if (!_stricmp(Arg, "IgnoreDelay"))
+	{
 		GetArg(Arg, Line, 2);
-		if (Arg[0] == '\0') {
+		if (Arg[0] == '\0')
+		{
 			WriteChatf("The Ignore Delay is currently: %i", intIgnoreDelay);
 			return;
 		}
-		else if (atoi(Arg) >= 0) {
+		else if (atoi(Arg) >= 0)
+		{
 			intIgnoreDelay = (atoi(Arg));
 			WriteChatf("The Ignore Delay is now set to: %i", intIgnoreDelay);
 		}
-		else {
+		else
+		{
 			WriteChatf("Usage: /mqsay ignoredelay <Time In Seconds>\n IE: /mqsay ignoredelay 300");
 		}
 		WritePrivateProfileString("Settings", "IgnoreDelay", SafeItoa(intIgnoreDelay, szTemp, 10), INIFileName);
 		return;
 	}
 	//user wants to audible alerts
-	if (!_stricmp(Arg, "alerts")) {
+	if (!_stricmp(Arg, "alerts"))
+	{
 		GetArg(Arg, Line, 2);
-		if (Arg[0] == '\0') {
+		if (Arg[0] == '\0')
+		{
 			WriteChatf("Alerts are currently: %s", (bSayAlerts ? "\agOn" : "\arOff"));
 			return;
 		}
 		//turn it on.
-		if (!_stricmp(Arg, "on")) {
+		if (!_stricmp(Arg, "on"))
+		{
 			bSayAlerts = true;
 			WriteChatf("Alerts are now: \agOn.");
 		}
 		//turn it off.
-		else if (!_stricmp(Arg, "off")) {
+		else if (!_stricmp(Arg, "off"))
+		{
 			bSayAlerts = false;
 			WriteChatf("Alerts are now: \arOff.");
 		}
-		else {
+		else
+		{
 			WriteChatf("Usage: /mqsay alerts [on | off]\n IE: /mqsay alerts on");
 		}
 		WritePrivateProfileString(szSayINISection, "Alerts", bSayAlerts ? "on" : "off", INIFileName);
 		return;
 	}
 	//user wants to display timestamps
-	if (!_stricmp(Arg, "timestamps")) {
+	if (!_stricmp(Arg, "timestamps"))
+	{
 		GetArg(Arg, Line, 2);
-		if (Arg[0] == '\0') {
+		if (Arg[0] == '\0')
+		{
 			WriteChatf("Timestamps are currently: %s", (bSayTimestamps ? "\agOn" : "\arOff"));
 			return;
 		}
 		//turn it on.
-		if (!_stricmp(Arg, "on")) {
+		if (!_stricmp(Arg, "on"))
+		{
 			bSayTimestamps = true;
 			WriteChatf("Timestamps are now: \agOn.");
 		}
 		//turn it off.
-		else if (!_stricmp(Arg, "off")) {
+		else if (!_stricmp(Arg, "off"))
+		{
 			bSayTimestamps = false;
 			WriteChatf("Timestamps are now: \arOff.");
 		}
-		else {
+		else
+		{
 			WriteChatf("Usage: /mqsay timestamps [on | off]\n IE: /mqsay timestamps on");
 		}
 		WritePrivateProfileString(szSayINISection, "Timestamps", bSayTimestamps ? "on" : "off", INIFileName);
 		return;
 	}
 	//user wants to adjust autoscroll
-	if (!_stricmp(Arg, "autoscroll")) {
+	if (!_stricmp(Arg, "autoscroll"))
+	{
 		GetArg(Arg, Line, 2);
-		if (Arg[0] == '\0') {
+		if (Arg[0] == '\0')
+		{
 			WriteChatf("Autoscroll is currently: %s", (bAutoScroll ? "\agOn" : "\arOff"));
 			return;
 		}
 		//turn it on.
-		if (!_stricmp(Arg, "on")) {
+		if (!_stricmp(Arg, "on"))
+		{
 			bAutoScroll = true;
 			WriteChatf("Autoscroll is now: \agOn.");
 		}
 		//turn it off.
-		else if (!_stricmp(Arg, "off")) {
+		else if (!_stricmp(Arg, "off"))
+		{
 			bAutoScroll = false;
 			WriteChatf("Autoscroll is now: \arOff.");
 		}
-		else {
+		else
+		{
 			WriteChatf("Usage: /mqsay autoscroll [on | off]\n IE: /mqsay autoscroll on");
 		}
 		WritePrivateProfileString("Settings", "AutoScroll", bAutoScroll ? "on" : "off", INIFileName);
 		return;
 	}
 	//user wants to adjust SaveByChar
-	if (!_stricmp(Arg, "SaveByChar")) {
+	if (!_stricmp(Arg, "SaveByChar"))
+	{
 		GetArg(Arg, Line, 2);
-		if (Arg[0] == '\0') {
+		if (Arg[0] == '\0')
+		{
 			WriteChatf("SaveByChar is currently: %s", (bSaveByChar ? "\agOn" : "\arOff"));
 			return;
 		}
 		//turn it on.
-		if (!_stricmp(Arg, "on")) {
+		if (!_stricmp(Arg, "on"))
+		{
 			bSaveByChar = true;
 			WriteChatf("SaveByChar is now: \agOn.");
 		}
 		//turn it off.
-		else if (!_stricmp(Arg, "off")) {
+		else if (!_stricmp(Arg, "off"))
+		{
 			bSaveByChar = false;
 			WriteChatf("SaveByChar is now: \arOff.");
 		}
-		else {
+		else
+		{
 			WriteChatf("Usage: /mqsay SaveByChar [on | off]\n IE: /mqsay SaveByChar on");
 		}
 		WritePrivateProfileString("Settings", "SaveByChar", bSaveByChar ? "on" : "off", INIFileName);
@@ -760,7 +811,8 @@ PLUGIN_API VOID SetGameState(DWORD GameState)
 	if (GameState == GAMESTATE_INGAME && !MQSayWnd)
 	{
 		// we entered the game, set up shop
-		if (bSayStatus) {
+		if (bSayStatus)
+		{
 			CreateSayWnd();
 		}
 	}
@@ -770,7 +822,8 @@ PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color)
 {
 	if (gGameState != GAMESTATE_INGAME) return 0;
 	if (!bSayStatus) return 0;
-	if (bSayDebug) {
+	if (bSayDebug)
+	{
 		char szMsg[MAX_STRING] = { 0 };
 		strcpy_s(szMsg, Line);
 		if (strchr(szMsg, '\x12'))
@@ -782,9 +835,11 @@ PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color)
 			strcpy_s(szClean, len + 64, szMsg);
 			CXStr out;
 #if defined(ROF2EMU) || defined(UFEMU)
-			if (CXStr* str = CleanItemTags(&out, szClean)) {
+			if (CXStr* str = CleanItemTags(&out, szClean))
+			{
 #else
-			if (CXStr* str = CleanItemTags(&out, szClean, false)) {
+			if (CXStr* str = CleanItemTags(&out, szClean, false))
+			{
 #endif
 				GetCXStr(str->Ptr, szClean, len + 64);
 			}
@@ -792,235 +847,16 @@ PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color)
 			}
 		WriteChatf("[\ar%i\ax]\a-t: \ap%s", Color, szMsg);
 		}
-	switch (Color) {
-	case 0://Color: 0 - Task Updates
-		break;
-	case 2: //Color: 2 - Consider Message - Green
-		break;
-	case 4: //Color: 4 - Consider messages - Dark Blue
-		break;
-	case 6://Color: 6 - Consider message - Grey
-		break;
-	case 10://Color: 10 - Merchant says "Hello there, Soandso. How about a nice Iron Ration?"
-		break;
-	case 13://Color: 13 - Attack is on/off - Other invites to raid.
-		break;
-	case 15://Color: 15 - Help messages, Consider Message - Yellow (right click on the NPC to consider it, Targeted (NPC): a slatescale serpent, You have gained an ability point)
-		break;
-	case 18://Color: 18 - Consider message - Light blue
-		break;
-	case 20://Color: 20 - You regain some experience from resurrection.
-		break;
-	case 256://Color: 256 - Other player /say messages
-		DoAlerts(Line);
-		break;
-	case 257://Color: 257 - Other /tell's you
-		break;
-	case 258://Color: 258 - Other tells /group
-		break;
-	case 259://Color: 259 - Guild Chat - Incoming
-		break;
-	case 260://Color: 260 - Other /ooc
-		break;
-	case 261://Color: 261 - Other /auction
-		break;
-	case 262://Color: 262 - Other /shout
-		break;
-	case 263://Color: 263 - other Emote commands/eat food messages (/cry, Chomp, chomp, chomp... Soandso takes a bite...etc)
-		break;
-	case 264://Color: 264 - You begin casting
-		break;
-	case 265://Color: 265 - You hit other (melee/melee crit)
-		break;
-	case 266://Color: 266 - Other hits you
-		break;
-	case 267://Color: 267 - You miss other
-		break;
-	case 268://Color: 268 - Riposte/Dodge/Other Misses You
-		break;
-	case 269://Color: 269 - Announcement (GM Events etc)
-		break;
-	case 270://Color: 270 - You have become better at [Skill]! (Number)
-		break;
-	case 271://Color: 271 - Song wear off message?? (Ritual Scarification wear off message)
-		break;
-	case 272://Color: 272 - Pet thanks for stuff you give them?
-		break;
-	case 273://Color: 273 - Charged mercenary upkeep/Group Invites/Joins/Banker tells you welcome to bank.
-		break;
-	case 274://Color: 274 - Faction hits
-		break;
-	case 275://Color: 275 - [Merchant] tells you, that'll be [price] for the [item]
-		break;
-	case 276://Color: 276 - You sold [QTY] [Item Name] to [Player] for [Amount]/You Purchased [Item Name] from [NPC] for [Amount]
-		break;
-	case 277://Color: 277 - Your death message.
-		break;
-	case 278://Color: 278 - Other PC death message.
-		break;
-	case 279://Color: 279 - Others Hits Other
-		break;
-	case 280://Color: 280 - Other Misses Other
-		break;
-	case 281://Color: 281 - /who
-		break;
-	case 282://Color: 282 - Other /yell
-		break;
-	case 283://Color: 283 - Your Non-Melee spell dmg.
-		break;
-	case 284://Color: 284 - Spell wear off messages
-		break;
-	case 285://Color: 285 - Coin collection/Split
-		break;
-	case 286://Color: 286 - Loot Related (Master looter actions, you loot)
-		break;
-	case 287://Color: 287 - Dice Rolls
-		break;
-	case 288://Color: 288 - Other Starts Casting Messages
-		break;
-	case 289://Color: 289 - Target is out of range, get closer/Interupt/Fizzle/other spell failure
-		break;
-	case 290://Color: 290 - Channel Lists after logged in
-		break;
-	case 291://Color: 291 - Chat Channel 1 - Incoming
-		break;
-	case 292://Color: 292 - Chat Channel 2 - Incoming
-		break;
-	case 293://Color: 293 - Chat Channel 3 - Incoming
-		break;
-	case 294://Color: 294 - Chat Channel 4 - Incoming
-		break;
-	case 295://Color: 295 - Chat Channel 5 - Incoming
-		break;
-	case 296://Color: 296 - Chat Channel 6 - Incoming
-		break;
-	case 297://Color: 297 - Chat Channel 7 - Incoming
-		break;
-	case 298://Color: 298 - Chat Channel 8 - Incoming
-		break;
-	case 299://Color: 299 - Chat Channel 9 - Incoming
-		break;
-	case 300://Color: 300 - Chat Channel 10 - Incoming
-		break;
-	case 303://Color: 303 - Errors (You must first click on the being you wish to attack, Can't hit them from here)
-		break;
-	case 306://Color: 306 - Enrage (Showed for pet)
-		break;
-	case 307://Color: 307 - Your /say messages, mob advances messages.
-		break;
-	case 308://Color: 308 - You tell other.
-		break;
-	case 309://Color: 309 - Group conversation
-		break;
-	case 310://Color: 310 - Guild conversation - Outgoing
-		break;
-	case 311://Color: 311 - you /ooc
-		break;
-	case 312://Color: 312 - you /auction
-		break;
-	case 313://Color: 313 - you shout.
-		break;
-	case 314://Color: 314 - /emote messages
-		break;
-	case 315://Color: 315 - Chat Channel 1 - Outgoing
-		break;
-	case 316://Color: 316 - Chat Channel 2 - Outgoing
-		break;
-	case 317://Color: 317 - Chat Channel 3 - Outgoing
-		break;
-	case 318://Color: 318 - Chat Channel 4 - Outgoing
-		break;
-	case 319://Color: 319 - Chat Channel 5 - Outgoing
-		break;
-	case 320://Color: 320 - Chat Channel 6 - Outgoing
-		break;
-	case 321://Color: 321 - Chat Channel 7 - Outgoing
-		break;
-	case 322://Color: 322 - Chat Channel 8 - Outgoing
-		break;
-	case 323://Color: 323 - Chat Channel 9 - Outgoing
-		break;
-	case 324://Color: 324 - Chat Channel 10 - Outgoing
-		break;
-	case 327://Color: 327 - Any /rsay
-		break;
-	case 328://Color: 328 - your pet misses
-		break;
-	case 329://Color: 329 - Damage Shield hits you.
-		break;
-	case 330://Color: 330 - Raid Role messages.
-		break;
-	case 333://Color: 333 - Item Focus messages
-		break;
-	case 334://Color: 334 - You gain Experience messages
-		break;
-	case 335://Color: 335 - You have already finished collecting [Item].
-		break;
-	case 336://Color: 336 - Pet Non-Melee/Pet beings to cast
-		break;
-	case 337://Color: 337 - Pet messages (YourPet says, "Following you master.")
-		break;
-	case 339://Color: 339 - Strike thru (yours and others)
-		break;
-	case 340://Color: 340 - You are stunned/unstunned messages.
-		break;
-	case 342://Color: 342 - fellowship messages
-		break;
-	case 343://Color: 343 - corpse emote
-		break;
-	case 345://Color: 345 - Guild plants banner
-		break;
-	case 346://Color: 346 - Mercenary tells group
-		break;
-	case 348://Color: 348 - Achievement - you and other.
-		break;
-	case 349://Color: 349 - Achievement - Guildmate
-		break;
-	case 358://Color: 358 - NPC Death message
-		break;
-	case 360://Color: 360 - Other Rolls Dice.
-		break;
-	case 361://Color: 361 - Injured by falling (self)
-		break;
-	case 362://Color: 362 - Injured by falling (other)
-		break;
-	case 363://Color: 363 - Your damage shield
-		break;
-	case 364://Color: 364 - Other's damage shield
-		break;
-	case 366://Color: 366 - Your [Spell Name] has been overwritten - Detrimental
-		break;
-	case 367://Color: 367 - Your [Spell Name] has been overwritten - Beneficial
-		break;
-	case 368://Color: 368 - You cannot use that command right now (clicking disc too fast)
-		break;
-	case 369://Color: 369 - You can use [Ability Name] again in [Time till you can use it again]
-		break;
-	case 370://Color: 370 - AA Reuse Timer failed
-		break;
-	case 371://Color: 371 - Destroy item message
-		break;
-	case 373://Color: 373 - Heal over time on other?
-		break;
-	case 374://Color: 374 - You heal other
-		break;
-	case 375://Color: 375 - Other buffs other/Other Heal Other
-		break;
-	case 376://Color: 376 - Your DoT's
-		break;
-	case 377://Color: 377 - Other's DoT's
-		break;
-	case 378://Color: 378 - Song messages - Soandso begins to sing a song. <Selo's Sonata I>
-		break;
-	case 379://Color: 379 - Others Non-Melee
-		break;
-	case 380://Color: 380 - Your spell messages
+	switch (Color)
+	{
+		case 256://Color: 256 - Other player /say messages
+			DoAlerts(Line);
 		break;
 	default:
 		//Don't Know these, lets see what it is.
 		if (bSayDebug) WriteChatf("[\ar%i\ax]\a-t: \ap%s", Color, Line);
-		break;
-	}
+			break;
+		}
 	return 0;
 	}
 
@@ -1032,7 +868,8 @@ PLUGIN_API VOID OnPulse()
 {
 	if (MQSayWnd)
 	{
-		if (gGameState == GAMESTATE_INGAME && MQSayWnd->GetZLayer() != 0) {
+		if (gGameState == GAMESTATE_INGAME && MQSayWnd->GetZLayer() != 0)
+		{
 			MQSayWnd->SetZLayer(0);
 		}
 		if (!sPendingSay.empty())
@@ -1080,12 +917,16 @@ PLUGIN_API VOID OnPulse()
 			((CXWnd*)MQSayWnd)->DoAllDrawing();
 		}
 		static std::chrono::steady_clock::time_point PulseTimer = std::chrono::steady_clock::now();
-		if (!mAlertTimers.empty() && std::chrono::steady_clock::now() >= PulseTimer + std::chrono::seconds(1)) {
-			for (auto it = mAlertTimers.cbegin(); it != mAlertTimers.cend(); /* Increment in the function */) {
-				if (it->second + std::chrono::seconds(intIgnoreDelay) <= std::chrono::steady_clock::now()) {
+		if (!mAlertTimers.empty() && std::chrono::steady_clock::now() >= PulseTimer + std::chrono::seconds(1))
+		{
+			for (auto it = mAlertTimers.cbegin(); it != mAlertTimers.cend(); /* Increment in the function */)
+			{
+				if (it->second + std::chrono::seconds(intIgnoreDelay) <= std::chrono::steady_clock::now())
+				{
 					it = mAlertTimers.erase(it);
 				}
-				else {
+				else
+				{
 					++it;
 				}
 			}
@@ -1098,18 +939,22 @@ class MQ2SayType* pSayWndType = nullptr;
 class MQ2SayType : public MQ2Type
 {
 public:
-	enum SayWndMembers {
+	enum SayWndMembers
+	{
 		Title = 1,
 	};
-	MQ2SayType() :MQ2Type("saywnd") {
+	MQ2SayType() :MQ2Type("saywnd")
+	{
 		TypeMember(Title);
 	}
 	~MQ2SayType() {}
-	bool GetMember(MQ2VARPTR VarPtr, PCHAR Member, PCHAR Index, MQ2TYPEVAR& Dest) {
+	bool GetMember(MQ2VARPTR VarPtr, PCHAR Member, PCHAR Index, MQ2TYPEVAR& Dest)
+	{
 		PMQ2TYPEMEMBER pMember = MQ2SayType::FindMember(Member);
 		if (!pMember)
 			return false;
-		switch ((SayWndMembers)pMember->ID) {
+		switch ((SayWndMembers)pMember->ID)
+		{
 		case Title:
 		{
 			if (MQSayWnd)
@@ -1128,20 +973,24 @@ public:
 		return false;
 	}
 
-	bool ToString(MQ2VARPTR VarPtr, PCHAR Destination) {
+	bool ToString(MQ2VARPTR VarPtr, PCHAR Destination)
+	{
 		if (MQSayWnd)
 		{
 			GetCXStr(MQSayWnd->CGetWindowText(), Destination);
 		}
-		else {
+		else
+		{
 			strcpy_s(Destination, MAX_STRING, "");
 		}
 		return true;
 	}
-	bool FromData(MQ2VARPTR& VarPtr, MQ2TYPEVAR& Source) {
+	bool FromData(MQ2VARPTR& VarPtr, MQ2TYPEVAR& Source)
+	{
 		return false;
 	}
-	bool FromString(MQ2VARPTR& VarPtr, PCHAR Source) {
+	bool FromString(MQ2VARPTR& VarPtr, PCHAR Source)
+	{
 		return false;
 	}
 };
@@ -1163,10 +1012,12 @@ PLUGIN_API VOID InitializePlugin()
 	AddCommand("/mqsay", MQSay);
 	bmStripFirstStmlLines = AddMQ2Benchmark("StripFirstStmlLines");
 	LoadSaySettings();
-	if (!bSayStatus) {
+	if (!bSayStatus)
+	{
 		WriteChatf("[\arMQ2Say\ax] \a-wPlugin Loaded sucessfully. Window not displayed due to the plugin being turned off in the ini. Type /mqsay on to turn it back on.\ax");
 	}
-	else {
+	else
+	{
 		WriteChatf("[\arMQ2Say\ax] \a-wPlugin Loaded sucessfully.\ax");
 	}
 }

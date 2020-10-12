@@ -1,5 +1,5 @@
 Other Authors
-    EQMule, Brainaic, Lax, Knightly 
+    EQMule, Brainiac, Lax, Knightly 
 
 Software Requirements
     Macroquest 2 
