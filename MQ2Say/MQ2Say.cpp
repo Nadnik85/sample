@@ -16,8 +16,8 @@ std::list<std::string> sPendingSay;
 std::map<std::string, std::chrono::steady_clock::time_point> mAlertTimers;
 
 const unsigned int CMD_HIST_MAX = 50;
-DWORD ulOldVScrollPos = 0;
-DWORD bmStripFirstStmlLines = 0;
+int ulOldVScrollPos = 0;
+int  bmStripFirstStmlLines = 0;
 int intIgnoreDelay = 300;
 char szSayINISection[MAX_STRING] = { 0 };
 char szWinTitle[MAX_STRING] = { 0 };
@@ -29,7 +29,7 @@ bool bSaveByChar = true;
 bool bSayAlerts = true;
 bool bSayTimestamps = true;
 class CMQSayWnd;
-CMQSayWnd* MQSayWnd = 0;
+CMQSayWnd* MQSayWnd = nullptr;
 
 class CMQSayWnd : public CCustomWnd
 {
@@ -82,7 +82,7 @@ public:
 			{
 				char szBuffer[MAX_STRING] = { 0 };
 				GetCXStr((PCXSTR)InputBox->InputText, szBuffer, MAX_STRING);
-				if (szBuffer[0])
+				if (szBuffer[0] != 0)
 				{
 					if (!sCmdHistory.size() || sCmdHistory.front().compare(szBuffer))
 					{
@@ -116,14 +116,14 @@ public:
 						if (sCmdHistory.size() > 0)
 						{
 							iCurrentCmd++;
-							if (iCurrentCmd < ((int)sCmdHistory.size()) && iCurrentCmd >= 0)
+							if (iCurrentCmd < (static_cast<int>(sCmdHistory.size())) && iCurrentCmd >= 0)
 							{
 								std::string s = (std::string)sCmdHistory.at(iCurrentCmd);
 								((CXWnd*)InputBox)->SetWindowTextA(CXStr(s.c_str()));
 							}
 							else
 							{
-								iCurrentCmd = ((int)sCmdHistory.size()) - 1;
+								iCurrentCmd = (static_cast<int>(sCmdHistory.size())) - 1;
 							}
 						}
 					}
@@ -188,7 +188,7 @@ public:
 		// SetSayFont which is called from the /chatfontsize function
 		Fonts = (FONTDATA*)&(((char*)pWndMgr)[EQ_CHAT_FONT_OFFSET]);
 		// check font array bounds and pointers
-		if (size < 0 || size >= (int)Fonts->NumFonts)
+		if (size < 0 || size >= (static_cast<int>(Fonts->NumFonts)))
 		{
 			return;
 		}
@@ -212,7 +212,7 @@ public:
 	//CXWnd* OutWnd;
 	//struct _CSIDLWND* OutStruct;
 	DWORD OutBoxLines;
-	DWORD FontSize;
+	DWORD FontSize = 0;
 private:
 	std::vector<std::string> sCmdHistory;
 	int iCurrentCmd;
@@ -284,7 +284,7 @@ std::string FormatSay(const std::string& strSenderIn, const std::string& strText
 	}
 }
 
-void WriteSay(std::string SaySender, std::string SayText)
+void WriteSay(const std::string& SaySender, const std::string& SayText)
 {
 	if (MQSayWnd == nullptr || !bSayStatus)
 	{
@@ -299,7 +299,7 @@ void WriteSay(std::string SaySender, std::string SayText)
 	CXStr NewText(szProcessed);
 	ConvertItemTags(NewText, FALSE);
 	sPendingSay.push_back(NewText.Ptr->Text);
-	delete szProcessed;
+	delete[] szProcessed;
 	return;
 }
 
@@ -471,7 +471,7 @@ void DestroySayWnd()
 		sPendingSay.clear();
 		SaveSayToINI((PCSIDLWND)MQSayWnd);
 		delete MQSayWnd;
-		MQSayWnd = 0;
+		MQSayWnd = nullptr;
 		ulOldVScrollPos = 0;
 	}
 }
@@ -737,20 +737,6 @@ void MQSay(PSPAWNINFO pChar, PCHAR Line)
 		return;
 	}
 	WriteChatf("%s was not a valid option. Valid options are Reset, Clear, Alerts, Autoscroll, IgnoreDelay, Reload, Timestamps, Title", Arg);
-}
-
-void DoMQ2SayBind(PCHAR Name, BOOL Down)
-{
-	if (!Down)
-	{
-		if (MQSayWnd)
-		{
-			CXRect rect = ((CXWnd*)MQSayWnd->InputBox)->GetScreenRect();
-			CXPoint pt = rect.CenterPoint();
-			((CXWnd*)MQSayWnd->InputBox)->SetWindowTextA(CXStr("/"));
-			((CXWnd*)MQSayWnd->InputBox)->HandleLButtonDown(&pt, 0);
-		}
-	}
 }
 
 PLUGIN_API VOID OnReloadUI()
@@ -1107,7 +1093,7 @@ PLUGIN_API VOID OnPulse()
 	}
 }
 
-class MQ2SayType* pSayWndType = 0;
+class MQ2SayType* pSayWndType = nullptr;
 
 class MQ2SayType : public MQ2Type
 {
@@ -1174,7 +1160,6 @@ PLUGIN_API VOID InitializePlugin()
 	// Add commands, macro parameters, hooks, etc.
 	AddMQ2Data("SayWnd", dataSayWnd);
 	pSayWndType = new MQ2SayType;
-	AddMQ2KeyBind("MQ2SAY", DoMQ2SayBind);
 	AddCommand("/mqsay", MQSay);
 	bmStripFirstStmlLines = AddMQ2Benchmark("StripFirstStmlLines");
 	LoadSaySettings();
@@ -1192,7 +1177,6 @@ PLUGIN_API VOID ShutdownPlugin()
 	sPendingSay.clear();
 	// Remove commands, macro parameters, hooks, etc.
 	RemoveCommand("/mqsay");
-	RemoveMQ2KeyBind("MQ2Say");
 	RemoveMQ2Data("SayWnd");
 	delete pSayWndType;
 	RemoveMQ2Benchmark(bmStripFirstStmlLines);
