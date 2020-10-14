@@ -6,12 +6,13 @@
 // and Shutdown for setup and cleanup, do NOT do it in DllMain.
 // 2.1 Added enums for menu and go to menu item
 // 2.2 Added fix from dannuic/knightly to stop clearing target when using hotbuttons.
+// 2.3 Added a fix for stopping movement by Freezerburn26
 
 #include "../MQ2Plugin.h"
 #include "resource.h"
 
 PreSetup("MQ2TargetInfo");
-PLUGIN_VERSION(2.0);
+PLUGIN_VERSION(2.3);
 
 enum TI_MenuCommands
 {
