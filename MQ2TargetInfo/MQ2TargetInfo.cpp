@@ -1416,7 +1416,7 @@ void Initialize()
 }
 
 int rightclickindex = -1;
-void StopMovement(bool bChange = true)
+void StopMovement(bool bChange = true, bool bStopNav = true)
 {
 	if (bChange)
 	{
@@ -1434,13 +1434,17 @@ void StopMovement(bool bChange = true)
 			else if (GetModuleHandle("mq2eqbc"))
 				DoCommandf("/squelch /bcg //squelch /stick off");
 		}
-		if (GetModuleHandle("mq2nav"))
+		if (!bStopNav)
 		{
-			if (GetModuleHandle("mq2dannet"))
-				DoCommandf("/squelch /dgge /squelch /nav stop");
-			else if (GetModuleHandle("mq2eqbc"))
-				DoCommandf("/squelch /bcg //squelch /nav stop");
+			if (GetModuleHandle("mq2nav"))
+			{
+				if (GetModuleHandle("mq2dannet"))
+					DoCommandf("/squelch /dgge /squelch /nav stop");
+				else if (GetModuleHandle("mq2eqbc"))
+					DoCommandf("/squelch /bcg //squelch /nav stop");
+			}
 		}
+		
 		//
 		FollowMeButton->Checked = false;
 		gbFollowme = false;
@@ -1611,7 +1615,7 @@ public:
 				{
 					return 1;
 				}
-				StopMovement();
+				StopMovement(true,false);
 				CHAR szMe[MAX_STRING] = { 0 };
 				strcpy_s(szMe, szNavCommand);
 				ParseMacroData(szMe, MAX_STRING);
@@ -2100,7 +2104,7 @@ void CMD_GroupInfo(PSPAWNINFO pPlayer, char* szLine)
 		{
 			return;
 		}
-		StopMovement();
+		StopMovement(true,false);
 		CHAR szMe[MAX_STRING] = { 0 };
 		strcpy_s(szMe, szNavCommand);
 		ParseMacroData(szMe, MAX_STRING);
