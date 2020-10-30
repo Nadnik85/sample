@@ -1,9 +1,27 @@
+Oct 29 2020
+- Updated for BETA
+-
+Oct 28 2020
+- Updated for BETA
+-
+Oct 25 2020
+- Updated for BETA
+-
+Oct 24 2020
+- Updated for BETA
+-
+Oct 23 2020
+- Updated for BETA
+-
+Oct 22 2020
+- Updated for BETA
+-
 Oct 21 2020
 - Added raid to chat events - Cred Kaen01
 - Updated for LIVE
 - Updated for BETA
 -
--Oct 20 2020
+Oct 20 2020
 - Updated for BETA
 -
 Oct 19 2020
