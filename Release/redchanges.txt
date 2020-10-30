@@ -1,8 +1,80 @@
+Oct 30 2020 
+- MQ2Status (Sic) Added support for MQ2Enchanter/MQ2Shaman for /status
+- MQ2XAssist (Knightly, eqmule) Fixes an issue where EQ doesn't clear assistname in the hitbyspell function (a likely bug in the EQ client)
+
+Oct 29 2020
+- Updated for BETA
+
+Oct 28 2020
+- Updated for BETA
+
+Oct 25 2020
+- Updated for BETA
+
+Oct 24 2020
+- Updated for BETA
+
+Oct 23 2020
+- Updated for BETA
+
+Oct 22 2020
+- Updated for BETA
+
+Oct 21 2020 by RedGuides
+- NEW PLUGIN! MQ2Say (sl968) A customizable alert for /say messages that may otherwise be missed. This is important as a GMs will often use /say when contacting you, as will other players.  
+- New paid plugin! MQ2Enchanter (ChatWithThisName, Sic) a combat plugin for your enchanter. Please see MQ2Enchanter resource for commands and instructions. The current pre-release version is free.
+- New paid plugin! MQ2Shaman (ChatWithThisName, Sic) a combat plugin for your shaman. Please see MQ2Shaman resource for commands and instructions. The current pre-release version is free.
+
+Oct 21 2020
+- Added raid to chat events - Cred Kaen01
+- Updated for LIVE
+- Updated for BETA
+
+-Oct 20 2020
+- Updated for BETA
+
+Oct 19 2020
+- Updated for BETA
+
+Oct 14 2020
+- Updated for TEST
+
+Oct 13 2020
+- Updated for TEST
+- Added a fix for stopping movement in mq2targetinfo by Freezerburn26
+
+Sep 23 2020
+- Updated for TEST
+
+Sep 21 2020 by RedGuides
+- NEW PLUGIN! MQ2Ice (dewey2461) An addon to deal with skidding on ice. It forces "walk" on ice, and when skidding it will pause stick/Nav, allows movement keys to halt motion, and will resume stick/nav when skidding stops. Made for ToFS, but .ini settings can make it work anywhere.
+- MQ2Status (Sic, Knightly) Added "/status macro" to report the macro you have running, and cleaned up subscription section
+- MQ2DPSAdv (Knightly, Sic) Crash fixes
+
+Sep 19 2020 by RedGuides
+- MQ2DPSAdv (Knightly, ChatWithThisName) Code cleanup, added UI option for History Limit (Thanks Sic)
+ Fixes the ini setting of History Limit to 1 (sorry, you'll have to fix that yourself)
+ Fixes a previous crash that I made happen a lot more frequently (dangling pointer)
+
+Sep 16 2020 by RedGuides
+- MQ2DPSAdv (Knightly) Fixed a naming collision crash.
+  Add HistoryLimit setting to the ini which allows you to specify how many mobs for which to keep a DPS history. This should help in those times where running the plugin for long periods of time eventually slows down or crashes.  The default is 25.
+  Add /dps limit command to set the history limit for that character
+
+Sep 16 2020
+- Updated for LIVE
+
+Sep 11 2020 by RedGuides
+- MQ2AutoSize (dencelle) Fixed and working again. Offset pattern needed updating.
+
+Sep 10 2020
+- Fixed a crash on TEST in the tlos that call FindAffectSlot (.Stacks etc) last argument has been removed
+- MQ2Main (drwhomphd) Made sure the other chat events in DataVars follow the same fix that eqmule put in for Tells in order to work on FV or different languages. 
+- MQ2Main (ChatWithThisName) fixed FindItem/FindItemCount, it will no longer report twice as many augments found.
+
 Sep 09 2020 by RedGuides
 - MQ2AFNuke (jimbob) Fixed Enchanter burns. Added /nuke doswarm on|off for wizard swarm pets (Call of Xuzl AA). 
 - MQ2Heals (jimbob) fixed rez abilities for cleric/drood/shaman. Should try to rez group/raid/fellowship corpses.
-- MQ2Main (drwhomphd) Made sure the other chat events in DataVars follow the same fix that eqmule put in for Tells in order to work on FV or different languages. 
-- MQ2Main (ChatWithThisName) fixed FindItem/FindItemCount, it will no longer report twice as many augments found.
 - MQ2CPULoad (Knightly, brainiac) Code cleanup
 
 Sep 09 2020

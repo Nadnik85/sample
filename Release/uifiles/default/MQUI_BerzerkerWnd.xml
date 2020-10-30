@@ -1963,7 +1963,242 @@
 		</PressedColor>
 	</Button>
 	
+	<Button item="Zerker_Checkbox51">
+		<ScreenID>Zerker_Checkbox51</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
 	
+	<Button item="Zerker_Checkbox52">
+		<ScreenID>Zerker_Checkbox52</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	<Button item="Zerker_Checkbox53">
+		<ScreenID>Zerker_Checkbox53</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox54">
+		<ScreenID>Zerker_Checkbox54</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	<Button item="Zerker_Checkbox55">
+		<ScreenID>Zerker_Checkbox55</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox56">
+		<ScreenID>Zerker_Checkbox56</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	<Button item="Zerker_Checkbox57">
+		<ScreenID>Zerker_Checkbox57</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox58">
+		<ScreenID>Zerker_Checkbox58</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	<Button item="Zerker_Checkbox59">
+		<ScreenID>Zerker_Checkbox59</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+	
+	<Button item="Zerker_Checkbox60">
+		<ScreenID>Zerker_Checkbox60</ScreenID>
+		<Size>
+			<CX>150</CX>
+			<CY>18</CY>
+		</Size>
+		<Style_Checkbox>true</Style_Checkbox>
+		<Text>CheckBox</Text>
+		<TooltipReference>No Tooltip for Joo!</TooltipReference>
+		<Template>BDT_CheckboxWithText</Template>
+		<DecalSize>
+			<CX>16</CX>
+			<CY>16</CY>
+		</DecalSize>
+		<TextAlignCenter>false</TextAlignCenter>
+		<TextOffsetX>20</TextOffsetX>
+		<UseCustomPressedColor>true</UseCustomPressedColor>
+		<PressedColor>
+			<R>0</R>
+			<G>255</G>
+			<B>0</B>
+		</PressedColor>
+	</Button>
+		
 	<!--Check Boxes End Here-->
 
 	<!--Input Boxes start here -->
@@ -2931,7 +3166,7 @@
 			<CX>125</CX>
 			<CY>20</CY>
 		</Size>
-		<Text>RaidAssist</Text>
+		<Text>RaidAssistNum</Text>
 		<TextColor>
 			<R>255</R>
 			<G>255</G>
@@ -3014,6 +3249,109 @@
 			<B>255</B>
 		</TextColor>
 	</Combobox>
+	
+	
+	
+	
+	<Label item="Zerker_Aura1_Label">
+		<ScreenID>Zerker_Aura1_Label</ScreenID>
+		<Font>3</Font>
+		<RelativePosition>true</RelativePosition>
+		<Location>
+			<X>155</X>
+			<Y>125</Y>
+		</Location>
+		<Size>
+			<CX>65</CX>
+			<CY>20</CY>
+		</Size>
+		<Text>Aura1</Text>
+		<TextColor>
+			<R>255</R>
+			<G>255</G>
+			<B>255</B>
+		</TextColor>
+		<NoWrap>true</NoWrap>
+		<AlignCenter>false</AlignCenter>
+		<AlignRight>false</AlignRight>
+	</Label>
+
+	<Combobox item="Zerker_Aura1_ComboBox">
+		<ScreenID>Zerker_Aura1_ComboBox</ScreenID>
+		<Font>1</Font>
+		<DrawTemplate>WDT_Inner</DrawTemplate>
+
+		<RelativePosition>true</RelativePosition>
+		<Location>
+			<X>0</X>
+			<Y>0</Y>
+		</Location>
+		<Size>
+			<CX>100</CX>
+			<CY>20</CY>
+		</Size>
+
+		<ListHeight>90</ListHeight>
+		<Button>BDT_Combo</Button>
+		<Style_Border>true</Style_Border>
+		<TextColor>
+			<R>255</R>
+			<G>255</G>
+			<B>255</B>
+		</TextColor>
+	</Combobox>
+	
+	<Label item="Zerker_Aura2_Label">
+		<ScreenID>Zerker_Aura2_Label</ScreenID>
+		<Font>3</Font>
+		<RelativePosition>true</RelativePosition>
+		<Location>
+			<X>155</X>
+			<Y>125</Y>
+		</Location>
+		<Size>
+			<CX>65</CX>
+			<CY>40</CY>
+		</Size>
+		<Text>Aura2</Text>
+		<TextColor>
+			<R>255</R>
+			<G>255</G>
+			<B>255</B>
+		</TextColor>
+		<NoWrap>true</NoWrap>
+		<AlignCenter>false</AlignCenter>
+		<AlignRight>false</AlignRight>
+	</Label>
+
+	<Combobox item="Zerker_Aura2_ComboBox">
+		<ScreenID>Zerker_Aura2_ComboBox</ScreenID>
+		<Font>1</Font>
+		<DrawTemplate>WDT_Inner</DrawTemplate>
+
+		<RelativePosition>true</RelativePosition>
+		<Location>
+			<X>0</X>
+			<Y>0</Y>
+		</Location>
+		<Size>
+			<CX>100</CX>
+			<CY>20</CY>
+		</Size>
+
+		<ListHeight>90</ListHeight>
+		<Button>BDT_Combo</Button>
+		<Style_Border>true</Style_Border>
+		<TextColor>
+			<R>255</R>
+			<G>255</G>
+			<B>255</B>
+		</TextColor>
+	</Combobox>
+	
+	
+	
+	
 	<!--Combo Boxes End Here-->
 
 	<TileLayoutBox item="InputboxLayout">
@@ -3043,6 +3381,12 @@
 		
 		<Pieces>Zerker_Stance_Label</Pieces>
 		<Pieces>Zerker_Stance_ComboBox</Pieces>
+		
+		<Pieces>Zerker_Aura1_Label</Pieces>
+		<Pieces>Zerker_Aura1_ComboBox</Pieces>
+		
+		<Pieces>Zerker_Aura2_Label</Pieces>
+		<Pieces>Zerker_Aura2_ComboBox</Pieces>
 
 		<Pieces>Zerker_RaidAssist_Label</Pieces>
 		<Pieces>Zerker_RaidAssist_ComboBox</Pieces>
@@ -3160,6 +3504,16 @@
 		<Pieces>Zerker_Checkbox48</Pieces>
 		<Pieces>Zerker_Checkbox49</Pieces>
 		<Pieces>Zerker_Checkbox50</Pieces>
+		<Pieces>Zerker_Checkbox51</Pieces>
+		<Pieces>Zerker_Checkbox52</Pieces>
+		<Pieces>Zerker_Checkbox53</Pieces>
+		<Pieces>Zerker_Checkbox54</Pieces>
+		<Pieces>Zerker_Checkbox55</Pieces>
+		<Pieces>Zerker_Checkbox56</Pieces>
+		<Pieces>Zerker_Checkbox57</Pieces>
+		<Pieces>Zerker_Checkbox58</Pieces>
+		<Pieces>Zerker_Checkbox59</Pieces>
+		<Pieces>Zerker_Checkbox60</Pieces>
 	</TileLayoutBox>
 
 	<Page item="Zerker_Settings">
