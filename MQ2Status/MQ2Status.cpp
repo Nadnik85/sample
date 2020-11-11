@@ -862,6 +862,25 @@ void StatusCmd(SPAWNINFO* pChar, char* szLine)
 
 			if (classPlugin) {
 				stringBuffer += GetColorCode('o', false) + "Class Plugin: " + GetColorCode('g', false) + "Loaded! " + GetColorCode('w', false);
+
+				if (FindMQ2DataType("CWTN")) {
+					stringBuffer += GetColorCode('o', false);
+					// Possible way to do this without Parsing Macro Data?
+					constexpr int MAX_CWTN_OUTPUT_BUFFER = 24;
+					char theMode[MAX_CWTN_OUTPUT_BUFFER] = "${CWTN.Mode}"; // What mode are we in?
+					char cwtnPaused[MAX_CWTN_OUTPUT_BUFFER] = "${CWTN.Paused}"; // is the plugin paused
+
+					stringBuffer += "Mode: ";
+					stringBuffer += GetColorCode('g', false);
+					ParseMacroData(theMode, MAX_CWTN_OUTPUT_BUFFER);
+					stringBuffer += theMode;
+
+					ParseMacroData(cwtnPaused, MAX_CWTN_OUTPUT_BUFFER);
+					if (!strcmp(cwtnPaused, "TRUE")) {
+						stringBuffer += GetColorCode('r', false);
+						stringBuffer += " ***PAUSED*** ";
+					}
+				}
 			}
 			else if (notLoaded) { // Only outputs if there is a CWTN classPlugin available for that class, and it wasn't loaded.
 				stringBuffer += GetColorCode('o', false) + "Class Plugin: " + GetColorCode('r', false) + "Not Loaded! " + GetColorCode('w', false);
