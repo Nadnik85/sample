@@ -28,3 +28,6 @@
 [submodule "MQ2SQLite"]
 	path = MQ2SQLite
 	url = https://gitlab.com/Knightly1/mq2sqlite.git
+[submodule "mq2rewards"]
+	path = mq2rewards
+	url = https://gitlab.com/redguides/plugins/mq2rewards
