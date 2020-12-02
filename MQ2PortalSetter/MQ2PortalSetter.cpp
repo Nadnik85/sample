@@ -19,10 +19,11 @@ class CPortalSetterWindow : public CCustomWnd {
  public:
   CPortalSetterWindow(char *Template):CCustomWnd(Template) {
     SetWndNotification(CPortalSetterWindow);
-	EasternWasteTwo_Button	  = (CButtonWnd*)GetChildItem("EasternWastesTwoButton");
+    CobaltScarTwo_Button      = (CButtonWnd*)GetChildItem("CobaltScarTwoButton");
+	EasternWasteTwo_Button    = (CButtonWnd*)GetChildItem("EasternWastesTwoButton");
 	Stratos_button            = (CButtonWnd*)GetChildItem("StratosButton");
 	Overthere_button          = (CButtonWnd*)GetChildItem("OverthereButton");
-	Lceanium_button			  = (CButtonWnd*)GetChildItem("LceaniumButton");
+	Lceanium_button           = (CButtonWnd*)GetChildItem("LceaniumButton");
     kattaCastrumDeluge_button = (CButtonWnd*)GetChildItem("KattaCastrumDelugeButton");
     westKarana_button         = (CButtonWnd*)GetChildItem("WestKaranaButton");
     shardsLanding_button      = (CButtonWnd*)GetChildItem("ShardsLandingButton");
@@ -55,6 +56,7 @@ class CPortalSetterWindow : public CCustomWnd {
   ~CPortalSetterWindow() {}
 
   int WndNotification(CXWnd *pWnd, unsigned int Message, void *unknown);
+  CButtonWnd* CobaltScarTwo_Button;
   CButtonWnd* EasternWasteTwo_Button;
   CButtonWnd *Stratos_button;
   CButtonWnd *Overthere_button;
@@ -88,13 +90,26 @@ class CPortalSetterWindow : public CCustomWnd {
   CButtonWnd *greaterFaydark_button;
 };
 
-int CPortalSetterWindow::WndNotification(CXWnd *pWnd, unsigned int Message, void *unknown) {    
+int CPortalSetterWindow::WndNotification(CXWnd *pWnd, unsigned int Message, void *unknown) {
+
   if (pWnd==0) {
     if (Message==XWM_CLOSE) {
         SetVisible(1);
         return 1;
     }
   }
+
+  if (pWnd == (CXWnd*)CobaltScarTwo_Button) {
+      if (Message == XWM_LCLICK) {
+#ifdef MQ2PORTALSETTER_DEBUG
+          WriteChatf("PortalSetterWindow::CobaltScarTwo_Button - LCLICK");
+#endif
+          sprintf_s(portalStoneName, "Othmir Clamshell");
+          currentRoutineStep = 1;
+          setPortal();
+      }
+  }
+
   if (pWnd == (CXWnd*)EasternWasteTwo_Button) {
 	  if (Message == XWM_LCLICK) {
 			#ifdef MQ2PORTALSETTER_DEBUG
@@ -105,7 +120,7 @@ int CPortalSetterWindow::WndNotification(CXWnd *pWnd, unsigned int Message, void
 		  setPortal();
 	  }
   }
-  
+
   if (pWnd == (CXWnd*)Stratos_button) {
 	  if (Message == XWM_LCLICK) {
 			#ifdef MQ2PORTALSETTER_DEBUG
@@ -446,11 +461,11 @@ static void setPortal() {
     }
   }
   switch (currentRoutineStep) {
-    case 1: { 
+    case 1: {
       char zStoneListPosition[MAX_STRING];
       sprintf_s(zStoneListPosition, "${Window[MerchantWnd].Child[MW_ItemList].List[=%s,2]}", portalStoneName);
       ParseMacroData(zStoneListPosition, MAX_STRING);
-      SendListSelect("MerchantWnd", "MW_ItemList", (atoi(zStoneListPosition) - 1)); 
+      SendListSelect("MerchantWnd", "MW_ItemList", (atoi(zStoneListPosition) - 1));
       currentRoutineStep++;
       break;
     }
@@ -468,7 +483,7 @@ static void setPortal() {
         sprintf_s(zNotifyCommand, "/itemnotify \"%s\" leftmouseup", portalStoneName);
         EzCommand(zNotifyCommand);
         currentRoutineStep++;
-      } 
+      }
       break;
     }
     case 4: {
@@ -481,7 +496,7 @@ static void setPortal() {
         if (GetCharInfo2()->pInventoryArray->Inventory.Cursor) {
           EzCommand("/click left target");
           currentRoutineStep++;
-        } 
+        }
       } else {
         currentRoutineStep--;
       }
@@ -574,7 +589,7 @@ PLUGIN_API VOID OnPulse(VOID)
 		}
 	}
 
-	//-- If we are out of range then reset state. 
+	//-- If we are out of range then reset state.
 	if (currentRoutineStep && !inPortalMerchantRange()) {
 		WriteChatColor("[MQ2PortalSetter] Out of range of portal attendant, aborting.", CONCOLOR_RED);
 		currentRoutineStep = 0;
