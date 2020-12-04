@@ -20,10 +20,10 @@ class CPortalSetterWindow : public CCustomWnd {
   CPortalSetterWindow(char *Template):CCustomWnd(Template) {
     SetWndNotification(CPortalSetterWindow);
     CobaltScarTwo_Button      = (CButtonWnd*)GetChildItem("CobaltScarTwoButton");
-	EasternWasteTwo_Button    = (CButtonWnd*)GetChildItem("EasternWastesTwoButton");
-	Stratos_button            = (CButtonWnd*)GetChildItem("StratosButton");
-	Overthere_button          = (CButtonWnd*)GetChildItem("OverthereButton");
-	Lceanium_button           = (CButtonWnd*)GetChildItem("LceaniumButton");
+    EasternWasteTwo_Button    = (CButtonWnd*)GetChildItem("EasternWastesTwoButton");
+    Stratos_button            = (CButtonWnd*)GetChildItem("StratosButton");
+    Overthere_button          = (CButtonWnd*)GetChildItem("OverthereButton");
+    Lceanium_button           = (CButtonWnd*)GetChildItem("LceaniumButton");
     kattaCastrumDeluge_button = (CButtonWnd*)GetChildItem("KattaCastrumDelugeButton");
     westKarana_button         = (CButtonWnd*)GetChildItem("WestKaranaButton");
     shardsLanding_button      = (CButtonWnd*)GetChildItem("ShardsLandingButton");
@@ -91,7 +91,6 @@ class CPortalSetterWindow : public CCustomWnd {
 };
 
 int CPortalSetterWindow::WndNotification(CXWnd *pWnd, unsigned int Message, void *unknown) {
-
   if (pWnd==0) {
     if (Message==XWM_CLOSE) {
         SetVisible(1);
