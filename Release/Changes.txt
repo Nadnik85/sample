@@ -1,3 +1,67 @@
+Dec 05 2020
+- Updated for BETA
+- Chatwindow at charselect now saves it's position independently from in game
+-
+Dec 04 2020
+- Updated for BETA
+-
+Dec 03 2020
+- Updated for BETA
+- Added WarforgedEmblem and RestlessMark Currencies - Sic
+- Added .Sharing to the fellowship tlo it returns true of false if exp sharing is on for the member - Sic
+	Usage: /echo ${Me.Fellowship.Sharing[x]} where x is fellowship member 1-12
+- Added .FindVariable to the Macro TLO it returns a string of the full variable name if it exist - requested by ctaylor22
+	Usage: /echo Macro.FindVariable[=Myvar]} for EXACT variable name
+	Return: Myvar
+	Usage: /echo Macro.FindVariable[Myvar]} for partial variable name
+	Return: Myvar01 (because it's partial and it found one named Myvar01)
+-
+Dec 02 2020
+- Updated for TEST
+- Updated for BETA
+- Added MarkNPC to the raid tlo -CWTN
+-
+Dec 01 2020
+- Updated for BETA
+-
+Nov 30 2020
+- Updated for BETA
+-
+Nov 29 2020
+- Updated for BETA
+-
+Nov 28 2020
+- Updated for BETA
+-
+Nov 27 2020
+- Updated for BETA
+-
+Nov 26 2020
+- Updated for BETA
+-
+Nov 25 2020
+- Updated for BETA
+-
+Nov 24 2020
+- Updated for BETA
+-
+Nov 23 2020
+- Updated for BETA
+-
+Nov 22 2020
+- Updated for BETA
+-
+Nov 21 2020
+- Updated for BETA
+-
+Nov 20 2020
+- Updated for BETA
+-
+Nov 19 2020
+- Updated for BETA
+- All instances of CFacePick has been changed to CPlayerCustomizationWnd
+- Fixed some misc UI offsets
+-
 Nov 18 2020
 - Updated for LIVE
 - Updated for BETA
