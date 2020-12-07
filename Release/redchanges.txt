@@ -1,3 +1,133 @@
+Dec 08 2020 by RedGuides
+- EQBCS2.exe (Jimbob) client max increased to 250
+- MQ2Melee
+- MQ2PortalSetter
+- MQ2Relocate
+- MQ2Status
+
+Dec 07 2020
+- Updated for BETA
+- Fixed malo/tash detection problems - SwiftyMuse
+
+Dec 06 2020
+- Updated for BETA
+
+Dec 05 2020
+- Updated for BETA
+- Chatwindow at charselect now saves it's position independently from in game
+
+Dec 04 2020
+- Updated for BETA
+
+Dec 03 2020
+- Updated for BETA
+- Added WarforgedEmblem and RestlessMark Currencies - Sic
+- Added .Sharing to the fellowship tlo it returns true of false if exp sharing is on for the member - Sic
+	Usage: /echo ${Me.Fellowship.Sharing[x]} where x is fellowship member 1-12
+- Added .FindVariable to the Macro TLO it returns a string of the full variable name if it exist - requested by ctaylor22
+	Usage: /echo Macro.FindVariable[=Myvar]} for EXACT variable name
+	Return: Myvar
+	Usage: /echo Macro.FindVariable[Myvar]} for partial variable name
+	Return: Myvar01 (because it's partial and it found one named Myvar01)
+
+Dec 02 2020
+- Updated for TEST
+- Updated for BETA
+- Added MarkNPC to the raid tlo -CWTN
+
+Dec 01 2020
+- Updated for BETA
+
+Nov 30 2020
+- Updated for BETA
+
+Nov 29 2020 by RedGuides
+- MQ2Status (Sic, Knightly) Alphabetized status help output. Moved money/plat out of stat. Fixed missing space in "Mercenary State" and "Hidden"
+
+Nov 29 2020
+- Updated for BETA
+
+Nov 28 2020
+- Updated for BETA
+
+Nov 27 2020
+- Updated for BETA
+
+Nov 26 2020
+- Updated for BETA
+
+Nov 25 2020
+- Updated for BETA
+
+Nov 24 2020
+- Updated for BETA
+
+Nov 23 2020
+- Updated for BETA
+
+Nov 22 2020
+- Updated for BETA
+
+Nov 21 2020
+- Updated for BETA
+
+Nov 20 2020
+- Updated for BETA
+
+Nov 19 2020
+- Updated for BETA
+- All instances of CFacePick has been changed to CPlayerCustomizationWnd
+- Fixed some misc UI offsets
+
+Nov 18 2020 by RedGuides
+- New plugin! MQ2Rewards (GoldenFrog, Sic, brainiac, Knightly) allows control over specifying, selecting, and claiming rewards from macros.
+
+Nov 18 2020
+- Updated for LIVE
+- Updated for BETA
+- Fixed a bug in mq2targetinfo that would reset the ini if the plugin version changed.
+
+Nov 17 2020
+- Updated for BETA
+
+Nov 16 2020
+- Updated for BETA
+
+Nov 15 2020
+- Updated for BETA 
+
+Nov 14 2020
+- Updated for BETA
+- Updated for TEST
+
+Nov 11 2020
+MQ2Status (Sic, Knightly) Added support for CWTN "paused" mode
+
+Nov 10 2020
+- Updated for BETA
+
+Nov 09 2020
+- Updated for BETA
+
+Nov 07 2020
+- Updated for BETA
+
+Nov 06 2020
+- Updated for BETA
+
+Nov 05 2020
+- Updated for TEST
+- Updated for BETA
+
+Nov 04 2020
+- Updated for BETA
+
+Nov 03 2020
+- Updated for BETA
+
+Oct 31 2020
+- Fixed a few spell and spellmgr bugs, the struct is 1 byte aligned now, as it should be.
+
 Oct 30 2020 
 - MQ2Status (Sic) Added support for MQ2Enchanter/MQ2Shaman for /status
 - MQ2XAssist (Knightly, eqmule) Fixes an issue where EQ doesn't clear assistname in the hitbyspell function (a likely bug in the EQ client)
