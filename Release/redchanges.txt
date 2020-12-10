@@ -1,9 +1,35 @@
+Dec 10 2020 by RedGuides
+- New Plugin! MQ2GroundSpawns (ChatWithThisName, Sic) Will help find & collect items in a list for you by zone.
+- MQ2React (drwhomphd) Config setting added to affect rate of react processing.
+- MQ2Grind (hytiek) Added ExitMode of taskquit or campfire, fixes for kissasssit paladins
+
+Dec 10 2020
+- Fixes to new alt currency - sic
+- Fixes for num expansions - CWTN
+- Fixed charselect save position of chatwindow (probably)
+- Fixed ZONE_COUNT, this should fix misc plugins that rely on it being correct. (mq2easyfind)
+
 Dec 08 2020 by RedGuides
+- New Plugin! MQ2Grind (hytiek) Helps your group flip the Restless Assault (ToV) instance. This is an alpha version, hytiek will make it paid when it supports more instances.
+- MQ2Melee (Redbot, Knightly) Stickbreak=1 is now default, meaning that pressing a movement key will stop mq2melee from "sticking" to the current target. To undo this change, "/melee stickbreak=0" and then "/melee save"
+- MQ2Status (Sic, Knightly) Bagspace will now correctly return all sizes of bagspaces available from small to giant, and not JUST giant sized slots. Due to an internal issue with MQ2, the amount on TLP servers will be off by 2 slots.
+  /status skill will now returnback the value of your requested skill. example: /status skill blacksmithing
+- MQ2PortalSetter (Sic, Knightly) Updated for Claws of Veeshan (Cobalt Scar COV)
+- MQ2Relocate (Sic, Knightly) Added Di`Zok Escape Staff to /relocate evac. Bugfixes. 
 - EQBCS2.exe (Jimbob) client max increased to 250
-- MQ2Melee
-- MQ2PortalSetter
-- MQ2Relocate
-- MQ2Status
+- Zones.ini (Sic) Updated for Claws of Veeshan
+
+Dec 08 2020
+- Updated for TEST
+- Updated for LIVE
+- Added .Move to the Window TLO Methods
+	Usage: /invoke ${Window[GroupWindow].Move[100,200,300,400]} ([x,y,width,height]) width and height are optional.
+- Added .SetBGColor to the Window TLO Methods
+	Usage: /invoke ${Window[GroupWindow].SetBGColor[0xFF000000]} ([argb])
+- Added .SetAlpha to the Window TLO Methods
+	Usage: /invoke ${Window[GroupWindow].SetAlpha[0xFF]} (0-0xFF)
+- Added .SetFadeAlpha to the Window TLO Methods
+	Usage: /invoke ${Window[GroupWindow].SetFadeAlpha[0xFF]} (0-0xFF)
 
 Dec 07 2020
 - Updated for BETA
