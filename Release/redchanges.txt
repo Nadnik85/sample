@@ -1,3 +1,18 @@
+Dec 15 2020 by RedGuides
+- MQ2Status (Sic) Updated currency for CoV, major code reorganization
+- MQ2AASpend (Sic) Updated MQ2AASpend to automatically adjust with Autogrant for Bonus purposes.
+
+Dec 15 2020
+- Updated for TEST
+- Removed MAX_KEYRINGITEMS it was a guess at best from 2014 before we knew how the arrays where constructed.
+- pBankArray in CHARINFO is now a ItemBaseContainer named BankItems
+- pSharedBankArray in CHARINFO is now a ItemBaseContainer named SharedBankItems
+- pMercEquipment in CHARINFO is now a ItemBaseContainer named MercenaryItems
+- pMountsArray in CHARINFO is now a ItemBaseContainer named MountKeyRingItems
+- pIllusionsArray in CHARINFO is now a ItemBaseContainer named IllusionKeyRingItems
+- pFamiliarArray in CHARINFO is now a ItemBaseContainer named FamiliarKeyRingItems
+- pHeroForgeArray in CHARINFO is now a ItemBaseContainer named HeroForgeKeyRingItems
+
 Dec 10 2020 by RedGuides
 - New Plugin! MQ2GroundSpawns (ChatWithThisName, Sic) Will help find & collect items in a list for you by zone.
 - MQ2React (drwhomphd) Config setting added to affect rate of react processing.
