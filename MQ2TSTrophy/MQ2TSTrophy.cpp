@@ -305,7 +305,7 @@ bool WorldContainerCheck()
 
 void EquipTrophy(const char* pTrophy, const char* pSlot)
 {
-	for (auto& i : vSlot) {
+	for (const auto& i : vSlot) {
 		if (pTrophy) {
 			char szBuffer[128] = { 0 };
 			if (iStep == 1) {
@@ -329,7 +329,7 @@ void EquipTrophy(const char* pTrophy, const char* pSlot)
 bool IsTrophyEquipped(std::string trophy)
 {
 	bool equipped = false;
-	for (auto& i : vSlot) {
+	for (const auto& i : vSlot) {
 		if (PCONTENTS pItem = FindItemBySlot(i)) {
 			if (pItem->Item2->Name == trophy) {
 				equipped = true;
