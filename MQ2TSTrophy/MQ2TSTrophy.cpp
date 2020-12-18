@@ -16,8 +16,8 @@ bool WorldContainerCheck();
 bool InGame();
 void EquipTrophy(const char* pTrophy, const char* pSlot = "Ammo"); // Defaulted to ammo slot
 
-std::string TrophyCheckByType(std::string trophytype);
-bool IsTrophyEquipped(std::string trophy);
+std::string TrophyCheckByType(const std::string& trophytype);
+bool IsTrophyEquipped(const std::string& trophy);
 CONTENTS* Cursor();
 
 bool containerfound = false;
@@ -326,7 +326,7 @@ void EquipTrophy(const char* pTrophy, const char* pSlot)
 	}
 }
 
-bool IsTrophyEquipped(std::string trophy)
+bool IsTrophyEquipped(const std::string& trophy)
 {
 	bool equipped = false;
 	for (const auto& i : vSlot) {
@@ -426,7 +426,7 @@ std::map <const std::string, std::vector<std::string> > mTrophies = {
 	}
 };
 
-std::string TrophyCheckByType(std::string trophytype) {
+std::string TrophyCheckByType(const std::string& trophytype) {
 	for (auto& trophyname : mTrophies.at(trophytype)) {
 		if (FindItemByName(&trophyname[0], 1)) {
 			return trophyname;
