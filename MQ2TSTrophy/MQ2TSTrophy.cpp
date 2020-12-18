@@ -305,7 +305,7 @@ bool WorldContainerCheck()
 
 void EquipTrophy(const char* pTrophy, const char* pSlot)
 {
-	for (auto i : vSlot) {
+	for (auto& i : vSlot) {
 		if (pTrophy) {
 			char szBuffer[128] = { 0 };
 			if (iStep == 1) {
