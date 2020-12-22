@@ -93,51 +93,63 @@ public:
 			Dest.Type = pBoolType;
 			return true;
 		case Alchemy:
-			Dest.Ptr = &TrophyCheckByType("Alchemy")[0];
+			strcpy_s(DataTypeTemp, TrophyCheckByType("Alchemy").c_str());
+			Dest.Ptr = DataTypeTemp;
 			Dest.Type = pStringType;
 			return true;
 		case Baking:
-			Dest.Ptr = &TrophyCheckByType("Baking")[0];
+			strcpy_s(DataTypeTemp, TrophyCheckByType("Baking").c_str());
+			Dest.Ptr = DataTypeTemp;
 			Dest.Type = pStringType;
 			return true;
 		case Brewing:
-			Dest.Ptr = &TrophyCheckByType("Brewing")[0];
+			strcpy_s(DataTypeTemp, TrophyCheckByType("Brewing").c_str());
+			Dest.Ptr = DataTypeTemp;
 			Dest.Type = pStringType;
 			return true;
 		case Fletching:
-			Dest.Ptr = &TrophyCheckByType("Fletching")[0];
+			strcpy_s(DataTypeTemp, TrophyCheckByType("Fletching").c_str());
+			Dest.Ptr = DataTypeTemp;
 			Dest.Type = pStringType;
 			return true;
 		case Jewelry:
-			Dest.Ptr = &TrophyCheckByType("Jewelery")[0];
+			strcpy_s(DataTypeTemp, TrophyCheckByType("Jewelry").c_str());
+			Dest.Ptr = DataTypeTemp;
 			Dest.Type = pStringType;
 			return true;
 		case Tinkering:
-			Dest.Ptr = &TrophyCheckByType("Tinkering")[0];
+			strcpy_s(DataTypeTemp, TrophyCheckByType("Tinkering").c_str());
+			Dest.Ptr = DataTypeTemp;
 			Dest.Type = pStringType;
 			return true;
 		case Pottery:
-			Dest.Ptr = &TrophyCheckByType("Pottery")[0];
+			strcpy_s(DataTypeTemp, TrophyCheckByType("Pottery").c_str());
+			Dest.Ptr = DataTypeTemp;
 			Dest.Type = pStringType;
 			return true;
 		case Research:
-			Dest.Ptr = &TrophyCheckByType("Research")[0];
+			strcpy_s(DataTypeTemp, TrophyCheckByType("Research").c_str());
+			Dest.Ptr = DataTypeTemp;
 			Dest.Type = pStringType;
 			return true;
 		case Blacksmithing:
-			Dest.Ptr = &TrophyCheckByType("Blacksmithing")[0];
+			strcpy_s(DataTypeTemp, TrophyCheckByType("Blacksmithing").c_str());
+			Dest.Ptr = DataTypeTemp;
 			Dest.Type = pStringType;
 			return true;
 		case Tailoring:
-			Dest.Ptr = &TrophyCheckByType("Tailoring")[0];
+			strcpy_s(DataTypeTemp, TrophyCheckByType("Tailoring").c_str());
+			Dest.Ptr = DataTypeTemp;
 			Dest.Type = pStringType;
 			return true;
 		case Poison:
-			Dest.Ptr = &TrophyCheckByType("Poison")[0];
+			strcpy_s(DataTypeTemp, TrophyCheckByType("Poison").c_str());
+			Dest.Ptr = DataTypeTemp;
 			Dest.Type = pStringType;
 			return true;
 		case Fishing:
-			Dest.Ptr = &TrophyCheckByType("Fishing")[0];
+			strcpy_s(DataTypeTemp, TrophyCheckByType("Fishing").c_str());
+			Dest.Ptr = DataTypeTemp;
 			Dest.Type = pStringType;
 			return true;
 		case Container: // this returns true/false if we see a world/enviro tradeskill container
