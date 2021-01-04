@@ -1,3 +1,16 @@
+Jan 04 2020 by RedGuides
+- KissAssist (ctaylor22 & team) updated to version 12. In addition to a slew of fixes, new features include AE Mez improvements, item/buff begging, pull conditions, secondary aggro checks, summon corpses, custom commands & routines, reload .ini without restarting, and more. View the reference manual at kissassist.com
+- MQ2Status (Sic, Knightly) Added powersource /status powersource, cleaned code
+- MQ2DanNet (dannuic) removed shout elision to account for UDP dropped packets. Fixed lock issues. Fixed lag issues.
+
+Dec 22 2020 by RedGuides
+- MQ2AFNuke (jimbob) Updated for CoV spells, added option to assist player that is not MA/Raid MA. "/nuke AssistPlayer ToonName" and "/nuke clearassistplayer" to reset, added Dark Shield of the Scholar clicky to GCD actions. Removed "Rk." from Mage Orb names.
+- MQ2Heals (jimbob) Updated for CoV spells, added GCD actions. 
+- MQ2DPSAdv (Sic) Update "gore" and "rend" additions. 
+- MQ2TSTrophy (Sic, dannuic, Knightly) Major rewrite, will no longer swap a trophy into ammo if you ALREADY have it equipped in another slot.
+- MuleAssist.mac (Lemons, eqmule) updated to 15.2.1, fixed various crashes and bugs including /giveitem group and an issue with the mez routine, new command: "/mulecollect" will collect all collectibles in inventory.
+- MQ2Rez (Sic, Knightly) fix the "ghost window" situation where findmq2window might settle on the first instance of a window, but that actual window is hidden.
+
 Dec 15 2020 by RedGuides
 - MQ2Status (Sic) Updated currency for CoV, major code reorganization
 - MQ2AASpend (Sic) Updated MQ2AASpend to automatically adjust with Autogrant for Bonus purposes.
