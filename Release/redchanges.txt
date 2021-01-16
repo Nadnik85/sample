@@ -1,7 +1,25 @@
-Jan 04 2020 by RedGuides
-- KissAssist (ctaylor22 & team) updated to version 12. In addition to a slew of fixes, new features include AE Mez improvements, item/buff begging, pull conditions, secondary aggro checks, summon corpses, custom commands & routines, reload .ini without restarting, and more. View the reference manual at kissassist.com
+Jan 15 2021 by RedGuides
+- KissAssist (ctaylor22) Fixes: targeting issues, random crashes for non-pullers, added check to remove invulnerability to cast a heal, added in-game command "/burn on|off" for the burn routine. Added "/cureon 2" to only check self for cures. Changed ClickBackToCamp to use 0/1/2. 0=Off - Don't click back to camp, 1=On - Click back immediately. 2=On - Wait 10 seconds before clicking back.​
+- MQ2Grind (hytiek) is now a premium plugin
+- MQ2Ice (dewey2461, Sic, Knightly) Will no longer do mq2ice stuff if your character is levitating. This is especially useful for zones where you can levitate over ice.
+
+Jan 13 2021
+- Updated for TEST
+- The internal webbrowser is on vacation, it will return when it's ready to do so.
+- For now we will just have to open links in an external browser.
+
+Jan 04 2021 by RedGuides
+- KissAssist (ctaylor22, Toadwart, kaen01, drwhomphd, sl968, vsab, jande, GPS_Soldier, zuesizgod, LrdDread) updated to version 12. In addition to a slew of fixes, new features include AE Mez improvements, item/buff begging, pull conditions, secondary aggro checks, summon corpses, custom commands & routines, reload .ini without restarting, and more. View the reference manual at kissassist.com
 - MQ2Status (Sic, Knightly) Added powersource /status powersource, cleaned code
 - MQ2DanNet (dannuic) removed shout elision to account for UDP dropped packets. Fixed lock issues. Fixed lag issues.
+- MQ2AFNuke / MQ2Heals (jimbob) Added missing dicho upgrades for MQ2Heals and MQ2AFNuke. Changed the way assist works... should change targets based on your configuration:
+/nuke assist Default -> Default
+/nuke assist Group -> Group Only
+/nuke assist Raid# -> Assist Raid# Only
+/nuke assist XTarget -> XTarget Only
+/nuke assist Playername -> Assist PC named Playername Only
+- MQ2Grind (hytiek) Various fixes with pets, command recognition, LoS issues, and getting group into the instance.
+- MQ2Rewards (Goldenfrog) Correct issue with OptionItems. 
 
 Dec 22 2020 by RedGuides
 - MQ2AFNuke (jimbob) Updated for CoV spells, added option to assist player that is not MA/Raid MA. "/nuke AssistPlayer ToonName" and "/nuke clearassistplayer" to reset, added Dark Shield of the Scholar clicky to GCD actions. Removed "Rk." from Mage Orb names.
