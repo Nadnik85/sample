@@ -1,3 +1,13 @@
+Jan 30 2021
+- Fixed a backwards compatability problem with CPageWnd::GetTabText and CStmlWnd::GetSTMLText for TEST
+  If you already changed your plugins to use STMLText.Ptr instead of just STMLText you can change it back.
+  Sorry for the inconvenience, it was a difficult patch which took several days to fix, 
+  I did not have time to think that change through until I had a good nights sleep.
+  
+Jan 29 2021 by RedGuides
+- MQ2AFNuke (jimbob) Druid - Added some more DoT support (still have a bunch to add). Added AE spells and support (still have a bunch to add). Added spell Twincast. Magician - Added a ton of spells for lower levels. Enchanter - Added item clicky support that was missing. Added item clicky to GCD. Wizard - Fixed global cooldown AA Nukes and item clickies. Removed some refactored code that was commented out.
+- MQ2Heals (jimbob) Changed some settings for rez support. It probably wasn't saving/reading the setting from the .ini correctly.
+
 Jan 29 2021
 - Updated for TEST
 
