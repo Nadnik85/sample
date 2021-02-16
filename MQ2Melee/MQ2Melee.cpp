@@ -33,6 +33,7 @@
 //							| 2019-11-14: Updated by Sic/CWTN Yaulp to default to "off"
 //							| 2019-12-29: Updated by ChatWithThisname-> Added Warrior, Berserker, Rogue discs for ToV. Rearranged information by class instead of alphabetically.
 //							| 2020-01-06: Updated by Sic - Added Paladin, Shadowknight, Ranger, Monk, Necro, and Beastlord ToV discs/spells
+//							| 2021-02-13: Updated by BigDorf - fix knights 2H Bash, Nov 2019 AA name change, "Two-Handed Bash" to "Improved Bash"
 //
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
 // SHOW_ABILITY:    0=0ff, 1=Display every ability that plugin use.
@@ -3449,9 +3450,9 @@ void Configure() {
         }
     }
 	#if !defined(ROF2EMU) && !defined(UFEMU)
-		HaveBash = GetAAIndexByName("Two-Handed Bash") ? true : false;
+		HaveBash = GetAAIndexByName("Improved Bash");
 	#else
-		HaveBash = GetAAIndexByName("2 Hand Bash") ? true : false;
+		HaveBash = GetAAIndexByName("2 Hand Bash");
 	#endif
     BardClass = false;
     BerserkerClass = false;
