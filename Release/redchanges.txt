@@ -1,3 +1,14 @@
+Feb 16 2021 by RedGuides
+- New Plugin! MQ2Rand (Dewey2461, Sic) a "/random" helper for raids. Hit the start button and it gives a message to the raid, then populates a list announcing the winner. 
+- MQ2Autoforage (Sic, Knightly) No longer try and AutoForage while FD or Dead
+- MQ2Melee (BigDorf, Knightly) fix knight's 2h bash, bug caused by Nov 2019 AA name change to "Improved Bash"
+
+Feb 16 2021
+- Updated for TEST
+
+Jan 30 2021
+- Fixed ${Me.PctExpToAA} ty cwtn for report
+  
 Jan 30 2021
 - Fixed a backwards compatability problem with CPageWnd::GetTabText and CStmlWnd::GetSTMLText for TEST
   If you already changed your plugins to use STMLText.Ptr instead of just STMLText you can change it back.
