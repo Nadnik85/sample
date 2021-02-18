@@ -3450,7 +3450,7 @@ void Configure() {
         }
     }
 	#if !defined(ROF2EMU) && !defined(UFEMU)
-		HaveBash = GetAAIndexByName("Improved Bash");
+		HaveBash = GetAAIndexByName("Improved Bash")  != 0  || GetAAIndexByName("Two-Handed Bash") != 0;
 	#else
 		HaveBash = GetAAIndexByName("2 Hand Bash");
 	#endif
