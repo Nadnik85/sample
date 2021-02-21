@@ -3950,12 +3950,12 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                     uiArgNum++;
                     STICK->Snap->Bearing = 1.0f;
                 }
-                else if (!_strnicmp(szCurrentArg, "left", 5))
+                else if (!_strnicmp(szCurrentArg, "right", 6))
                 {
                     uiArgNum++;
                     STICK->Snap->Bearing = HEADING_QUARTER;
                 }
-                else if (!_strnicmp(szCurrentArg, "right", 6))
+                else if (!_strnicmp(szCurrentArg, "left", 5))
                 {
                     uiArgNum++;
                     STICK->Snap->Bearing = (HEADING_HALF + HEADING_QUARTER);
