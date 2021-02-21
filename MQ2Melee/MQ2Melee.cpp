@@ -2307,6 +2307,13 @@ int Equip(unsigned long ID, long SlotID)
     if (!(SlotID < NUM_INV_SLOTS)) return false;                   // invalid destination slot id for equipping item to
     if (!OkayToEquip())      return false;                         // can't equip item right casting or cursor not free
 
+    PCONTENTS dCONT = GetCharInfo2()->pInventoryArray->InventoryArray[SlotID];
+    
+    // if the ID requested to equip has the same ID in the target slot, no action to take, objective already met.
+    if (dCONT != nullptr && GetItemFromContents(dCONT)->ItemNumber == ID) {
+        return true;
+    }
+
     char szTempItem[25] = { 0 };
     sprintf_s(szTempItem, "%d", ID);
     CItemLocation cMoveItem;
@@ -2340,11 +2347,11 @@ int Equip(unsigned long ID, long SlotID)
     if (SlotID == inv_secondary && TwohandType(ContPrimary()))           if (!Unequip(inv_primary))   return false;
 
     // if wearing something
-    if (PCONTENTS dCONT = GetCharInfo2()->pInventoryArray->InventoryArray[SlotID])
+    if (dCONT != nullptr && cMoveItem.InvSlot >= NUM_INV_SLOTS)
     {
-        if (cMoveItem.InvSlot >= NUM_INV_SLOTS) // if not a main inv slot
+        if (!PackFind(&cUnequipTo, dCONT))
         {
-            if (!PackFind(&cUnequipTo, dCONT)) return false; // search bags, if bags cant fit it, return false
+            return false; // search bags, if bags cant fit it, return false
         }
     }
 
