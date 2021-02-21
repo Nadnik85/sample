@@ -15,7 +15,7 @@ as required by the copyright holders of these functions, and desired by the deve
 
 #define PLUGIN_NAME  "MQ2MoveUtils"		// Plugin Name
 #define PLUGIN_DATE   20180528			// Plugin Date
-#define PLUGIN_VERS   12.4				// Plugin Version
+#define PLUGIN_VERS   12.5				// Plugin Version
 
 #ifndef PLUGIN_API
 #include "../MQ2Plugin.h"
