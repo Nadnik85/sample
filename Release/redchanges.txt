@@ -1,5 +1,15 @@
+Feb 18 2021 by RedGuides
+- MQ2Melee (BigDorf, Knightly) fix warrior 2H bash with AA Two-Handed Bash 
+
+Feb 18 2021
+- Some Label fixes - brainiac/swiftymuse
+
+Feb 17 2021
+- Updated for LIVE
+
 Feb 16 2021 by RedGuides
 - New Plugin! MQ2Rand (Dewey2461, Sic) a "/random" helper for raids. Hit the start button and it gives a message to the raid, then populates a list announcing the winner. 
+- Bazaar.mac (JerkChicken) Many new features added, undercut percentage, update drift, review prices after each purchase/sale, aggressive selling/buying options, pause on start, and more. 
 - MQ2Autoforage (Sic, Knightly) No longer try and AutoForage while FD or Dead
 - MQ2Melee (BigDorf, Knightly) fix knight's 2h bash, bug caused by Nov 2019 AA name change to "Improved Bash"
 
