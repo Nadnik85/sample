@@ -63,8 +63,7 @@ PLUGIN_API VOID SetGameState(DWORD GameState)
 	}
 }
 
-
-PLUGIN_API void OnReloadUI() {
+PLUGIN_API void OnCleanUI() {
 	bWndElementsLoaded = false;
 	MarketWnd = nullptr;
 	Funds = nullptr;
