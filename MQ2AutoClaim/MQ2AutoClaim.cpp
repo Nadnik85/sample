@@ -64,6 +64,14 @@ PLUGIN_API VOID SetGameState(DWORD GameState)
 }
 
 
+PLUGIN_API void OnReloadUI() {
+	bWndElementsLoaded = false;
+	MarketWnd = nullptr;
+	Funds = nullptr;
+	Desc = nullptr;
+	PopupWnd = nullptr;
+}
+
 // 01234567    0123456789
 // mm/dd/yy or mm/dd/yyyy
 void ParseDate(char* s, int& m, int& d, int& y)
@@ -110,9 +118,12 @@ PLUGIN_API VOID OnPulse()
 
 	if (!bWndElementsLoaded) {
 		MarketWnd = (CSidlScreenWnd*)FindMQ2Window("MarketPlaceWnd");
-		MarketWnd->GetChildItem("MKPW_AvailableFundsUpper");
-		Desc = (CStmlWnd*)MarketWnd->GetChildItem("MKPW_ClaimDescription");
+		if (MarketWnd) {
+			Funds = MarketWnd->GetChildItem("MKPW_AvailableFundsUpper");
+			Desc = (CStmlWnd*)MarketWnd->GetChildItem("MKPW_ClaimDescription");
+		}
 		PopupWnd = (CSidlScreenWnd*)FindMQ2Window("PurchaseGroupWnd");
+		bWndElementsLoaded = true;
 	}
 
 	if (bdebugging)
