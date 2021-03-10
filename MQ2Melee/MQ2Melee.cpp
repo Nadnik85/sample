@@ -3433,6 +3433,44 @@ void BashPress() {
     if (savedpri) Equip(savedpri, inv_primary);
 }
 
+bool isAAPurchased(PCHAR AAName) {
+    DWORD level = -1;
+    if (PSPAWNINFO pMe = (PSPAWNINFO)pLocalPlayer) {
+        level = pMe->Level;
+    }
+
+    for (unsigned long nAbility = 0; nAbility < AA_CHAR_MAX_REAL; nAbility++) {
+        PALTABILITY pAbility = GetAAByIdWrapper(pPCData->GetAlternateAbilityId(nAbility), level);
+
+        //test for good structure, and level as quick fail fast, the above wrapper not use level on EMU
+        if ( pAbility && pAbility->MinLevel <= level ) {
+            PCHAR pName = pCDBStr->GetString(pAbility->nName, 1, NULL);
+            if (pName && !_stricmp(AAName, pName)) {
+            // good level,  good name,   return postive find.
+                return true;
+            }
+        }
+	}
+    // failed to find by level and name checks,  return negative find.
+    return false;
+}
+
+bool is2HBashAAPurchased(long playerClass) {
+    //fail fast for non-2HB AA classes
+    if (playerClass != EQData::Warrior && playerClass != EQData::Paladin && playerClass != EQData::Shadowknight)
+        return false;
+
+#if !defined(ROF2EMU) && !defined(UFEMU)
+    if (playerClass == EQData::Warrior)
+        return isAAPurchased("Two-Handed Bash");
+    if (playerClass == EQData::Paladin || playerClass == EQData::Shadowknight)
+        return isAAPurchased("Improved Bash");
+    return false;
+#else
+    return isAAPurchased("2 Hand Bash");
+#endif
+}
+
 void Configure() {
     PCHARINFO2 pChar2 = GetCharInfo2();
     PCHARINFO pChar = GetCharInfo();
@@ -3456,11 +3494,9 @@ void Configure() {
             }
         }
     }
-	#if !defined(ROF2EMU) && !defined(UFEMU)
-		HaveBash = GetAAIndexByName("Improved Bash")  != 0  || GetAAIndexByName("Two-Handed Bash") != 0;
-	#else
-		HaveBash = GetAAIndexByName("2 Hand Bash");
-	#endif
+
+    HaveBash = is2HBashAAPurchased(Class);
+
     BardClass = false;
     BerserkerClass = false;
     MonkClass = false;
