@@ -636,6 +636,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2Node", "MQ2Node\MQ2Node\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2Ice", "MQ2Ice\MQ2Ice.vcxproj", "{39900CE5-DDC4-4EE0-B288-2AE95E32E4F6}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQ2Boxr", "MQ2Boxr\MQ2Boxr.vcxproj", "{EAC75882-EFFE-400B-A2FD-E9F59126887E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2A0A06A4-E9C6-4229-82EE-BD2D4E0A7221} = {2A0A06A4-E9C6-4229-82EE-BD2D4E0A7221}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -3240,6 +3245,26 @@ Global
 		{39900CE5-DDC4-4EE0-B288-2AE95E32E4F6}.xDebug|x64.Build.0 = Release|Win32
 		{39900CE5-DDC4-4EE0-B288-2AE95E32E4F6}.xDebug|x86.ActiveCfg = Debug|Win32
 		{39900CE5-DDC4-4EE0-B288-2AE95E32E4F6}.xDebug|x86.Build.0 = Debug|Win32
+		{EAC75882-EFFE-400B-A2FD-E9F59126887E}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{EAC75882-EFFE-400B-A2FD-E9F59126887E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EAC75882-EFFE-400B-A2FD-E9F59126887E}.Debug|Win32.Build.0 = Debug|Win32
+		{EAC75882-EFFE-400B-A2FD-E9F59126887E}.Debug|x64.ActiveCfg = Debug|Win32
+		{EAC75882-EFFE-400B-A2FD-E9F59126887E}.Debug|x86.ActiveCfg = Debug|Win32
+		{EAC75882-EFFE-400B-A2FD-E9F59126887E}.Debug|x86.Build.0 = Debug|Win32
+		{EAC75882-EFFE-400B-A2FD-E9F59126887E}.Release|Any CPU.ActiveCfg = Release|Win32
+		{EAC75882-EFFE-400B-A2FD-E9F59126887E}.Release|Win32.ActiveCfg = Release|Win32
+		{EAC75882-EFFE-400B-A2FD-E9F59126887E}.Release|Win32.Build.0 = Release|Win32
+		{EAC75882-EFFE-400B-A2FD-E9F59126887E}.Release|x64.ActiveCfg = Release|Win32
+		{EAC75882-EFFE-400B-A2FD-E9F59126887E}.Release|x86.ActiveCfg = Release|Win32
+		{EAC75882-EFFE-400B-A2FD-E9F59126887E}.Release|x86.Build.0 = Release|Win32
+		{EAC75882-EFFE-400B-A2FD-E9F59126887E}.xDebug|Any CPU.ActiveCfg = Debug|Win32
+		{EAC75882-EFFE-400B-A2FD-E9F59126887E}.xDebug|Any CPU.Build.0 = Debug|Win32
+		{EAC75882-EFFE-400B-A2FD-E9F59126887E}.xDebug|Win32.ActiveCfg = Debug|Win32
+		{EAC75882-EFFE-400B-A2FD-E9F59126887E}.xDebug|Win32.Build.0 = Debug|Win32
+		{EAC75882-EFFE-400B-A2FD-E9F59126887E}.xDebug|x64.ActiveCfg = Debug|Win32
+		{EAC75882-EFFE-400B-A2FD-E9F59126887E}.xDebug|x64.Build.0 = Debug|Win32
+		{EAC75882-EFFE-400B-A2FD-E9F59126887E}.xDebug|x86.ActiveCfg = Debug|Win32
+		{EAC75882-EFFE-400B-A2FD-E9F59126887E}.xDebug|x86.Build.0 = Debug|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
