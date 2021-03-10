@@ -1,25 +1,41 @@
-/* 
-MQ2AutoClaim  - Claim your free station cash
-
-   Original Author : Dewey2461
-	 Updated by Chatwiththisname.
-   FILES: MQ2AutoClaim.INI - Used to store the "next" reward date. 
-
-   Original Author notes: This was originally a macro, it was converted to a plugin so it will automatically run at startup. 
-		WARNING: Makes heavy use of ParseMacroData to Evaluate MQ2 macro code, you are free to refactor it. 
-			If you make changes please push the changes back to the author. 
-
-	Update 12/16/2019 - Chatwiththisname - 
-		No longer requires you open the DB Store window. 
-		No longer parses macro data.
-		Now uses login name instead of character name.
-		Optional INI Entry added - AutoClosePopup, defaults to 0. If anything other than 0 it's true. If it's not present it's false.
-			if true will automatically close the popup you get after claiming DBCash
-*/
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////
+//
+//   MQ2AutoClaim  - Claim your free station cash
+//
+//   Author : Dewey2461
+//
+//   FILES: MQ2AutoClaim.INI - Used to store the "next" reward date.
+//
+//   This was originally a macro, it was converted to a plugin so it will automatically run at startup.
+//   This plugin was originally written using ParseMacroData and was updated to not need that by ChatWithThisName
+//   For full changelog see https://gitlab.com/redguides/VeryVanilla/-/blob/master/MQ2AutoClaim/MQ2AutoClaim.cpp
+//
+////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////
+//
+//
+//  IMPLEMENTATION NOTES:
+//
+//  /echo ${Window[MKPW_ClaimWindow].Child[MKPW_ClaimDescription].Text}
+//
+//  Option #1 - Reward expires:<br><c "#FFFF00">mm/dd/yy hh:mmPM</c>    - Time to collect
+//  Option #2 - Next Reward: mm/dd/yy                                   - Already collected
+//  Option #3 - Not a member? Click for details!                        - Not gold.
+//
+//
+////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "../MQ2Plugin.h"
 
 PreSetup("MQ2AutoClaim");
+
+#include <chrono>
+using namespace std::chrono_literals;
+using std::chrono::steady_clock;
+
 int GetSubscriptionLevel();
 void LoadINI();
 
@@ -86,36 +102,35 @@ int CompareDates(char* s1, char* s2)
 }
 
 
+steady_clock::time_point LastUpdate = {};
+int LastState = -1;
 
 // Doing all the heavy lifting in OnPulse via a State Machine "PluginState"
 PLUGIN_API VOID OnPulse(VOID)
 {
 	if (!PluginState || gGameState != GAMESTATE_INGAME || !GetCharInfo() || !GetCharInfo2() || !GetCharInfo()->pSpawn) 
 		return;
+
+	// Throttle update frequency to once every second
+	auto nowTime = std::chrono::steady_clock::now();
+	if (PluginState == LastState && nowTime - LastUpdate < 1s)
+		return;
+	LastUpdate = nowTime;
+	LastState = PluginState;
+
 	if (!bINILoaded) {
 		LoadINI();
 	}
 
 	if (bdebugging) WriteChatf("PluginState: %i", PluginState);
 
-	static unsigned long long Tick = 0;
-	static unsigned long long AbortTick = 0;
+	static steady_clock::time_point abortTime = {};
 	static char szDesc[MAX_STRING] = { 0 };
 	static char szName[MAX_STRING] = { 0 };//This is the account name.
 	static char szCash[64] = { 0 };
 	static char szDate[12] = { 0 };
-	CSidlScreenWnd* MarketWnd = (CSidlScreenWnd*)FindMQ2Window("MarketPlaceWnd");
-	CXWnd* Funds;
-	if (MarketWnd)
-		Funds = MarketWnd->GetChildItem("MKPW_AvailableFundsUpper");
-	CStmlWnd* Desc;
-	if (MarketWnd)
-		Desc = (CStmlWnd*)MarketWnd->GetChildItem("MKPW_ClaimDescription");
-	CSidlScreenWnd* PopupWnd = (CSidlScreenWnd*)FindMQ2Window("PurchaseGroupWnd");
 
-	Tick = GetTickCount642();
-
-	if (Tick > AbortTick && PluginState != 1)
+	if (nowTime > abortTime && PluginState != 1)
 	{
 		WriteChatf("[MQ2AutoClaim] Aborting... 120s should be plenty of time so something went wrong");
 		PluginState = 0;
@@ -158,19 +173,22 @@ PLUGIN_API VOID OnPulse(VOID)
 			return;
 		}
 
-		// We are GOLD and NextCheck looks like we might have some SC ready. 
-		AbortTick = Tick + 120000;
+		// We are GOLD and NextCheck looks like we might have some SC ready.
+		abortTime = nowTime + 2min;
 		PluginState = 2;
 		break;
 	}
-	case 2: // Wait for market place window to open and populate	
-		if (MarketWnd && Funds) {
-				GetCXStr(Funds->CGetWindowText(), szCash, 64);
-				if (bdebugging) WriteChatf("Current Funds: %s", szCash);
+	case 2: // Wait for market place window to open and populate
+	{
+		CXWnd* Funds = pMarketplaceWnd ? pMarketplaceWnd->GetChildItem("MKPW_AvailableFundsUpper") : nullptr;
+		if (Funds) {
+			GetCXStr(Funds->CGetWindowText(), szCash, 64);
+			if (bdebugging) WriteChatf("Current Funds: %s", szCash);
 		}
-		if (!szCash[0]) return;
+		if (!szCash[0] || !_stricmp(szCash, "...")) return;
 
-		if (MarketWnd && Desc) {	
+		CStmlWnd* Desc = pMarketplaceWnd ? (CStmlWnd*)pMarketplaceWnd->GetChildItem("MKPW_ClaimDescription") : nullptr;
+		if (Desc) {
 			GetCXStr(Desc->STMLText, szDesc, MAX_STRING);
 			if (bdebugging) WriteChatf("Desc: %s", szDesc);
 		}
@@ -186,21 +204,26 @@ PLUGIN_API VOID OnPulse(VOID)
 		WriteChatf("\ag[MQ2AutoClaim]\aw Sorry, No free SC yet.");
 		PluginState = 4;
 		break;
-	case 3:	// Wait for funds to update 
+	}
+	case 3:	// Wait for funds to update
 	{
 		char sztemp[64] = { 0 };
-		if (MarketWnd && Funds) {
+
+		CXWnd* Funds = pMarketplaceWnd ? pMarketplaceWnd->GetChildItem("MKPW_AvailableFundsUpper") : nullptr;
+		if (Funds) {
 			GetCXStr(Funds->CGetWindowText(), sztemp, 64);
 			if (bdebugging) WriteChatf("Comparing Funds. Current: %s, Previous: %s", sztemp, szCash);
 		}
-		if (_stricmp(sztemp, szCash) == 0) 
+		if (_stricmp(sztemp, szCash) == 0)
 			return;
 		WriteChatf("\at[\agMQ2AutoClaim\at]\aw: \agClaimed your +500 free SC! You have \ay %s \aw SC.", sztemp);
 		PluginState = 4;
 		break;
 	}
 	case 4:
-		if (MarketWnd && Desc) {
+	{
+		CStmlWnd* Desc = pMarketplaceWnd ? (CStmlWnd*)pMarketplaceWnd->GetChildItem("MKPW_ClaimDescription") : nullptr;
+		if (Desc) {
 			GetCXStr(Desc->STMLText, szDesc, MAX_STRING);
 		}
 		if (strncmp(szDesc, "Next reward:", 12) == 0) {
@@ -229,15 +252,16 @@ PLUGIN_API VOID OnPulse(VOID)
 		}
 		PluginState = 5;
 		break;
+	}
 	case 5:
-		if (PopupWnd) {
-			if (PopupWnd->IsVisible()) {
-				if (bDiscardPopup) PopupWnd->SetVisible(false);
-				bClaimed = false;
-			}
+	{
+		if (pPurchaseGroupWnd && pPurchaseGroupWnd->IsVisible()) {
+			if (bDiscardPopup) pPurchaseGroupWnd->SetVisible(false);
+			bClaimed = false;
 		}
 		if (!bClaimed) PluginState = 0;
 		break;
+	}
 	}
 
 }
