@@ -1,5 +1,5 @@
 Other Authors
-    EQMule, Brainiac, Lax, Knightly, Chatwiththisname
+    EQMule, Brainiac, Lax, Knightly, and Chatwiththisname
 
 Software Requirements
     Macroquest 2 

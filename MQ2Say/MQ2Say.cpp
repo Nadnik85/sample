@@ -1,14 +1,14 @@
 // MQ2Say.cpp : Say Detection and Alerting
 //
 
+constexpr int MAX_CHAT_SIZE = 700;
+constexpr int LINES_PER_FRAME = 3;
+
 #include "../MQ2Plugin.h"
 #include <time.h>
 #include <ctime>
 #include <iostream>
 #include <chrono>
-
-constexpr int MAX_CHAT_SIZE = 700;
-constexpr int LINES_PER_FRAME = 3;
 
 PreSetup("MQ2Say");
 
