@@ -1,14 +1,14 @@
 // MQ2Say.cpp : Say Detection and Alerting
 //
 
-constexpr int MAX_CHAT_SIZE = 700;
-constexpr int LINES_PER_FRAME = 3;
-
 #include "../MQ2Plugin.h"
 #include <time.h>
 #include <ctime>
 #include <iostream>
 #include <chrono>
+
+constexpr int MAX_CHAT_SIZE = 700;
+constexpr int LINES_PER_FRAME = 3;
 
 PreSetup("MQ2Say");
 
@@ -28,6 +28,11 @@ bool bAutoScroll = true;
 bool bSaveByChar = true;
 bool bSayAlerts = true;
 bool bSayTimestamps = true;
+bool bIgnoreGroup = false;
+bool bIgnoreGuild = false;
+bool bIgnoreFellowship = false;
+bool bIgnoreRaid= false;
+
 class CMQSayWnd;
 CMQSayWnd* MQSayWnd = nullptr;
 
@@ -316,6 +321,35 @@ void DoAlerts(std::string Line)
 		std::vector<std::string> strSaySplit = SplitSay(Line);
 		if (strSaySplit.size() == 2)
 		{
+			//Check if we should ignore them before we do the alert or WriteSay
+			if (bIgnoreGroup && IsGroupMember((char*)strSaySplit[0].c_str())) {
+				if (bSayDebug)
+					WriteChatf("Skipping group member");
+
+				return;
+			}
+
+			if (bIgnoreGuild && IsGuildMember((char*)strSaySplit[0].c_str())) {
+				if (bSayDebug)
+					WriteChatf("Skipping Guild Member");
+
+				return;
+			}
+
+			if (bIgnoreFellowship && IsFellowshipMember(strSaySplit[0].c_str())) {
+				if (bSayDebug)
+					WriteChatf("Skipping fellowship member");
+
+				return;
+			}
+
+			if (bIgnoreRaid && IsRaidMember((char*)strSaySplit[0].c_str())) {
+				if (bSayDebug)
+					WriteChatf("Skipping Raid member");
+
+				return;
+			}
+
 			WriteSay(strSaySplit[0], strSaySplit[1]);
 			if (bSayAlerts)
 			{
@@ -353,6 +387,14 @@ void LoadSaySettings()
 	GetPrivateProfileString("Settings", "SaveByChar", bSaveByChar ? "on" : "off", szTemp, MAX_STRING, INIFileName);
 	bSaveByChar = (!_strnicmp(szTemp, "on", 3));
 	intIgnoreDelay = GetPrivateProfileInt("Settings", "IgnoreDelay", intIgnoreDelay, INIFileName);
+	GetPrivateProfileString("Settings", "IgnoreGroup", bIgnoreGroup ? "on" : "off", szTemp, MAX_STRING, INIFileName);
+	bIgnoreGroup = (!_strnicmp(szTemp, "on", 3));
+	GetPrivateProfileString("Settings", "IgnoreGuild", bIgnoreGuild ? "on" : "off", szTemp, MAX_STRING, INIFileName);
+	bIgnoreGuild = (!_strnicmp(szTemp, "on", 3));
+	GetPrivateProfileString("Settings", "IgnoreFellowship", bIgnoreFellowship ? "on" : "off", szTemp, MAX_STRING, INIFileName);
+	bIgnoreFellowship = (!_strnicmp(szTemp, "on", 3));
+	GetPrivateProfileString("Settings", "IgnoreRaid", bIgnoreRaid ? "on" : "off", szTemp, MAX_STRING, INIFileName);
+	bIgnoreRaid = (!_strnicmp(szTemp, "on", 3));
 	return;
 }
 
@@ -418,6 +460,10 @@ void SaveSayToINI(PCSIDLWND pWindow)
 	WritePrivateProfileString("Settings", "AutoScroll", bAutoScroll ? "on" : "off", INIFileName);
 	WritePrivateProfileString("Settings", "SaveByChar", bSaveByChar ? "on" : "off", INIFileName);
 	WritePrivateProfileString("Settings", "IgnoreDelay", SafeItoa(intIgnoreDelay, szTemp, 10), INIFileName);
+	WritePrivateProfileString("Settings", "IgnoreGroup", bIgnoreGroup ? "on" : "off", INIFileName);
+	WritePrivateProfileString("Settings", "IgnoreGuild", bIgnoreGuild ? "on" : "off", INIFileName);
+	WritePrivateProfileString("Settings", "IgnoreFellowship", bIgnoreFellowship ? "on" : "off", INIFileName);
+	WritePrivateProfileString("Settings", "IgnoreRaid", bIgnoreRaid ? "on" : "off", INIFileName);
 	if (pWindow->IsMinimized())
 	{
 		WritePrivateProfileString(szSayINISection, "SayTop", SafeItoa(pWindow->GetOldLocation().top, szTemp, 10), INIFileName);
@@ -556,7 +602,7 @@ void MQSay(PSPAWNINFO pChar, PCHAR Line)
 		WriteChatf("[\arMQ2Say\ax] \awPlugin is:\ax %s", bSayStatus ? "\agOn\ax" : "\arOff\ax");
 		WriteChatf("Usage: /mqsay <on/off>");
 		WriteChatf("/mqsay [Option Name] <value/on/off>");
-		WriteChatf("Valid options are Reset, Clear, Alerts, Autoscroll, IgnoreDelay, Reload, Timestamps, Title");
+		WriteChatf("Valid options are Reset, Clear, Alerts, Autoscroll, IgnoreDelay, Fellowship, Group, Guild, Raid, Reload, Timestamps, Title");
 		return;
 	}
 	//user wants to adjust Say Status
@@ -787,7 +833,122 @@ void MQSay(PSPAWNINFO pChar, PCHAR Line)
 		WritePrivateProfileString("Settings", "SaveByChar", bSaveByChar ? "on" : "off", INIFileName);
 		return;
 	}
-	WriteChatf("%s was not a valid option. Valid options are Reset, Clear, Alerts, Autoscroll, IgnoreDelay, Reload, Timestamps, Title", Arg);
+	//Should the user ignore group members.
+	if (!_stricmp(Arg, "Group"))
+	{
+		GetArg(Arg, Line, 2);
+		if (Arg[0] == '\0')
+		{
+			WriteChatf("Group is currently: %s", (bIgnoreGroup ? "\agOn" : "\arOff"));
+			return;
+		}
+		//turn it on.
+		if (!_stricmp(Arg, "on"))
+		{
+			bIgnoreGroup = true;
+			WriteChatf("Group is now: \agOn.");
+		}
+		//turn it off.
+		else if (!_stricmp(Arg, "off"))
+		{
+			bIgnoreGroup = false;
+			WriteChatf("Group is now: \arOff.");
+		}
+		else
+		{
+			WriteChatf("Usage: /mqsay group [on | off]\n IE: /mqsay group on");
+		}
+		WritePrivateProfileString("Settings", "IgnoreGroup", bIgnoreGroup ? "on" : "off", INIFileName);
+		return;
+	}
+
+	//Should the user ignore their own guild.
+	if (!_stricmp(Arg, "Guild"))
+	{
+		GetArg(Arg, Line, 2);
+		if (Arg[0] == '\0')
+		{
+			WriteChatf("Guild is currently: %s", (bIgnoreGuild ? "\agOn" : "\arOff"));
+			return;
+		}
+		//turn it on.
+		if (!_stricmp(Arg, "on"))
+		{
+			bIgnoreGuild = true;
+			WriteChatf("Guild is now: \agOn.");
+		}
+		//turn it off.
+		else if (!_stricmp(Arg, "off"))
+		{
+			bIgnoreGuild = false;
+			WriteChatf("Guild is now: \arOff.");
+		}
+		else
+		{
+			WriteChatf("Usage: /mqsay Guild [on | off]\n IE: /mqsay Guild on");
+		}
+		WritePrivateProfileString("Settings", "IgnoreGuild", bIgnoreGuild ? "on" : "off", INIFileName);
+		return;
+	}
+
+	//Should the user ignore their own Fellowship.
+	if (!_stricmp(Arg, "Fellowship"))
+	{
+		GetArg(Arg, Line, 2);
+		if (Arg[0] == '\0')
+		{
+			WriteChatf("Fellowship is currently: %s", (bIgnoreFellowship ? "\agOn" : "\arOff"));
+			return;
+		}
+		//turn it on.
+		if (!_stricmp(Arg, "on"))
+		{
+			bIgnoreFellowship = true;
+			WriteChatf("Fellowship is now: \agOn.");
+		}
+		//turn it off.
+		else if (!_stricmp(Arg, "off"))
+		{
+			bIgnoreFellowship = false;
+			WriteChatf("Fellowship is now: \arOff.");
+		}
+		else
+		{
+			WriteChatf("Usage: /mqsay Fellowship [on | off]\n IE: /mqsay Fellowship on");
+		}
+		WritePrivateProfileString("Settings", "IgnoreFellowship", bIgnoreFellowship ? "on" : "off", INIFileName);
+		return;
+	}
+
+	//Should the user ignore their own Raid.
+	if (!_stricmp(Arg, "Raid"))
+	{
+		GetArg(Arg, Line, 2);
+		if (Arg[0] == '\0')
+		{
+			WriteChatf("Raid is currently: %s", (bIgnoreRaid ? "\agOn" : "\arOff"));
+			return;
+		}
+		//turn it on.
+		if (!_stricmp(Arg, "on"))
+		{
+			bIgnoreRaid = true;
+			WriteChatf("Raid is now: \agOn.");
+		}
+		//turn it off.
+		else if (!_stricmp(Arg, "off"))
+		{
+			bIgnoreRaid = false;
+			WriteChatf("Raid is now: \arOff.");
+		}
+		else
+		{
+			WriteChatf("Usage: /mqsay Raid [on | off]\n IE: /mqsay Raid on");
+		}
+		WritePrivateProfileString("Settings", "IgnoreRaid", bIgnoreRaid ? "on" : "off", INIFileName);
+		return;
+	}
+	WriteChatf("%s was not a valid option. Valid options are Reset, Clear, Alerts, Autoscroll, IgnoreDelay, Fellowship, Group, Guild, Raid, Reload, Timestamps, Title", Arg);
 }
 
 PLUGIN_API VOID OnReloadUI()
@@ -849,14 +1010,14 @@ PLUGIN_API DWORD OnIncomingChat(PCHAR Line, DWORD Color)
 		}
 	switch (Color)
 	{
-		case 256://Color: 256 - Other player /say messages
-			DoAlerts(Line);
+	case 256://Color: 256 - Other player /say messages
+		DoAlerts(Line);
 		break;
 	default:
 		//Don't Know these, lets see what it is.
 		if (bSayDebug) WriteChatf("[\ar%i\ax]\a-t: \ap%s", Color, Line);
-			break;
-		}
+		break;
+	}
 	return 0;
 	}
 
