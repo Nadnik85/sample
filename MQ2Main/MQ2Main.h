@@ -65,7 +65,7 @@ GNU General Public License for more details.
 #if !defined(ISXEQ) && !defined(ISXEQ_LEGACY)
 // MQ2
 #include "..\Dxsdk90\include\dinput.h"
-#include "..\Detours\inc\detours.h" 
+#include "..\Detours\inc\detours.h"
 #include "..\Blech\Blech.h"
 #elif !defined(ISXEQ_LEGACY)
 // ISXEQ
@@ -101,10 +101,10 @@ extern CRITICAL_SECTION gPluginCS;
 #endif
 #if defined(LIVE)
 #include "eqgame.h"
-//#define NEWCHARINFO
+#define NEWCHARINFO
 #elif defined(TEST)
 #include "eqgame(Test).h"
-//#define NEWCHARINFO
+#define NEWCHARINFO
 #elif defined(EQBETA)
 #include "eqgame(beta).h"
 #define NEWCHARINFO
@@ -113,6 +113,7 @@ extern CRITICAL_SECTION gPluginCS;
 //#define NEWCHARINFO
 #elif defined(UFEMU)
 #include "eqgame(uf).h"
+//#define NEWCHARINFO
 #endif
 #ifndef ISXEQ
 #define RETURN(x) return;
@@ -463,7 +464,6 @@ LEGACY_API int FindMQ2DataTypeMemberSize(PCHAR Name);
 LEGACY_API bool FindMQ2DataTypeMemberName(PCHAR Name, DWORD index, PCHAR Out, size_t OutSize);
 LEGACY_API DWORD FindMQ2DataTypeMemberID(PCHAR Name, DWORD index);
 LEGACY_API PMQ2DATAITEM FindMQ2Data(PCHAR szName);
-LEGACY_API PDATAVAR FindMQ2DataVariable(PCHAR szName);
 LEGACY_API BOOL ParseMQ2DataPortion(PCHAR szOriginal, MQ2TYPEVAR &Result);
 LEGACY_API bool AddMQ2TypeExtension(const char* typeName, MQ2Type* extension);
 LEGACY_API bool RemoveMQ2TypeExtension(const char* typeName, MQ2Type* extension);
@@ -564,6 +564,7 @@ EQLIB_API PSPELL GetSpellByAAName(PCHAR szName);
 EQLIB_API PSPELL GetSpellByAAName(PCHAR szName);
 EQLIB_API PALTABILITY GetAAByIdWrapper(int nAbilityId, int playerLevel = -1);
 EQLIB_API DWORD GetSpellRankByName(PCHAR SpellName);
+EQLIB_API bool HasExpansion(DWORD nExpansion);
 EQLIB_API VOID TruncateSpellRankName(PCHAR SpellName);
 EQLIB_API VOID RemoveBuff(PSPAWNINFO pChar, PCHAR szLine);
 EQLIB_API VOID RemovePetBuff(PSPAWNINFO pChar, PCHAR szLine);
@@ -636,7 +637,7 @@ EQLIB_API __int64 GetGuildIDByName(PCHAR szGuild);
 EQLIB_API PCHAR GetGuildByID(DWORD GuildID);
 EQLIB_API DWORD GetGuildIDByName(PCHAR szGuild);
 #endif
-extern std::map<int, std::string>targetBuffSlotToCasterMap; 
+extern std::map<int, std::string>targetBuffSlotToCasterMap;
 extern std::map<int, std::map<int,cTargetBuff>>CachedBuffsMap;
 EQLIB_API PCONTENTS GetEnviroContainer();
 EQLIB_API CContainerWnd *FindContainerForContents(PCONTENTS pContents);
@@ -710,7 +711,7 @@ EQLIB_API bool LoH_HT_Ready();
 #ifndef ISXEQ
 LEGACY_API PCHAR GetFuncParam(PCHAR szMacroLine, DWORD ParamNum, PCHAR szParamName, size_t ParamNameLen, PCHAR szParamType, size_t ParamTypeLen);
 //LEGACY_API PCHAR GetFuncParam(PCHAR szMacroLine, DWORD ParamNum, PCHAR szParamName, PCHAR szParamType);
-LEGACY_API PDATAVAR FindMQ2DataVariable(PCHAR Name);
+LEGACY_API PDATAVAR FindMQ2DataVariable(PCHAR Name, bool bExact = true);
 LEGACY_API BOOL AddMQ2DataVariable(PCHAR Name, PCHAR Index, MQ2Type *pType, PDATAVAR *ppHead, PCHAR Default);
 LEGACY_API BOOL AddMQ2DataVariableFromData(PCHAR Name, PCHAR Index, MQ2Type *pType, PDATAVAR *ppHead, MQ2TYPEVAR Default);
 LEGACY_API PDATAVAR *FindVariableScope(PCHAR Name);
@@ -791,7 +792,6 @@ EQLIB_API DWORD       GetWorldState(VOID);
 EQLIB_API float       GetMeleeRange(class EQPlayer *, class EQPlayer *);
 EQLIB_API DWORD       GetSpellGemTimer(DWORD nGem);
 EQLIB_API DWORD       GetSpellBuffTimer(DWORD SpellID);
-EQLIB_API bool        HasExpansion(DWORD nExpansion);
 EQLIB_API VOID		  ListMercAltAbilities();
 EQLIB_API PCONTENTS	  FindItemBySlot(short InvSlot, short BagSlot = -1, ItemContainerInstance location = eItemContainerPossessions);
 EQLIB_API PCONTENTS	  FindItemByName(PCHAR pName, BOOL bExact = false);
@@ -857,6 +857,14 @@ LEGACY_API BOOL Calculate(PCHAR szFormula, DOUBLE& Dest);
 // Given a string that contains a number, make the number "pretty" by adding things like
 // comma separators, or decimals.
 EQLIB_API void PrettifyNumber(char* string, size_t bufferSize, int decimals = 0);
+
+//
+enum class GetMoneyFromStringFormat {
+	Long = 0,       // e.g. pp, gp, sp, cp
+	Short = 1,      // e.g. p, g, s, c
+};
+EQLIB_API uint64_t GetMoneyFromString(const char* string, GetMoneyFromStringFormat format = GetMoneyFromStringFormat::Long);
+EQLIB_API void FormatMoneyString(char* szBuffer, size_t bufferLength, uint64_t moneyAmount, GetMoneyFromStringFormat format = GetMoneyFromStringFormat::Long);
 
 #ifndef ISXEQ
 #include "MQ2TopLevelObjects.h"
@@ -992,9 +1000,11 @@ EQLIB_API AggroMeterManagerClient *GetAggroInfo();
 EQLIB_API ClientSOIManager *GetAuraMgr();
 EQLIB_API CBroadcast *GetTextOverlay();
 EQLIB_API MercenaryAlternateAdvancementManagerClient *GetMercAltAbilities();
-EQLIB_API bool Anonymize(char *name, int maxlen, int NameFlag = 0);
+EQLIB_API bool Anonymize(char *name, int maxlen, int bNameFlag = 0);
 EQLIB_API void UpdatedMasterLooterLabel();
 //EQLIB_API EQGroundItemListManager *GetItemList();
+
+EQLIB_API bool TargetBuffCastByMe(const char* pBuff);
 
 EQLIB_API int MQ2ExceptionFilter(unsigned int code, struct _EXCEPTION_POINTERS* ex, const char * description, ...);
 inline PCHAR ISXEQArgToMQ2Arg(int argc, char *argv[], char *szTemp, size_t size)
@@ -1010,4 +1020,60 @@ inline PCHAR ISXEQArgToMQ2Arg(int argc, char *argv[], char *szTemp, size_t size)
 }
 #define LODWORD(_qw)    ((DWORD)(_qw))
 #define HIDWORD(_qw)    ((DWORD)(((_qw) >> 32) & 0xffffffff))
+#include <memory>
+
+// Provides Alloc and Free methods that use the everquest heap. This is to allow
+// us to allocate memory in a way that can later be freed by everquest later on.
+// This enables us to do things like create new strings or modify existing strings,
+// insert elements into containers, etc.
+
+namespace eqlib {
+
+// allocate memory as if by using eq's malloc.
+using eqAllocFn = void* (*)(std::size_t amount);
+extern EQLIB_OBJECT eqAllocFn eqAlloc;
+
+// free memory as if by using eq's free.
+using eqFreeFn = void (*)(void*);
+extern EQLIB_OBJECT eqFreeFn eqFree;
+EQLIB_API void InitializeEQLib();
+// c++17 based custom allocator for creating objects on eq's heap
+template <typename T>
+struct everquest_allocator
+{
+	using value_type = T;
+	using propogate_on_container_move_assignment = std::true_type;
+	using is_always_equal = std::true_type;
+
+	everquest_allocator() noexcept {}
+	everquest_allocator(const everquest_allocator&) noexcept {}
+	~everquest_allocator() {}
+
+	template <class U>
+	everquest_allocator(const everquest_allocator<U>&) noexcept {}
+
+	T* allocate(std::size_t count)
+	{
+		return reinterpret_cast<T*>(eqAlloc(size * sizeof(T)));
+	}
+
+	void deallocate(T* p, size_t)
+	{
+		eqFree(p);
+	}
+};
+
+template <typename T>
+bool operator==(const everquest_allocator<T>&, const everquest_allocator<T>&) noexcept
+{
+	return true;
+}
+
+template <typename T>
+bool operator!=(const everquest_allocator<T>&, const everquest_allocator<T>&) noexcept
+{
+	return false;
+}
+
+} // namespace eqlib
 #pragma pack(pop)

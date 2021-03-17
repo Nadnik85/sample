@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
 	}
 
 	if (giveusage==1) {
-		fprintf(stderr, "Usage: "PROG_NAME" [options]\n");
+		fprintf(stderr, "Usage: %s [options]\n", PROG_NAME);
 		fprintf(stderr, "  Options are as follows:\n");
 		fprintf(stderr, "  -?       \tDisplay this help message.\n");
 		fprintf(stderr, "  -p <port>\tPort to listen on.\n");

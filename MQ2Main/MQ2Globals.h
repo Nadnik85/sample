@@ -585,7 +585,7 @@ namespace MQ2Globals
 	EQLIB_VAR CChatManager **ppChatManager;
 	EQLIB_VAR CConfirmationDialog **ppConfirmationDialog;
 
-	EQLIB_VAR CFacePick **ppFacePick;
+	EQLIB_VAR CPlayerCustomizationWnd **ppPlayerCustomizationWnd;
 	EQLIB_VAR CFactionWnd **ppFactionWnd;
 	EQLIB_VAR CExtendedTargetWnd **ppExtendedTargetWnd;
 
@@ -621,8 +621,10 @@ namespace MQ2Globals
 	EQLIB_VAR CBreathWnd **ppBreathWnd;
 	EQLIB_VAR CMapToolbarWnd **ppMapToolbarWnd;
 	EQLIB_VAR CMapViewWnd **ppMapViewWnd;
+	EQLIB_VAR CMarketplaceWnd **ppMarketplaceWnd;
 	EQLIB_VAR CEditLabelWnd **ppEditLabelWnd;
 	EQLIB_VAR COptionsWnd **ppOptionsWnd;
+	EQLIB_VAR COverseerWnd **ppOverseerWnd;
 	EQLIB_VAR CBuffWindow **ppBuffWindowNORMAL;
 	EQLIB_VAR CBuffWindow **ppBuffWindowSHORT;
 	EQLIB_VAR CTargetWnd **ppTargetWnd;
@@ -630,6 +632,7 @@ namespace MQ2Globals
 	EQLIB_VAR CCombatSkillsSelectWnd **ppCombatSkillsSelectWnd;
 	EQLIB_VAR CHotButtonWnd **ppHotButtonWnd;
 	EQLIB_VAR CPlayerWnd **ppPlayerWnd;
+	EQLIB_VAR CPurchaseGroupWnd **ppPurchaseGroupWnd;
 	EQLIB_VAR CCastingWnd **ppCastingWnd;
 	EQLIB_VAR CCastSpellWnd **ppCastSpellWnd;
 	EQLIB_VAR CSpellBookWnd **ppSpellBookWnd;
@@ -674,8 +677,10 @@ namespace MQ2Globals
 	EQLIB_VAR CPotionBeltWnd **ppPotionBeltWnd;
 	#endif
 	EQLIB_VAR CBandolierWnd **ppBandolierWnd;
+#if defined(ROF2EMU) || defined(UFEMU)
 	EQLIB_VAR CWebManager **ppCWebManager;
 	#define pCWebManager (*ppCWebManager)
+#endif
 	EQLIB_VAR CTaskWnd **ppTaskWnd;
 	EQLIB_VAR CTaskManager *ppTaskManager;
 	#define pTaskManager (*ppTaskManager)
@@ -701,7 +706,7 @@ namespace MQ2Globals
 #define pContainerMgr (*ppContainerMgr)
 #define pChatManager (*ppChatManager)
 #define pEQSuiteTextureLoader (ppEQSuiteTextureLoader)
-#define pFacePick (*ppFacePick)
+#define pPlayerCustomizationWnd (*ppPlayerCustomizationWnd)
 #define pFactionWnd (*ppFactionWnd)
 #define pExtendedTargetWnd (*ppExtendedTargetWnd)
 #if !defined(ROF2EMU) && !defined(UFEMU)
@@ -735,8 +740,10 @@ namespace MQ2Globals
 #define pBreathWnd (*ppBreathWnd)
 #define pMapToolbarWnd (*ppMapToolbarWnd)
 #define pMapViewWnd (*ppMapViewWnd)
+#define pMarketplaceWnd (*ppMarketplaceWnd)
 #define pEditLabelWnd (*ppEditLabelWnd)
 #define pOptionsWnd (*ppOptionsWnd)
+#define pOverseerWnd (*ppOverseerWnd)
 #define pBuffWnd (*ppBuffWindowNORMAL)
 #define pSongWnd (*ppBuffWindowSHORT)
 #define pTargetWnd (*ppTargetWnd)
@@ -745,6 +752,7 @@ namespace MQ2Globals
 #define pCombatSkillsSelectWnd (*ppCombatSkillsSelectWnd)
 #define pHotButtonWnd (*ppHotButtonWnd)
 #define pPlayerWnd (*ppPlayerWnd)
+#define pPurchaseGroupWnd (*ppPurchaseGroupWnd)
 #define pCastingWnd (*ppCastingWnd)
 #define pCastSpellWnd (*ppCastSpellWnd)
 #define pSpellBookWnd (*ppSpellBookWnd)
@@ -956,7 +964,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD pinstCAudioTriggersWindow;
 	EQLIB_VAR DWORD pinstCCharacterListWnd;
 	EQLIB_VAR DWORD pinstCExtendedTargetWnd;
-	EQLIB_VAR DWORD pinstCFacePick;
+	EQLIB_VAR DWORD pinstCPlayerCustomizationWnd;
 	EQLIB_VAR DWORD pinstCFactionWnd;
 	EQLIB_VAR DWORD pinstCFindItemWnd;
 	EQLIB_VAR DWORD pinstCNoteWnd;
@@ -982,13 +990,16 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD pinstCRaidOptionsWnd;
 	EQLIB_VAR DWORD pinstCBreathWnd;
 	EQLIB_VAR DWORD pinstCMapViewWnd;
+	EQLIB_VAR DWORD pinstCMarketplaceWnd;
 	EQLIB_VAR DWORD pinstCMapToolbarWnd;
 	EQLIB_VAR DWORD pinstCEditLabelWnd;
 	EQLIB_VAR DWORD pinstCTargetWnd;
 	EQLIB_VAR DWORD pinstCColorPickerWnd;
 	EQLIB_VAR DWORD pinstCCombatSkillsSelectWnd;
 	EQLIB_VAR DWORD pinstCPlayerWnd;
+	EQLIB_VAR DWORD pinstCPurchaseGroupWnd;
 	EQLIB_VAR DWORD pinstCOptionsWnd;
+	EQLIB_VAR DWORD pinstCOverseerWnd;
 	EQLIB_VAR DWORD pinstCBuffWindowNORMAL;
 	EQLIB_VAR DWORD pinstCBuffWindowSHORT;
 	EQLIB_VAR DWORD pinstCharacterCreation;
@@ -1074,7 +1085,9 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD pinstCAdvancedLootWnd;
 	EQLIB_VAR DWORD pinstCContextMenuManager;
 	EQLIB_VAR DWORD pinstCVoiceMacroWnd;
+	#if defined(ROF2EMU) || defined(UFEMU)
 	EQLIB_VAR DWORD pinstCWebManager;
+	#endif
 	EQLIB_VAR DWORD pinstItemIconCache;
 	EQLIB_VAR DWORD pinstRewardSelectionWnd;
 	EQLIB_VAR DWORD pinstCConfirmationDialog;
@@ -1105,6 +1118,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD __HeadingDiff;
 	EQLIB_VAR DWORD __HelpPath;
 	EQLIB_VAR DWORD __LoadFrontEnd;
+	EQLIB_VAR DWORD __ExecuteFrontEnd;
 	EQLIB_VAR DWORD __NewUIINI;
 	EQLIB_VAR DWORD __pCrashHandler;
 	EQLIB_VAR DWORD __ProcessGameEvents;
@@ -1162,6 +1176,9 @@ namespace MQ2Globals
 	
 	EQLIB_VAR DWORD CBankWnd__GetNumBankSlots;
 	EQLIB_VAR DWORD CBankWnd__WndNotification;
+	EQLIB_VAR DWORD CBarterSearchWnd__WndNotification;
+	EQLIB_VAR DWORD CBarterSearchWnd__UpdateInventoryList;
+	EQLIB_VAR DWORD CBarterWnd__WndNotification;
 	#if !defined(ROF2EMU) && !defined(UFEMU)
 	EQLIB_VAR DWORD CFindItemWnd__WndNotification;
 	EQLIB_VAR DWORD CFindItemWnd__Update;
@@ -1351,7 +1368,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD CItemDisplayWnd__CItemDisplayWnd;
 	EQLIB_VAR DWORD CItemDisplayWnd__dCItemDisplayWnd;
 	
-	EQLIB_VAR DWORD CLabel__Draw;
+	EQLIB_VAR DWORD CLabel__UpdateText;
 
 	EQLIB_VAR DWORD CListWnd__CListWnd;
 	EQLIB_VAR DWORD CListWnd__dCListWnd;
@@ -1380,6 +1397,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD CListWnd__GetCurSel;
 	EQLIB_VAR DWORD CListWnd__GetItemAtPoint;
 	EQLIB_VAR DWORD CListWnd__GetItemAtPoint1;
+	EQLIB_VAR DWORD CListWnd__GetItemColor;
 	EQLIB_VAR DWORD CListWnd__GetItemData;
 	EQLIB_VAR DWORD CListWnd__GetItemHeight;
 	EQLIB_VAR DWORD CListWnd__GetItemIcon;
@@ -1410,7 +1428,8 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD CMapViewWnd__CMapViewWnd;
     EQLIB_VAR DWORD CMapViewWnd__GetWorldCoordinates;
     EQLIB_VAR DWORD CMapViewWnd__HandleLButtonDown;
-
+    EQLIB_VAR DWORD CMapViewWnd__WndNotification;
+	
 	EQLIB_VAR DWORD CMerchantWnd__DisplayBuyOrSellPrice;
 	EQLIB_VAR DWORD CMerchantWnd__PurchasePageHandler__RequestGetItem;
 	EQLIB_VAR DWORD CMerchantWnd__PurchasePageHandler__RequestPutItem;
@@ -1428,6 +1447,8 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD CSidlManager__CreateXWndFromTemplate1;
 	EQLIB_VAR DWORD CSidlManager__CreateXWnd;
 	EQLIB_VAR DWORD CSidlManager__CreateHotButtonWnd;
+
+	EQLIB_VAR DWORD CSidlManagerbase__CreateXWnd;
 	
 	EQLIB_VAR DWORD CSidlScreenWnd__CalculateHSBRange;
 	EQLIB_VAR DWORD CSidlScreenWnd__CalculateVSBRange;
@@ -1535,6 +1556,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD CXStr__GetLength;
 	EQLIB_VAR DWORD CXStr__Mid;
 	EQLIB_VAR DWORD CXStr__Insert;
+	EQLIB_VAR DWORD CXStr__Copy;
 	EQLIB_VAR DWORD CXStr__FindNext;
 
 	EQLIB_VAR DWORD CXWnd__BringToTop;
@@ -1607,6 +1629,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD EQ_Character__GetAdjustedSkill;
 	EQLIB_VAR DWORD EQ_Character__GetBaseSkill;
 	EQLIB_VAR DWORD EQ_Character__CanUseItem;
+	EQLIB_VAR DWORD EQ_Character__CanMedOnHorse;
 	EQLIB_VAR DWORD BaseProfile__GetItemPossession;
 	
 	EQLIB_VAR DWORD ArrayClass__DeleteElement;
@@ -1642,7 +1665,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD EQ_Item__CanGoInBag;
 	EQLIB_VAR DWORD EQ_Item__IsEmpty;
 	EQLIB_VAR DWORD EQ_Item__GetMaxItemCount;
-	EQLIB_VAR DWORD EQ_Item__GetAugmentFitBySlot;
+	EQLIB_VAR DWORD EQ_Item__CanGemFitInSlot;
 	
 	EQLIB_VAR DWORD EQ_LoadingS__SetProgressBar;
 	EQLIB_VAR DWORD EQ_LoadingS__Array;
@@ -1770,12 +1793,13 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD EQ_Spell__SpellAffectBase;
 	EQLIB_VAR DWORD EQ_Spell__IsNoRemove;
 	EQLIB_VAR DWORD EQ_Spell__IsDegeneratingLevelMod;
-
+	EQLIB_VAR DWORD EQ_Spell__IsLullSpell;
+	
 	EQLIB_VAR DWORD EQSpellStrings__GetString;
 	
 	EQLIB_VAR DWORD __IsResEffectSpell;
 	EQLIB_VAR DWORD EQ_Affect__GetAffectData;
-
+	EQLIB_VAR DWORD EQ_Affect__SetAffectData;
 	EQLIB_VAR DWORD CharacterZoneClient__CalcAffectChangeGeneric;
 	EQLIB_VAR DWORD CharacterZoneClient__GetFocusReuseMod;
 	EQLIB_VAR DWORD CharacterZoneClient__CalcAffectChange;
@@ -1797,6 +1821,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD ActorClient__GetPosition1;
 	EQLIB_VAR DWORD CTextureAnimation__SetCurCell;
 	EQLIB_VAR DWORD CTextureAnimation__Draw;
+	EQLIB_VAR DWORD CTextureAnimation__AddBlankFrame;
 	EQLIB_VAR DWORD CTAFrameDraw__Draw; 
 	EQLIB_VAR DWORD CSidlManager__FindAnimation1;
 	EQLIB_VAR DWORD msg_spell_worn_off;
@@ -1814,6 +1839,7 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD CLargeDialogWnd__Open;
 	EQLIB_VAR DWORD CWndDisplayManager__FindWindowA;
 	EQLIB_VAR DWORD CItemDisplayManager__CreateWindowInstance;
+	EQLIB_VAR DWORD CItemDisplayManager__ShowItem;
 	EQLIB_VAR DWORD CCursorAttachment__AttachToCursor;
 	EQLIB_VAR DWORD CCursorAttachment__AttachToCursor1;
 	EQLIB_VAR DWORD CCursorAttachment__Deactivate;
@@ -1821,6 +1847,8 @@ namespace MQ2Globals
 	EQLIB_VAR DWORD CEQSuiteTextureLoader__GetTexture;
 	EQLIB_VAR DWORD CSidlManagerBase__FindButtonDrawTemplate;
 	EQLIB_VAR DWORD CSidlManagerBase__FindButtonDrawTemplate1;
+	EQLIB_VAR DWORD __eq_new;
+	EQLIB_VAR DWORD __eq_delete;
 	EQLIB_VAR DWORD __eqgraphics_fopen;
 
 	const std::string PARSE_PARAM_BEG = "${Parse[";

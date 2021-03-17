@@ -6,13 +6,14 @@
 // and Shutdown for setup and cleanup, do NOT do it in DllMain.
 // 2.1 Added enums for menu and go to menu item
 // 2.2 Added fix from dannuic/knightly to stop clearing target when using hotbuttons.
+// 2.3 Added a fix for stopping movement by Freezerburn26
 
 #include "../MQ2Plugin.h"
 #include "resource.h"
 
 PreSetup("MQ2TargetInfo");
-PLUGIN_VERSION(2.0);
-
+PLUGIN_VERSION(2.3);
+#include <Shellapi.h>
 enum TI_MenuCommands
 {
 	TIMC_MakeMeLeader = 54,
@@ -128,6 +129,11 @@ public:
 			if (pTarget) {
 				phinfo pinf;
 				if (GetPhMap((PSPAWNINFO)pTarget, &pinf)) {
+
+					#if !defined(ROF2EMU) && !defined(UFEMU)
+					std::string url = pinf.Link;
+					ShellExecute(NULL, "open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
+					#else
 					std::string url = "https://webproxy.to/browse.php?b=4&u=";
 					url.append(pinf.Link);// https://eqresource.com&b=4";
 					//std::string url = "https://www.google.com/search?q=";
@@ -137,6 +143,7 @@ public:
 					{
 						//Beep(1000, 100);
 					}
+					#endif
 				}
 			}
 		}
@@ -714,16 +721,6 @@ void ReadIniSettings()
 		CHAR szTemp[MAX_STRING] = { 0 };
 		sprintf_s(szTemp, "%.1f", MQ2Version);
 		WritePrivateProfileString("Default", "PluginVersion", szTemp, INIFileName);
-	}
-	else {
-		CHAR szTemp[MAX_STRING] = { 0 };
-		sprintf_s(szTemp, "%.1f", MQ2Version);
-		//they match do nothing
-		if (_stricmp(szTemp, szVersion))
-		{
-			//they dont match update ini.
-			ResetIni();
-		}
 	}
 	ret = GetPrivateProfileInt("Default", "UsePerCharSettings", -1, INIFileName);
 	gBUsePerCharSettings = (ret == 0 ? FALSE : TRUE);
@@ -1416,7 +1413,7 @@ void Initialize()
 }
 
 int rightclickindex = -1;
-void StopMovement(bool bChange = true)
+void StopMovement(bool bChange = true, bool bStopNav = true)
 {
 	if (bChange)
 	{
@@ -1434,13 +1431,17 @@ void StopMovement(bool bChange = true)
 			else if (GetModuleHandle("mq2eqbc"))
 				DoCommandf("/squelch /bcg //squelch /stick off");
 		}
-		if (GetModuleHandle("mq2nav"))
+		if (!bStopNav)
 		{
-			if (GetModuleHandle("mq2dannet"))
-				DoCommandf("/squelch /dgge /squelch /nav stop");
-			else if (GetModuleHandle("mq2eqbc"))
-				DoCommandf("/squelch /bcg //squelch /nav stop");
+			if (GetModuleHandle("mq2nav"))
+			{
+				if (GetModuleHandle("mq2dannet"))
+					DoCommandf("/squelch /dgge /squelch /nav stop");
+				else if (GetModuleHandle("mq2eqbc"))
+					DoCommandf("/squelch /bcg //squelch /nav stop");
+			}
 		}
+		
 		//
 		FollowMeButton->Checked = false;
 		gbFollowme = false;
@@ -1611,7 +1612,7 @@ public:
 				{
 					return 1;
 				}
-				StopMovement();
+				StopMovement(true,false);
 				CHAR szMe[MAX_STRING] = { 0 };
 				strcpy_s(szMe, szNavCommand);
 				ParseMacroData(szMe, MAX_STRING);
@@ -2100,7 +2101,7 @@ void CMD_GroupInfo(PSPAWNINFO pPlayer, char* szLine)
 		{
 			return;
 		}
-		StopMovement();
+		StopMovement(true,false);
 		CHAR szMe[MAX_STRING] = { 0 };
 		strcpy_s(szMe, szNavCommand);
 		ParseMacroData(szMe, MAX_STRING);

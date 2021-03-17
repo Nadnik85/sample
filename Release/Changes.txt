@@ -1,3 +1,264 @@
+Mar 16 2021
+- Added the eqlib namespace by brainiac so we can free and allocate memory using eqs heap.
+- Check bounds on notify select commands - Brainiac
+- Misc Fixes
+- Updated for TEST
+-
+Mar 10 2021
+- Fix GetMoneyFromString and make an exported global helper for FormatMoneyString to do the opposite. - Brainiac
+- Fixed a bug in mount detection - Brainiac
+- Fixed a crash when setting an invalid keybind - Brainiac
+- Updated for LIVE
+-
+Mar 05 2021
+- Changed CombatState so it's no longer dependant on the player window.
+- 
+Mar 04 2021
+- Fixed the SPELL struct this should fix a bunch of misc bugs.
+- Updated for TEST
+-
+Mar 03 2021
+- Updated for TEST
+-
+Feb 27 2021
+- Added pMarketplaceWnd and pPurchaseGroupWnd
+-
+Feb 27 2021
+- Added sorting capability to the /buyer buy lines list - Feature suggestion: Ladon
+- Added sorting capability to the /barter inventory list
+- Added a Value column to the /barter inventory list so we can sort by merchant value.
+- Added Rightclick on item feature to /barter inventory list so it opens up the inspect item window on click.
+-
+Feb 25 2021
+- Updated for TEST
+-
+Feb 22 2021
+- Fix for FreeInventory (and other spots where GetCurrentInvSlots() is called) - SwiftyMUSE - Brainiac
+- Everything is using the CHARINFONEW struct now, we will keep it like that for a couple patches then just remove old charinfo.
+- Fixed ${Me.Buff[buff name].Caster} so it works like ${Target.Buff[buff name].Caster} when you have yourself as target
+- Fixed a crash when right clicking fake labels on map
+- Fixed a crash when adding circles to the map using /maploc when pcconcolor was set to 1
+- Fixed a bug in setting mq2chatwnd location after zoning.
+-
+Feb 18 2021
+- Some Label fixes - brainiac/SwiftyMUSE
+-
+Feb 17 2021
+- Updated for LIVE
+-
+Feb 16 2021
+- Updated for TEST
+-
+Jan 30 2021
+- Fixed ${Me.PctExpToAA} ty cwtn for report
+-
+Jan 30 2021
+- Fixed a backwards compatability problem with CPageWnd::GetTabText and CStmlWnd::GetSTMLText for TEST
+  If you already changed your plugins to use STMLText.Ptr instead of just STMLText you can change it back.
+  Sorry for the inconvenience, it was a difficult patch which took several days to fix, 
+  I did not have time to think that change through until I had a good nights sleep.
+-
+Jan 29 2021
+- Updated for TEST ty to sic for helping finding offsets!
+-
+Jan 22 2021
+- Fixed a bug where if you did not have a charm item equipped ${Me.Bandolier[blah].Active} would always return false
+- Changed /doability so it now takes fake ID 1-6 where it previously only took 1-5 because people where confused when fake IDs did not work.
+	I strongly recommend you never use fake ID 1-8, it's incredibly stupid, just use the real name, for example /doability Hide
+	or the REAL ID which in the example of Hide is 29, so /doability 29
+- Made a change to ${Target.CanSplashLand} so it takes floor z into account as well as spawn z, this should fix some corner cases where a splashspell can land
+	even though npc z is under or over the floor. - Feature request: Kaen01
+- Changed ${Bazaar.Item[x].Trader} to return a stringtype
+- Fixed ${Me.Grouped} to correctly return FALSE instead of NULL when not in a group.
+- Made NUM_INV_SLOTS dynamic Use GetCurrentInvSlots() instead.
+-
+Jan 20 2021
+- Updated for LIVE
+-
+Jan 13 2021
+- Updated for TEST
+- The internal webbrowser is on vacation, it will return when it's ready to do so.
+- For now we will just have to open links in an external browser.
+-
+Dec 15 2020
+- Updated for TEST
+- Removed MAX_KEYRINGITEMS it was a guess at best from 2014 before we knew how the arrays where constructed.
+- pBankArray in CHARINFO is now a ItemBaseContainer named BankItems
+- pSharedBankArray in CHARINFO is now a ItemBaseContainer named SharedBankItems
+- pMercEquipment in CHARINFO is now a ItemBaseContainer named MercenaryItems
+- pMountsArray in CHARINFO is now a ItemBaseContainer named MountKeyRingItems
+- pIllusionsArray in CHARINFO is now a ItemBaseContainer named IllusionKeyRingItems
+- pFamiliarArray in CHARINFO is now a ItemBaseContainer named FamiliarKeyRingItems
+- pHeroForgeArray in CHARINFO is now a ItemBaseContainer named HeroForgeKeyRingItems
+-
+Dec 10 2020
+- Fixes to new alt currency - sic
+- Fixes for num expansions - CWTN
+- Fixed charselect save position of chatwindow (probably)
+- Fixed ZONE_COUNT, this should fix misc plugins that rely on it being correct.
+-
+Dec 08 2020
+- Updated for TEST
+- Updated for LIVE
+- Added .Move to the Window TLO Methods
+	Usage: /invoke ${Window[GroupWindow].Move[100,200,300,400]} ([x,y,width,height]) width and height are optional.
+- Added .SetBGColor to the Window TLO Methods
+	Usage: /invoke ${Window[GroupWindow].SetBGColor[0xFF000000]} ([argb])
+- Added .SetAlpha to the Window TLO Methods
+	Usage: /invoke ${Window[GroupWindow].SetAlpha[0xFF]} (0-0xFF)
+- Added .SetFadeAlpha to the Window TLO Methods
+	Usage: /invoke ${Window[GroupWindow].SetFadeAlpha[0xFF]} (0-0xFF)
+-
+Dec 07 2020
+- Updated for BETA
+- Fixed malo/tash detection problems - SwiftyMuse
+-
+Dec 06 2020
+- Updated for BETA
+-
+Dec 05 2020
+- Updated for BETA
+- Chatwindow at charselect now saves it's position independently from in game
+-
+Dec 04 2020
+- Updated for BETA
+-
+Dec 03 2020
+- Updated for BETA
+- Added WarforgedEmblem and RestlessMark Currencies - Sic
+- Added .Sharing to the fellowship tlo it returns true of false if exp sharing is on for the member - Sic
+	Usage: /echo ${Me.Fellowship.Sharing[x]} where x is fellowship member 1-12
+- Added .FindVariable to the Macro TLO it returns a string of the full variable name if it exist - requested by ctaylor22
+	Usage: /echo Macro.FindVariable[=Myvar]} for EXACT variable name
+	Return: Myvar
+	Usage: /echo Macro.FindVariable[Myvar]} for partial variable name
+	Return: Myvar01 (because it's partial and it found one named Myvar01)
+-
+Dec 02 2020
+- Updated for TEST
+- Updated for BETA
+- Added MarkNPC to the raid tlo -CWTN
+-
+Dec 01 2020
+- Updated for BETA
+-
+Nov 30 2020
+- Updated for BETA
+-
+Nov 29 2020
+- Updated for BETA
+-
+Nov 28 2020
+- Updated for BETA
+-
+Nov 27 2020
+- Updated for BETA
+-
+Nov 26 2020
+- Updated for BETA
+-
+Nov 25 2020
+- Updated for BETA
+-
+Nov 24 2020
+- Updated for BETA
+-
+Nov 23 2020
+- Updated for BETA
+-
+Nov 22 2020
+- Updated for BETA
+-
+Nov 21 2020
+- Updated for BETA
+-
+Nov 20 2020
+- Updated for BETA
+-
+Nov 19 2020
+- Updated for BETA
+- All instances of CFacePick has been changed to CPlayerCustomizationWnd
+- Fixed some misc UI offsets
+-
+Nov 18 2020
+- Updated for LIVE
+- Updated for BETA
+- Fixed a bug in mq2targetinfo that would reset the ini if the plugin version changed.
+-
+Nov 17 2020
+- Updated for BETA
+-
+Nov 16 2020
+- Updated for BETA
+-
+Nov 15 2020
+- Updated for BETA
+-
+Nov 14 2020
+- Updated for BETA
+- Updated for TEST
+-
+Nov 10 2020
+- Updated for BETA
+-
+Nov 09 2020
+- Updated for BETA
+-
+Nov 07 2020
+- Updated for BETA
+-
+Nov 06 2020
+- Updated for BETA
+-
+Nov 05 2020
+- Updated for TEST
+- Updated for BETA
+-
+Nov 04 2020
+- Updated for BETA
+-
+Nov 03 2020
+- Updated for BETA
+-
+Oct 31 2020
+- Fixed a few spell and spellmgr bugs, the struct is 1 byte aligned now, as it should be.
+-
+Oct 29 2020
+- Updated for BETA
+-
+Oct 28 2020
+- Updated for BETA
+-
+Oct 25 2020
+- Updated for BETA
+-
+Oct 24 2020
+- Updated for BETA
+-
+Oct 23 2020
+- Updated for BETA
+-
+Oct 22 2020
+- Updated for BETA
+-
+Oct 21 2020
+- Added raid to chat events - Cred Kaen01
+- Updated for LIVE
+- Updated for BETA
+-
+Oct 20 2020
+- Updated for BETA
+-
+Oct 19 2020
+- Updated for BETA
+-
+Oct 14 2020
+- Updated for TEST
+-
+Oct 13 2020
+- Updated for TEST
+- Added a fix for stopping movement in mq2targetinfo by Freezerburn26
+-
 Sep 23 2020
 - Updated for TEST
 -

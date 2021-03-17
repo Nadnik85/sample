@@ -308,6 +308,18 @@ int CPacketScrambler::ntoh_detour(int nopcode)
 	int hopcode = ntoh_tramp(nopcode);
 	if (hopcode == EQ_ASSIST_COMPLETE) {
 		DWORD calc = 0;
+#if defined(TEST) || defined (LIVE)
+		__asm {
+			push eax;
+			push ecx;
+			mov eax, dword ptr[ebx + 0x1b];
+			mov ecx, dword ptr[ebx + 0x17];
+			xor eax, ecx;
+			mov calc, eax;
+			pop ecx;
+			pop eax;
+		};
+#else
 		__asm {
 			push eax;
 			push ebx;
@@ -318,6 +330,7 @@ int CPacketScrambler::ntoh_detour(int nopcode)
 			pop ebx;
 			pop eax;
 		};
+#endif
 		DWORD assistflag = 0;
 		if (GetAssistCalc = (fGetAssistCalc)GetProcAddress(ghmq2ic, "GetAssistCalc")) {
 			assistflag = GetAssistCalc(calc);
@@ -518,7 +531,6 @@ VOID HookInlineChecks(BOOL Patch)
 #ifndef ISXEQ
 VOID HookMemChecker(BOOL Patch)
 {
-
 	// hit the debugger if we don't hook this
 	// take no chances
 	if ((!EQADDR_MEMCHECK0) ||
@@ -1330,19 +1342,50 @@ EQLIB_API VOID MQ2CrashCallBack(PCHAR DumpFile)
 
 #endif
 DETOUR_TRAMPOLINE_EMPTY(int LoadFrontEnd_Trampoline());
+PVOID pv = 0;
+ULONG op;
+
 #ifndef TESTMEM
 int LoadFrontEnd_Detour()
 {
-	gGameState = GetGameState();
-
-	DebugTry(Benchmark(bmPluginsSetGameState, PluginsSetGameState(gGameState)));
-
 	int ret = LoadFrontEnd_Trampoline();
-	if (ret) {//means it was loaded properly
-		InitializeLoginPulse();
-		PluginsSetGameState(GAMESTATE_POSTFRONTLOAD);
-	}
+	gGameState = GetGameState();
+	DebugTry(Benchmark(bmPluginsSetGameState, PluginsSetGameState(gGameState)));
 	return ret;
+}
+HANDLE ghFrontEnd = 0;
+DWORD __stdcall WaitForeqmain(PVOID pData)
+{
+	while (!GetModuleHandle("eqmain.dll"))
+	{
+		Sleep(10);
+		if (GetGameState() != GAMESTATE_PRECHARSELECT)
+			break;
+	}
+	if (GetGameState() == GAMESTATE_PRECHARSELECT)
+	{
+		Sleep(1000);//this is stupid we should replace this with a function that checks tht eqmain is fully loaded: todo
+		OutputDebugString("InitializeLoginPulse will be called\n");
+		PluginsSetGameState(GAMESTATE_POSTFRONTLOAD);
+		InitializeLoginPulse();
+	}
+	ghFrontEnd = 0;
+	return 0;
+}
+
+LONG NTAPI ExceptionHandler(::PEXCEPTION_POINTERS pep)
+{
+ 	if (pep->ExceptionRecord->ExceptionCode == STATUS_GUARD_PAGE_VIOLATION)
+	{
+		DWORD ThreadID = 0;
+		if (!ghFrontEnd)
+		{
+			ghFrontEnd = CreateThread(NULL, 0, WaitForeqmain, 0, 0, &ThreadID);
+		}
+		return EXCEPTION_CONTINUE_EXECUTION;
+	}
+
+	return EXCEPTION_CONTINUE_SEARCH;
 }
 #endif
 void InitializeMQ2Detours()
@@ -1367,14 +1410,27 @@ void InitializeMQ2Detours()
 	//EzDetourwName(CrashDetected, CrashDetected_Detour, CrashDetected_Trampoline,"CrashDetected");
 #endif
 #ifndef TESTMEM
+	//we don't need this detour anymore, we wil just add a one time guard page exception and add login pulse up when it's hit
+	#if defined(ROF2EMU) || defined(UFEMU)
 	EzDetourwName(__LoadFrontEnd, LoadFrontEnd_Detour, LoadFrontEnd_Trampoline,"__LoadFrontEnd");
+	#else
+	pv = AddVectoredExceptionHandler(TRUE, ExceptionHandler);
+	VirtualProtect((LPVOID)__ExecuteFrontEnd, 1, PAGE_EXECUTE_READWRITE|PAGE_GUARD, &op);
+	#endif
 #endif
 }
 
 void ShutdownMQ2Detours()
 {
-
+	#if !defined(ROF2EMU) && !defined(UFEMU)
+	RemoveVectoredExceptionHandler(pv);
+	ULONG tmp;
+	VirtualProtect((LPVOID)__ExecuteFrontEnd, 1, op, &tmp);
+	TerminateThread(ghFrontEnd, 0);
+	ghFrontEnd = 0;
+	#else
 	RemoveDetour(__LoadFrontEnd);
+	#endif
 #ifndef ISXEQ
 	HookMemChecker(FALSE);
 	RemoveOurDetours();

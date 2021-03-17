@@ -23,11 +23,30 @@
 		<Template>BDT_BigNormal</Template>
 	</Button>
 	
+	<Button item="CobaltScarTwoButton">
+	<ScreenID>CobaltScarTwoButton</ScreenID>
+	<Location>
+		<X>10</X>
+		<Y>40</Y>
+	</Location>
+	<Size>
+		<CX>240</CX>
+		<CY>24</CY>
+	</Size>
+	<Text>Cobalt Scar (CoV)</Text>
+	<TextColor>
+		<R>255</R>
+		<G>255</G>
+		<B>255</B>
+	</TextColor>
+	<Template>BDT_BigNormal</Template>
+	</Button>
+	
 	<Button item="EasternWastesTwoButton">
 	<ScreenID>EasternWastesTwoButton</ScreenID>
 	<Location>
 		<X>10</X>
-		<Y>40</Y>
+		<Y>70</Y>
 	</Location>
 	<Size>
 		<CX>240</CX>
@@ -46,7 +65,7 @@
     <ScreenID>OStratosButton</ScreenID>
     <Location>
       <X>10</X>
-      <Y>70</Y>
+      <Y>100</Y>
     </Location>
     <Size>
       <CX>240</CX>
@@ -66,7 +85,7 @@
     <ScreenID>OverthereButton</ScreenID>
     <Location>
       <X>10</X>
-      <Y>100</Y>
+      <Y>130</Y>
     </Location>
     <Size>
       <CX>240</CX>
@@ -85,7 +104,7 @@
     <ScreenID>LceaniumButton</ScreenID>
     <Location>
       <X>10</X>
-      <Y>130</Y>
+      <Y>160</Y>
     </Location>
     <Size>
       <CX>240</CX>
@@ -105,7 +124,7 @@
 		<ScreenID>KattaCastrumDelugeButton</ScreenID>
 		<Location>
 			<X>10</X>
-			<Y>165</Y>
+			<Y>189</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -125,7 +144,7 @@
 		<ScreenID>WestKaranaButton</ScreenID>
 		<Location>
 			<X>135</X>
-			<Y>165</Y>
+			<Y>189</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -145,7 +164,7 @@
 		<ScreenID>ShardsLandingButton</ScreenID>
 		<Location>
 			<X>10</X>
-			<Y>189</Y>
+			<Y>213</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -165,7 +184,7 @@
 		<ScreenID>ArgathButton</ScreenID>
 		<Location>
 			<X>135</X>
-			<Y>189</Y>
+			<Y>213</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -186,7 +205,7 @@
 		<ScreenID>FeerrottButton</ScreenID>
 		<Location>
 			<X>10</X>
-			<Y>213</Y>
+			<Y>237</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -206,7 +225,7 @@
 		<ScreenID>BrellsRestButton</ScreenID>
 		<Location>
 			<X>135</X>
-			<Y>213</Y>
+			<Y>237</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -226,7 +245,7 @@
 		<ScreenID>DragonscaleHillsButton</ScreenID>
 		<Location>
 			<X>10</X>
-			<Y>237</Y>
+			<Y>261</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -246,7 +265,7 @@
 		<ScreenID>PlaneOfTimeButton</ScreenID>
 		<Location>
 			<X>135</X>
-			<Y>237</Y>
+			<Y>261</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -266,7 +285,7 @@
 		<ScreenID>KattaCastrumButton</ScreenID>
 		<Location>
 			<X>10</X>
-			<Y>261</Y>
+			<Y>285</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -286,7 +305,7 @@
 		<ScreenID>GorukarMesaButton</ScreenID>
 		<Location>
 			<X>135</X>
-			<Y>261</Y>
+			<Y>285</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -306,7 +325,7 @@
 		<ScreenID>ArcstoneButton</ScreenID>
 		<Location>
 			<X>10</X>
-			<Y>285</Y>
+			<Y>309</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -326,7 +345,7 @@
 		<ScreenID>PlaneOfSkyButton</ScreenID>
 		<Location>
 			<X>135</X>
-			<Y>285</Y>
+			<Y>309</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -346,7 +365,7 @@
 		<ScreenID>CobaltScarButton</ScreenID>
 		<Location>
 			<X>10</X>
-			<Y>309</Y>
+			<Y>333</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -366,7 +385,7 @@
 		<ScreenID>PlaneOfHateButton</ScreenID>
 		<Location>
 			<X>135</X>
-			<Y>309</Y>
+			<Y>333</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -386,7 +405,7 @@
 		<ScreenID>BarinduButton</ScreenID>
 		<Location>
 			<X>10</X>
-			<Y>333</Y>
+			<Y>357</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -406,7 +425,7 @@
 		<ScreenID>WallOfSlaughterButton</ScreenID>
 		<Location>
 			<X>135</X>
-			<Y>333</Y>
+			<Y>357</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -426,7 +445,7 @@
 		<ScreenID>TwilightSeaButton</ScreenID>
 		<Location>
 			<X>10</X>
-			<Y>357</Y>
+			<Y>381</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -446,7 +465,7 @@
 		<ScreenID>UndershoreButton</ScreenID>
 		<Location>
 			<X>135</X>
-			<Y>357</Y>
+			<Y>381</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -466,7 +485,7 @@
 		<ScreenID>DreadlandsButton</ScreenID>
 		<Location>
 			<X>10</X>
-			<Y>381</Y>
+			<Y>405</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -486,7 +505,7 @@
 		<ScreenID>StonebruntButton</ScreenID>
 		<Location>
 			<X>135</X>
-			<Y>381</Y>
+			<Y>405</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -506,7 +525,7 @@
 		<ScreenID>IcecladOceanButton</ScreenID>
 		<Location>
 			<X>10</X>
-			<Y>405</Y>
+			<Y>429</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -526,7 +545,7 @@
 		<ScreenID>LavastormButton</ScreenID>
 		<Location>
 			<X>135</X>
-			<Y>405</Y>
+			<Y>429</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -546,7 +565,7 @@
 		<ScreenID>ToxxuliaButton</ScreenID>
 		<Location>
 			<X>10</X>
-			<Y>429</Y>
+			<Y>453</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -566,7 +585,7 @@
 		<ScreenID>NorthKaranaButton</ScreenID>
 		<Location>
 			<X>135</X>
-			<Y>429</Y>
+			<Y>453</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -586,7 +605,7 @@
 		<ScreenID>CommonlandsButton</ScreenID>
 		<Location>
 			<X>10</X>
-			<Y>453</Y>
+			<Y>477</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -606,7 +625,7 @@
 		<ScreenID>GreaterFaydarkButton</ScreenID>
 		<Location>
 			<X>135</X>
-			<Y>453</Y>
+			<Y>477</Y>
 		</Location>
 		<Size>
 			<CX>115</CX>
@@ -631,7 +650,7 @@
 		</Location>
 		<Size>
 			<CX>265</CX>
-			<CY>501</CY>
+			<CY>526</CY>
 		</Size>
 		<Text>Portal Setter</Text>
 		<TooltipReference />
@@ -642,6 +661,7 @@
 		<Style_Border>true</Style_Border>
 		<Style_Sizable>false</Style_Sizable>
 		
+		<Pieces>CobaltScarTwoButton</Pieces>
 		<Pieces>EasternWastesTwoButton</Pieces>
 		<Pieces>StratosButton</Pieces>
 		<Pieces>OverthereButton</Pieces>

@@ -439,6 +439,7 @@ BOOL AddMacroLine(PCHAR FileName, PCHAR szLine, size_t Linelen, int *LineNumber,
 			if (!_stricmp(szLine, "auc"))   gEventChat = gEventChat | CHAT_AUC;
 			if (!_stricmp(szLine, "guild")) gEventChat = gEventChat | CHAT_GUILD;
 			if (!_stricmp(szLine, "group")) gEventChat = gEventChat | CHAT_GROUP;
+			if (!_stricmp(szLine, "raid"))  gEventChat = gEventChat | CHAT_RAID;
 			if (!_stricmp(szLine, "chat"))  gEventChat = gEventChat | CHAT_CHAT;
 		}
 		else if (szLine[1] == '!') {
@@ -919,6 +920,7 @@ VOID EndMacro(PSPAWNINFO pChar, PCHAR szLine)
 		MacroError("Cannot end a macro when one isn't running.");
 		return;
 	}
+	pBlock->Paused = false;
 	/////////////// 
 	// Code allowing for a routine for "OnExit"
 	for (std::map<int, MACROLINE>::iterator i = pBlock->Line.begin(); i != pBlock->Line.end(); i++)

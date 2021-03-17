@@ -48,6 +48,7 @@ class CAchievementsWnd;
 class CRealEstateItemsWnd;
 class CAlarmWnd;
 class CBankWnd;
+class CBarterSearchWnd;
 class CBazaarSearchWnd;
 class CBazaarWnd;
 class CBodyTintWnd;
@@ -88,7 +89,7 @@ class CEditWnd;
 class CEQSuiteTextureLoader;
 class CEverQuest;
 class CExploreModeWnd;
-class CFacePick;
+class CPlayerCustomizationWnd;
 class CFactionWnd;
 class CExtendedTargetWnd;
 class CFindItemWnd;
@@ -122,6 +123,7 @@ class CInvSlot;
 class CInvSlotMgr;
 class CInvSlotTemplate;
 class CInvSlotWnd;
+class CItemDisplayManager;
 class CItemDisplayWnd;
 class CJournalCatWnd;
 class CJournalNPCWnd;
@@ -137,6 +139,7 @@ class CLoadskinWnd;
 class CLootWnd;
 class CMapToolbarWnd;
 class CMapViewWnd;
+class CMarketplaceWnd;
 class CMemoryStream;
 class PointMerchantWnd;
 class CMerchantWnd;
@@ -148,6 +151,7 @@ class CMutexSyncCounted;
 class CNoteWnd;
 class ConversationJournal;
 class COptionsWnd;
+class COverseerWnd;
 class CPageTemplate;
 class CPageWnd;
 class CParam;
@@ -193,6 +197,7 @@ class CPetInfoWnd;
 class CPetitionQWnd;
 class CPlayerNotesWnd;
 class CPlayerWnd;
+class CPurchaseGroupWnd;
 class CPotionBeltWnd;
 class CBandolierWnd;
 class CQuantityWnd;
@@ -517,9 +522,16 @@ public:
 	EQLIB_OBJECT char GetChar(long) const;
 	EQLIB_OBJECT char SetChar(long, char);
 
-	EQLIB_OBJECT CXStr Copy(long, long)const;
+	EQLIB_OBJECT CXStr Copy(long Start, long Count) const;
 	EQLIB_OBJECT CXStr Left(int)const;
+	#ifdef CXStr__Mid_x
 	EQLIB_OBJECT CXStr Mid(int, int)const;
+	#else
+	EQLIB_OBJECT CXStr CXStr::Mid(int First, int Len) const
+	{
+		return Copy(First, Len);
+	}
+	#endif
 	EQLIB_OBJECT CXStr Right(int)const;
 	//EQLIB_OBJECT enum EStringEncoding CXStr::GetEncoding(void)const;
 	EQLIB_OBJECT int PrintString(char const*, ...);
@@ -529,7 +541,18 @@ public:
 	EQLIB_OBJECT int operator==(char const*) const;
 	EQLIB_OBJECT int operator==(const CXStr&) const;
 	EQLIB_OBJECT int operator>(const CXStr&) const;
+	#if defined(ROF2EMU) || defined(UFEMU)
 	EQLIB_OBJECT long GetLength() const;
+	#else
+	EQLIB_OBJECT long GetLength() const
+	{
+		if (Ptr != NULL)
+		{
+			return Ptr->Length;
+		}
+		return 0;
+	}
+	#endif
 	EQLIB_OBJECT wchar_t GetUnicode(long pos) const;
 	EQLIB_OBJECT unsigned short SetUnicode(long, unsigned short);
 	EQLIB_OBJECT bool FindNext(char ch, int& pos) const;
@@ -1122,6 +1145,55 @@ EQLIB_OBJECT void CBankWnd::ClickedMoneyButton(int,int);
 EQLIB_OBJECT void CBankWnd::Init(void);
 EQLIB_OBJECT void CBankWnd::UpdateMoneyDisplay(void);
 };
+struct InventoryItem
+{
+/*0x00*/ int	ItemID;
+/*0x04*/ int	Charges;
+/*0x08*/ int	Qty;
+/*0x0c*/ int	ItemIcon;
+/*0x10*/ CHAR	Name[0x40];
+/*0x50*/ 
+};
+struct BarterBuyerSearchData
+{
+/*0x00*/ int	ZoneID;
+/*0x04*/ UINT	UniquePlayerID;
+/*0x08*/ UINT	ZonePlayerID;
+/*0x0c*/ CHAR	Name[0x40];
+/*0x4c*/ 
+};
+
+struct BarterBuyLine
+{
+public:
+	//maybe later
+};
+class CBarterSearchWnd : public CSidlScreenWnd
+{
+public:
+/*0x000*/ HashTable<BarterBuyerSearchData> Buyers;//size 0x10
+/*0x010*/ CListWnd		*plistInventory;
+/*0x014*/ CListWnd		*plistBuyLines;
+/*0x018*/ CListWnd		*plistDetails;
+/*0x01c*/ CEditWnd		*peditSearch;
+/*0x020*/ CButtonWnd	*pbtnRefreshInventory;
+/*0x024*/ CButtonWnd	*pbtnSearch;
+/*0x028*/ CButtonWnd	*pbtnWelcome;
+/*0x02c*/ CButtonWnd	*pbtnGreeting;
+/*0x030*/ CButtonWnd	*pbtnFind;
+/*0x034*/ CButtonWnd	*pbtnHide;
+/*0x038*/ CButtonWnd	*pbtnBuyLineInspectItem;
+/*0x03c*/ CButtonWnd	*pbtnCompensationInspectItem;
+/*0x040*/ CButtonWnd	*pbtnCompensationPreviewItem;
+/*0x044*/ CButtonWnd	*pbtnSellButton;
+/*0x048*/ CComboWnd		*pcomboPlayersCombo;
+/*0x04c*/ void			*pLayout;//CLayoutWnd
+/*0x050*/ void			*pMatchLayout;//CLayoutWnd
+/*0x054*/ bool			NeedsUpdate;
+/*0x058*/ ArrayClass_RO<BarterBuyLine> BuyLinesArray;//size is 0x10
+/*0x068*/ ArrayClass2_RO<InventoryItem> InventoryItemsArray;//size 0x1c
+/*0x084*/ //more members that I dont need atm
+};
 
 class CBazaarSearchWnd : public CSidlScreenWnd
 {
@@ -1541,7 +1613,16 @@ EQLIB_OBJECT void CChatManager::SetChannelMap(int,class CChatWindow *);
 EQLIB_OBJECT void CChatManager::SetLockedActiveChatWindow(CChatWindow *);
 EQLIB_OBJECT void CChatManager::UpdateContextMenus(class CChatWindow *);
 EQLIB_OBJECT void CChatManager::UpdateTellMenus(class CChatWindow *);
+#if defined(ROF2EMU) || defined(UFEMU)
 EQLIB_OBJECT CChatWindow *CChatManager::GetLockedActiveChatWindow(void);
+#else
+EQLIB_OBJECT CChatWindow *CChatManager::GetLockedActiveChatWindow(void)
+{
+	//return (CChatWindow *)
+	PCXWND pWnd = (((EQCHATMGR*)this)->LockedActive != -1) ? ((EQCHATMGR*)this)->ChatWnd[((EQCHATMGR*)this)->LockedActive] : NULL;
+	return (CChatWindow *)pWnd;
+}
+#endif
 #if !defined(ROF2EMU) && !defined(UFEMU)
 EQLIB_OBJECT void CChatManager::CreateChatWindow(CXWnd*pParentWnd, int ID, char* Name, int Language, int DefaultChannel, int ChatChannel, char* szTellTarget, int FontStyle, bool bScrollbar, bool bHighLight, COLORREF HighlightColor);
 #else
@@ -2826,24 +2907,24 @@ class CFactionWnd : public CSidlScreenWnd
 public:
 	EQLIB_OBJECT CFactionWnd::CFactionWnd(class CXWnd *);
 };
-class CFacePick : public CSidlScreenWnd
+class CPlayerCustomizationWnd : public CSidlScreenWnd
 {
 public:
-EQLIB_OBJECT CFacePick::CFacePick(class CXWnd *);
-EQLIB_OBJECT void CFacePick::Activate(void);
-EQLIB_OBJECT void CFacePick::SetFaceSelectionsFromPlayer(void);
+EQLIB_OBJECT CPlayerCustomizationWnd::CPlayerCustomizationWnd(class CXWnd *);
+EQLIB_OBJECT void CPlayerCustomizationWnd::Activate(void);
+EQLIB_OBJECT void CPlayerCustomizationWnd::SetFaceSelectionsFromPlayer(void);
 // virtual
-EQLIB_OBJECT CFacePick::~CFacePick(void);
-EQLIB_OBJECT int CFacePick::Draw(void)const;
-EQLIB_OBJECT int CFacePick::OnProcessFrame(void);
-EQLIB_OBJECT int CFacePick::WndNotification(class CXWnd *,unsigned __int32,void *);
-//EQLIB_OBJECT void * CFacePick::`scalar deleting destructor'(unsigned int);
-//EQLIB_OBJECT void * CFacePick::`vector deleting destructor'(unsigned int);
-EQLIB_OBJECT void CFacePick::Deactivate(void);
+EQLIB_OBJECT CPlayerCustomizationWnd::~CPlayerCustomizationWnd(void);
+EQLIB_OBJECT int CPlayerCustomizationWnd::Draw(void)const;
+EQLIB_OBJECT int CPlayerCustomizationWnd::OnProcessFrame(void);
+EQLIB_OBJECT int CPlayerCustomizationWnd::WndNotification(class CXWnd *,unsigned __int32,void *);
+//EQLIB_OBJECT void * CPlayerCustomizationWnd::`scalar deleting destructor'(unsigned int);
+//EQLIB_OBJECT void * CPlayerCustomizationWnd::`vector deleting destructor'(unsigned int);
+EQLIB_OBJECT void CPlayerCustomizationWnd::Deactivate(void);
 // private
-EQLIB_OBJECT void CFacePick::CycleThroughFHEB(int,int);
-EQLIB_OBJECT void CFacePick::Init(void);
-EQLIB_OBJECT void CFacePick::ShowButtonGroup(int,bool);
+EQLIB_OBJECT void CPlayerCustomizationWnd::CycleThroughFHEB(int,int);
+EQLIB_OBJECT void CPlayerCustomizationWnd::Init(void);
+EQLIB_OBJECT void CPlayerCustomizationWnd::ShowButtonGroup(int,bool);
 };
 class CFindItemWnd : public CSidlScreenWnd//, public WndEventHandler but we just add the member LastCheckTime
 {
@@ -3990,6 +4071,7 @@ EQLIB_OBJECT int CInvSlotWnd::WndNotification(class CXWnd *,unsigned __int32,voi
 //EQLIB_OBJECT void * CInvSlotWnd::`vector deleting destructor'(unsigned int);
 EQLIB_OBJECT void CInvSlotWnd::SetAttributesFromSidl(class CParamScreenPiece *);
 };
+
 enum ItemDisplayFlags
 {
 	PREVENT_LINK = 0x00000001,
@@ -4303,10 +4385,12 @@ EQLIB_OBJECT void CWndDisplayManager::CloseAll();
 //virtual
 EQLIB_OBJECT int CreateWindowInstance();
 };
+
 class CItemDisplayManager : public CWndDisplayManager
 {
 public:
 EQLIB_OBJECT int CItemDisplayManager::CreateWindowInstance(void);
+EQLIB_OBJECT void CItemDisplayManager::ShowItem(const VePointer<CONTENTS>& Cont, int Flags);
 };
 
 class CLineBase
@@ -4859,6 +4943,10 @@ public:
 	int SliderType;
 	void *pHandler;//PointMerchantInterface*
 };
+class CMarketplaceWnd : public CSidlScreenWnd
+{
+	public:
+};
 
 class VeBaseReferenceCount
 {
@@ -5274,6 +5362,12 @@ EQLIB_OBJECT void COptionsWnd::SyncMousePage(void);
 EQLIB_OBJECT void COptionsWnd::FillChatFilterList(void);
 };
 
+class COverseerWnd : public CSidlScreenWnd
+{
+public:
+
+};
+
 class CPageTemplate
 {
 public:
@@ -5305,7 +5399,13 @@ public:
 EQLIB_OBJECT CPageWnd::CPageWnd(class CXWnd *,unsigned __int32,class CXRect,class CXStr,class CPageTemplate *);
 EQLIB_OBJECT void CPageWnd::SetTabText(CXStr &)const;
 #if !defined(ROF2EMU) && !defined(UFEMU)
-EQLIB_OBJECT CXStr CPageWnd::GetTabText(bool bSomething = false) const;
+EQLIB_OBJECT CXStr CPageWnd::GetTabText(bool bSomething = false) const
+{
+	if (CXStr *txt = (CXStr *)&this->TabText)
+		return *txt;
+	else
+		return "";
+}
 EQLIB_OBJECT void CPageWnd::FlashTab(bool bFlash, int mstime) const;
 #else
 EQLIB_OBJECT CXStr CPageWnd::GetTabText() const;
@@ -5994,6 +6094,12 @@ EQLIB_OBJECT void CPlayerWnd::LoadIniInfo(void);
 EQLIB_OBJECT void CPlayerWnd::StoreIniInfo(void);
 // private
 EQLIB_OBJECT void CPlayerWnd::Init(void);
+};
+
+class CPurchaseGroupWnd : public CSidlScreenWnd
+{
+public:
+
 };
 
 class CPotionBeltWnd : public CSidlScreenWnd
@@ -6818,6 +6924,7 @@ public:
 	//we include CXW instead...
 /*0x000*/ CXW
 /*0x1F0*/ PCXSTR STMLText;
+//*0x1F0*/ CXStr STMLText;
 /*0x1F4*/ CircularArrayClass2<STextLine> TextLines;//size 0x24
 /*0x21c*/ __int32 TextTotalHeight;
 /*0x220*/ __int32 TextTotalWidth;//0x220 see 8F5A6F in sep 11 2017 test - eqmule
@@ -6851,7 +6958,17 @@ public:
 EQLIB_OBJECT CStmlWnd::CStmlWnd(class CXWnd *,unsigned __int32,class CXRect);
 EQLIB_OBJECT bool CStmlWnd::CanGoBackward(void);
 EQLIB_OBJECT CXSize CStmlWnd::AppendSTML(CXStr); // lax 11-15-2003
-EQLIB_OBJECT class CXStr CStmlWnd::GetSTMLText(void)const;
+#ifdef CStmlWnd__GetSTMLText_x
+EQLIB_OBJECT CXStr CStmlWnd::GetSTMLText(void) const;
+#else
+EQLIB_OBJECT CXStr CStmlWnd::GetSTMLText(void) const
+{
+	if (CXStr *txt = (CXStr *)&this->STMLText)
+		return *txt;
+	else
+		return "";
+}
+#endif
 EQLIB_OBJECT class CXStr CStmlWnd::GetVisibleText(class CXStr&,class CXRect)const;
 EQLIB_OBJECT static class CXStr __cdecl CStmlWnd::MakeStmlColorTag(unsigned long);
 EQLIB_OBJECT static class CXStr __cdecl CStmlWnd::MakeWndNotificationTag(unsigned __int32,class CXStr&,class CXStr&);
@@ -7281,7 +7398,7 @@ EQLIB_OBJECT CTextureAnimation::CTextureAnimation(void);
 EQLIB_OBJECT class CTextureAnimation & CTextureAnimation::operator=(class CTextureAnimation const &);
 EQLIB_OBJECT class CXPoint CTextureAnimation::GetHotspot(void)const;
 EQLIB_OBJECT class CXStr CTextureAnimation::GetName(void)const;
-EQLIB_OBJECT int CTextureAnimation::AddBlankFrame(unsigned __int32,class CXPoint);
+EQLIB_OBJECT int CTextureAnimation::AddBlankFrame(unsigned __int32 Ticks, class CXPoint Hotspot);
 EQLIB_OBJECT int CTextureAnimation::AddFrame(class CUITexturePiece,unsigned __int32,class CXPoint);
 EQLIB_OBJECT int CTextureAnimation::AddFrame(class CUITextureInfo const *,class CXRect,unsigned __int32,class CXPoint);
 EQLIB_OBJECT int CTextureAnimation::Draw(class CXPoint,class CXRect,unsigned long,unsigned long)const;
@@ -7940,7 +8057,9 @@ class EQ_Affect
 {
 public:
 EQLIB_OBJECT void EQ_Affect::Reset(void);
-EQLIB_OBJECT int EQ_Affect::GetAffectData(int)const;
+EQLIB_OBJECT int EQ_Affect::GetAffectData(int Slot)const;
+EQLIB_OBJECT void EQ_Affect::SetAffectData(int Slot, int Val);
+
 #if !defined(ROF2EMU) && !defined(UFEMU)
 /*0x00*/ EqGuid    CasterGuid;
 /*0x08*/ SlotData SlotData[NUM_SLOTDATA]; // used for book keeping of various effects (debuff counter, rune/vie damage remaining)
@@ -8253,7 +8372,7 @@ EQLIB_OBJECT bool EQ_Item::IsKeyRingItem(KeyRingType type)const;
 EQLIB_OBJECT bool EQ_Item::CanGoInBag(PCONTENTS *pCont, int OutputText = 0, bool mustbefalse = false) const;
 EQLIB_OBJECT bool EQ_Item::IsEmpty(void) const;
 EQLIB_OBJECT int EQ_Item::GetMaxItemCount(void)const;
-EQLIB_OBJECT int EQ_Item::GetAugmentFitBySlot(PCONTENTS *Aug, int Slot, bool bCheckSlot = true, bool bCheckDup = true)const; 
+EQLIB_OBJECT int EQ_Item::CanGemFitInSlot(PCONTENTS *Aug, int Slot, bool bCheckSlot = true, bool bCheckDup = true)const; 
 ITEMINFO Data;
 };
 
@@ -8363,17 +8482,58 @@ public:
 EQLIB_OBJECT EQ_Spell::~EQ_Spell(void);
 EQLIB_OBJECT EQ_Spell::EQ_Spell(char *);
 EQLIB_OBJECT bool EQ_Spell::IsStackableDot(void)const;
+#ifdef EQ_Spell__IsStackable_x
 EQLIB_OBJECT bool EQ_Spell::IsStackable(void) const;
+#else
+EQLIB_OBJECT bool EQ_Spell::IsStackable(void) const
+{
+	if (((PSPELL)this)->NotStackableDot)
+	{
+		return false;
+	}
+	else if (((PSPELL)this)->SpellType != 0 )
+	{
+		return false;
+	}
+	else if (((PSPELL)this)->DurationType == 0 )
+	{
+		return false;
+	}
+	return SpellAffects(SPA_HP) != 0 || SpellAffects(SPA_GRAVITATE) != 0;
+}
+#endif
 EQLIB_OBJECT int EQ_Spell::IsPermIllusionSpell(void)const;
 EQLIB_OBJECT int EQ_Spell::SpellUsesDragonBreathEffect(void);
 EQLIB_OBJECT unsigned char EQ_Spell::SpellAffects(int)const;//this one takes an attrib(soe calls it affect) and returns the index for it...
 EQLIB_OBJECT unsigned char EQ_Spell::GetSpellLevelNeeded(int)const;//takes a Class, druid for example is 6
 EQLIB_OBJECT int EQ_Spell::SpellAffectBase(int)const;//takes a SPA, returns the first matching base it finds for it
 EQLIB_OBJECT const PSPELLCALCINFO EQ_Spell::GetSpellAffectBySlot(int Slot) const;
+EQLIB_OBJECT bool EQ_Spell::IsLullSpell(void) const;
 #if !defined(ROF2EMU) && !defined(UFEMU)
 EQLIB_OBJECT const PSPELLCALCINFO EQ_Spell::GetSpellAffectByIndex(int Index) const;
 #endif
-EQLIB_OBJECT bool EQ_Spell::IsNoRemove(void)const;
+#ifdef EQ_Spell__IsNoRemove_x
+EQLIB_OBJECT bool EQ_Spell::IsNoRemove(void) const;
+inline bool IsDetrimentalSpell() const
+{
+	return (Data.SpellType == 0);
+}
+#else
+EQLIB_OBJECT bool EQ_Spell::IsBeneficialSpellUsedDetrimentally() const
+{
+	const PSPELLCALCINFO pSpellAffect = GetSpellAffectByIndex(0);
+	return pSpellAffect->Attrib == SPA_CLEAR_NPC_TARGETLIST || pSpellAffect->Attrib == SPA_NPC_REACTION_RATING ||
+		   pSpellAffect->Attrib == SPA_NPC_FACTION || pSpellAffect->Attrib == SPA_CANCEL_MAGIC || IsLullSpell();
+}
+EQLIB_OBJECT bool EQ_Spell::IsNoRemove(void) const
+{
+	return !(((PSPELL)this)->SpellType >= 1) || ((PSPELL)this)->NoRemove;
+}
+EQLIB_OBJECT bool EQ_Spell::IsDetrimentalSpell() const
+{
+	return (!(((PSPELL)this)->SpellType >= 1) || IsBeneficialSpellUsedDetrimentally());
+}
+#endif
 EQLIB_OBJECT static bool EQ_Spell::IsDegeneratingLevelMod(int);
 
 EQLIB_OBJECT static bool EQ_Spell::IsSPAStacking(int Spa);
@@ -8393,10 +8553,6 @@ inline int GetNoOverwrite() const
 inline bool IsBeneficialSpell() const
 {
 	return (Data.SpellType >= 1);
-}
-inline bool IsDetrimentalSpell() const
-{
-	return (Data.SpellType == 0);
 }
 inline bool IsShortEffectDuration() const 
 {
@@ -11217,29 +11373,31 @@ public:
 //see 8D35C1 in may 10 2018 -eqmule
 //see 8E87D1 in Apr 15 2019 -eqmule
 //see 8FD4C1 in Jan 06 2020 test -eqmule
+//see 8F1051 in Dec 05 2020 Live -eqmule
 #if defined(ROF2EMU)
 //see 7FEC8D in Rof2 -eqmule
 #define ZONE_COUNT 768
 #else
-#define ZONE_COUNT 837
+#define ZONE_COUNT 843
 #endif
+//Size of ZoneGuideManagerClient is 0x9144 see 6B6915 in Dec 05 2020 Live -eqmule
 class ZoneGuideManagerBase
 {
 public:
 #if defined(ROF2EMU)
 /*0x0000*/ PVOID vfTable;
-/*0x0004*/ ZoneGuideZone Zones[ZONE_COUNT];//0x2c * 0x300
+/*0x0004*/ ZoneGuideZone Zones[ZONE_COUNT];//0x2c * 768
 /*0x8404*/ ArrayClass_RO<ZoneGuideContinent> Continents;
 /*0x8414*/ ArrayClass_RO<ZoneGuideZoneType> ZoneTypes;
 /*0x8424*/ ArrayClass_RO<ZoneGuideTransferType> TransferTypes;
 /*0x8434*/ 
 #else
 /*0x0000*/ PVOID vfTable;
-/*0x0004*/ ZoneGuideZone Zones[ZONE_COUNT];//0x2c * 0x345
-/*0x8FE0*/ ArrayClass_RO<ZoneGuideContinent> Continents;
-/*0x8FF0*/ ArrayClass_RO<ZoneGuideZoneType> ZoneTypes;
-/*0x9000*/ ArrayClass_RO<ZoneGuideTransferType> TransferTypes;
-/*0x9010*/ 
+/*0x0004*/ ZoneGuideZone Zones[ZONE_COUNT];//0x2c * 843
+/*0x90E8*/ ArrayClass_RO<ZoneGuideContinent> Continents;
+/*0x90F8*/ ArrayClass_RO<ZoneGuideZoneType> ZoneTypes;
+/*0x9108*/ ArrayClass_RO<ZoneGuideTransferType> TransferTypes;
+/*0x9118*/ 
 #endif
 };
 typedef struct _ZonePathData

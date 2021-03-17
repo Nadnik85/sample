@@ -2547,7 +2547,7 @@ VOID DoAbility(PSPAWNINFO pChar, PCHAR szLine)
 	CHAR szBuffer[MAX_STRING] = { 0 };
 	GetArg(szBuffer, szLine, 1);
 	int abil = atoi(szBuffer);
-	if (abil && abil > 5 && abil < NUM_SKILLS)//user wants us to activate a ability by its REAL ID...
+	if (abil && abil > 6 && abil < NUM_SKILLS)//user wants us to activate a ability by its REAL ID...
 	{
 		if (DWORD nToken = pCSkillMgr->GetNameToken(abil))
 		{
@@ -2650,7 +2650,11 @@ VOID DoAbility(PSPAWNINFO pChar, PCHAR szLine)
 		}
 	}
 	// else display that we didnt found abilities
-	WriteChatColor("You do not seem to have that ability available", USERCOLOR_DEFAULT);
+	if(abil)
+		WriteChatf("You do not seem to have ability %s (ID %d) available", szBuffer,abil);
+	else
+		WriteChatf("You do not seem to have ability %s available", szBuffer);
+
 }
 
 // ***************************************************************************
@@ -2856,7 +2860,7 @@ VOID Cast(PSPAWNINFO pChar, PCHAR szLine)
 		else {
 			if (PCONTENTS pItem = FindItemByName(szArg2, true))
 			{
-				if (pItem->GetGlobalIndex().Index.Slot1 < NUM_INV_SLOTS)
+				if (pItem->GetGlobalIndex().Index.Slot1 < (int)GetCurrentInvSlots())
 				{
 					if (GetItemFromContents(pItem)->Clicky.SpellID > 0 && GetItemFromContents(pItem)->Clicky.SpellID != -1)
 					{
@@ -3332,13 +3336,8 @@ VOID BankList(PSPAWNINFO pChar, PCHAR szLine)
 	WriteChatColor("-------------------------", USERCOLOR_DEFAULT);
 	char Link[MAX_STRING] = { 0 };
 	for (int a = 0; a<NUM_BANK_SLOTS; a++) {
-#ifdef NEWCHARINFO
 		if (pCharInfo && pCharInfo->BankItems.Items.Size > (UINT)a)
 			pContainer = pCharInfo->BankItems.Items[a].pObject;
-#else
-		if (pCharInfo && pCharInfo->pBankArray)
-			pContainer = pCharInfo->pBankArray->Bank[a];
-#endif
 		if (pContainer) {
 			GetItemLink(pContainer, Link);
 			sprintf_s(szTemp, "Slot %d: %dx %s (%s)", a, pContainer->StackCount ? pContainer->StackCount : 1, Link, GetItemFromContents(pContainer)->LoreName);
@@ -3580,8 +3579,13 @@ VOID MultilineCommand(PSPAWNINFO pChar, PCHAR szLine)
 	{
 		if (token1 != NULL)
 		{
+			strcpy_s(szCmd, token1);
+			//strcpy_s(Copy, token1);
+			//_strlwr_s(Copy);
+			//if (strstr(Copy, "delay")
 			{
-				strcpy_s(szCmd, token1);
+				//add to our queue
+				//
 			}
 			DoCommand(pChar, szCmd);
 			token1 = strtok_s(NULL, szArg, &next_token1);

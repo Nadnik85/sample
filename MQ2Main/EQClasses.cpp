@@ -1380,23 +1380,23 @@ FUNCTION_AT_ADDRESS( CExploreModeWnd::CExploreModeWnd(class CXWnd *),CExploreMod
 #ifdef CExploreModeWnd__Activate_x
 FUNCTION_AT_ADDRESS(void  CExploreModeWnd::Activate(void),CExploreModeWnd__Activate);
 #endif
-#ifdef CFacePick__CFacePick_x
-FUNCTION_AT_ADDRESS( CFacePick::CFacePick(class CXWnd *),CFacePick__CFacePick);
+#ifdef CPlayerCustomizationWnd__CPlayerCustomizationWnd_x
+FUNCTION_AT_ADDRESS( CPlayerCustomizationWnd::CPlayerCustomizationWnd(class CXWnd *),CPlayerCustomizationWnd__CPlayerCustomizationWnd);
 #endif
-#ifdef CFacePick__Init_x
-FUNCTION_AT_ADDRESS(void  CFacePick::Init(void),CFacePick__Init);
+#ifdef CPlayerCustomizationWnd__Init_x
+FUNCTION_AT_ADDRESS(void  CPlayerCustomizationWnd::Init(void),CPlayerCustomizationWnd__Init);
 #endif
-#ifdef CFacePick__ShowButtonGroup_x
-FUNCTION_AT_ADDRESS(void  CFacePick::ShowButtonGroup(int,bool),CFacePick__ShowButtonGroup);
+#ifdef CPlayerCustomizationWnd__ShowButtonGroup_x
+FUNCTION_AT_ADDRESS(void  CPlayerCustomizationWnd::ShowButtonGroup(int,bool),CPlayerCustomizationWnd__ShowButtonGroup);
 #endif
-#ifdef CFacePick__Activate_x
-FUNCTION_AT_ADDRESS(void  CFacePick::Activate(void),CFacePick__Activate);
+#ifdef CPlayerCustomizationWnd__Activate_x
+FUNCTION_AT_ADDRESS(void  CPlayerCustomizationWnd::Activate(void),CPlayerCustomizationWnd__Activate);
 #endif
-#ifdef CFacePick__SetFaceSelectionsFromPlayer_x
-FUNCTION_AT_ADDRESS(void  CFacePick::SetFaceSelectionsFromPlayer(void),CFacePick__SetFaceSelectionsFromPlayer);
+#ifdef CPlayerCustomizationWnd__SetFaceSelectionsFromPlayer_x
+FUNCTION_AT_ADDRESS(void  CPlayerCustomizationWnd::SetFaceSelectionsFromPlayer(void),CPlayerCustomizationWnd__SetFaceSelectionsFromPlayer);
 #endif
-#ifdef CFacePick__CycleThroughFHEB_x
-FUNCTION_AT_ADDRESS(void  CFacePick::CycleThroughFHEB(int,int),CFacePick__CycleThroughFHEB);
+#ifdef CPlayerCustomizationWnd__CycleThroughFHEB_x
+FUNCTION_AT_ADDRESS(void  CPlayerCustomizationWnd::CycleThroughFHEB(int,int),CPlayerCustomizationWnd__CycleThroughFHEB);
 #endif
 #ifdef CFactionWnd__CFactionWnd1_x
 FUNCTION_AT_ADDRESS( CFactionWnd::CFactionWnd(class CXWnd *),CFactionWnd__CFactionWnd);
@@ -4250,6 +4250,9 @@ FUNCTION_AT_ADDRESS(void EQ_Affect::Reset(void),EQ_Affect__Reset);
 #ifdef EQ_Affect__GetAffectData_x
 FUNCTION_AT_ADDRESS(int EQ_Affect::GetAffectData(int)const,EQ_Affect__GetAffectData);
 #endif
+#ifdef EQ_Affect__SetAffectData_x
+FUNCTION_AT_ADDRESS(void EQ_Affect::SetAffectData(int Slot, int Val), EQ_Affect__SetAffectData);
+#endif
 #ifdef EQ_Character__EQ_Character_x
 FUNCTION_AT_ADDRESS( EQ_Character::EQ_Character(void),EQ_Character__EQ_Character);
 #endif
@@ -4760,6 +4763,9 @@ FUNCTION_AT_ADDRESS(bool EQ_Spell::IsNoRemove(void)const ,EQ_Spell__IsNoRemove);
 #ifdef EQ_Spell__IsDegeneratingLevelMod_x
 FUNCTION_AT_ADDRESS(bool EQ_Spell::IsDegeneratingLevelMod(int) ,EQ_Spell__IsDegeneratingLevelMod);
 #endif
+#ifdef EQ_Spell__IsLullSpell_x
+FUNCTION_AT_ADDRESS(bool EQ_Spell::IsLullSpell(void) const,EQ_Spell__IsLullSpell);
+#endif
 #ifdef EQ_Character__EQSPA_Feign_Death_x
 FUNCTION_AT_ADDRESS(void  EQ_Character::EQSPA_Feign_Death(int),EQ_Character__EQSPA_Feign_Death);
 #endif
@@ -4874,8 +4880,8 @@ FUNCTION_AT_ADDRESS(bool EQ_Item::IsEmpty(void) const,EQ_Item__IsEmpty);
 #ifdef EQ_Item__ValueSellMerchant_x
 FUNCTION_AT_ADDRESS(long  EQ_Item::ValueSellMerchant(float,long)const,EQ_Item__ValueSellMerchant);
 #endif
-#ifdef EQ_Item__GetAugmentFitBySlot_x
-FUNCTION_AT_ADDRESS(int EQ_Item::GetAugmentFitBySlot(PCONTENTS *, int, bool, bool index)const,EQ_Item__GetAugmentFitBySlot); 
+#ifdef EQ_Item__CanGemFitInSlot_x
+FUNCTION_AT_ADDRESS(int EQ_Item::CanGemFitInSlot(PCONTENTS *, int, bool, bool index)const,EQ_Item__CanGemFitInSlot); 
 #endif
 #ifdef EQ_Item__ValueSSell_x
 FUNCTION_AT_ADDRESS(char *  EQ_Item::ValueSSell(float,long),EQ_Item__ValueSSell);
@@ -8058,7 +8064,7 @@ FUNCTION_AT_ADDRESS(bool CXStr::FindNext(char ch, int& pos) const,CXStr__FindNex
 FUNCTION_AT_ADDRESS(void CXStr::Insert(long pos, const CXStr& str),CXStr__Insert);
 #endif
 #ifdef CXStr__Copy_x
-FUNCTION_AT_ADDRESS(class CXStr  CXStr::Copy(long,long)const ,CXStr__Copy);
+FUNCTION_AT_ADDRESS(CXStr CXStr::Copy(long Start, long Count)const ,CXStr__Copy);
 #endif
 #ifdef CXStr__CopySelf_x
 FUNCTION_AT_ADDRESS(void  CXStr::CopySelf(long,long),CXStr__CopySelf);
@@ -8152,7 +8158,7 @@ FUNCTION_AT_ADDRESS(class CXStr *CListWnd::GetItemText(class CXStr *,int,int)con
 FUNCTION_AT_ADDRESS(class CTextureAnimation const *CListWnd::GetItemIcon(int,int)const ,CListWnd__GetItemIcon);
 #endif
 #ifdef CListWnd__GetItemColor_x
-FUNCTION_AT_ADDRESS(unsigned long  CListWnd::GetItemColor(int,int)const ,CListWnd__GetItemColor);
+FUNCTION_AT_ADDRESS(unsigned long CListWnd::GetItemColor(int item ,int subitem)const ,CListWnd__GetItemColor);
 #endif
 #ifdef CListWnd__GetColumnFlags_x
 FUNCTION_AT_ADDRESS(unsigned __int32  CListWnd::GetColumnFlags(int)const ,CListWnd__GetColumnFlags);
@@ -8386,6 +8392,9 @@ FUNCTION_AT_ADDRESS(int CWndDisplayManager::FindWindowA(bool bNewWnd),CWndDispla
 #endif
 #ifdef CItemDisplayManager__CreateWindowInstance_x
 FUNCTION_AT_ADDRESS(int CItemDisplayManager::CreateWindowInstance(void),CItemDisplayManager__CreateWindowInstance);
+#endif
+#ifdef CItemDisplayManager__ShowItem_x
+FUNCTION_AT_ADDRESS(void CItemDisplayManager::ShowItem(const VePointer<CONTENTS>& Cont, int Flags), CItemDisplayManager__ShowItem);
 #endif
 #ifdef CSTMLboxTemplate__CSTMLboxTemplate_x
 FUNCTION_AT_ADDRESS( CSTMLboxTemplate::CSTMLboxTemplate(class CParamSTMLbox *),CSTMLboxTemplate__CSTMLboxTemplate);
@@ -9339,7 +9348,7 @@ FUNCTION_AT_ADDRESS( STextureAnimationFrame::STextureAnimationFrame(class CUITex
 FUNCTION_AT_ADDRESS( CUITextureInfo::CUITextureInfo(unsigned __int32,int),CUITextureInfo__CUITextureInfo3);
 #endif
 #ifdef CTextureAnimation__AddBlankFrame_x
-FUNCTION_AT_ADDRESS(int  CTextureAnimation::AddBlankFrame(unsigned __int32,class CXPoint),CTextureAnimation__AddBlankFrame);
+FUNCTION_AT_ADDRESS(int CTextureAnimation::AddBlankFrame(unsigned __int32 Ticks, CXPoint Hotspot),CTextureAnimation__AddBlankFrame);
 #endif
 #ifdef CTextureAnimation__SetCurFrame_x
 FUNCTION_AT_ADDRESS(void  CTextureAnimation::SetCurFrame(int),CTextureAnimation__SetCurFrame);

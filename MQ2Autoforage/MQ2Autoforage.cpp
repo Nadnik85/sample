@@ -61,6 +61,10 @@ bool SetININame()
 	if (gGameState==GAMESTATE_INGAME && GetCharInfo())
 	{
 		sprintf_s(INIFileName,"%s\\MQ2Forage_%s_%s.ini", gszINIPath, GetCharInfo()->Name, EQADDR_SERVERNAME);
+		if (!_FileExists(INIFileName))
+			sprintf_s(INIFileName,"%s\\MQ2Forage_%s.ini", gszINIPath, EQADDR_SERVERNAME);
+		if (!_FileExists(INIFileName))
+			sprintf_s(INIFileName,"%s\\MQ2Forage.ini", gszINIPath);	
 		Load_INI();
 		return true;
 	}
@@ -113,7 +117,11 @@ PLUGIN_API VOID OnPulse()
 	}
 	PSPAWNINFO pChSpawn = GetCharInfo()->pSpawn;
 
-	if ((IsForaging) && !(*EQADDR_ATTACK > 0) && !(PCSIDLWND)pSpellBookWnd->IsVisible() && !(PCSIDLWND)pGiveWnd->IsVisible() && !(PCSIDLWND)pBankWnd->IsVisible() && !(PCSIDLWND)pMerchantWnd->IsVisible() && !(PCSIDLWND)pTradeWnd->IsVisible() && !(PCSIDLWND)pLootWnd->IsVisible() && !IAmCamping)// && !GetCharInfo()->pSpawn->Mount) {
+	if ((IsForaging) && !(*EQADDR_ATTACK > 0) && !(PCSIDLWND)pSpellBookWnd->IsVisible() &&
+		!(PCSIDLWND)pGiveWnd->IsVisible() && !(PCSIDLWND)pBankWnd->IsVisible() &&
+		!(PCSIDLWND)pMerchantWnd->IsVisible() && !(PCSIDLWND)pTradeWnd->IsVisible() &&
+		!(PCSIDLWND)pLootWnd->IsVisible() && !IAmCamping && pChSpawn->StandState != STANDSTATE_FEIGN &&
+		pChSpawn->StandState != STANDSTATE_DEAD)// && !GetCharInfo()->pSpawn->Mount) {
 	{
 		if (AbilityReady("Forage")) {
 			if (pChSpawn->StandState == STANDSTATE_SIT) {

@@ -10,6 +10,9 @@ constexpr int LINES_PER_FRAME = 3;
 #include <iostream>
 #include <chrono>
 
+constexpr int MAX_CHAT_SIZE = 700;
+constexpr int LINES_PER_FRAME = 3;
+
 PreSetup("MQ2Say");
 
 std::list<std::string> sPendingSay;
@@ -603,6 +606,7 @@ void MQSay(PSPAWNINFO pChar, PCHAR Line)
 		WriteChatf("Usage: /mqsay <on/off>");
 		WriteChatf("/mqsay [Option Name] <value/on/off>");
 		WriteChatf("Valid options are Reset, Clear, Alerts, Autoscroll, IgnoreDelay, Fellowship, Group, Guild, Raid, Reload, Timestamps, Title");
+		WriteChatf("Valid options are Reset, Clear, Alerts, Autoscroll, IgnoreDelay, Reload, Timestamps, Title");
 		return;
 	}
 	//user wants to adjust Say Status

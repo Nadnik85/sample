@@ -386,6 +386,14 @@ static inline DWORD GetBodyType(PSPAWNINFO pSpawn)
 	return 0;
 }
 
+static inline bool endsWith(char* base, char* str) {
+	if (!base || !str)
+		return false;
+	int blen = strlen(base);
+	int slen = strlen(str);
+	return (blen >= slen) && (0 == strcmp(base + blen - slen, str));
+}
+
 static inline eSpawnType GetSpawnType(PSPAWNINFO pSpawn)
 {
 	switch (pSpawn->Type)
@@ -395,7 +403,7 @@ static inline eSpawnType GetSpawnType(PSPAWNINFO pSpawn)
 		return PC;
 	}
 	case SPAWN_NPC:
-		if (pSpawn->Rider)
+		if (pSpawn->Rider || endsWith(pSpawn->DisplayedName, "`s Mount"))
 		{
 			return MOUNT;
 		}
@@ -762,14 +770,6 @@ static inline DWORD FixOffset(DWORD nOffset)
 	return ((nOffset - 0x400000) + baseAddress);
 }
 
-static inline bool endsWith(char* base, char* str) {
-	if (!base || !str)
-		return false;
-	int blen = strlen(base);
-	int slen = strlen(str);
-	return (blen >= slen) && (0 == strcmp(base + blen - slen, str));
-}
-
 // ***************************************************************************
 // Function:    MQGetTickCount64
 // Description: Returns Uptime in milliseconds. Minimum Resolution is 15ms
@@ -1031,4 +1031,28 @@ static inline unsigned long GetDWordAt(unsigned long address, unsigned long numB
             return *(unsigned long*)address;
     }
     return 0;
+}
+
+static inline int GetHighestAvailableBagSlot()
+{
+	return HasExpansion(EXPANSION_HoT) ? NUM_BAG_SLOTS : (NUM_BAG_SLOTS - 2);
+}
+
+static inline int GetAvailableBankSlots()
+{
+	return HasExpansion(EXPANSION_PoR) ? 24 : 16;
+}
+
+static inline int GetAvailableSharedBankSlots()
+{
+	return HasExpansion(EXPANSION_TBL) ? 6 : HasExpansion(EXPANSION_CotF) ? 4 : 2;
+}
+
+static inline int GetCurrentInvSlots()
+{
+	int invslots = NUM_INV_SLOTS;
+	if (PCHARINFO pChar = GetCharInfo()) {
+		invslots = BAG_SLOT_START + GetHighestAvailableBagSlot();
+	}
+	return invslots;
 }

@@ -44,7 +44,7 @@ const int CSockio::BADPARM=    -5;
 const int CSockio::NOSOCK=     -6;
 const int CSockio::NOCONN=     -7;
 
-const int CEqbcs::MAX_CLIENTS  = 50;
+const int CEqbcs::MAX_CLIENTS  = 250;
 const int CEqbcs::DEFAULT_PORT = 2112;
 
 // ---------------------------------------------------------------------

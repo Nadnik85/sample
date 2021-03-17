@@ -266,7 +266,9 @@ public:
 		if (im) {
 			if (im->htmlwnd)
 			{
+				#if defined(ROF2EMU) || defined(UFEMU)
 				im->htmlwnd->SetClientCallbacks(NULL);
+				#endif
 			}
 		}
 		//this->GetInstance().htmlwnd->SetClientCallbacks(NULL);
@@ -312,19 +314,24 @@ void ItemInfoManager::Notify(CObservable *Src, const CNotification* const Notifi
 }
 void ItemInfoManager::onStatusChanged(Window *wnd)
 {
+	#if defined(ROF2EMU) || defined(UFEMU)
 	if (const wchar_t *status = wnd->getStatus()) {
 		//WriteChatf("Status changed: %s", status);
 	}
+	#endif
 }
 void ItemInfoManager::onURIChanged(Window *wnd)
 {
+	#if defined(ROF2EMU) || defined(UFEMU)
 	if (const char *uri = wnd->getURI()) {
 		//WriteChatf("URI changed: %s", uri);
 	}
+	#endif
 }
 
 void ItemInfoManager::onProgressChanged(Window *wnd)
 {
+#if defined(ROF2EMU) || defined(UFEMU)
 	bool bIsLoading;
 	float pct = wnd->getProgress(bIsLoading);
 	//WriteChatf("Progress %0.2f Loading is %s", pct, bIsLoading ? "TRUE":"FALSE");
@@ -339,6 +346,7 @@ void ItemInfoManager::onProgressChanged(Window *wnd)
 		}
 	}
 	Sleep(0);*/
+#endif
 }
 bool ItemInfoManager::doValidateURI(Window *wnd, const char *uri)
 {
@@ -1440,7 +1448,14 @@ public:
 					case 6://open in lucy
 					{
 						if (PITEMINFO pItem = GetItemFromContents(i->second.ItemDisplayWnd->pCurrentItem)) {
-							//break it
+							#if !defined(ROF2EMU) && !defined(UFEMU)
+							std::string url = "http://lucy.allakhazam.com/item.html?id=";
+							CHAR szID[64] = { 0 };
+							_itoa_s(pItem->ItemNumber, szID, 10);
+							url.append(szID);
+							ShellExecute(NULL, "open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
+							#else
+														//break it
 							//std::string url = "http://webproxy.to/browse.php?b=4&u=http://lucy.allakhazam.com/item.html?id=";
 							//std::string url = "https://lucy.allakhazam.com/item.html?id=";
 							//std::string url = "https://www.raidloot.com/Item.aspx?id=";
@@ -1478,6 +1493,7 @@ public:
 								//maybe later im not 100% sure what observers are for
 								//ItemHtmlwnd->AddObserver(&manager);
 							}
+							#endif
 						}
 						return 0;
 					}
@@ -2468,7 +2484,7 @@ void InsertAug(PSPAWNINFO pChar, PCHAR szLine)
 					int Slot = 0;
 					bool bFits = false;
 					for (; Slot < 6; Slot++) {
-						int fit = ((EQ_Item*)pCont)->GetAugmentFitBySlot(&pCursor, Slot);
+						int fit = ((EQ_Item*)pCont)->CanGemFitInSlot(&pCursor, Slot);
 						if (fit == 0) {
 							bFits = true;
 							break;
@@ -3257,12 +3273,13 @@ int DoIHave(PITEMINFO Item)
    DWORD nAug = 0;
 	unsigned long nPack;
 	unsigned long iSlot;
-
-   //return nHowMany;
+  //return nHowMany;
 	if (PCHARINFO2 pChar2 = GetCharInfo2()) {
-		if (pChar2->pInventoryArray) {
+		BaseProfile *pBprof = (BaseProfile *)pChar2;
+		DWORD invslots = pBprof->pInventoryArray.Size;
+ 		if (pChar2->pInventoryArray) {
 			// Normal Inventory worn slots
-			for (iSlot = 0; iSlot < NUM_INV_SLOTS; iSlot++)
+			for (iSlot = 0; iSlot < invslots; iSlot++)
 			{
 				if (PCONTENTS pItem = pChar2->pInventoryArray->InventoryArray[iSlot])
 				{
@@ -3336,13 +3353,8 @@ int DoIHave(PITEMINFO Item)
 			{
 				PCHARINFO pCharInfo = GetCharInfo();
 				PCONTENTS pPack = NULL;
-#ifdef NEWCHARINFO
 				if (pCharInfo && pCharInfo->BankItems.Items.Size > nPack)
 					pPack = pCharInfo->BankItems.Items[nPack].pObject;
-#else
-				if (pCharInfo && pCharInfo->pBankArray)
-					pPack = pCharInfo->pBankArray->Bank[nPack];
-#endif
 				if (pPack)
 				{
 					if (GetItemFromContents(pPack)->ItemNumber == ID)
@@ -3377,13 +3389,8 @@ int DoIHave(PITEMINFO Item)
 			{
 				PCHARINFO pCharInfo = GetCharInfo();
 				PCONTENTS pPack = NULL;
-#ifdef NEWCHARINFO
 				if (pCharInfo && pCharInfo->SharedBankItems.Items.Size > nPack)
 					pPack = pCharInfo->SharedBankItems.Items[nPack].pObject;
-#else
-				if (pCharInfo && pCharInfo->pSharedBankArray)
-					pPack = pCharInfo->pSharedBankArray->SharedBank[nPack];
-#endif
 				if (pPack)
 				{
 					if (GetItemFromContents(pPack)->ItemNumber == ID)

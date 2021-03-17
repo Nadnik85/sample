@@ -1,8 +1,334 @@
+Feb 18 2021 by RedGuides
+- MQ2Melee (BigDorf, Knightly) fix warrior 2H bash with AA Two-Handed Bash 
+
+Feb 18 2021
+- Some Label fixes - brainiac/swiftymuse
+
+Feb 17 2021
+- Updated for LIVE
+
+Feb 16 2021 by RedGuides
+- New Plugin! MQ2Rand (Dewey2461, Sic) a "/random" helper for raids. Hit the start button and it gives a message to the raid, then populates a list announcing the winner. 
+- Bazaar.mac (JerkChicken) Many new features added, undercut percentage, update drift, review prices after each purchase/sale, aggressive selling/buying options, pause on start, and more. 
+- MQ2Autoforage (Sic, Knightly) No longer try and AutoForage while FD or Dead
+- MQ2Melee (BigDorf, Knightly) fix knight's 2h bash, bug caused by Nov 2019 AA name change to "Improved Bash"
+
+Feb 16 2021
+- Updated for TEST
+
+Jan 30 2021
+- Fixed ${Me.PctExpToAA} ty cwtn for report
+  
+Jan 30 2021
+- Fixed a backwards compatability problem with CPageWnd::GetTabText and CStmlWnd::GetSTMLText for TEST
+  If you already changed your plugins to use STMLText.Ptr instead of just STMLText you can change it back.
+  Sorry for the inconvenience, it was a difficult patch which took several days to fix, 
+  I did not have time to think that change through until I had a good nights sleep.
+  
+Jan 29 2021 by RedGuides
+- MQ2AFNuke (jimbob) Druid - Added some more DoT support (still have a bunch to add). Added AE spells and support (still have a bunch to add). Added spell Twincast. Magician - Added a ton of spells for lower levels. Enchanter - Added item clicky support that was missing. Added item clicky to GCD. Wizard - Fixed global cooldown AA Nukes and item clickies. Removed some refactored code that was commented out.
+- MQ2Heals (jimbob) Changed some settings for rez support. It probably wasn't saving/reading the setting from the .ini correctly.
+
+Jan 29 2021
+- Updated for TEST
+
+Jan 22 2021
+- Fixed a bug where if you did not have a charm item equipped ${Me.Bandolier[blah].Active} would always return false
+- Changed /doability so it now takes fake ID 1-6 where it previously only took 1-5 because people where confused when fake IDs did not work.
+	I strongly recommend you never use fake ID 1-8, it's incredibly stupid, just use the real name, for example /doability Hide
+	or the REAL ID which in the example of Hide is 29, so /doability 29
+- Made a change to ${Target.CanSplashLand} so it takes floor z into account as well as spawn z, this should fix some corner cases where a splashspell can land
+	even though npc z is under or over the floor. - Feature request: Kaen01
+- Changed ${Bazaar.Item[x].Trader} to return a stringtype
+- Fixed ${Me.Grouped} to correctly return FALSE instead of NULL when not in a group.
+- Made NUM_INV_SLOTS dynamic Use GetCurrentInvSlots() instead.
+
+Jan 20 2021 by RedGuides
+- MQ2Shaman (ChatWithThisName, Sic) is now a premium plugin. If you get an "out of date" error about this plugin, you need to either purchase or remove it.
+- MQ2DanNet (dannuic) fixed erroneous default when a bad peer was specified
+
+Jan 20 2021
+- Updated for LIVE
+
+Jan 15 2021 by RedGuides
+- KissAssist (ctaylor22) Fixes: targeting issues, random crashes for non-pullers, added check to remove invulnerability to cast a heal, added in-game command "/burn on|off" for the burn routine. Added "/cureon 2" to only check self for cures. Changed ClickBackToCamp to use 0/1/2. 0=Off - Don't click back to camp, 1=On - Click back immediately. 2=On - Wait 10 seconds before clicking back.​
+- MQ2Grind (hytiek) is now a premium plugin
+- MQ2Ice (dewey2461, Sic, Knightly) Will no longer do mq2ice stuff if your character is levitating. This is especially useful for zones where you can levitate over ice.
+
+Jan 13 2021
+- Updated for TEST
+- The internal webbrowser is on vacation, it will return when it's ready to do so.
+- For now we will just have to open links in an external browser.
+
+Jan 04 2021 by RedGuides
+- KissAssist (ctaylor22, Toadwart, kaen01, drwhomphd, sl968, vsab, jande, GPS_Soldier, zuesizgod, LrdDread) updated to version 12. In addition to a slew of fixes, new features include AE Mez improvements, item/buff begging, pull conditions, secondary aggro checks, summon corpses, custom commands & routines, reload .ini without restarting, and more. View the reference manual at kissassist.com
+- MQ2Status (Sic, Knightly) Added powersource /status powersource, cleaned code
+- MQ2DanNet (dannuic) removed shout elision to account for UDP dropped packets. Fixed lock issues. Fixed lag issues.
+- MQ2AFNuke / MQ2Heals (jimbob) Added missing dicho upgrades for MQ2Heals and MQ2AFNuke. Changed the way assist works... should change targets based on your configuration:
+/nuke assist Default -> Default
+/nuke assist Group -> Group Only
+/nuke assist Raid# -> Assist Raid# Only
+/nuke assist XTarget -> XTarget Only
+/nuke assist Playername -> Assist PC named Playername Only
+- MQ2Grind (hytiek) Various fixes with pets, command recognition, LoS issues, and getting group into the instance.
+- MQ2Rewards (Goldenfrog) Correct issue with OptionItems. 
+
+Dec 22 2020 by RedGuides
+- MQ2AFNuke (jimbob) Updated for CoV spells, added option to assist player that is not MA/Raid MA. "/nuke AssistPlayer ToonName" and "/nuke clearassistplayer" to reset, added Dark Shield of the Scholar clicky to GCD actions. Removed "Rk." from Mage Orb names.
+- MQ2Heals (jimbob) Updated for CoV spells, added GCD actions. 
+- MQ2DPSAdv (Sic) Update "gore" and "rend" additions. 
+- MQ2TSTrophy (Sic, dannuic, Knightly) Major rewrite, will no longer swap a trophy into ammo if you ALREADY have it equipped in another slot.
+- MuleAssist.mac (Lemons, eqmule) updated to 15.2.1, fixed various crashes and bugs including /giveitem group and an issue with the mez routine, new command: "/mulecollect" will collect all collectibles in inventory.
+- MQ2Rez (Sic, Knightly) fix the "ghost window" situation where findmq2window might settle on the first instance of a window, but that actual window is hidden.
+
+Dec 15 2020 by RedGuides
+- MQ2Status (Sic) Updated currency for CoV, major code reorganization
+- MQ2AASpend (Sic) Updated MQ2AASpend to automatically adjust with Autogrant for Bonus purposes.
+
+Dec 15 2020
+- Updated for TEST
+- Removed MAX_KEYRINGITEMS it was a guess at best from 2014 before we knew how the arrays where constructed.
+- pBankArray in CHARINFO is now a ItemBaseContainer named BankItems
+- pSharedBankArray in CHARINFO is now a ItemBaseContainer named SharedBankItems
+- pMercEquipment in CHARINFO is now a ItemBaseContainer named MercenaryItems
+- pMountsArray in CHARINFO is now a ItemBaseContainer named MountKeyRingItems
+- pIllusionsArray in CHARINFO is now a ItemBaseContainer named IllusionKeyRingItems
+- pFamiliarArray in CHARINFO is now a ItemBaseContainer named FamiliarKeyRingItems
+- pHeroForgeArray in CHARINFO is now a ItemBaseContainer named HeroForgeKeyRingItems
+
+Dec 10 2020 by RedGuides
+- New Plugin! MQ2GroundSpawns (ChatWithThisName, Sic) Will help find & collect items in a list for you by zone.
+- MQ2React (drwhomphd) Config setting added to affect rate of react processing.
+- MQ2Grind (hytiek) Added ExitMode of taskquit or campfire, fixes for kissasssit paladins
+
+Dec 10 2020
+- Fixes to new alt currency - sic
+- Fixes for num expansions - CWTN
+- Fixed charselect save position of chatwindow (probably)
+- Fixed ZONE_COUNT, this should fix misc plugins that rely on it being correct. (mq2easyfind)
+
+Dec 08 2020 by RedGuides
+- New Plugin! MQ2Grind (hytiek) Helps your group flip the Restless Assault (ToV) instance. This is an alpha version, hytiek will make it paid when it supports more instances.
+- MQ2Melee (Redbot, Knightly) Stickbreak=1 is now default, meaning that pressing a movement key will stop mq2melee from "sticking" to the current target. To undo this change, "/melee stickbreak=0" and then "/melee save"
+- MQ2Status (Sic, Knightly) Bagspace will now correctly return all sizes of bagspaces available from small to giant, and not JUST giant sized slots. Due to an internal issue with MQ2, the amount on TLP servers will be off by 2 slots.
+  /status skill will now returnback the value of your requested skill. example: /status skill blacksmithing
+- MQ2PortalSetter (Sic, Knightly) Updated for Claws of Veeshan (Cobalt Scar COV)
+- MQ2Relocate (Sic, Knightly) Added Di`Zok Escape Staff to /relocate evac. Bugfixes. 
+- EQBCS2.exe (Jimbob) client max increased to 250
+- Zones.ini (Sic) Updated for Claws of Veeshan
+
+Dec 08 2020
+- Updated for TEST
+- Updated for LIVE
+- Added .Move to the Window TLO Methods
+	Usage: /invoke ${Window[GroupWindow].Move[100,200,300,400]} ([x,y,width,height]) width and height are optional.
+- Added .SetBGColor to the Window TLO Methods
+	Usage: /invoke ${Window[GroupWindow].SetBGColor[0xFF000000]} ([argb])
+- Added .SetAlpha to the Window TLO Methods
+	Usage: /invoke ${Window[GroupWindow].SetAlpha[0xFF]} (0-0xFF)
+- Added .SetFadeAlpha to the Window TLO Methods
+	Usage: /invoke ${Window[GroupWindow].SetFadeAlpha[0xFF]} (0-0xFF)
+
+Dec 07 2020
+- Updated for BETA
+- Fixed malo/tash detection problems - SwiftyMuse
+
+Dec 06 2020
+- Updated for BETA
+
+Dec 05 2020
+- Updated for BETA
+- Chatwindow at charselect now saves it's position independently from in game
+
+Dec 04 2020
+- Updated for BETA
+
+Dec 03 2020
+- Updated for BETA
+- Added WarforgedEmblem and RestlessMark Currencies - Sic
+- Added .Sharing to the fellowship tlo it returns true of false if exp sharing is on for the member - Sic
+	Usage: /echo ${Me.Fellowship.Sharing[x]} where x is fellowship member 1-12
+- Added .FindVariable to the Macro TLO it returns a string of the full variable name if it exist - requested by ctaylor22
+	Usage: /echo Macro.FindVariable[=Myvar]} for EXACT variable name
+	Return: Myvar
+	Usage: /echo Macro.FindVariable[Myvar]} for partial variable name
+	Return: Myvar01 (because it's partial and it found one named Myvar01)
+
+Dec 02 2020
+- Updated for TEST
+- Updated for BETA
+- Added MarkNPC to the raid tlo -CWTN
+
+Dec 01 2020
+- Updated for BETA
+
+Nov 30 2020
+- Updated for BETA
+
+Nov 29 2020 by RedGuides
+- MQ2Status (Sic, Knightly) Alphabetized status help output. Moved money/plat out of stat. Fixed missing space in "Mercenary State" and "Hidden"
+
+Nov 29 2020
+- Updated for BETA
+
+Nov 28 2020
+- Updated for BETA
+
+Nov 27 2020
+- Updated for BETA
+
+Nov 26 2020
+- Updated for BETA
+
+Nov 25 2020
+- Updated for BETA
+
+Nov 24 2020
+- Updated for BETA
+
+Nov 23 2020
+- Updated for BETA
+
+Nov 22 2020
+- Updated for BETA
+
+Nov 21 2020
+- Updated for BETA
+
+Nov 20 2020
+- Updated for BETA
+
+Nov 19 2020
+- Updated for BETA
+- All instances of CFacePick has been changed to CPlayerCustomizationWnd
+- Fixed some misc UI offsets
+
+Nov 18 2020 by RedGuides
+- New plugin! MQ2Rewards (GoldenFrog, Sic, brainiac, Knightly) allows control over specifying, selecting, and claiming rewards from macros.
+
+Nov 18 2020
+- Updated for LIVE
+- Updated for BETA
+- Fixed a bug in mq2targetinfo that would reset the ini if the plugin version changed.
+
+Nov 17 2020
+- Updated for BETA
+
+Nov 16 2020
+- Updated for BETA
+
+Nov 15 2020
+- Updated for BETA 
+
+Nov 14 2020
+- Updated for BETA
+- Updated for TEST
+
+Nov 11 2020
+MQ2Status (Sic, Knightly) Added support for CWTN "paused" mode
+
+Nov 10 2020
+- Updated for BETA
+
+Nov 09 2020
+- Updated for BETA
+
+Nov 07 2020
+- Updated for BETA
+
+Nov 06 2020
+- Updated for BETA
+
+Nov 05 2020
+- Updated for TEST
+- Updated for BETA
+
+Nov 04 2020
+- Updated for BETA
+
+Nov 03 2020
+- Updated for BETA
+
+Oct 31 2020
+- Fixed a few spell and spellmgr bugs, the struct is 1 byte aligned now, as it should be.
+
+Oct 30 2020 
+- MQ2Status (Sic) Added support for MQ2Enchanter/MQ2Shaman for /status
+- MQ2XAssist (Knightly, eqmule) Fixes an issue where EQ doesn't clear assistname in the hitbyspell function (a likely bug in the EQ client)
+
+Oct 29 2020
+- Updated for BETA
+
+Oct 28 2020
+- Updated for BETA
+
+Oct 25 2020
+- Updated for BETA
+
+Oct 24 2020
+- Updated for BETA
+
+Oct 23 2020
+- Updated for BETA
+
+Oct 22 2020
+- Updated for BETA
+
+Oct 21 2020 by RedGuides
+- NEW PLUGIN! MQ2Say (sl968) A customizable alert for /say messages that may otherwise be missed. This is important as a GMs will often use /say when contacting you, as will other players.  
+- New paid plugin! MQ2Enchanter (ChatWithThisName, Sic) a combat plugin for your enchanter. Please see MQ2Enchanter resource for commands and instructions. The current pre-release version is free.
+- New paid plugin! MQ2Shaman (ChatWithThisName, Sic) a combat plugin for your shaman. Please see MQ2Shaman resource for commands and instructions. The current pre-release version is free.
+
+Oct 21 2020
+- Added raid to chat events - Cred Kaen01
+- Updated for LIVE
+- Updated for BETA
+
+-Oct 20 2020
+- Updated for BETA
+
+Oct 19 2020
+- Updated for BETA
+
+Oct 14 2020
+- Updated for TEST
+
+Oct 13 2020
+- Updated for TEST
+- Added a fix for stopping movement in mq2targetinfo by Freezerburn26
+
+Sep 23 2020
+- Updated for TEST
+
+Sep 21 2020 by RedGuides
+- NEW PLUGIN! MQ2Ice (dewey2461) An addon to deal with skidding on ice. It forces "walk" on ice, and when skidding it will pause stick/Nav, allows movement keys to halt motion, and will resume stick/nav when skidding stops. Made for ToFS, but .ini settings can make it work anywhere.
+- MQ2Status (Sic, Knightly) Added "/status macro" to report the macro you have running, and cleaned up subscription section
+- MQ2DPSAdv (Knightly, Sic) Crash fixes
+
+Sep 19 2020 by RedGuides
+- MQ2DPSAdv (Knightly, ChatWithThisName) Code cleanup, added UI option for History Limit (Thanks Sic)
+ Fixes the ini setting of History Limit to 1 (sorry, you'll have to fix that yourself)
+ Fixes a previous crash that I made happen a lot more frequently (dangling pointer)
+
+Sep 16 2020 by RedGuides
+- MQ2DPSAdv (Knightly) Fixed a naming collision crash.
+  Add HistoryLimit setting to the ini which allows you to specify how many mobs for which to keep a DPS history. This should help in those times where running the plugin for long periods of time eventually slows down or crashes.  The default is 25.
+  Add /dps limit command to set the history limit for that character
+
+Sep 16 2020
+- Updated for LIVE
+
+Sep 11 2020 by RedGuides
+- MQ2AutoSize (dencelle) Fixed and working again. Offset pattern needed updating.
+
+Sep 10 2020
+- Fixed a crash on TEST in the tlos that call FindAffectSlot (.Stacks etc) last argument has been removed
+- MQ2Main (drwhomphd) Made sure the other chat events in DataVars follow the same fix that eqmule put in for Tells in order to work on FV or different languages. 
+- MQ2Main (ChatWithThisName) fixed FindItem/FindItemCount, it will no longer report twice as many augments found.
+
 Sep 09 2020 by RedGuides
 - MQ2AFNuke (jimbob) Fixed Enchanter burns. Added /nuke doswarm on|off for wizard swarm pets (Call of Xuzl AA). 
 - MQ2Heals (jimbob) fixed rez abilities for cleric/drood/shaman. Should try to rez group/raid/fellowship corpses.
-- MQ2Main (drwhomphd) Made sure the other chat events in DataVars follow the same fix that eqmule put in for Tells in order to work on FV or different languages. 
-- MQ2Main (ChatWithThisName) fixed FindItem/FindItemCount, it will no longer report twice as many augments found.
 - MQ2CPULoad (Knightly, brainiac) Code cleanup
 
 Sep 09 2020

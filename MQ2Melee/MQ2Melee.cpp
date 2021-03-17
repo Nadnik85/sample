@@ -33,6 +33,7 @@
 //							| 2019-11-14: Updated by Sic/CWTN Yaulp to default to "off"
 //							| 2019-12-29: Updated by ChatWithThisname-> Added Warrior, Berserker, Rogue discs for ToV. Rearranged information by class instead of alphabetically.
 //							| 2020-01-06: Updated by Sic - Added Paladin, Shadowknight, Ranger, Monk, Necro, and Beastlord ToV discs/spells
+//							| 2021-02-13: Updated by BigDorf - fix knights 2H Bash, Nov 2019 AA name change, "Two-Handed Bash" to "Improved Bash"
 //
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=//
 // SHOW_ABILITY:    0=0ff, 1=Display every ability that plugin use.
@@ -1360,7 +1361,7 @@ DECLARE_ABILITY_OPTION(pSLAMS, "slam", "[ON/OFF]?", "${If[${Select[${Me.Race.ID}
 DECLARE_ABILITY_OPTION(pSNEAK, "sneak", "[ON/OFF]?", "0", "${If[${meleemvi[plugin]} && ${Me.Skill[sneak]},1,0]}");
 DECLARE_ABILITY_OPTION(pSTAND, "standup", "[ON/OFF] Authorize to StandUp?", "0", "${If[${meleemvi[plugin]},1,0]}");
 DECLARE_ABILITY_OPTION(pSTIKD, "stickdelay", "[#] Sec to Wait Target in Range?", "0", "${If[${meleemvi[plugin]} && ${Stick.Status.NotEqual[NULL]},1,0]}");
-DECLARE_ABILITY_OPTION(pSTIKKB, "stickbreak", "0=Normal, 1=Allow BreakOnKB", "0", "${If[${meleemvi[plugin]} && ${Stick.Status.NotEqual[NULL]},1,0]}");
+DECLARE_ABILITY_OPTION(pSTIKKB, "stickbreak", "0=Normal, 1=Allow BreakOnKB", "1", "${If[${meleemvi[plugin]} && ${Stick.Status.NotEqual[NULL]},1,0]}");
 DECLARE_ABILITY_OPTION(pSTIKM, "stickmode", "[0-2] 0=Built-In 1=From INI 2=do not stick?", "0", "${If[${meleemvi[plugin]} && ${Stick.Status.NotEqual[NULL]},1,0]}");
 DECLARE_ABILITY_OPTION(pSTIKNR, "sticknorange", "0=Normal, 1=No Range Check", "0", "${If[${meleemvi[plugin]} && ${Stick.Status.NotEqual[NULL]},1,0]}");
 DECLARE_ABILITY_OPTION(pSTIKR, "stickrange", "[#] Target in Range? 0=0ff", "${If[${Stick.Status.NotEqual[NULL]},75,0]}", "${If[${meleemvi[plugin]} && ${Stick.Status.NotEqual[NULL]} && ${meleemvi[stickrange]},1,0]}");
@@ -2306,6 +2307,13 @@ int Equip(unsigned long ID, long SlotID)
     if (!(SlotID < NUM_INV_SLOTS)) return false;                   // invalid destination slot id for equipping item to
     if (!OkayToEquip())      return false;                         // can't equip item right casting or cursor not free
 
+    PCONTENTS dCONT = GetCharInfo2()->pInventoryArray->InventoryArray[SlotID];
+    
+    // if the ID requested to equip has the same ID in the target slot, no action to take, objective already met.
+    if (dCONT != nullptr && GetItemFromContents(dCONT)->ItemNumber == ID) {
+        return true;
+    }
+
     char szTempItem[25] = { 0 };
     sprintf_s(szTempItem, "%d", ID);
     CItemLocation cMoveItem;
@@ -2339,11 +2347,11 @@ int Equip(unsigned long ID, long SlotID)
     if (SlotID == inv_secondary && TwohandType(ContPrimary()))           if (!Unequip(inv_primary))   return false;
 
     // if wearing something
-    if (PCONTENTS dCONT = GetCharInfo2()->pInventoryArray->InventoryArray[SlotID])
+    if (dCONT != nullptr && cMoveItem.InvSlot >= NUM_INV_SLOTS)
     {
-        if (cMoveItem.InvSlot >= NUM_INV_SLOTS) // if not a main inv slot
+        if (!PackFind(&cUnequipTo, dCONT))
         {
-            if (!PackFind(&cUnequipTo, dCONT)) return false; // search bags, if bags cant fit it, return false
+            return false; // search bags, if bags cant fit it, return false
         }
     }
 
@@ -3425,6 +3433,44 @@ void BashPress() {
     if (savedpri) Equip(savedpri, inv_primary);
 }
 
+bool isAAPurchased(PCHAR AAName) {
+    DWORD level = -1;
+    if (PSPAWNINFO pMe = (PSPAWNINFO)pLocalPlayer) {
+        level = pMe->Level;
+    }
+
+    for (unsigned long nAbility = 0; nAbility < AA_CHAR_MAX_REAL; nAbility++) {
+        PALTABILITY pAbility = GetAAByIdWrapper(pPCData->GetAlternateAbilityId(nAbility), level);
+
+        //test for good structure, and level as quick fail fast, the above wrapper not use level on EMU
+        if ( pAbility && pAbility->MinLevel <= level ) {
+            PCHAR pName = pCDBStr->GetString(pAbility->nName, 1, NULL);
+            if (pName && !_stricmp(AAName, pName)) {
+            // good level,  good name,   return postive find.
+                return true;
+            }
+        }
+	}
+    // failed to find by level and name checks,  return negative find.
+    return false;
+}
+
+bool is2HBashAAPurchased(long playerClass) {
+    //fail fast for non-2HB AA classes
+    if (playerClass != EQData::Warrior && playerClass != EQData::Paladin && playerClass != EQData::Shadowknight)
+        return false;
+
+#if !defined(ROF2EMU) && !defined(UFEMU)
+    if (playerClass == EQData::Warrior)
+        return isAAPurchased("Two-Handed Bash");
+    if (playerClass == EQData::Paladin || playerClass == EQData::Shadowknight)
+        return isAAPurchased("Improved Bash");
+    return false;
+#else
+    return isAAPurchased("2 Hand Bash");
+#endif
+}
+
 void Configure() {
     PCHARINFO2 pChar2 = GetCharInfo2();
     PCHARINFO pChar = GetCharInfo();
@@ -3448,11 +3494,9 @@ void Configure() {
             }
         }
     }
-	#if !defined(ROF2EMU) && !defined(UFEMU)
-		HaveBash = GetAAIndexByName("Two-Handed Bash") ? true : false;
-	#else
-		HaveBash = GetAAIndexByName("2 Hand Bash") ? true : false;
-	#endif
+
+    HaveBash = is2HBashAAPurchased(Class);
+
     BardClass = false;
     BerserkerClass = false;
     MonkClass = false;

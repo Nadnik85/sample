@@ -17,7 +17,7 @@ list<string> sPendingChat;
 const unsigned int CMD_HIST_MAX=50;
 DWORD ulOldVScrollPos=0;
 DWORD bmStripFirstStmlLines=0;
-CHAR szChatINISection[MAX_STRING]={0};
+
 bool bAutoScroll=true;
 bool bNoCharSelect=false;
 bool bSaveByChar=true;
@@ -27,34 +27,40 @@ CMQChatWnd *MQChatWnd=0;
 class CMQChatWnd : public CCustomWnd
 {
 public:
-    CMQChatWnd(char *Template):CCustomWnd(Template)
-    {
-        DebugSpew("CMQChatWnd()");
-        SetWndNotification(CMQChatWnd);
-		SetWindowStyle(CWS_CLIENTMOVABLE |CWS_USEMYALPHA | CWS_RESIZEALL | CWS_BORDER | CWS_MINIMIZE | CWS_TITLE);
+	CMQChatWnd(char *Template) :CCustomWnd(Template)
+	{
+		DebugSpew("CMQChatWnd()");
+		SetWndNotification(CMQChatWnd);
+		SetWindowStyle(CWS_CLIENTMOVABLE | CWS_USEMYALPHA | CWS_RESIZEALL | CWS_BORDER | CWS_MINIMIZE | CWS_TITLE);
 		//SetWindowStyle(CWS_AUTOVSCROLL | CWS_AUTOHSCROLL | CWS_TITLE | CWS_MINIMIZE | CWS_RELATIVERECT | CWS_BORDER | CWS_RESIZEALL);
 		RemoveStyle(CWS_TRANSPARENT | CWS_CLOSE);
 		SetBGColor(0xFF000000);//black background
-        InputBox=(CTextEntryWnd*)GetChildItem("CW_ChatInput");
+		InputBox = (CTextEntryWnd*)GetChildItem("CW_ChatInput");
 		InputBox->AddStyle(CWS_AUTOVSCROLL | CWS_RELATIVERECT | CWS_BORDER);// 0x800C0;
 		this->SetFaded(false);
 		this->SetEscapable(false);
 		this->SetClickable(true);
 		this->SetAlpha(0xFF);
+		this->SetFadeToAlpha(0xFF);
 		this->SetBGType(1);
 		this->ContextMenuID = 3;
 		InputBox->SetCRNormal(0xFFFFFFFF);//we want a white cursor
-        InputBox->SetMaxChars(512);
-        OutputBox=(CStmlWnd*)GetChildItem("CW_ChatOutput");
+		InputBox->SetMaxChars(512);
+		OutputBox = (CStmlWnd*)GetChildItem("CW_ChatOutput");
 		OutputBox->SetParentWindow((_CSIDLWND *)this);
 		InputBox->SetParentWindow((_CSIDLWND *)this);
-        OutBoxLines=0;
+		OutBoxLines = 0;
 		OutputBox->MaxLines = 0x190;
-        OutputBox->SetClickable(true);
+		OutputBox->SetClickable(true);
 		OutputBox->AddStyle(CWS_CLIENTMOVABLE);
-        iCurrentCmd=-1;
+		iCurrentCmd = -1;
 		SetZLayer(1); // Make this the topmost window (we will leave it as such for charselect, and allow it to move to background ingame)
-    }
+		this->SetNeedsSaving(0);
+		this->CSetWindowText("MQ");
+		CXRect rc = { 300, 10, 600, 210 };
+		((CXWnd*)this)->Move(rc, false);
+		//this->SetKeepOnScreen(1);
+	}
     ~CMQChatWnd()
     {
     }
@@ -222,11 +228,20 @@ public:
     //struct _CSIDLWND* OutStruct;
     DWORD OutBoxLines;
     DWORD FontSize;
+	DWORD GameState;
+	std::string IniSection;
 private:
     std::vector<std::string> sCmdHistory;
     int iCurrentCmd;
 };
-
+template <unsigned int _Size>LPSTR SafeItoa(int _Value,char(&_Buffer)[_Size], int _Radix)
+{
+	errno_t err = _itoa_s(_Value, _Buffer, _Radix);
+	if (!err) {
+		return _Buffer;
+	}
+	return "";
+}
 VOID LoadChatSettings()
 {
     CHAR szTemp[MAX_STRING]={0};
@@ -240,24 +255,24 @@ VOID LoadChatSettings()
 
 VOID LoadChatFromINI(PCSIDLWND pWindow)
 {
+	if (!pLocalPlayer)
+		return;
+	if (!MQChatWnd)
+		return;
+	int gs = MQChatWnd->GameState;
+	if (gs != GAMESTATE_INGAME && gs != GAMESTATE_CHARSELECT)
+		return;
     CHAR szTemp[MAX_STRING]={0};
-
+	CHAR szChatINISection[MAX_STRING]={0};
     LoadChatSettings();
-
-    sprintf_s(szChatINISection,"%s.%s",EQADDR_SERVERNAME,((PSPAWNINFO)pLocalPlayer)->Name);
-    if (!bSaveByChar)
-		sprintf_s(szChatINISection,"Default");
+	sprintf_s(szChatINISection, "%s", MQChatWnd->IniSection.c_str());
 	//left top right bottom
 	int left = GetPrivateProfileInt(szChatINISection, "ChatLeft", 10, INIFileName);
 	if (left == 2000)
 	{
 		left = 10;
 	}
-	pWindow->SetLocation({ (LONG)left,
-		(LONG)GetPrivateProfileInt(szChatINISection,"ChatTop",       10,INIFileName),
-		(LONG)GetPrivateProfileInt(szChatINISection,"ChatRight",    410,INIFileName),
-		(LONG)GetPrivateProfileInt(szChatINISection,"ChatBottom",   210,INIFileName) });
-
+	
     pWindow->SetLocked((GetPrivateProfileInt(szChatINISection,"Locked",         0,INIFileName) ? true:false));
     pWindow->SetFades((GetPrivateProfileInt(szChatINISection,"Fades",          0,INIFileName) ? true:false));
     pWindow->SetFadeDelay(GetPrivateProfileInt(szChatINISection,"Delay",       2000,INIFileName));
@@ -275,19 +290,28 @@ VOID LoadChatFromINI(PCSIDLWND pWindow)
     MQChatWnd->SetChatFont(GetPrivateProfileInt(szChatINISection,"FontSize",4,INIFileName));
     GetPrivateProfileString(szChatINISection,"WindowTitle","MQ",szTemp,MAX_STRING,INIFileName);
 	pWindow->CSetWindowText(szTemp);
-	//SetCXStr(&pWindow->WindowText,szTemp);
+	pWindow->SetKeepOnScreen(GetPrivateProfileInt(szChatINISection,"KeepOnScreen",         0,INIFileName));
+	CXRect rc;
+	rc.left = left;
+	rc.top = (LONG)GetPrivateProfileInt(szChatINISection,"ChatTop",       10,INIFileName);
+	rc.right = (LONG)GetPrivateProfileInt(szChatINISection, "ChatRight", 410, INIFileName);
+	rc.bottom = (LONG)GetPrivateProfileInt(szChatINISection,"ChatBottom",   210,INIFileName);
+
+	((CXWnd*)pWindow)->Move(rc, true, true, true, true);
 }
-template <unsigned int _Size>LPSTR SafeItoa(int _Value,char(&_Buffer)[_Size], int _Radix)
-{
-	errno_t err = _itoa_s(_Value, _Buffer, _Radix);
-	if (!err) {
-		return _Buffer;
-	}
-	return "";
-}
+
 VOID SaveChatToINI(PCSIDLWND pWindow)
 {
-    CHAR szTemp[MAX_STRING]={0};
+ 	if (!pLocalPlayer)
+		return;
+	if (!MQChatWnd)
+		return;
+	int gs = MQChatWnd->GameState;
+	if (gs != GAMESTATE_INGAME && gs != GAMESTATE_CHARSELECT)
+		return;
+	CHAR szTemp[MAX_STRING]={0};
+	CHAR szChatINISection[MAX_STRING]={0};
+	sprintf_s(szChatINISection, "%s", MQChatWnd->IniSection.c_str());
 
     WritePrivateProfileString("Settings","AutoScroll",   bAutoScroll?"on":"off",INIFileName);
     WritePrivateProfileString("Settings","NoCharSelect", bNoCharSelect?"on":"off",INIFileName);
@@ -298,38 +322,38 @@ VOID SaveChatToINI(PCSIDLWND pWindow)
         WritePrivateProfileString(szChatINISection,"ChatTop",    SafeItoa(pWindow->GetOldLocation().top,    szTemp,10),INIFileName);
         WritePrivateProfileString(szChatINISection,"ChatBottom", SafeItoa(pWindow->GetOldLocation().bottom, szTemp,10),INIFileName);
         WritePrivateProfileString(szChatINISection,"ChatLeft",   SafeItoa(pWindow->GetOldLocation().left,   szTemp,10),INIFileName);
-        WritePrivateProfileString(szChatINISection,"ChatRight",  SafeItoa(pWindow->GetOldLocation().right,  szTemp,10),INIFileName);
+        WritePrivateProfileString(szChatINISection,"ChatRight",  SafeItoa(pWindow->GetOldLocation().right,	szTemp,10),INIFileName);
     }
     else
     {
-        WritePrivateProfileString(szChatINISection,"ChatTop",    SafeItoa(pWindow->GetLocation().top,    szTemp,10),INIFileName);
-        WritePrivateProfileString(szChatINISection,"ChatBottom", SafeItoa(pWindow->GetLocation().bottom, szTemp,10),INIFileName);
-        WritePrivateProfileString(szChatINISection,"ChatLeft",   SafeItoa(pWindow->GetLocation().left,   szTemp,10),INIFileName);
-        WritePrivateProfileString(szChatINISection,"ChatRight",  SafeItoa(pWindow->GetLocation().right,  szTemp,10),INIFileName);
+        WritePrivateProfileString(szChatINISection,"ChatTop",    SafeItoa(pWindow->GetLocation().top,		szTemp,10),INIFileName);
+        WritePrivateProfileString(szChatINISection,"ChatBottom", SafeItoa(pWindow->GetLocation().bottom,	szTemp,10),INIFileName);
+        WritePrivateProfileString(szChatINISection,"ChatLeft",   SafeItoa(pWindow->GetLocation().left,		szTemp,10),INIFileName);
+        WritePrivateProfileString(szChatINISection,"ChatRight",  SafeItoa(pWindow->GetLocation().right,		szTemp,10),INIFileName);
     }
-    WritePrivateProfileString(szChatINISection,"Locked",         SafeItoa(pWindow->IsLocked(),          szTemp,10),INIFileName);
-    WritePrivateProfileString(szChatINISection,"Fades",          SafeItoa(pWindow->GetFades(),           szTemp,10),INIFileName);
-    WritePrivateProfileString(szChatINISection,"Delay",          SafeItoa(pWindow->GetFadeDelay(),       szTemp,10),INIFileName);
-    WritePrivateProfileString(szChatINISection,"Duration",       SafeItoa(pWindow->GetFadeDuration(),    szTemp,10),INIFileName);
-    WritePrivateProfileString(szChatINISection,"Alpha",          SafeItoa(pWindow->GetAlpha(),           szTemp,10),INIFileName);
-    WritePrivateProfileString(szChatINISection,"FadeToAlpha",    SafeItoa(pWindow->GetFadeToAlpha(),     szTemp,10),INIFileName);
+    WritePrivateProfileString(szChatINISection,"Locked",         SafeItoa(pWindow->IsLocked(),				szTemp,10),INIFileName);
+    WritePrivateProfileString(szChatINISection,"Fades",          SafeItoa(pWindow->GetFades(),				szTemp,10),INIFileName);
+    WritePrivateProfileString(szChatINISection,"Delay",          SafeItoa(pWindow->GetFadeDelay(),			szTemp,10),INIFileName);
+    WritePrivateProfileString(szChatINISection,"Duration",       SafeItoa(pWindow->GetFadeDuration(),		szTemp,10),INIFileName);
+    WritePrivateProfileString(szChatINISection,"Alpha",          SafeItoa(pWindow->GetAlpha(),				szTemp,10),INIFileName);
+    WritePrivateProfileString(szChatINISection,"FadeToAlpha",    SafeItoa(pWindow->GetFadeToAlpha(),		szTemp,10),INIFileName);
 	ARGBCOLOR col = { 0 };
 	col.ARGB = pWindow->GetBGColor();
-    WritePrivateProfileString(szChatINISection,"BGType",         SafeItoa(pWindow->GetBGType(),          szTemp,10),INIFileName);
-    WritePrivateProfileString(szChatINISection,"BGTint.alpha",   SafeItoa(col.A,       szTemp,10),INIFileName);
-    WritePrivateProfileString(szChatINISection,"BGTint.red",     SafeItoa(col.R,       szTemp,10),INIFileName);
-    WritePrivateProfileString(szChatINISection,"BGTint.green",   SafeItoa(col.G,       szTemp,10),INIFileName);
-    WritePrivateProfileString(szChatINISection,"BGTint.blue",    SafeItoa(col.B,       szTemp,10),INIFileName);
-    WritePrivateProfileString(szChatINISection,"FontSize",       SafeItoa(MQChatWnd->FontSize,      szTemp,10),INIFileName);
-
+    WritePrivateProfileString(szChatINISection,"BGType",         SafeItoa(pWindow->GetBGType(),				szTemp,10),INIFileName);
+    WritePrivateProfileString(szChatINISection,"BGTint.alpha",   SafeItoa(col.A,							szTemp,10),INIFileName);
+    WritePrivateProfileString(szChatINISection,"BGTint.red",     SafeItoa(col.R,							szTemp,10),INIFileName);
+    WritePrivateProfileString(szChatINISection,"BGTint.green",   SafeItoa(col.G,							szTemp,10),INIFileName);
+    WritePrivateProfileString(szChatINISection,"BGTint.blue",    SafeItoa(col.B,							szTemp,10),INIFileName);
+    WritePrivateProfileString(szChatINISection,"FontSize",       SafeItoa(MQChatWnd->FontSize,				szTemp,10),INIFileName);
+    WritePrivateProfileString(szChatINISection,"KeepOnScreen",	 SafeItoa(pWindow->GetKeepOnScreen(),		szTemp,10),INIFileName);
+	
 	GetCXStr(pWindow->CGetWindowText(),szTemp, MAX_STRING);
 	//GetCXStr(pWindow->WindowText,szTemp, MAX_STRING);
     WritePrivateProfileString(szChatINISection,"WindowTitle",szTemp,INIFileName);
 }
-
+void UpdateGameState(DWORD GameState);
 VOID CreateChatWindow()
 {
-    DebugSpew("MQ2ChatWnd::CreateChatWindow()");
     if (MQChatWnd)
     {
         return;
@@ -339,6 +363,7 @@ VOID CreateChatWindow()
     {
         return;
     }
+	UpdateGameState(GetGameState());
 	LoadChatFromINI((PCSIDLWND)MQChatWnd);
 	SaveChatToINI((PCSIDLWND)MQChatWnd); // A) we're masochists, B) this creates the file if its not there..
 }
@@ -348,7 +373,7 @@ VOID DestroyChatWnd()
     if (MQChatWnd)
     {
         sPendingChat.clear();
-        SaveChatToINI((PCSIDLWND)MQChatWnd);
+		SaveChatToINI((PCSIDLWND)MQChatWnd);
         delete MQChatWnd;
         MQChatWnd=0;
         ulOldVScrollPos=0;
@@ -422,6 +447,11 @@ VOID MQChat(PSPAWNINFO pChar, PCHAR Line)
 			CXRect rc = { 300, 10, 600, 210 };
 			((CXWnd*)MQChatWnd)->Move(rc, false);
 			SaveChatToINI((PCSIDLWND)MQChatWnd);
+			MQChatWnd->GameState = GAMESTATE_CHARSELECT;
+			MQChatWnd->IniSection = "CharSelect";
+			SaveChatToINI((PCSIDLWND)MQChatWnd);
+			UpdateGameState(GetGameState());
+
             return;
 		}
 
@@ -548,23 +578,46 @@ PLUGIN_API VOID OnReloadUI()
 {
     DebugSpewAlways("MQ2ChatWnd::OnReloadUI()");
     // redraw window when you load/reload UI
-    DebugTry(CreateChatWindow());
+	DebugSpewAlways("OnReloadUI called %d loading chat", GetGameState());
+	DebugTry(CreateChatWindow());
 }
 
 PLUGIN_API VOID OnCleanUI()
 {
     DebugSpewAlways("MQ2ChatWnd::OnCleanUI()");
     // destroy chatwnd before server select & while reloading UI
+	DebugSpewAlways("OnCleanUI called %d saving chat", GetGameState());
     DestroyChatWnd();
 }
-
+void UpdateGameState(DWORD GameState)
+{
+	if (MQChatWnd)
+	{
+		if (GameState == GAMESTATE_CHARSELECT || GameState == GAMESTATE_INGAME)
+		{
+			MQChatWnd->GameState = GameState;
+			MQChatWnd->IniSection = "CharSelect";
+			if (GameState == GAMESTATE_INGAME)
+			{
+				CHAR szChatINISection[128];
+				sprintf_s(szChatINISection, "%s.%s", EQADDR_SERVERNAME, ((PSPAWNINFO)pLocalPlayer)->Name);
+				MQChatWnd->IniSection = szChatINISection;
+				if (!bSaveByChar)
+					MQChatWnd->IniSection = "Default";
+			}
+			LoadChatFromINI((PCSIDLWND)MQChatWnd);
+		}
+	}
+}
 PLUGIN_API VOID SetGameState(DWORD GameState)
 {
-    DebugSpew("MQ2ChatWnd::SetGameState()");
+    //DebugSpew("MQ2ChatWnd::SetGameState()");
+	UpdateGameState(GameState);
     if (GameState==GAMESTATE_CHARSELECT)
     {
         if (bNoCharSelect)
         {
+			DebugSpewAlways("Gamestate changed to %d saving chat", GameState);
             // destroy chatwnd at charselect if NoCharSelect=on
             DestroyChatWnd();
         }
@@ -582,9 +635,11 @@ PLUGIN_API VOID SetGameState(DWORD GameState)
         if (GameState==GAMESTATE_INGAME && !MQChatWnd)
         {
             // we entered the game, set up shop
+			DebugSpewAlways("Gamestate changed to %d loading chat", GameState);
             DebugTry(CreateChatWindow());
-        }
+		}
     }
+	UpdateGameState(GameState);
 }
 
 // This is called every time WriteChatColor is called by MQ2Main or any plugin,
@@ -711,16 +766,13 @@ PLUGIN_API DWORD OnWriteChatColor(PCHAR Line, DWORD Color, DWORD Filter)
 	delete szProcessed;
     return 0;
 }
-
+int savecounter = 0;
 PLUGIN_API VOID OnPulse()
 {
     if (gGameState==GAMESTATE_CHARSELECT && !MQChatWnd && !bNoCharSelect)
     {
         CreateChatWindow();
     }
-	//if (CXWnd *krwnd = FindMQ2Window("TaskOverlayWnd")) {
-	//	Sleep(0);
-	//}
     if (MQChatWnd)
     {
 		switch (gGameState)
@@ -735,6 +787,16 @@ PLUGIN_API VOID OnPulse()
 			{
 				if (MQChatWnd->GetZLayer() != 0)
 					MQChatWnd->SetZLayer(0);
+				if (savecounter++ > 100)//we dont need to check this a million times per second...
+				{
+					if (MQChatWnd->GetNeedsSaving())
+					{
+						SaveChatToINI((PCSIDLWND)MQChatWnd);
+						MQChatWnd->SetNeedsSaving(0);
+						//WriteChatf("Saved ChatWindow Position");
+					}
+					savecounter = 0;
+				}
 				break;
 			}
 		}
