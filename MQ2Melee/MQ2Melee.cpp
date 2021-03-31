@@ -3061,6 +3061,7 @@ bool      Loaded              = false;        // Loaded?
 bool      Moving              = false;        // Moving?
 bool      Immobile            = false;        // Immobilized?
 bool      AutoFire            = false;        // True when autofire is on.
+bool      ClassCan2HBash      = false;        // True for PAL SHD and WAR
 bool      HaveBash            = false;        // Have Two Hand Bash?
 bool      HaveHold            = false;        // Have Pet Hold?
 bool      HaveGHold           = false;        // Have Pet GHold?
@@ -3415,8 +3416,21 @@ void AttackOFF() {
 }
 
 bool BashCheck() {
-    if (ShieldType(ContSecondary())) return true;
-    if (TwohandType(ContPrimary()))  return HaveBash;
+    if (ShieldType(ContSecondary()))
+        return true;
+
+    if (ClassCan2HBash) {                                 // class is Pal/Shd/War?
+        PCONTENTS pContPri = ContPrimary();
+        if (pContPri  && TwohandType(pContPri) ) {        // Primary is a 2H?
+            if (HaveBash)                                 // Have the 2H bash aa?
+                return true;
+
+            PITEMINFO pItem = GetItemFromContents(pContPri);
+            if ( pItem && pItem->Worn.SpellID == 2835 )   // Knights epic1.0 have worn spell effect: Two-Hand Bash, ID 2835
+                return true;
+        }
+    }
+
     return (elSHIELD && CountItemByID(elSHIELD) && OkayToEquip(Giant));
 }
 
@@ -3434,41 +3448,24 @@ void BashPress() {
 }
 
 bool isAAPurchased(PCHAR AAName) {
-    DWORD level = -1;
-    if (PSPAWNINFO pMe = (PSPAWNINFO)pLocalPlayer) {
-        level = pMe->Level;
-    }
+    PSPAWNINFO pMe = (PSPAWNINFO)pLocalPlayer;
+    if (!pMe)
+        return false;
 
     for (unsigned long nAbility = 0; nAbility < AA_CHAR_MAX_REAL; nAbility++) {
-        PALTABILITY pAbility = GetAAByIdWrapper(pPCData->GetAlternateAbilityId(nAbility), level);
+        PALTABILITY pAbility = GetAAByIdWrapper(pPCData->GetAlternateAbilityId(nAbility), pMe->Level);
 
         //test for good structure, and level as quick fail fast, the above wrapper not use level on EMU
-        if ( pAbility && pAbility->MinLevel <= level ) {
+        if ( pAbility && pAbility->MinLevel <= pMe->Level ) {
             PCHAR pName = pCDBStr->GetString(pAbility->nName, 1, NULL);
             if (pName && !_stricmp(AAName, pName)) {
             // good level,  good name,   return postive find.
                 return true;
             }
         }
-	}
+    }
     // failed to find by level and name checks,  return negative find.
     return false;
-}
-
-bool is2HBashAAPurchased(long playerClass) {
-    //fail fast for non-2HB AA classes
-    if (playerClass != EQData::Warrior && playerClass != EQData::Paladin && playerClass != EQData::Shadowknight)
-        return false;
-
-#if !defined(ROF2EMU) && !defined(UFEMU)
-    if (playerClass == EQData::Warrior)
-        return isAAPurchased("Two-Handed Bash");
-    if (playerClass == EQData::Paladin || playerClass == EQData::Shadowknight)
-        return isAAPurchased("Improved Bash");
-    return false;
-#else
-    return isAAPurchased("2 Hand Bash");
-#endif
 }
 
 void Configure() {
@@ -3495,7 +3492,25 @@ void Configure() {
         }
     }
 
-    HaveBash = is2HBashAAPurchased(Class);
+#if !defined(ROF2EMU) && !defined(UFEMU)
+    if (Class == Warrior)
+    {
+        HaveBash = isAAPurchased("Two-Handed Bash");
+        ClassCan2HBash = true;
+    }
+    else if (Class == Paladin || Class == Shadowknight)
+    {
+        HaveBash = isAAPurchased("Improved Bash");
+        ClassCan2HBash = true;
+    }
+#else
+    if (Class == Warrior || Class == Paladin || Class == Shadowknight)
+    {
+        HaveBash = isAAPurchased("2 Hand Bash");
+        ClassCan2HBash = true;
+    }
+#endif
+
 
     BardClass = false;
     BerserkerClass = false;
