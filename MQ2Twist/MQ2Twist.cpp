@@ -433,7 +433,7 @@ BOOL ItemFound(char *ItemName)
     char zOutput[MAX_STRING]={0};
     if(!ItemName)
         return false;
-    sprintf_s(zOutput, "${FindItem[%s].InvSlot.ID}", ItemName);
+    sprintf_s(zOutput, "${FindItem[%s].Name}", ItemName);
     ParseMacroData(zOutput, sizeof(zOutput));
     WriteDebug("MQ2Twist::ItemFound(%s)", ItemName);
     if(!_stricmp(zOutput, "null"))
@@ -484,7 +484,7 @@ void DoSwapIn(unsigned int Index)
 				return;
 			}
 			if (_strnicmp(vr.slot, "DISABLED", 8)) {
-				sprintf_s(szTemp, "${InvSlot[%s].Item", vr.slot);
+				sprintf_s(szTemp, "${Me.Inventory[%s].Name}", vr.slot);
 				ParseMacroData(szTemp, sizeof(szTemp));
 				strcpy_s(SwappedOutItem, szTemp);
 				strcpy_s(SwappedOutSlot, vr.slot);
@@ -1216,7 +1216,7 @@ PLUGIN_API VOID OnPulse(VOID)
                         WriteDebug("MQ2Twist::Pulse - Single Song (Casting Item %d - %s)", SongTodo, ItemClick[itemID].name); 
                         if(ItemFound(ItemClick[itemID].name)) {
                             DoSwapIn(itemID);
-                            sprintf_s(szTemp,"/multiline ; /stopsong ; /nomodkey /itemnotify ${FindItem[%s].InvSlot} rightmouseup", ItemClick[itemID].name); 
+                            sprintf_s(szTemp,"/multiline ; /stopsong ; /nomodkey /itemnotify \"%s\" rightmouseup", ItemClick[itemID].name); 
                         }
                         else {
                             WriteChatf("MQ2Twist::Pulse - Single Item \"%s\" not found in inventory, skipping.", ItemClick[itemID].name);
@@ -1316,7 +1316,7 @@ PLUGIN_API VOID OnPulse(VOID)
                         WriteDebug("MQ2Twist::Pulse - Calling DoSwapIn(%d)", itemID);
                         if(ItemFound(ItemClick[itemID].name)) {
                             DoSwapIn(itemID);
-                            sprintf_s(szTemp,"/multiline ; /stopsong ; /nomodkey /itemnotify ${FindItem[%s].InvSlot} rightmouseup", ItemClick[itemID].name); 
+                            sprintf_s(szTemp,"/multiline ; /stopsong ; /nomodkey /itemnotify \"%s\" rightmouseup", ItemClick[itemID].name);  
                         }
                         else {
                             WriteChatf("MQ2Twist::Pulse - Item \"%s\" not found in inventory, skipping.", ItemClick[itemID].name);
