@@ -3151,7 +3151,6 @@ public:
 		Target = 8,
 		Taunt = 9,
 		BuffDuration = 10,
-		Focus = 11,
 	};
 	enum PetMethods
 	{
@@ -3168,7 +3167,6 @@ public:
 		TypeMember(Target);
 		TypeMember(Taunt);
 		TypeMember(BuffDuration);
-		TypeMember(Focus);
 	}
 
 	~MQ2PetType()
