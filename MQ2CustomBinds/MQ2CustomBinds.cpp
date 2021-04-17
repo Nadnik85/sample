@@ -126,7 +126,7 @@ void WriteRetiredHeaderToTXT(const char* filename)
     constexpr char* Asterisks = "* * * * * * * * * *";
     constexpr char* RetiredMsg = "This TXT file is replaced by the INI file.\nYou can safely delete this TXT file.";
 
-    void* data = NULL;
+    void* data = nullptr;
     struct stat fileStat;
     FILE *file = nullptr;
 
