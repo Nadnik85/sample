@@ -103,9 +103,9 @@ PLUGIN_API VOID ShutdownPlugin(VOID)
 PLUGIN_API VOID SetGameState(DWORD GameState)
 {
     static bool BindsLoaded=false;
-    if (GameState==GAMESTATE_INGAME || GameState==GAMESTATE_CHARSELECT) 
+    if (GameState==GAMESTATE_INGAME || GameState==GAMESTATE_CHARSELECT)
     {
-        if (!BindsLoaded) 
+        if (!BindsLoaded)
         {
             LoadCustomBinds();
             BindsLoaded=true;
@@ -114,17 +114,40 @@ PLUGIN_API VOID SetGameState(DWORD GameState)
 }
 
 /* Config file Data Access Abstraction
- * 
+ *
  * Abstraction is on Load only ( between INI and TXT config files )
  * provision for the standard INI introduced to read and write configuration.
- * original TXT save config code removed.
  * original TXT load amended to write back a note that the file is replaced by INI files.
- * 
- * Original names, LoadCustomBinds() & SaveCustomBinds() retained
+ *
  */
 
-void WriteRetiredHeaderToTXT(char* filename);
+void WriteRetiredHeaderToTXT(const char* filename)
+{
+    constexpr char* Asterisks = "* * * * * * * * * *";
+    constexpr char* RetiredMsg = "This TXT file is replaced by the INI file.\nYou can safely delete this TXT file.";
 
+    void* data = NULL;
+    struct stat fileStat;
+    FILE *file = nullptr;
+
+    errno_t err = stat(filename, &fileStat);
+    if (err)
+        return;
+
+    err = fopen_s(&file, filename, "rt");
+    if (err)
+        return;
+
+    data = malloc(fileStat.st_size);
+    if (data) {
+        int length = fread(data, 1, fileStat.st_size, file);
+        freopen_s(&file, filename, "wt", file);
+        fprintf(file, "%s\n%s\n%s\n", Asterisks, RetiredMsg, Asterisks);
+        fwrite(data, 1, length, file);
+        free(data);
+    }
+    fclose(file);
+}
 
 bool LoadCustomBindsTXT()
 {
@@ -172,13 +195,12 @@ bool LoadCustomBindsTXT()
 bool LoadCustomBindsINI()
 {
     char names[MAX_STRING] = { 0 };
-    char* pstr;
 
     CUSTOMBIND NewBind;
 
     //names will get populated with a series of null term strings, and ends with another null.
     GetPrivateProfileSectionNames(names, sizeof(names), INIFileName);
-    pstr = names;
+    char* pstr = names;
 
     if (pstr[0] == 0)
         return false;
@@ -208,51 +230,20 @@ VOID SaveCustomBinds()
             WritePrivateProfileString(pBind->Name, "up", pBind->CommandUp, INIFileName);
         }
     }
-    WriteChatColor("custom binds saved to ini");
+    WriteChatColor("Custom binds saved to ini");
 }
-
-void WriteRetiredHeaderToTXT(char* filename)
-{
-    constexpr char* Asterisks = "* * * * * * * * * *";
-    constexpr char* RetiredMsg = "This TXT file is replaced by the INI file.\nYou can safely delete this TXT file.";
-
-    void* data = NULL;
-    struct stat fileStat;
-    FILE *file = nullptr;
-
-    errno_t err = stat(filename, &fileStat);
-    if (err)
-        return;
-
-    err = fopen_s(&file, filename, "rt");
-    if (err)
-        return;
-
-    data = malloc(fileStat.st_size);
-    if (data) {
-        int length = fread(data, 1, fileStat.st_size, file);
-        freopen_s(&file, filename, "wt", file);
-        fprintf(file, "%s\n%s\n%s\n", Asterisks, RetiredMsg, Asterisks);
-        fwrite(data, 1, length, file);
-        free(data);
-    }
-    fclose(file);
-}
-
 
 // Load accessor method, to try ini first, fall back to txt.
 // if txt is used, save immediate.
 VOID LoadCustomBinds()
 {
     if (LoadCustomBindsINI()) {
-        WriteChatColor("custom binds loaded from ini");
+        WriteChatColor("Custom binds loaded from ini");
     }
-    else {
-        if (LoadCustomBindsTXT()) {
-            WriteChatColor("custom binds loaded from txt");
-            // save to ini, for use going forward.
-            SaveCustomBinds();
-        }
+    else if (LoadCustomBindsTXT()) {
+        WriteChatColor("Custom binds loaded from txt");
+        // save to ini, for use going forward.
+        SaveCustomBinds();
     }
 }
 
