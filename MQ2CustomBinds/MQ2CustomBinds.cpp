@@ -113,23 +113,36 @@ PLUGIN_API VOID SetGameState(DWORD GameState)
     }
 }
 
-VOID LoadCustomBinds()
+/* Config file Data Access Abstraction
+ * 
+ * Abstraction is on Load only ( between INI and TXT config files )
+ * provision for the standard INI introduced to read and write configuration.
+ * original TXT save config code removed.
+ * original TXT load amended to write back a note that the file is replaced by INI files.
+ * 
+ * Original names, LoadCustomBinds() & SaveCustomBinds() retained
+ */
+
+void WriteRetiredHeaderToTXT(char* filename);
+
+
+bool LoadCustomBindsTXT()
 {
     CHAR filename[MAX_STRING];
     strcpy_s(filename,gszINIPath);
     strcat_s(filename,"\\MQ2CustomBinds.txt");
-	FILE *file = 0;
-	errno_t err = fopen_s(&file,filename, "rt");
+    FILE *file = nullptr;
+    errno_t err = fopen_s(&file,filename, "rt");
     if (err)
-        return;
+        return false;
     CUSTOMBIND NewBind;
     ZeroMemory(&NewBind,sizeof(CUSTOMBIND));
     CHAR szLine[MAX_STRING];
 
     while(fgets(szLine,2048,file))
     {
-		char *Next_Token1 = 0;
-		char *Next_Token2 = 0;
+        char *Next_Token1 = 0;
+        char *Next_Token2 = 0;
         char *Cmd = strtok_s(szLine,"\r\n",&Next_Token1);
         char *Cmd2 = strtok_s(Cmd,"=",&Next_Token2);
         if (!_stricmp(Cmd2,"name"))
@@ -149,26 +162,103 @@ VOID LoadCustomBinds()
     }
 
     fclose(file);
+
+    //place txt file retired header into old txt file
+    WriteRetiredHeaderToTXT(filename);
+
+    return true;
+}
+
+bool LoadCustomBindsINI()
+{
+    char names[MAX_STRING] = { 0 };
+    char* pstr;
+
+    CUSTOMBIND NewBind;
+
+    //names will get populated with a series of null term strings, and ends with another null.
+    GetPrivateProfileSectionNames(names, sizeof(names), INIFileName);
+    pstr = names;
+
+    if (pstr[0] == 0)
+        return false;
+
+    while (pstr[0] != 0) {
+        ZeroMemory(&NewBind, sizeof(CUSTOMBIND));
+        strcpy_s(NewBind.Name, pstr);
+
+        GetPrivateProfileString(NewBind.Name, "up", "", NewBind.CommandUp, sizeof(NewBind.CommandUp), INIFileName);
+        GetPrivateProfileString(NewBind.Name, "down", "", NewBind.CommandDown, sizeof(NewBind.CommandDown), INIFileName);
+        AddCustomBind(NewBind.Name, NewBind.CommandDown, NewBind.CommandUp);
+
+        pstr += strlen(pstr) + 1;
+    }
+    return true;
 }
 
 VOID SaveCustomBinds()
 {
-    CHAR filename[MAX_STRING];
-    strcpy_s(filename,gszINIPath);
-    strcat_s(filename,"\\MQ2CustomBinds.txt");
-	FILE *file = 0;
-	errno_t err = fopen_s(&file,filename, "wt");
+    //truncate the file
+    std::remove(INIFileName);
+
+    for (unsigned long N = 0; N < CustomBinds.Size; N++) {
+        if (PCUSTOMBIND pBind = CustomBinds[N])
+        {
+            WritePrivateProfileString(pBind->Name, "down", pBind->CommandDown, INIFileName);
+            WritePrivateProfileString(pBind->Name, "up", pBind->CommandUp, INIFileName);
+        }
+    }
+    WriteChatColor("custom binds saved to ini");
+}
+
+void WriteRetiredHeaderToTXT(char* filename)
+{
+    constexpr char* Asterisks = "* * * * * * * * * *";
+    constexpr char* RetiredMsg = "This TXT file is replaced by the INI file.\nYou can safely delete this TXT file.";
+
+    void* data = NULL;
+    struct stat fileStat;
+    FILE *file = nullptr;
+
+    errno_t err = stat(filename, &fileStat);
     if (err)
         return;
 
-	for (unsigned long N = 0; N < CustomBinds.Size; N++) {
-		if (PCUSTOMBIND pBind = CustomBinds[N])
-		{
-			fprintf(file, "name=%s\ndown=%s\nup=%s\n", pBind->Name, pBind->CommandDown, pBind->CommandUp);
-		}
-	}
-	fclose(file);
+    err = fopen_s(&file, filename, "rt");
+    if (err)
+        return;
+
+    data = malloc(fileStat.st_size);
+    if (data) {
+        int length = fread(data, 1, fileStat.st_size, file);
+        freopen_s(&file, filename, "wt", file);
+        fprintf(file, "%s\n%s\n%s\n", Asterisks, RetiredMsg, Asterisks);
+        fwrite(data, 1, length, file);
+        free(data);
+    }
+    fclose(file);
 }
+
+
+// Load accessor method, to try ini first, fall back to txt.
+// if txt is used, save immediate.
+VOID LoadCustomBinds()
+{
+    if (LoadCustomBindsINI()) {
+        WriteChatColor("custom binds loaded from ini");
+    }
+    else {
+        if (LoadCustomBindsTXT()) {
+            WriteChatColor("custom binds loaded from txt");
+            // save to ini, for use going forward.
+            SaveCustomBinds();
+        }
+    }
+}
+
+/* End of Config file Data Access Abstraction.
+ */
+
 
 VOID ExecuteCustomBind(PCHAR Name,BOOL Down)
 {
