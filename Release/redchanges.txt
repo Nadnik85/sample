@@ -1,3 +1,12 @@
+Apr 21 2021 by RedGuides
+- MQ2Enchanter (ChatWithThisName) has been removed from beta and is now premium.
+- RGMercs (morisato) TLP fixes for warrior/cleric/enchanter. Druids and Mages revamped, the help file is now split between "/rg help" and "/rg advanced"
+- MQ2Rez (jimbob) Added option for /rez delay #, so rezzes can be delayed again
+- MQ2CustomBinds (BigDorf) Now defaults to INI file format for bind name/up/down information. There will be a one-time conversion of your .txt files to .ini. 
+
+Apr 21 2021
+- Updated for LIVE
+
 Apr 14 2021 by RedGuides
 - KissAssist (ctaylor22) Added code to reduce the Navigation spam when in combat. This version also has changes to help keep your character from running directly underneath Mobs before the initial attack is issued. MQ2DanNet syntax error fixed.
 - MQ2Twist (Woobs) Fix Twist not using items
@@ -5,7 +14,7 @@ Apr 14 2021 by RedGuides
 Apr 14 2021
 - Updated for TEST
 
-April 2 2021 by RedGuides
+Apr 2 2021 by RedGuides
 - MQ2Boxr (Sidien, Knightly) added support for MuleAssist, removed the CampRadius command. Code made easier to extend.
 - MQ2Melee (BigDorf, Knightly) Bash will now ensure equipped gear is appropriate for bashing, including a check for the worn effect "two hand bash", code cleanup
 - Multiple plugins (Sic, ChatWithThisName, brainiac) had a small fix for a bug with CTextEntryWnd: MQ2AdvPath, MQ2ChatWnd, MQ2Say, MQ2Notepad, MQ2IRC, MQ2EQBC, MQ2DPSAdv, MQ2Gmail, MQ2Twitch 
