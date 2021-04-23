@@ -48,6 +48,7 @@ bool bgShowSize = false;
 bool bgInGame = false;
 bool bgDrawNames;
 bool bgFilters[2] = { true,true };
+char szMapFolder[64] = { 0 };
 sprite sItem; // Item sprite
 sprite sSpawn; // Spawn sprite
 sprite sRunning; // Running Spawn sprite
@@ -172,7 +173,7 @@ void RadarZDepth(float zDepth)
 }
 
 void RadarHelp() {
-	WriteChatColor("MQ2Radar:\n/radar COMMAND\nCOMMANDS:\ncenter x y\nview z\nscale z\nzoom z\nzdepth z\nalertspeed z\nmode 0/1\nnames on/off\nmap on/off\ntargetline on/off\ndelay z\nspawnsize on/off (z)\nsave\nreload\ntoggle\noptions\nlayer");
+	WriteChatColor("MQ2Radar:\n/radar COMMAND\nCOMMANDS:\ncenter x y\nview z\nscale z\nzoom z\nzdepth z\nalertspeed z\nmode 0/1\nnames on/off\nmap on/off\ntargetline on/off\ndelay z\nspawnsize on/off (z)\nsave\nreload\ntoggle\noptions\nlayer\nMapfolder");
 }
 
 // Check if the mouse is over a radar element
@@ -305,6 +306,9 @@ VOID Load_MQ2CharRadar_INI()
 	sprintf_s(szTemp, "%d", mapLayer);
 	WritePrivateProfileString("MQ2Radar", "MapLayer", szTemp, INIFileName);
 
+	GetPrivateProfileString("MQ2Radar", "MapFolder", "", &szMapFolder[0], sizeof(szMapFolder), INIFileName);
+	WritePrivateProfileString("MQ2Radar", "MapFolder", szMapFolder, INIFileName);
+
 	GetPrivateProfileString("MQ2Radar", "TargetLine", "1", &szTemp[0], sizeof(szTemp), INIFileName);
 	bgDrawTargetLine = atoi(&szTemp[0]) != 0;;
 	sprintf_s(szTemp, "%d", bgDrawTargetLine);
@@ -388,21 +392,30 @@ VOID RadarShowOptions()
 void LoadMap(char* pZone) {
 	char cBuffer[128];
 	char* pTokens = { 0 };
-	char cFileName[2048];
+	char cFileName[MAX_PATH];
 	line tempLine;
 	gMap.clear();
+
+	//If the mapLayer is 0, it's the base layer and doesn't use the _0
+	//If the user provided a szMapFolder, then we'll add that in as well.
 	switch (mapLayer) {
 		case 0:
-			sprintf_s(cFileName, "%s\\maps\\%s.txt", gszEQPath, pZone);
+			if (szMapFolder[0] != '\0') {
+				sprintf_s(cFileName, "%s\\maps\\%s\\%s.txt", gszEQPath, szMapFolder, pZone);
+			}
+			else {
+				sprintf_s(cFileName, "%s\\maps\\%s.txt", gszEQPath, pZone);
+			}
 			break;
 		case 1:
-			sprintf_s(cFileName, "%s\\maps\\%s_1.txt", gszEQPath, pZone);
-			break;
 		case 2:
-			sprintf_s(cFileName, "%s\\maps\\%s_2.txt", gszEQPath, pZone);
-			break;
 		case 3:
-			sprintf_s(cFileName, "%s\\maps\\%s_3.txt", gszEQPath, pZone);
+			if (szMapFolder[0] != '\0') {
+				sprintf_s(cFileName, "%s\\maps\\%s\\%s_%i.txt", gszEQPath, szMapFolder, pZone, mapLayer);
+			}
+			else {
+				sprintf_s(cFileName, "%s\\maps\\%s_%i.txt", gszEQPath, pZone, mapLayer);
+			}
 			break;
 		default:
 			sprintf_s(cFileName, "%s\\maps\\%s.txt", gszEQPath, pZone);
@@ -730,6 +743,32 @@ void Radar(PSPAWNINFO pChar, PCHAR szLine)
 			WriteChatf("MapLayer set to: %s", szSwitch);
 			if (!InGame())
 				return;
+			LoadMap(GetShortZone(GetCharInfo()->pSpawn->GetZoneID()));
+		}
+	}
+	else if (!_stricmp(szSwitch, "MapFolder")) {
+		GetArg(szSwitch, szLine, 2);
+		if (!strlen(szSwitch)) {
+			if (szMapFolder[0] != '\0') {
+				WriteChatf("MapFolder currently in use: %s", szMapFolder);
+			}
+			else {
+				WriteChatf("No MapFolder currently in use");
+			}
+
+			WriteChatf("Please provide a folder name such as \"Brewall's Maps\"");
+			WriteChatf("Note that multi-word Folders must be in Quotes");
+		}
+		else if (!_stricmp(szSwitch, "clear")) {
+			szMapFolder[0] = '\0';
+			WriteChatf("No longer using a MapFolder");
+			WritePrivateProfileString("MQ2Radar", "MapFolder", "", INIFileName);
+			LoadMap(GetShortZone(GetCharInfo()->pSpawn->GetZoneID()));
+		}
+		else {
+			sprintf_s(szMapFolder, szSwitch);
+			WritePrivateProfileString("MQ2Radar", "MapFolder", szSwitch, INIFileName);
+			WriteChatf("Mapfolder set to: %s", szSwitch);
 			LoadMap(GetShortZone(GetCharInfo()->pSpawn->GetZoneID()));
 		}
 	}
