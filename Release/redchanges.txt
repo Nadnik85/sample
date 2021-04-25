@@ -1,8 +1,24 @@
+Apr 25 2021 by RedGuides
+- MQ2DPSAdv (Sic, brainiac, dannuic, Knightly) Further fixes for crashes. Updated "healed" to " healed " to avoid catching user names like shealedallah the warrior princess.
+- MQ2Radar (ChatWithThisName, brainiac, odessa) Add option to use a custom map folder. 
+  /radar Mapfolder "Brewall's Maps"
+  requires the use of Quotes for multi-word Map folders.
+  /radar Mapfolder clear
+  Will clear the use of a map folder and use the default maps.
+  Adds new INI entry "MapFolder" which is loaded with other character specific options, and saved when the MapFolder is changed.
+- MQ2AutoForage (GoldenFrog, Knightly, dannuic) Added default [Global] section to INI. Items will read or write to a global section, unless a zone-specific line exists. e.g.
+  [Global]
+  Roots=keep
+- MQ2Say (Knightly, dannuic, ChatWithThisName) Backported some of the fixes and code-cleanup from Next 
+  
+Apr 21 2021 by RedGuides
+- MQ2DPSAdv (Sic, ChatWithThisName) Update due to chat color changes
+
 Apr 21 2021 by RedGuides
 - MQ2Enchanter (ChatWithThisName) has been removed from beta and is now premium.
 - RGMercs (morisato) TLP fixes for warrior/cleric/enchanter. Druids and Mages revamped, the help file is now split between "/rg help" and "/rg advanced"
-- MQ2Rez (jimbob) Added option for /rez delay #, so rezzes can be delayed again
-- MQ2CustomBinds (BigDorf) Now defaults to INI file format for bind name/up/down information. There will be a one-time conversion of your .txt files to .ini. 
+- MQ2Rez (jimbob, Sic, Knightly, brainiac) Added option for /rez delay #, so rezzes can be delayed again
+- MQ2CustomBinds (BigDorf, Knightly) Now defaults to INI file format for bind name/up/down information. There will be a one-time conversion of your .txt files to .ini. 
 
 Apr 21 2021
 - Updated for LIVE
