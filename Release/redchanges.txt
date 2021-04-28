@@ -1,4 +1,4 @@
-Apr 25 2021 by RedGuides
+Apr 28 2021 by RedGuides
 - MQ2DPSAdv (Sic, brainiac, dannuic, Knightly) Further fixes for crashes. Updated "healed" to " healed " to avoid catching user names like shealedallah the warrior princess.
 - MQ2Radar (ChatWithThisName, brainiac, odessa) Add option to use a custom map folder. 
   /radar Mapfolder "Brewall's Maps"
@@ -9,7 +9,10 @@ Apr 25 2021 by RedGuides
 - MQ2AutoForage (GoldenFrog, Knightly, dannuic) Added default [Global] section to INI. Items will read or write to a global section, unless a zone-specific line exists. e.g.
   [Global]
   Roots=keep
-- MQ2Say (Knightly, dannuic, ChatWithThisName) Backported some of the fixes and code-cleanup from Next 
+- MQ2Say (Knightly, ChatWithThisName, dannuic) Adds ability to ignore say messages from members of your group, guild, fellowship and raid. Backported some of the fixes and code-cleanup from Next.
+
+Apr 28 2021
+- Updated for TEST
   
 Apr 21 2021 by RedGuides
 - MQ2DPSAdv (Sic, ChatWithThisName) Update due to chat color changes
@@ -43,7 +46,7 @@ Mar 16 2021
 - Added a column sort fix by Brainiac
 - Check bounds on notify select commands - Brainiac
 - Misc Fixes
-- Updated for TEST
+- Updated for TEST]\
 
 Mar 10 2021 by RedGuides
 - New Plugin! MQ2Boxr (Sidien, dannuic) MQ2Boxr provides a command to control boxes running CWTN plugins, KissAssist, and rgmercs. The idea is to have one common command, which can be broadcast to all boxed characters regardless of what they are running.
