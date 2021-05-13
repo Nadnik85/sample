@@ -85,7 +85,7 @@ public:
         // ^ Retarded monkeys should not code ^
         OutStruct = (_CSIDLWND *)GetChildItem("CW_ChatOutput");
 
-        InputBox=(CEditWnd*)GetChildItem("CW_ChatInput");
+        InputBox=(CTextEntryWnd*)GetChildItem("CW_ChatInput");
         InputBox->AddStyle(0x800C);
         InputBox->SetCRNormal(0xFFFFFFFF);
         InputBox->SetMaxChars(512);
@@ -150,7 +150,7 @@ public:
     {
     }
 
-    CEditWnd *InputBox;
+    CTextEntryWnd *InputBox;
     CStmlWnd *StmlOut;
     CXWnd *OutWnd;
     struct _CSIDLWND *OutStruct;
