@@ -1,3 +1,95 @@
+May 04 2021 by Eqmule
+- Added a new plugin MQ2Achievements
+- Added /listach command for some debugging.
+-	This plugin gives full access to a characters achievements in the following way:
+-	The Achievement TLO:
+-	The Achievement TLO has the following members:
+-		Index, Category, ID, Name, Desc, Items and Item
+-		Index returns a int
+-		Category returns a pAchievementCategoryType it takes a index as a number or a name
+-			Example: /echo ${Achievement[General].Category[Level].Desc}
+-			Example: /echo ${Achievement[1].Category[3].Desc} //1 is General, 3 is Level
+-			Both Output: -General Achievements: Level
+-
+-		ID returns a int
+-		Name returns a string
+-		Desc returns a string
+-		Items returns a int of how many Item exist
+-		Item return a pAchievementType it takes a index as a number or a name
+-			Example: /echo ${Achievement[General].Category[Level].Item[1].Desc}
+-			Example: /echo ${Achievement[General].Category[Level].Item[Level 5].Desc}
+-			Both Output: This achievement is completed by reaching level 5.
+-				The pAchievementType has the following members:
+-				Index, ID, Name, Desc, Completed, Points, Objective and Objectives
+-				Index returns a int
+-				ID returns a int
+-				Name returns a string
+-				Desc returns a string
+-				Completed returns true or false
+-				Points returns a int
+-				Objectives returns a int of how many Objective exist
+-				Objective return a pAchievementComponentType it takes a index as a number or a name
+-					Example: /echo ${Achievement[General].Category[Level].Item[1].Objective[1].ID}
+-					Example: /echo ${Achievement[General].Category[Level].Item[Level 5].Objective[Reach Level 5].ID}
+-					Both Output: 5
+-						The pAchievementComponentType has the following members:
+-						Index, ID, Name, Completed, CompletedTime, Type, RequiredCount and SequenceNum
+-						Index returns a int
+-						ID returns a int
+-						Name returns a string
+-						Completed returns true or false
+-						CompletedTime returns a pTimeType
+-						Type returns a string it can be Unlock, Completion, Indirect, Display and None
+-						RequiredCount returns a int
+-						SequenceNum returns a int
+-						Example: /echo ${Achievement[General].Category[Level].Item[1].Objective[1].Type}
+-						Example: /echo ${Achievement[General].Category[Level].Item[Level 5].Objective[Reach Level 5].Type}
+-						Both Output: Completion
+- Ok if you read through all of that let me explain why this is a useful plugin
+-	RG has a macro called traveler or something, it runs your character through all zones for the travel achievements
+-	Basically this macro can now be modified to just check which zones you have already been to.
+-	Let me show you an example:
+	/echo ${Achievement[Everquest].Category[Exploration].Item[12].Name}
+	Output: Befallen
+	/echo ${Achievement[Everquest].Category[Exploration].Item[12].ID}
+	/echo ${Achievement[Everquest].Category[Exploration].Item[Befallen Traveler].ID}
+	Both Output: 100003600 (this is interesting because 36 is the ZONE ID of Befallen, more n this later)
+	/echo ${Achievement[Everquest].Category[Exploration].Item[12].Completed}
+	Output: FALSE (ok good I have not been there, lets go... or TRUE, we can skip traveling there)
+	ok so how do we scan through all acievements for zones we have been to?
+	well for a human that takes time, for a macro its done in a few milli seconds.
+	A macro Sub can easily figure out if u have visited a zone just by knowing it's ID
+	I'll example how to go through some zones for the Everquest category
+	[code]
+		#warning
+		#turbo 80
+		Sub HaveWeBeenThere(int zoneid)
+			/declare i int local
+			/declare thezoneid string local
+			/for i 1 to ${Achievement[Everquest].Category[Exploration].Items}
+				/varset thezoneid ${Achievement[Everquest].Category[Exploration].Item[${i}].ID}
+				/varset thezoneid ${thezoneid.Left[-2]}
+				/varset thezoneid ${thezoneid.Right[-3]}
+				
+				/if (${zoneid}==${thezoneid}) {
+					/echo we have found our zone...
+					/if (${Achievement[Everquest].Category[Exploration].Item[${i}].Completed}==FALSE) {
+						/echo its: [${i}] ${Zone[${thezoneid}]} and we have NOT been there.
+						/return FALSE
+					} else {
+						/echo its: [${i}] ${Zone[${thezoneid}]} and we have been there!
+						/return TRUE
+					}
+				}
+			/next i
+		/return FALSE
+
+		Sub Main
+			/call HaveWeBeenThere 36
+		/return
+	[/code]
+- This is a beta release.
+-
 Apr 28 2021 by RedGuides
 - MQ2DPSAdv (Sic, brainiac, dannuic, Knightly) Further fixes for crashes. Updated "healed" to " healed " to avoid catching user names like shealedallah the warrior princess.
 - MQ2Radar (ChatWithThisName, brainiac, odessa) Add option to use a custom map folder. 
