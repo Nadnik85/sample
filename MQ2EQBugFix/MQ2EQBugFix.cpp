@@ -6,38 +6,10 @@
 // and Shutdown for setup and cleanup, do NOT do it in DllMain.
 
 #include "../MQ2Plugin.h"
-#if defined(LIVE)
-#include "../MQ2Main/eqgame-private(live).h"
-#elif defined(TEST)
-#include "../MQ2Main/eqgame-private(test).h"
-#elif defined(EQBETA)
-#include "../MQ2Main/eqgame-private(beta).h"
-#endif
+
 PreSetup("MQ2EQBugFix");
 DWORD p2DPrimitiveManager = 0;
 DWORD pRender = 0;
-#define INITIALIZE_EQGAME_OFFSET(var) DWORD var = (((DWORD)var##_x - 0x400000) + (DWORD)GetModuleHandle(NULL))
-class RG
-{
-public:
-	DWORD CharacterBase__GetExpansionFlags_Trampoline(void);
-	DWORD CharacterBase__GetExpansionFlags_Detour(void)
-	{
-		if (PCHARINFO pchar = GetCharInfo()) {
-			if (pchar->ExpansionFlags<0x8000) {
-				return pchar->ExpansionFlags|0x8000;
-			}
-			else {
-				return CharacterBase__GetExpansionFlags_Trampoline();
-			}
-		}
-		return CharacterBase__GetExpansionFlags_Trampoline();
-	}
-};
-#if defined(LIVE)
-INITIALIZE_EQGAME_OFFSET(CharacterBase__GetExpansionFlags);
-#endif
-DETOUR_TRAMPOLINE_EMPTY(DWORD RG::CharacterBase__GetExpansionFlags_Trampoline(void));
 
 //A1B408 ; int __cdecl startworddisplayexceptionhandler()
 int __cdecl startworddisplayexceptionhandler_Trampoline(struct EHExceptionRecord *, struct EHRegistrationNode *, struct _CONTEXT *, void *);   
@@ -144,6 +116,7 @@ int __cdecl CachedTextBug_Detour(class CTextObject *obj)
 	return 0;
 }
 DETOUR_TRAMPOLINE_EMPTY(int __cdecl CachedTextBug_Tramp(class CTextObject *));
+
 class BugFix
 {
 public:
@@ -193,7 +166,7 @@ DETOUR_TRAMPOLINE_EMPTY(bool CUnSerializeBuffer_BugFix::GetString_Trampoline(cha
 
 DWORD __UpdateDisplay = 0;
 DWORD __Reset = 0;
-PLUGIN_API void InitializePlugin()
+PLUGIN_API VOID InitializePlugin(VOID)
 {
 	//dont mess with this its work in progress, im sick of the crash that happens if you invoke the UAC dialog while eq is loading
 	//basically it makes the render device get lost and then we crash
@@ -227,21 +200,15 @@ PLUGIN_API void InitializePlugin()
 			//EzDetourwName(switchbug, CachedTextBug_Detour, CachedTextBug_Tramp,"CachedTextBug_Detour");
 		}
 	}*/
-	DebugSpewAlways("Initializing MQ2EQBugFix");
-
-	// Check against a null `this` pointer. This has been here for ages. We'ren ot even sure
-	// that this is still needed.
-	EzDetour(CDisplay__is3dON, &CDisplay_Hook::is_3dON_Detour, &CDisplay_Hook::is_3dON_Trampoline);
+    DebugSpewAlways("Initializing MQ2EQBugFix");
+    EzDetourwName(CDisplay__is3dON, &CDisplay_Hook::is_3dON_Detour, &CDisplay_Hook::is_3dON_Trampoline,"CDisplay__is3dON");
     #ifdef EQMULETESTINGSTUFF
 	//EzDetourwName(startworlddisplayexceptionhandler, startworddisplayexceptionhandler_Detour, startworddisplayexceptionhandler_Trampoline,"startworlddisplayexceptionhandler");
-	#endif
-	#if defined(LIVE)
-	EzDetour(CharacterBase__GetExpansionFlags, &RG::CharacterBase__GetExpansionFlags_Detour, &RG::CharacterBase__GetExpansionFlags_Trampoline);
 	#endif
 	#if defined(ROF2EMU) || defined(UFEMU)
     EzDetourwName(EQ_PC__GetCombatAbilityTimer, &BugFix::EQ_PC__GetCombatAbilityTimer_Detour, &BugFix::EQ_PC__GetCombatAbilityTimer_Trampoline,"EQ_PC__GetCombatAbilityTimer");
 	#endif
-
+	
 
 	// Avoid a buffer over-read in CUnSerializeBuffer::GetString. This function will call strlen on
 	// a network message that may already have been read to the end, resulting in a buffer over-read.
@@ -253,10 +220,9 @@ PLUGIN_API void InitializePlugin()
 	EzDetour(CUnSerializeBuffer__GetString, &CUnSerializeBuffer_BugFix::GetString_Detour, &CUnSerializeBuffer_BugFix::GetString_Trampoline);
 }
 
-PLUGIN_API void ShutdownPlugin()
+PLUGIN_API VOID ShutdownPlugin(VOID)
 {
-	DebugSpewAlways("Shutting down MQ2EQBugFix");
-
+    DebugSpewAlways("Shutting down MQ2EQBugFix");
 	RemoveDetour(CDisplay__is3dON);
 	RemoveDetour(CUnSerializeBuffer__GetString);
 	#if defined(ROF2EMU) || defined(UFEMU)
@@ -273,8 +239,5 @@ PLUGIN_API void ShutdownPlugin()
 	}
 	#ifdef EQMULETESTINGSTUFF
     //RemoveDetour(startworlddisplayexceptionhandler);
-	#endif
-	#if defined(LIVE)
-	RemoveDetour(CharacterBase__GetExpansionFlags);
 	#endif
 }
