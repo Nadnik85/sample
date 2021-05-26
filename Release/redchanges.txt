@@ -1,3 +1,16 @@
+May 25 2021 by RedGuides
+- MQ2Events (Sic) This addresses a possible crash when trying to load an empty trigger
+
+May 25 2021
+- Updated for TEST
+- Added some chat color defines - sic
+
+May 24 2021
+- Fixed some problems with /itemnotify
+
+May 19 2021 by RedGuides
+- MQ2DPSAdv (Sic, brainiac) Crash Fix. Updated IsPet check. Previous update to remove pets/swarm pets would cause a crash if your pet was the recipient of damage from the mob you were fighting. Now we just skip adding it as a mob in the dropdown.
+
 May 19 2021 by RedGuides
 - MQ2DPSAdv (ChatWithThisName, Knightly) Prevent swarm pets from showing up in dropdown. 
 
