@@ -1,9 +1,12 @@
+Jun 08 2021
+- Updated for TEST
+
 May 25 2021 by RedGuides
-- MQ2Events (Sic) This addresses a possible crash when trying to load an empty trigger
+- MQ2Events (Sic, brainiac) This addresses a possible crash when trying to load an empty trigger
 
 May 25 2021
 - Updated for TEST
-- Added some chat color defines - sic
+- MQ2Main (brainiac, Sic) Added some chat color defines
 
 May 24 2021
 - Fixed some problems with /itemnotify
