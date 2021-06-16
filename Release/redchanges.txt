@@ -1,3 +1,14 @@
+Jun 16 2021 by RedGuides
+- NEW PLUGIN! MQ2Mage (ChatWithThisName, Sic) helps you run a magician. Free during beta, will become premium later.
+- MQ2Status (Sic, brainiac) Adding "/status luck", and remaining CWTN plugin info
+
+Jun 16 2021
+- Updated for LIVE
+
+Jun 09 2021 by RedGuides
+- New plugin! MQ2UItils (eqmule) puts a little green line on the compass if you have a target.
+- MQ2EasyFind (eqmule) - added more PoK zone connections
+
 Jun 08 2021
 - Updated for TEST
 
