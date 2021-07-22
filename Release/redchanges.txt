@@ -1,3 +1,9 @@
+Jul 21 2021 by RedGuides
+- MQ2Status (Sic, Knightly) Added Assigned AA to /status aaxp. Added "luck" to help output
+
+Jul 21 2021
+- Updated for LIVE
+
 Jul 14 2021 by RedGuides
 - MQ2AutoAccept (Sic, Knightly) Will no longer erroneously accept non-percentage based resurrection spells, like a "call". It is intended that mq2autoaccept ignores rezzes, and allows something else, like mq2rez to accept all resurrections including non-percentage based ones.
   Will now respect "/autoaccept off" and "/autoaccept group off" in regards to group invites
